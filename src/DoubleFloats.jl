@@ -4,10 +4,11 @@ export Double, FastDouble
 
 import Base.IEEEFloat # Union{Float64, Float32, Float16}
 
+using AccurateArithmetic
+
 
 # Emphasis expresses algorithmic preference
 # Accuracy and Performants are Traits of Emphasis
-
 
 """
     Emphasis
