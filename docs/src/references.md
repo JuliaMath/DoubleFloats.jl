@@ -24,3 +24,18 @@ Faithfully Rounded Floating-point Computations
 ```
 &nbsp; &nbsp; &rarr;  http://www.ti3.tu-harburg.de/paper/rump/LaRu2017b.pdf      
 
+
+```
+Nelson H.F. Beebe
+The Mathematical-Function Computation Handbook
+Springer, 2017, book
+```
+&nbsp;
+
+```
+J.-M. Muller, N. Brisebarre, F. de Dinechin, C.-P. Jeannerod, V. Lefevre,
+    G. Melquiond, N. Revol, D. Stehle, and S. Torres.
+Handbook of Floating-Point Arithmetic
+Birkhauser Boston, 2010, book
+```
+&nbsp;
