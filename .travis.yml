@@ -1,14 +1,19 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
 os:
   - linux
   - osx
 julia:
-  - 0.6.2
+  - 0.6
   - nightly
+matrix:
+  fast_finish: true
+  allow_failures:
+    - julia: nightly
 notifications:
   email: false
-# uncomment the following lines to override the default test script
-#script:
+#script: # the default script is equivalent to the following
 #  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)'
+#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)';
+after_success:
+  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Documenter"); using Documenter; include(joinpath("docs", "make.jl"))';
+  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
