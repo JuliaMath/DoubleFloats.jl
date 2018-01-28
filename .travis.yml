@@ -1,4 +1,4 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
+## Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
 os:
   - linux
@@ -6,15 +6,28 @@ os:
 julia:
   - 0.6
   - nightly
-matrix:
-  fast_finish: true
-  allow_failures:
-    - julia: nightly
 notifications:
   email: false
-#script: # the default script is equivalent to the following
-#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)';
+git:
+  depth: 99999999
+
+## uncomment the following lines to allow failures on nightly julia
+## (tests will run but not make your overall status red)
+matrix:
+  allow_failures:
+  - julia: nightly
+
+## uncomment and modify the following lines to manually install system packages
+#addons:
+#  apt: # apt-get for linux
+#    packages:
+#    - gfortran
+#before_script: # homebrew for mac
+#  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
+
+## uncomment the following lines to override the default test script
+#script:
+#  - julia -e 'Pkg.clone(pwd()); Pkg.build("AccurateArithmetic"); Pkg.test("AccurateArithmetic"; coverage=true)'
 after_success:
-  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Documenter"); using Documenter; include(joinpath("docs", "make.jl"))';
-  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
+  - julia -e 'cd(Pkg.dir("AccurateArithmetic")); Pkg.add("Documenter"); using Documenter; include(joinpath("docs", "make.jl"))';
+  - julia -e 'cd(Pkg.dir("AccurateArithmetic")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
