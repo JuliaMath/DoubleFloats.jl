@@ -13,6 +13,4 @@ end
 
 
 
-
-
 include("string_show.jl")
