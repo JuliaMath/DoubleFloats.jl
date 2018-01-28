@@ -1,6 +1,3 @@
-const EMPHASIS_STR     = ""        # these are used in string()
-const ALT_EMPHASIS_STR = "Fast"    # and prepend "Double"
-
 function Base.string(x::Double{T,EMPHASIS}) where {T}
     return string(EMPHASIS_STR,"Double(",x.hi,", ",x.lo,")")
 end
