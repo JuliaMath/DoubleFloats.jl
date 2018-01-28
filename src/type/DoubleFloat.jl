@@ -30,7 +30,7 @@ const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_doublefloat_lo = hash(zero(UInt), hash_doublefloat_lo)
 Base.hash(z::Double{T,E}, h::UInt) where {T,E<:Emphasis} =
     hash(unsigned(z.hi) ⊻ unsigned(z.lo),
-         (h, hash(T) ⊻ hash(E)) ⊻ hash_0_doublefloat_lo))
+         hash(h, hash(T) ⊻ hash(E) ⊻ hash_0_doublefloat_lo))
 
 
 
