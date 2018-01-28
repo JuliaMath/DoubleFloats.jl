@@ -1,6 +1,8 @@
 module DoubleFloats
 
-export Double, FastDouble
+export Double, FastDouble,
+       MultipartFloat, AbstractDouble,
+       Emphasis, Accuracy, Performance
 
 import Base.IEEEFloat # Union{Float64, Float32, Float16}
 
