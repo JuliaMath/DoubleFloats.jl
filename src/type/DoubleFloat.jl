@@ -25,14 +25,28 @@ FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 FastDouble(x::T) where {T<:AbstractFloat} = Double{T, Performance}(x, zero(T))
 FastDouble(x::T, y::T) where {T<:AbstractFloat} = Double{T, Performance}(add_acc(x, y)...,)
 
-# a type specific fast hash function helps
-const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
-const hash_0_doublefloat_lo = hash(zero(UInt), hash_doublefloat_lo)
-Base.hash(z::Double{T,E}, h::UInt) where {T,E<:Emphasis} =
-    hash(unsigned(z.hi) ⊻ unsigned(z.lo),
-         hash(h, hash(T) ⊻ hash(E) ⊻ hash_0_doublefloat_lo))
+# a fast type specific hash function helps
 
+const hash_accuracy = Hash(Accuracy)
+const hash_performance = Hash(Performance)
 
+const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
+const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
+@inline function Base.hash(x::Double{T,Accuracy}, h::UInt) where {T}
+    isnan(hi(x)) && return (hx_NaN ⊻ h)
+    iszero(lo(x)) && return Base.hx(Base.fptoui(UInt64, abs(hi(x))), hi(x), h)
+    Base.hx(hash_accuracy ⊻ Base.fptoui(UInt64, abs(hi(x))), 
+            lo(x), h ⊻ hash_0_doublefloat_lo)
+end
+
+@inline function Base.hash(x::Double{T,Performance}, h::UInt) where {T}
+    isnan(hi(x)) && return (hx_NaN ⊻ h)
+    iszero(lo(x)) && return Base.hx(Base.fptoui(UInt64, abs(hi(x))), hi(x), h)
+    Base.hx(hash_performance ⊻ Base.fptoui(UInt64, abs(hi(x))),
+            lo(x), h ⊻ hash_0_doublefloat_lo)
+end
+
+ 
 include("type/values_predicates.jl")
 include("type/string_show.jl")
