@@ -1,6 +1,13 @@
-abstract type AbstractDouble{T}    <: MultipartFloat{T} end
+include("emphasis.jl") 
+#=
+    Emphasis is a proto-trait
+    algorithmic Accuracy    is a trait, ako Emphasis
+    algorithmic Performance is a trait, ako Emphasis
+=#
 
-struct Double{T<:AbstractFloat, E<:Emphasis} <: AbstractDouble{T}
+abstract type AbstractDouble{T<:AbstractFloat} <: MultipartFloat{T} end
+
+struct Double{T, E<:Emphasis} <: AbstractDouble{T<::AbstractFloat}
     hi::T
     lo::T
 end
