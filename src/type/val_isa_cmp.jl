@@ -1,5 +1,6 @@
 import Base: zero, one, Inf, NaN,
-             iszero, isinf, isnan, isfinite, isinteger, isodd, iseven
+             iszero, isinf, isnan, isfinite, isinteger, isodd, iseven,
+             :(==), :(!=), :(<), :(<=), :(>=), :(>), isless, isequal
 
 if VERSION >= v"0.7.0-" 
     import Base:isone
@@ -38,3 +39,17 @@ iseven(x::DoubleFloat{T,E}) where {T<:Real,E<:Emphasis} =
 
 issubnormal(x::DoubleFloat{T,E}) where {T<:Real,E<:Emphasis} =
     issubnormal(hi(x)) || issubnormal(lo(x))
+
+
+
+@inline (==)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (lo(x) === lo(y)) && (hi(x) === hi(y))
+@inline (!=)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (lo(x) !== lo(y)) || (hi(x) !== hi(y))
+@inline (<)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (hi(x) < hi(y)) || (hi(x) === hi(y) && lo(x) < lo(y))
+@inline (>)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (hi(x) > hi(y)) || (hi(x) === hi(y) && lo(x) > lo(y))
+@inline (<=)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (hi(x) < hi(y)) || (hi(x) === hi(y) && lo(x) <= lo(y))
+@inline (>=)(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (hi(x) > hi(y)) || (hi(x) === hi(y) && lo(x) >= lo(y))
+
+@inline isequal(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (x == y)
+@inline isless(x::Double{T,E}, y::Double{T,E}) where {T<:Number,E<:Emphasis} = (x < y)
+
+
