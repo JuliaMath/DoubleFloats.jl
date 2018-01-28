@@ -48,5 +48,5 @@ end
 end
 
  
-include("type/val_isa_cmp.jl")
-include("type/string_show.jl")
+include("val_isa_cmp.jl")
+include("string_show.jl")
