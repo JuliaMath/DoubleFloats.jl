@@ -1,9 +1,9 @@
-include("emphasis.jl") 
 #=
     Emphasis is a proto-trait
     algorithmic Accuracy    is a trait, ako Emphasis
     algorithmic Performance is a trait, ako Emphasis
 =#
+include("emphasis.jl")
 
 abstract type AbstractDouble{T<:AbstractFloat} <: MultipartFloat{T} end
 
