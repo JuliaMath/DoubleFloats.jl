@@ -41,8 +41,7 @@ function inv(::Type{E}, a::T) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function (/)(::Type{E}, a::T, b::T) where {T<:AbstractFloat, E<:Emphasis}
-   return Double{T,E}(div_acc(a)...,)
+   return Double{T,E}(div_acc(a, b)...,)
 end
 @inline (/)(::Type{E}, a::F1, b::F2) where 
-    {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} =
-    (/)(E, promote(a, b)...,), lo)
+    {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (/)(E, promote(a, b)...,)
