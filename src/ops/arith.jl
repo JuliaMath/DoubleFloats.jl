@@ -1,10 +1,10 @@
 import Base: (+), (-), (*), (/), inv #square, inv, div, rem, cld, fld, mod, divrem, fldmod, sqrt,
 
-@inline (+)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:SysFloat, F2<:SysFloat} =
+@inline (+)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
     (+)(E, promote(a, b)...)
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
-function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:SysFloat, E<:Emphasis}
+function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
     hi, lo = add_acc(x.hi, y.hi)
     thi, tlo = add_acc(x.lo, y.lo)
     c = lo + thi
@@ -15,7 +15,7 @@ function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:SysFloat, E<:Emphasis}
 end
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
-function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = add_acc(xhi, yhi)
     thi, tlo = add_acc(xlo, ylo)
     c = lo + thi
@@ -25,12 +25,12 @@ function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
     return hi, lo
 end
 
-@inline (-)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:SysFloat, F2<:SysFloat} =
+@inline (-)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
     (-)(E, promote(a, b)...)
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
 # reworked for subraction
-function (-)(x::Double{T, E}, y::Double{T,E}) where {T<:SysFloat, E<:Emphasis}
+function (-)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
     hi, lo = sub_acc(x.hi, y.hi)
     thi, tlo = sub_acc(x.lo, y.lo)
     c = lo + thi
@@ -42,7 +42,7 @@ end
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
 # reworked for subtraction
-function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = sub_acc(xhi, yhi)
     thi, tlo = sub_acc(xlo, ylo)
     c = lo + thi
@@ -58,7 +58,7 @@ experimental relerr ldexp(3.936,-106) == ldexp(1.968, -107)
 =#
 
 # Algorithm 12 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
-function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = mul_acc(xhi, yhi)
     t = xlo * ylo
     t = fma(xhi, ylo, t)
@@ -69,7 +69,7 @@ function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
 end
 
 # Algorithm 12 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
-function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:SysFloat,E<:Emphasis}
+function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
     hi, lo = mul_acc(x.hi, y.hi)
     t = x.lo * y.lo
     t = fma(x.hi, y.lo, t)
@@ -79,7 +79,7 @@ function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:SysFloat,E<:Emphasis}
     return Double{T,E}(hi, lo)
 end
 
-function (square)(x::Double{T,E}) where {T<:SysFloat,E<:Emphasis}
+function (square)(x::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
     hi, lo = mul_acc(x.hi, x.hi)
     t = x.lo * x.lo
     t = fma(x.hi, x.lo, t)
@@ -90,7 +90,7 @@ function (square)(x::Double{T,E}) where {T<:SysFloat,E<:Emphasis}
 end
 
 
-function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:SysFloat}
+function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEFloat}
     hi1 = a.hi / b.hi
     hi, lo = prod_dd_fl(b.hi, b.lo, hi1)
     xhi, xlo = add_acc(a.hi, -hi)
@@ -103,7 +103,7 @@ end
 
 #=
 # Algorithm 18 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
-function (/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:SysFloat}
+function (/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:IEEEFloat}
     hi = inv(y.hi)
     rhi = fma(-y.hi, hi, one(T))
     rlo = y.lo * hi
@@ -115,7 +115,7 @@ function (/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:SysFloat}
 end
 =#
 
-function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:SysFloat}
+function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
     q1 = a.hi / b.hi
     th,tl = prod_dd_fl(b.hi,b.lo,q1)
     rh,rl = add_dd_dd(a.hi, a.lo, -th,-tl)
@@ -128,7 +128,6 @@ function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:SysFloat}
     return Double{T,Accuracy}(rh, rl)
 end
 
-@inline (/)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:SysFloat, F2<:SysFloat} = (/)(E, a, b)
+@inline (/)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} = (/)(E, a, b)
 
-inv(x::Double{T, E}) where {T<:SysFloat, E<:Emphasis} = one(T)/x
-
+inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
