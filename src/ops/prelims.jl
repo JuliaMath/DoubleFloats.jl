@@ -1,4 +1,4 @@
-import Base: signbit, sign, abs, :(-), flipsign, copysign, ldexp, frexp
+import Base: signbit, sign, abs, (-), flipsign, copysign, ldexp, frexp
 
 @inline signbit(a::Double{T,E}) where {T,E} = signbit(a.hi)
 @inline sign(a::Double{T,E}) where {T,E} = sign(a.hi)
