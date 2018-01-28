@@ -1,6 +1,6 @@
 import Base: zero, one, Inf, NaN,
              iszero, isinf, isnan, isfinite, isinteger, isodd, iseven,
-             :(==), :(!=), :(<), :(<=), :(>=), :(>), isless, isequal
+             (==), (!=), (<), (<=), (>=), (>), isless, isequal
 
 if VERSION >= v"0.7.0-" 
     import Base:isone
