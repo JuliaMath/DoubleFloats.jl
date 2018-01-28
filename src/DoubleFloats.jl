@@ -14,7 +14,7 @@ end
 using AccurateArithmetic
 
 include("traits.jl")
-include("DoubleFloat.jl")
+include("type/DoubleFloat.jl")
 
 
 
