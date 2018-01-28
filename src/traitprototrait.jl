@@ -1,10 +1,4 @@
 #=
-    MultipartFloat subtypes include DoubleFloats, TripleFloats, QuadFloats
-=#
-
-abstract type MultipartFloat{T} <: AbstractFloat end
-
-#=
     `Emphasis` is a proto-trait of algorithmic preference.
 
         MultipartFloat types implement mathematical operations.
