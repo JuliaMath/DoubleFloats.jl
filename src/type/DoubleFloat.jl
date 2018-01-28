@@ -27,8 +27,8 @@ FastDouble(x::T, y::T) where {T<:AbstractFloat} = Double{T, Performance}(add_acc
 
 # a fast type specific hash function helps
 
-const hash_accuracy = Hash(Accuracy)
-const hash_performance = Hash(Performance)
+const hash_accuracy = hash(Accuracy)
+const hash_performance = hash(Performance)
 
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
