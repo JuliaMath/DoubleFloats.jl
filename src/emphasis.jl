@@ -3,6 +3,7 @@
 
 """
     Emphasis
+
 An abstract type for algorithmic preferences:
 - [`Accuracy`](@ref) emphasizes accuracy.
 - [`Performance`](@ref) emphasizes performance.
@@ -11,12 +12,14 @@ abstract type Emphasis end
 
 """
     Accuracy
+
 Use this as the Emphasis for the most accurate calcuations.
 """
 struct Accuracy    <: Emphasis end
 
 """
     Performance
+
 Use this as the Emphasis for the most performant calcuations.
 """
 struct Performance <: Emphasis end
