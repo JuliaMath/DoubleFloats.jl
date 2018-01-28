@@ -10,10 +10,6 @@ function cub(::Type{E}, a::T) where {T<:AbstractFloat, E<:Emphasis}
    return Double{T,E}(cub_acc(a)...,)
 end
 
-function inv(::Type{E}, a::T) where {T<:AbstractFloat, E<:Emphasis}
-   return Double{T,E}(inv_acc(a)...,)
-end
-
 function sqrt(::Type{E}, a::T) where {T<:AbstractFloat, E<:Emphasis}
    return Double{T,E}(sqrt_acc(a)...,)
 end
