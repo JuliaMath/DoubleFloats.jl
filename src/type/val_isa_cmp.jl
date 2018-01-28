@@ -18,7 +18,7 @@ one(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isone(hi(x)) && iszero(lo(x))
 
-NaN(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
+nan(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
    Double(E, T(NaN), zero(T))
 isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isnan(hi(x)) && iszero(lo(x))
