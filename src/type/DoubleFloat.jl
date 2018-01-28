@@ -1,5 +1,3 @@
-abstract type AbstractDouble{T} <: MultipartFloat{T} end
-
 struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
     lo::T
