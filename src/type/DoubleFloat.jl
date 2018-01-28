@@ -34,7 +34,7 @@ Base.hash(z::Double{T,E}, h::UInt) where {T,E<:Emphasis} =
     hash(unsigned(z.hi) ⊻ unsigned(z.lo),
          (h, hash(T) ⊻ hash(E)) ⊻ hash_0_doublefloat_lo))
 
-include("predicates.jl")
+include("values_predicates.jl")
 include("string_show.jl")
 
 
