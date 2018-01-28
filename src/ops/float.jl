@@ -1,4 +1,4 @@
-import Base: inv, sqrt, :(+), :(-), :(*), :(/)
+import Base: inv, sqrt, (+), (-), (*), (/)
 
 export sqr, cub
 
