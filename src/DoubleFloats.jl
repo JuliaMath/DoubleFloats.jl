@@ -11,8 +11,7 @@ else
 end
 
 
-include("MultipartFloat.jl")
-include("Emphasis.jl")
+include("Abstract.jl")
 include("DoubleFloat.jl")
 
 using AccurateArithmetic
