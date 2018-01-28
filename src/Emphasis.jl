@@ -1,5 +1,20 @@
-# Emphasis expresses algorithmic preference
-# Accuracy and Performants are Traits of Emphasis
+#=
+    MultipartFloat subtypes include DoubleFloats, TripleFloats, QuadFloats
+=#
+
+abstract type MultipartFloat{T} <: AbstractFloat end
+
+#=
+    `Emphasis` is a proto-trait of algorithmic preference.
+
+        MultipartFloat types implement mathematical operations.
+        Some of these functions have two implementations:
+           one designed for accuracy
+           one designed for performance
+        
+        `Accuracy` or `Performance`
+           the emphasis is given as type parameter
+=#
 
 """
     Emphasis
