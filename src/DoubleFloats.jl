@@ -15,8 +15,9 @@ using AccurateArithmetic
 
 include("traits.jl")
 include("type/DoubleFloat.jl")
-include("type/string_show.jl")
 
+include("type/string_show.jl")
+include("ops/predicates.jl")
 
 
 end # module DoubleFloats
