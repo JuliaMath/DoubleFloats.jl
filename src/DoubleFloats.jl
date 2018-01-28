@@ -2,7 +2,8 @@ module DoubleFloats
 
 export Double, FastDouble,
        MultipartFloat, AbstractDouble,
-       Emphasis, Accuracy, Performance
+       Emphasis, Accuracy, Performance,
+       spread, sld, tld
 
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
@@ -17,6 +18,7 @@ include("traits.jl")
 include("type/DoubleFloat.jl")
 
 include("ops/prelims.jl")
+include("ops/intfloat.jl")
 
 
 end # module DoubleFloats
