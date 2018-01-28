@@ -4,12 +4,18 @@ export Double, FastDouble,
        MultipartFloat, AbstractDouble,
        Emphasis, Accuracy, Performance
 
-import Base.IEEEFloat # Union{Float64, Float32, Float16}
+if VERSION >= v"0.7.0-"
+    import Base.IEEEFloat
+else
+     const IEEEFloat = Union{Float64, Float32, Float16}
+end
 
-using AccurateArithmetic
 
 include("MultipartFloat.jl")
 include("Emphasis.jl")
 include("DoubleFloat.jl")
+
+using AccurateArithmetic
+
 
 end # module DoubleFloats
