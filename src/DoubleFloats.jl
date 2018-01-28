@@ -11,7 +11,7 @@ else
 end
 
 
-include("AbstractTrait.jl")
+include("traitlike.jl")
 include("DoubleFloat.jl")
 
 using AccurateArithmetic
