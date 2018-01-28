@@ -3,7 +3,7 @@ module DoubleFloats
 export Double, FastDouble,
        MultipartFloat, AbstractDouble,
        Emphasis, Accuracy, Performance,
-       spread, sld, tld
+       nan, spread, sld, tld
 
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
