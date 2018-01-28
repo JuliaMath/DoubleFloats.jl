@@ -48,5 +48,5 @@ end
 end
 
  
-include("type/values_predicates.jl")
+include("type/val_isa_cmp.jl")
 include("type/string_show.jl")
