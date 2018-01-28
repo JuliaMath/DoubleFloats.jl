@@ -29,7 +29,7 @@ function (-)(::Type{E}, a::T, b::T) where {T<:AbstractFloat, E<:Emphasis}
 end
 @inline (-)(::Type{E}, a::F1, b::F2) where {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (-)(E, promote(a, b)...)
 
-function (*)(::Type{E}, a::T, b::T) where {T<:SysFloat, E<:Emphasis}
+function (*)(::Type{E}, a::T, b::T) where {T<:Abstract Float, E<:Emphasis}
    return Double{T,E}(mul_acc(a, b)...,)
 end
 @inline (*)(::Type{E}, a::F1, b::F2) where {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (*)(E, promote(a, b)...)
