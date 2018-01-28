@@ -14,6 +14,8 @@ end
 
 using AccurateArithmetic
 
+abstract type MultipartFloat{T} <: AbstractFloat end
+
 include("traits.jl")
 include("type/DoubleFloat.jl")
 
