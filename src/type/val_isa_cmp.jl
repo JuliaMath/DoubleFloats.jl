@@ -1,4 +1,4 @@
-import Base: zero, one, Inf, NaN,
+import Base: zero, one,
              iszero, isinf, isnan, isfinite, isinteger, isodd, iseven,
              (==), (!=), (<), (<=), (>=), (>), isless, isequal
 
@@ -23,7 +23,7 @@ nan(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
 isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isnan(hi(x)) && iszero(lo(x))
 
-Inf(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
+inf(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
    Double(E, T(Inf), zero(T))
 isinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isinf(hi(x)) && iszero(lo(x))
