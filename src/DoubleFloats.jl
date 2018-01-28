@@ -19,6 +19,8 @@ include("type/DoubleFloat.jl")
 
 include("ops/prelims.jl")
 include("ops/intfloat.jl")
+include("ops/float.jl")
+include("ops/arith.jl")
 
 
 end # module DoubleFloats
