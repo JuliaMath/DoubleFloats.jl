@@ -11,10 +11,11 @@ else
 end
 
 
+using AccurateArithmetic
+
 include("traits.jl")
 include("DoubleFloat.jl")
 
-using AccurateArithmetic
 
 
 end # module DoubleFloats
