@@ -16,10 +16,11 @@ function Base.string(x::Double{T,ALT_EMPHASIS}) where {T}
 end
 
 function Base.show(io::IO, x::Double{T,E}) where  {T, E<:Emphasis}
-    print(io, convert(String, x))
+    str = convert(String, x)
+    print(io, str)
 end
 
 function Base.show(x::Double{T,E}) where  {T, E<:Emphasis}
-    print(Base.STDOUT, string(x))
+    str = string(x)
+    print(Base.STDOUT, str)
 end
-
