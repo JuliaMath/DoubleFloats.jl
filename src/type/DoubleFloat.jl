@@ -34,13 +34,13 @@ const hash_performance = hash(Performance)
 const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_doublefloat_lo = hash(zero(UInt), hash_doublefloat_lo)
 
-@inline function Base.hash(x::Double{T,Accuracy}, h::UInt) where {T}
+function Base.hash(x::Double{T,Accuracy}, h::UInt) where {T}
     isnan(hi(x)) && return (hx_NaN ⊻ h)
     iszero(lo(x)) && return Base.hx(Base.fptoui(UInt64, abs(hi(x))), hi(x), h)
     Base.hx(hash_accuracy ⊻ Base.fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_0_doublefloat_lo)
 end
 
-@inline function Base.hash(x::Double{T,Performance}, h::UInt) where {T}
+function Base.hash(x::Double{T,Performance}, h::UInt) where {T}
     isnan(hi(x)) && return (hx_NaN ⊻ h)
     iszero(lo(x)) && return Base.hx(Base.fptoui(UInt64, abs(hi(x))), hi(x), h)
     Base.hx(hash_performance ⊻ Base.fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_0_doublefloat_lo)
