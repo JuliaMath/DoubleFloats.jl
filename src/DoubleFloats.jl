@@ -10,7 +10,7 @@ export Double, FastDouble,
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
 else
-     const IEEEFloat = Union{Float64, Float32, Float16}
+    const IEEEFloat = Union{Float64, Float32, Float16}
 end
 
 
