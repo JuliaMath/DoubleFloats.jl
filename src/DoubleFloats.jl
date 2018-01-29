@@ -5,7 +5,7 @@ export Double, FastDouble,
        Emphasis, Accuracy, Performance,
        hi, lo,
        spread, sld, tld,
-       nan, inf,
+       nan, inf
        
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
