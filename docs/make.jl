@@ -8,6 +8,7 @@ makedocs(
     authors = "Jeffrey Sarnoff, Simon Byrne, Sascha Timme, and other contributors",
     pages = [
         "Home" => "index.md",
+        "Names" => "naming.md",
         "Refs" => "references.md"
     ],
 )
