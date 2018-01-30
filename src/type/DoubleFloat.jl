@@ -44,7 +44,7 @@ import Base: hash, hx, fptoui
 const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_dfloat_lo = hash(zero(UInt), hash_doublefloat_lo)
 const hash_accuracy_lo = hash(hash(Accuracy), hash_doublefloat_lo)
-const hash_precision_lo = hash(hash(Precision), hash_doublefloat_lo)
+const hash_performance_lo = hash(hash(Performance), hash_doublefloat_lo)
 
 function hash(x::Double{T,Accuracy}, h::UInt) where {T}
     !isnan(hi(x)) ? 
@@ -57,8 +57,8 @@ end
 function hash(x::Double{T,Precision}, h::UInt) where {T}
     !isnan(hi(x)) ? 
        ( iszero(lo(x)) ? 
-            hx(fptoui(UInt64, abs(hi(x))), hi(x), h ⊻ hash_precision_lo) :
-            hx(fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_precision_lo)  
+            hx(fptoui(UInt64, abs(hi(x))), hi(x), h ⊻ hash_performance_lo) :
+            hx(fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_performance_lo)  
        ) : (hx_NaN ⊻ h)
 end
 
