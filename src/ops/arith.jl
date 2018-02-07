@@ -1,4 +1,4 @@
-import Base: (+), (-), (*), (/), inv 
+import Base: (+), (-), (*), (/), inv, sqrt 
 
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 @inline function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
@@ -124,3 +124,11 @@ function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
 end
 
 @inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
+
+function sqrt(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis}
+    approxsqrt = sqrt(x.hi)
+    approx = x/approxsqrt
+    approx = approx + approxsqrt
+    return Double{T,E}(0.5*approx.hi, 0.5*approx.lo)
+end
+
