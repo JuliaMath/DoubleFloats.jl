@@ -52,12 +52,20 @@ function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     return hi, lo
 end
 
+# Algorithm 9 from Tight and rigourous error bounds. relative error <= 2u²
+function prod_dd_fl(xhi::T, xlo::T, y::T) where T<:IEEEFloat
+    hi, lo = mul_(xhi, y)
+    t = lo + xlo*y
+    hi, lo = add_hilo_(hi, t)
+    return hi, lo
+end
+
 #=
-theoretical relerr <= 5*(u^2)
+theoretical relerr <= 5u²
 experimental relerr ldexp(3.936,-106) == ldexp(1.968, -107)
 =#
 
-# Algorithm 12 from Tight and rigourous error bounds for basic building blocks 
+# Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
 function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = mul_(xhi, yhi)
     t = xlo * ylo
