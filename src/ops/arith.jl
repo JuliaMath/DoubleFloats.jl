@@ -5,23 +5,23 @@ import Base: (+), (-), (*), (/), inv
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
 function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
-    hi, lo = add_hilo(x.hi, y.hi)
-    thi, tlo = add_hilo(x.lo, y.lo)
+    hi, lo = add_(x.hi, y.hi)
+    thi, tlo = add_(x.lo, y.lo)
     c = lo + thi
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     return Double{T,E}(hi, lo)
 end
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
 function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
-    hi, lo = add_hilo(xhi, yhi)
-    thi, tlo = add_hilo(xlo, ylo)
+    hi, lo = add_(xhi, yhi)
+    thi, tlo = add_(xlo, ylo)
     c = lo + thi
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     return hi, lo
 end
 
@@ -31,24 +31,24 @@ end
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
 # reworked for subraction
 function (-)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
-    hi, lo = sub_hilo(x.hi, y.hi)
-    thi, tlo = sub_hilo(x.lo, y.lo)
+    hi, lo = sub_(x.hi, y.hi)
+    thi, tlo = sub_(x.lo, y.lo)
     c = lo + thi
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     return Double{T,E}(hi, lo)
 end
 
 # Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
 # reworked for subtraction
 function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
-    hi, lo = sub_hilo(xhi, yhi)
-    thi, tlo = sub_hilo(xlo, ylo)
+    hi, lo = sub_(xhi, yhi)
+    thi, tlo = sub_(xlo, ylo)
     c = lo + thi
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_hilo(hi, c)
+    hi, lo = add_hilo_(hi, c)
     return hi, lo
 end
 
@@ -59,33 +59,33 @@ experimental relerr ldexp(3.936,-106) == ldexp(1.968, -107)
 
 # Algorithm 12 from Tight and rigourous error bounds for basic building blocks 
 function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
-    hi, lo = mul_hilo(xhi, yhi)
+    hi, lo = mul_(xhi, yhi)
     t = xlo * ylo
     t = fma(xhi, ylo, t)
     t = fma(xlo, yhi, t)
     t = lo + t
-    hi, lo = add_hilo_hilo(hi, t)
+    hi, lo = add_hilo_(hi, t)
     return hi, lo
 end
 
 # Algorithm 12 from Tight and rigourous error bounds for basic building blocks 
 function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
-    hi, lo = mul_hilo(x.hi, y.hi)
+    hi, lo = mul_(x.hi, y.hi)
     t = x.lo * y.lo
     t = fma(x.hi, y.lo, t)
     t = fma(x.lo, y.hi, t)
     t = lo + t
-    hi, lo = add_hilo_hilo(hi, t)
+    hi, lo = add_hilo_(hi, t)
     return Double{T,E}(hi, lo)
 end
 
 function (square)(x::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
-    hi, lo = mul_hilo(x.hi, x.hi)
+    hi, lo = mul_(x.hi, x.hi)
     t = x.lo * x.lo
     t = fma(x.hi, x.lo, t)
     t = fma(x.lo, x.hi, t)
     t = lo + t
-    hi, lo = add_hilo_hilo(hi, t)
+    hi, lo = add_hilo_(hi, t)
     return Double{T,E}(hi, lo)
 end
 
@@ -93,11 +93,11 @@ end
 function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEFloat}
     hi1 = a.hi / b.hi
     hi, lo = prod_dd_fl(b.hi, b.lo, hi1)
-    xhi, xlo = add_hilo(a.hi, -hi)
+    xhi, xlo = add_(a.hi, -hi)
     xlo -= lo
     xlo += a.lo
     hi2 = (xhi + xlo) / b.hi
-    hi, lo = add_hilo(hi1, hi2)
+    hi, lo = add_(hi1, hi2)
     return Double{T,Performance}(hi, lo)
 end
 
