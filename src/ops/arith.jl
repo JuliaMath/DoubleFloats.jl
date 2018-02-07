@@ -1,21 +1,7 @@
 import Base: (+), (-), (*), (/), inv 
 
-@inline (+)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (+)(E, promote(a, b)...)
-
-# Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
-function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
-    hi, lo = add_(x.hi, y.hi)
-    thi, tlo = add_(x.lo, y.lo)
-    c = lo + thi
-    hi, lo = add_hilo_(hi, c)
-    c = tlo + lo
-    hi, lo = add_hilo_(hi, c)
-    return Double{T,E}(hi, lo)
-end
-
-# Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
-function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
+# Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
+@inline function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = add_(xhi, yhi)
     thi, tlo = add_(xlo, ylo)
     c = lo + thi
@@ -25,27 +11,12 @@ function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     return hi, lo
 end
 
-@inline (-)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (-)(E, promote(a, b)...)
-
-# Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
-# reworked for subraction
-function (-)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
-    hi, lo = sub_(x.hi, y.hi)
-    thi, tlo = sub_(x.lo, y.lo)
-    c = lo + thi
-    hi, lo = add_hilo_(hi, c)
-    c = tlo + lo
-    hi, lo = add_hilo_(hi, c)
-    return Double{T,E}(hi, lo)
-end
-
-# Algorithm 6 from Tight and rigourous error bounds for basic building blocks 
+# Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 # reworked for subtraction
-function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
+@inline function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = sub_(xhi, yhi)
     thi, tlo = sub_(xlo, ylo)
-    c = lo + thi
+    c = lo + thi# Algorithm 9 from Tight and rigourous error bounds. relative error <= 2u²
     hi, lo = add_hilo_(hi, c)
     c = tlo + lo
     hi, lo = add_hilo_(hi, c)
@@ -53,20 +24,15 @@ function sub_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
 end
 
 # Algorithm 9 from Tight and rigourous error bounds. relative error <= 2u²
-function prod_dd_fl(xhi::T, xlo::T, y::T) where T<:IEEEFloat
+@inline function mul_dd_fl(xhi::T, xlo::T, y::T) where T<:IEEEFloat
     hi, lo = mul_(xhi, y)
     t = lo + xlo*y
     hi, lo = add_hilo_(hi, t)
     return hi, lo
 end
 
-#=
-theoretical relerr <= 5u²
-experimental relerr ldexp(3.936,-106) == ldexp(1.968, -107)
-=#
-
 # Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
-function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
+@inline function mul_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = mul_(xhi, yhi)
     t = xlo * ylo
     t = fma(xhi, ylo, t)
@@ -76,18 +42,39 @@ function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     return hi, lo
 end
 
-# Algorithm 12 from Tight and rigourous error bounds for basic building blocks 
-function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
-    hi, lo = mul_(x.hi, y.hi)
-    t = x.lo * y.lo
-    t = fma(x.hi, y.lo, t)
-    t = fma(x.lo, y.hi, t)
-    t = lo + t
-    hi, lo = add_hilo_(hi, t)
-    return Double{T,E}(hi, lo)
+
+@inline (+)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
+    (+)(E, promote(a, b)...)
+
+@inline (-)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
+    (-)(E, promote(a, b)...)
+
+@inline (*)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
+    (*)(E, promote(a, b)...)
+
+@inline (/)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
+    (/)(E, promote(a, b)...)
+
+# Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
+function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
+    hi, lo = add_dd_dd(x.hi, x.lo, y.hi, y.lo)
+    return Double{T, E}(hi, lo)
 end
 
-function (square)(x::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
+# Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
+# reworked for subraction
+function (-)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
+    hi, lo = sub_dd_dd(x.hi, x.lo, y.hi, y.lo)
+    return Double{T, E}(hi, lo)
+end
+
+# Algorithm 12 from Tight and rigourous error bounds for basic building blocks 
+function (*)(x::Double{T,E}, y::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
+    hi, lo = mul_dd_dd(x.hi, x.lo, y.hi, y.lo)
+    return Double{T, E}(hi, lo)    
+end
+
+function sqr(x::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
     hi, lo = mul_(x.hi, x.hi)
     t = x.lo * x.lo
     t = fma(x.hi, x.lo, t)
@@ -136,6 +123,4 @@ function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
     return Double{T,Accuracy}(rh, rl)
 end
 
-@inline (/)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} = (/)(E, a, b)
-
-inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
+@inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
