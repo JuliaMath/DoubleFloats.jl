@@ -54,7 +54,7 @@ function hash(x::Double{T,Accuracy}, h::UInt) where {T}
        ) : (hx_NaN ⊻ h)
 end
 
-function hash(x::Double{T,Precision}, h::UInt) where {T}
+function hash(x::Double{T,Performance}, h::UInt) where {T}
     !isnan(hi(x)) ? 
        ( iszero(lo(x)) ? 
             hx(fptoui(UInt64, abs(hi(x))), hi(x), h ⊻ hash_performance_lo) :
