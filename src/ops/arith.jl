@@ -50,18 +50,6 @@ end
 end
 
 
-@inline (+)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (+)(E, promote(a, b)...)
-
-@inline (-)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (-)(E, promote(a, b)...)
-
-@inline (*)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (*)(E, promote(a, b)...)
-
-@inline (/)(a::Double{F1,E}, b::Double{F2,E}) where {E<:Emphasis, F1<:IEEEFloat, F2<:IEEEFloat} =
-    (/)(E, promote(a, b)...)
-
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 function (+)(x::Double{T, E}, y::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
     hi, lo = add_dd_dd(x.hi, x.lo, y.hi, y.lo)
