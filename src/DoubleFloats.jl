@@ -23,6 +23,8 @@ include("traits.jl")
 
 include("type/DoubleFloat.jl")
 include("type/promote.jl")
+include("type/string_show.jl")
+include("type/val_isa_cmp.jl")
 
 include("ops/prelims.jl")
 include("ops/intfloat.jl")
