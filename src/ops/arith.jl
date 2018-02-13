@@ -92,13 +92,13 @@ function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEF
 end
 
 function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:AbstractFloat}
-    hi = inv(y.hi)
-    rhi = fma(-y.hi, hi, one(T))
-    rlo = y.lo * hi
+    hi = inv(b.hi)
+    rhi = fma(-b.hi, hi, one(T))
+    rlo = b.lo * hi
     rhi, rlo = add_hilo_(rhi, rlo)
     rhi, rlo = mul_dd_fl(rhi, rlo, hi)
     rhi, rlo = add_dd_fl(rhi, rlo, hi)
-    hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
+    hi, lo = mul_dd_dd(a.hi, a.lo, rhi, rlo)
     return Double(hi, lo)
 end
 
