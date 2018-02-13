@@ -103,6 +103,17 @@ function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEF
     return Double{T,Performance}(hi, lo)
 end
 
+function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:AbstractFloat}
+    hi = inv(y.hi)
+    rhi = fma(-y.hi, hi, one(T))
+    rlo = y.lo * hi
+    rhi, rlo = add_hilo_(rhi, rlo)
+    rhi, rlo = mul_dd_fl(rhi, rlo, hi)
+    rhi, rlo = add_dd_fl(rhi, rlo, hi)
+    hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
+    return Double(hi, lo)
+end
+
 #=
 # Algorithm 18 from Tight and rigourous error bounds for basic building blocks 
 function (/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:IEEEFloat}
@@ -124,17 +135,6 @@ function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
     return hi, lo
  end   
-
-function (/)(a::Double{T,Accurate}, b::Double{T,Accurate}) where {T<:AbstractFloat}
-    hi = inv(y.hi)
-    rhi = fma(-y.hi, hi, one(T))
-    rlo = y.lo * hi
-    rhi, rlo = add_hilo_(rhi, rlo)
-    rhi, rlo = mul_dd_fl(rhi, rlo, hi)
-    rhi, rlo = add_dd_fl(rhi, rlo, hi)
-    hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
-    return Double(hi, lo)
-end
 
 @inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
 
