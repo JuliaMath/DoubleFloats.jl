@@ -12,7 +12,7 @@ function convert(::Type{Double{T,E}}, x::Type{BigFloat}) where {T<:AbstractFloat
     return Double{T,E}(hi, lo)
 end
 
-function convert(::Type{BigFloat} x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function convert(::Type{BigFloat}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi = BigFloat(hi(x))
     lo = BigFloat(lo(x)
     return hi+lo
