@@ -1,5 +1,12 @@
 import Base: (+), (-), (*), (/), inv, sqrt 
 
+@inline function add_dd_fl(xhi::T, xlo::T, y::T) where T<:IEEEFloat
+    hi, lo = add_(xhi, y)
+    c = lo + xlo
+    hi, lo = add_hilo_(hi, c)
+    return hi, lo
+end
+
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 @inline function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:IEEEFloat
     hi, lo = add_(xhi, yhi)
