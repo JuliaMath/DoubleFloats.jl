@@ -127,11 +127,29 @@ function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
 @inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(Double{T,E})/x
 
 function sqrt(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis}
-    approxsqrt = sqrt(x.hi)
-    zhi, zlo = mul_dd_fl(x.hi, x.lo, approxsqrt)
-    zhi, zlo = add_dd_fl(zhi, zlo, approxsqrt)
-    zhi *= 0.5
-    zlo *= 0.5
-    return Double{T,E}(zhi, zlo)
+    is_zero(x) && return x
+    signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
+    
+    half = T(0.5)
+    dhalf = Double{T,E}(half)
+    
+    r = inv(sqrt(x.hi))
+    h = Double{T,E}(x.hi * half, x.lo * half)
+    
+    r2 = r * r
+    hr2 = h * r2
+    radj = dhalf - hr2
+    radj = radj * r
+    r = r + radj
+    
+    r2 = r * r
+    hr2 = h * r2
+    radj = dhalf - hr2
+    radj = radj * r
+    r = r + radj
+    
+    r = r * x
+    
+    return r
 end
 
