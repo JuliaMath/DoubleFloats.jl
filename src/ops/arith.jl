@@ -128,8 +128,10 @@ function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
 
 function sqrt(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis}
     approxsqrt = sqrt(x.hi)
-    approx = x/approxsqrt
-    approx = approx + approxsqrt
-    return Double{T,E}(0.5*approx.hi, 0.5*approx.lo)
+    hi, lo = mul_dd_fl(hi(x), lo(x), approxsqrt)
+    hi, lo = add_dd_fl(hi, lo, approxsqrt)
+    hi *= 0.5
+    lo *= 0.5
+    return Double{T,E}(hi, lo)
 end
 
