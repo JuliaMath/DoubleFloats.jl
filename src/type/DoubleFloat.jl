@@ -23,7 +23,7 @@ Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} = Double{T, P
 Double(x::T) where {T<:AbstractFloat} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
 Double(x::T, y::T) where {T<:AbstractFloat} =
-    Double{Float64, Accuracy}(add_acc(Float64(x), Float64(y))...,)
+    Double{Float64, Accuracy}(add_(Float64(x), Float64(y))...,)
 Double(x::T) where {T<:String} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
 
@@ -31,12 +31,12 @@ FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 FastDouble(x::T) where {T<:AbstractFloat} =
     Double{Float64, Performance}(x, zero(Float64))
 FastDouble(x::T, y::T) where {T<:AbstractFloat} =
-    Double{Float64, Performance}(add_acc(x, y)...,)
+    Double{Float64, Performance}(add_(x, y)...,)
 
 FastDouble(x::T) where {T<:Real} =
     FastDouble{Float64, Performance}(Float64(x), zero(Float64))
 FastDouble(x::T, y::T) where {T<:Real} =
-    FastDouble{Float64, Performance}(add_acc(convert(Float64,x), convert(Float64,y))...,)
+    FastDouble{Float64, Performance}(add_(convert(Float64,x), convert(Float64,y))...,)
 
 # a fast type specific hash function helps
 import Base: hash, hx, fptoui
