@@ -14,6 +14,9 @@ end
 # initializers
 
 Double() = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
+
+Double{T, E}(x::T) where {T<:AbstractFloat, E<:Emphasis} = Double{T, E}(x, zero(T))
+
 Double(::Type{Accuracy}) = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
 Double(::Type{Performance}) = Double{Float64, Performance}(zero(Float64), zero(Float64))
 Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat} = Double{T, Accuracy}(hi, zero(T))
