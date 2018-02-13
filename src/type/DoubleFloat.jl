@@ -3,6 +3,8 @@ import Base: Float16, Float32, Float64, BigFloat
 struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
     lo::T
+    
+    function Double{T, E}(hilo::Tuple{T, T}) where {T
 end
 
 @inline hi(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
@@ -27,6 +29,19 @@ Double(x::T, y::T) where {T<:AbstractFloat} =
     Double{Float64, Accuracy}(add_(Float64(x), Float64(y))...,)
 Double(x::T) where {T<:String} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
+
+@inline Double{T, E}(hilo::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double{T, E}(hilo[1], hilo[2])
+
+@inline Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T, Accuracy}(hi, lo)
+@inline Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T, Performance}(hi, lo)
+@inline Double(::Type{Accuracy}, hilo::Tuple{T,T}) where {T<:AbstractFloat} =
+    Double{T, Accuracy}(hilo[1], hilo[2])
+@inline Double(::Type{Performance}, hilo::Tuple{T,T}) where {T<:AbstractFloat} =
+    Double{T, Performance}(hilo[1], hilo[2])
+
 
 for T in (:Float64, :Float32, :Float16)
   @eval begin
