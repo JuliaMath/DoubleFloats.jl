@@ -36,10 +36,11 @@ Float32(x::Double{Float64, E}) where E<:Emphasis = Float32(x.hi)
 Float16(x::Double{Float64, E}) where E<:Emphasis = Float16(x.hi)
 Float16(x::Double{Float32, E}) where E<:Emphasis = Float16(x.hi)
 
-BigFloat(x::Double{T, E}) where {T<:Base.IEEEFloat, E<:Emphasis} =
-    BigFloat(x.hi) + BigFloat(x.lo)
+function BigFloat(x::Double{T, E}, p=precision(BigFloat)) where {T<:AbstractFloat, E<:Emphasis}
+    BigFloat(x.hi, p) + BigFloat(x.lo, p)
+end
 
-function Double{T, E}(x::BigFloat) where {T<:Base.IEEEFloat, E<:Emphasis}
+function Double{T, E}(x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
     hi = T(x)
     lo = T(x-hi)
     return Double{T, E}(hi, lo)
