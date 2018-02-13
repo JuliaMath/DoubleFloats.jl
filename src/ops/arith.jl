@@ -87,7 +87,7 @@ end
 
 function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEFloat}
     hi1 = a.hi / b.hi
-    hi, lo = prod_dd_fl(b.hi, b.lo, hi1)
+    hi, lo = mul_dd_fl(b.hi, b.lo, hi1)
     xhi, xlo = add_(a.hi, -hi)
     xlo -= lo
     xlo += a.lo
@@ -112,10 +112,10 @@ end
 
 function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
     q1 = a.hi / b.hi
-    th,tl = prod_dd_fl(b.hi,b.lo,q1)
+    th,tl = mul_dd_fl(b.hi,b.lo,q1)
     rh,rl = add_dd_dd(a.hi, a.lo, -th,-tl)
     q2 = rh / b.hi
-    th,tl = prod_dd_fl(b.hi,b.lo,q2)
+    th,tl = mul_dd_fl(b.hi,b.lo,q2)
     rh,rl = add_dd_dd(rh, rl, -th,-tl)
     q3 = rh / b.hi
     q1, q2 = add_hilo_hilo(q1, q2)
