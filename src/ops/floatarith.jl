@@ -44,6 +44,9 @@ end
    return (/)(E, ab[1]. ab[2])
 end
 
+#=
+leads to ambiguities
+
 @inline (+)(::Type{E}, a::F1, b::F2) where 
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (+)(E, promote(a, b))
 
@@ -55,3 +58,4 @@ end
 
 @inline (/)(::Type{E}, a::F1, b::F2) where 
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (/)(E, promote(a, b))
+=#
