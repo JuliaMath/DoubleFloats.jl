@@ -27,6 +27,24 @@ Double(x::T, y::T) where {T<:AbstractFloat} =
 Double(x::T) where {T<:String} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
 
+for T in (:Float64, :Float32, :Float16)
+  @eval begin
+    $T(x::Double{$T, E}) where E<:Emphasis = x.hi
+  end
+end    
+Float32(x::Double{Float64, E}) where E<:Emphasis = Float32(x.hi)
+Float16(x::Double{Float64, E}) where E<:Emphasis = Float16(x.hi)
+Float16(x::Double{Float32, E}) where E<:Emphasis = Float16(x.hi)
+
+BigFloat(x::Double{T, E}) where {T<:Base.IEEEFloat, E<:Emphasis} =
+    BigFloat(x.hi) + BigFloat(x.lo)
+
+function Double{T, E}(x::BigFloat)
+    hi = T(x)
+    lo = T(x-hi)
+    return Double{T, E}(hi, lo)
+end
+
 FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 FastDouble(x::T) where {T<:AbstractFloat} =
     Double{Float64, Performance}(x, zero(Float64))
