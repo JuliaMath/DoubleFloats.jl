@@ -39,7 +39,7 @@ Float16(x::Double{Float32, E}) where E<:Emphasis = Float16(x.hi)
 BigFloat(x::Double{T, E}) where {T<:Base.IEEEFloat, E<:Emphasis} =
     BigFloat(x.hi) + BigFloat(x.lo)
 
-function Double{T, E}(x::BigFloat)
+function Double{T, E}(x::BigFloat) where {T<:Base.IEEEFloat, E<:Emphasis}
     hi = T(x)
     lo = T(x-hi)
     return Double{T, E}(hi, lo)
