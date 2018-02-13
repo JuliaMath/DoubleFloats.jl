@@ -118,7 +118,7 @@ function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
     th,tl = mul_dd_fl(b.hi,b.lo,q2)
     rh,rl = add_dd_dd(rh, rl, -th,-tl)
     q3 = rh / b.hi
-    q1, q2 = add_hilo_hilo(q1, q2)
+    q1, q2 = add_hilo_(q1, q2)
     rh,rl = add_dd_fl(q1, q2, q3)
     return Double{T,Accuracy}(rh, rl)
 end
