@@ -124,7 +124,7 @@ function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     return hi, lo
  end   
 
-@inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
+@inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(Double{T,E})/x
 
 function sqrt(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis}
     approxsqrt = sqrt(x.hi)
