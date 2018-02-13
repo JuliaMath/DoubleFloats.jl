@@ -3,8 +3,6 @@ import Base: Float16, Float32, Float64, BigFloat
 struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
     lo::T
-    
-    function Double{T, E}(hilo::Tuple{T, T}) where {T
 end
 
 @inline hi(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
