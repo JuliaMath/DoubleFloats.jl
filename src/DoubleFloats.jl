@@ -1,12 +1,18 @@
 module DoubleFloats
 
 export Double, FastDouble,
+       sqr, cub,
        MultipartFloat, AbstractDouble,
        Emphasis, Accuracy, Performance,
        hi, lo,
        spread, sld, tld,
        nan, inf
-       
+
+import Base: abs, inv, sqrt, cbrt, 
+             (+), (-), (*), (/), (\)
+             # div, fld, cld, rem, mod, divrem, fldmod,
+             # (^)
+
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
 else
