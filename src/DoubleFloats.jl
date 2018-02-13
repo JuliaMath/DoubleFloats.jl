@@ -22,6 +22,7 @@ abstract type AbstractDouble{T} <: MultipartFloat{T} end
 include("traits.jl")
 
 include("type/DoubleFloat.jl")
+include("type/promote.jl")
 
 include("ops/prelims.jl")
 include("ops/intfloat.jl")
