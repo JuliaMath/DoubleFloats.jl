@@ -109,25 +109,31 @@ function (/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:IEEEFloat}
     hi = inv(y.hi)
     rhi = fma(-y.hi, hi, one(T))
     rlo = y.lo * hi
-    rhi, rlo = add_hilo_hilo(rhi, rlo)
-    rhi, rlo = prod_dd_fl(rhi, rlo, hi)
+    rhi, rlo = add_hilo_(rhi, rlo)
+    rhi, rlo = mul_dd_fl(rhi, rlo, hi)
     rhi, rlo = add_dd_fl(rhi, rlo, hi)
-    hi, lo = prod__dd_dd(x.hi, x.lo, rhi, rlo)
+    hi, lo = mul__dd_dd(x.hi, x.lo, rhi, rlo)
     return Double(hi, lo)
 end
 =#
+function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
+    hi = inv(y.hi)
+    rhi = fma(-y.hi, hi, one(T))
+    rhi, rlo = mul_(rhi, hi)
+    rhi, rlo = add_dd_fl(rhi, rlo, hi)
+    hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
+    return hi, lo
+ end   
 
-function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:IEEEFloat}
-    q1 = a.hi / b.hi
-    th,tl = mul_dd_fl(b.hi,b.lo,q1)
-    rh,rl = add_dd_dd(a.hi, a.lo, -th,-tl)
-    q2 = rh / b.hi
-    th,tl = mul_dd_fl(b.hi,b.lo,q2)
-    rh,rl = add_dd_dd(rh, rl, -th,-tl)
-    q3 = rh / b.hi
-    q1, q2 = add_hilo_(q1, q2)
-    rh,rl = add_dd_fl(q1, q2, q3)
-    return Double{T,Accuracy}(rh, rl)
+function (/)(a::Double{T,Accurate}, b::Double{T,Accurate}) where {T<:AbstractFloat}
+    hi = inv(y.hi)
+    rhi = fma(-y.hi, hi, one(T))
+    rlo = y.lo * hi
+    rhi, rlo = add_hilo_(rhi, rlo)
+    rhi, rlo = mul_dd_fl(rhi, rlo, hi)
+    rhi, rlo = add_dd_fl(rhi, rlo, hi)
+    hi, lo = mul_dd_dd(x.hi, x.lo, rhi, rlo)
+    return Double(hi, lo)
 end
 
 @inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(T)/x
