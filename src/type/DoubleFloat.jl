@@ -1,3 +1,4 @@
+import Base: Float16, Float32, Float64, BigFloat
 
 struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
