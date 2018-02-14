@@ -30,8 +30,17 @@ include("type/val_isa_cmp.jl")
 
 include("ops/prelims.jl")
 include("ops/intfloat.jl")
+
+include("ops/op_fp_fp.jl")
+include("ops/op_fpfp_db.jl")
+include("ops/op_dbfp_db.jl")
+include("ops/op_fpdb_db.jl")
+include("ops/op_db_db.jl")
+include("ops/op_dbdb_db.jl")
+
+#=
 include("ops/floatarith.jl")
 include("ops/arith.jl")
-
+=#
 
 end # module DoubleFloats
