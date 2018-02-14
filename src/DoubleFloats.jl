@@ -6,12 +6,8 @@ export Double, FastDouble,
        sqr, cub,
        MultipartFloat, AbstractDouble,
        spread, sld, tld,
-       nan, inf
-
-import Base: abs, inv, sqrt, cbrt,
-             (+), (-), (*), (/), (\)
-             # div, fld, cld, rem, mod, divrem, fldmod,
-             # (^)
+       nan, inf,
+       signs
 
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
