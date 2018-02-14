@@ -79,8 +79,22 @@ function sqr(x::Double{T,E}) where {T<:IEEEFloat,E<:Emphasis}
     return Double{T,E}(hi, lo)
 end
 
+function inv(b::Double{T,E}) where {T,E}
+    a = one(Double{T,E})
+
+    q0 = 1.0 / HI(b)
+    r = a - (b * q0)
+    q1 = HI(r) / HI(b)
+    r = r - (b * q1)
+    q2 = HI(r) / HI(b)
+
+    q0,q1 = add_2(q0, q1, q2)
+
+    return Double{T,E}(q0, q1)
+end
 
 function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEFloat}
+    a * inv(b)
     hi1 = HI(a) / HI(b)
     hi, lo = mul_dd_fl(HI(b), LO(b), hi1)
     xhi, xlo = add_(HI(a), -hi)
@@ -92,6 +106,28 @@ function (/)(a::Double{T,Performance}, b::Double{T,Performance}) where {T<:IEEEF
 end
 
 function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:AbstractFloat}
+    # yhi, ylo = inv(b)
+    a = one(Double{T,E})
+    yhi = 1.0 / HI(b)
+    r = a - (b * yhi)
+    ylo = HI(r) / HI(b)
+    r = r - (b * ylo)
+    q2 = HI(r) / HI(b)
+
+    yhi,ylo = add_2(yhi, ylo, q2)
+    
+    # result = a * result
+    xhi, xlo = HILO(a)
+    xyhi, xylo = mul_(xhi, yhi)
+    t = xlo * ylo
+    t = fma(xhi, ylo, t)
+    t = fma(xlo, yhi, t)
+    t = xylo + t
+    xyhi, xylo = add_hilo_(xyhi, t)
+    
+    return Double{T,Accuracy}(xyhi, xylo)
+end
+#=
     hi = inv(HI(b))
     rhi = fma(-HI(b), hi, one(T))
     rlo = LO(b) * hi
@@ -100,7 +136,7 @@ function (/)(a::Double{T,Accuracy}, b::Double{T,Accuracy}) where {T<:AbstractFlo
     rhi, rlo = add_dd_fl(rhi, rlo, hi)
     hi, lo = mul_dd_dd(HI(a), LO(a), rhi, rlo)
     return Double(hi, lo)
-end
+=#
 
 #=
 # Algorithm 18 from Tight and rigourous error bounds for basic building blocks
