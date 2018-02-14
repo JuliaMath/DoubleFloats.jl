@@ -33,13 +33,17 @@ Double(x::T, y::T) where {T<:AbstractFloat} =
 Double(x::T) where {T<:String} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
 
-Double(::Type{Accuracy}, hi::T) where {T<:Signed} = Double{T, Accuracy}(float(hi), zero(typeof(float(hi)))
-Double(::Type{Performance}, hi::T) where {T<:Signed} = Double{T, Performance}(float(hi), zero(typeof(float(hi))))
-Double(::Type{Accuracy}, hi::T, lo::T) where {T<:Signed} = Double{T, Accuracy}(float(hi), float(lo))
-Double(::Type{Performance}, hi::T, lo::T) where {T<:Signed} = Double{T, Performance}(float(hi), float(lo))
+Double(::Type{Accuracy}, hi::T) where {T<:Signed} =
+    Double{T, Accuracy}(float(hi), zero(typeof(float(hi))))
+Double(::Type{Performance}, hi::T) where {T<:Signed} =
+    Double{T, Performance}(float(hi), zero(typeof(float(hi))))
+Double(::Type{Accuracy}, hi::T, lo::T) where {T<:Signed} =
+    Double{T, Accuracy}(float(hi), float(lo))
+Double(::Type{Performance}, hi::T, lo::T) where {T<:Signed} =
+    Double{T, Performance}(float(hi), float(lo))
 
 Double(x::T) where {T<:Signed} =
-    Double{Float64, Accuracy}(float(x), zero(typeof(float(x)))
+    Double{Float64, Accuracy}(float(x), zero(typeof(float(x))))
 Double(x::T, y::T) where {T<:Signed} =
     Double{Float64, Accuracy}(add_(float(x), float(y))...,)
 
