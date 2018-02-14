@@ -1,4 +1,5 @@
-import Base: signbit, sign, abs, (-), flipsign, copysign, ldexp, frexp
+import Base: signbit, sign, abs, (-), flipsign, copysign,
+             ldexp, frexp, exponent, significand
 
 @inline signbit(a::Double{T,E}) where {T,E} = signbit(HI(a))
 @inline sign(a::Double{T,E}) where {T,E} = sign(HI(a))
@@ -32,4 +33,22 @@ end
 
 function ldexp(dhi::Tuple{T,T}, dlo::Tuple{T,T}, ::Type{E}) where {T<:Real, E<:Emphasis}
     return Double(E, ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
+end
+
+function exponent(x::Double{T,E}) where {T<:Real, E<:Emphasis}
+    ehi = exponent(HI(x))
+    elo = exponent(LO(x))
+    return ehi, elo
+end
+
+function significand(x::Double{T,E}) where {T<:Real, E<:Emphasis}
+    shi = significand(HI(x))
+    slo = significand(LO(x))
+    return shi, slo
+end
+
+function signs(x::Double{T,E}) where {T<:Real, E<:Emphasis}
+    shi = sign(HI(x))
+    slo = sign(LO(x))
+    return shi, slo
 end
