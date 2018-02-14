@@ -1,4 +1,4 @@
-inline function abs_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function abs_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    xhi, xlo = HILO(x)
    if signbit(xhi)
        xhi = -xhi
