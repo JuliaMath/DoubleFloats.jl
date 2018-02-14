@@ -1,4 +1,4 @@
-inline function add_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function add_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     yhi, ylo = HILO(y)
     yhi, ylo = add_2(x, yhi, ylo)
     return Double(E, yhi, ylo)
