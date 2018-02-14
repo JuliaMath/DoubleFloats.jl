@@ -1,5 +1,6 @@
 import Base: zero, one,
-             iszero, isinf, isnan, isfinite, isinteger, isodd, iseven,
+             iszero, isinf, isnan, isinf, isfinite, issubnormal, 
+             isinteger, isodd, iseven,
              (==), (!=), (<), (<=), (>=), (>), isless, isequal
 
 if VERSION >= v"0.7.0-"
