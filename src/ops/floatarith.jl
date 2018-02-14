@@ -29,14 +29,14 @@ end
 @inline function (-)(::Type{E}, ab::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis}
    return (-)(E, ab[1]. ab[2])
 end
-   
+
 @inline function (*)(::Type{E}, a::T, b::T) where {T<:AbstractFloat, E<:Emphasis}
    return Double{T,E}(mul_2(a, b))
 end
 @inline function (*)(::Type{E}, ab::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis}
    return (*)(E, ab[1]. ab[2])
 end
-      
+
 @inline function (/)(::Type{E}, a::T, b::T) where {T<:AbstractFloat, E<:Emphasis}
    return Double{T,E}(div_2(a, b))
 end
@@ -47,15 +47,15 @@ end
 #=
 leads to ambiguities
 
-@inline (+)(::Type{E}, a::F1, b::F2) where 
+@inline (+)(::Type{E}, a::F1, b::F2) where
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (+)(E, promote(a, b))
 
-@inline (-)(::Type{E}, a::F1, b::F2) where 
+@inline (-)(::Type{E}, a::F1, b::F2) where
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (-)(E, promote(a, b))
 
-@inline (*)(::Type{E}, a::F1, b::F2) where 
+@inline (*)(::Type{E}, a::F1, b::F2) where
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (*)(E, promote(a, b))
 
-@inline (/)(::Type{E}, a::F1, b::F2) where 
+@inline (/)(::Type{E}, a::F1, b::F2) where
     {E<:Emphasis, F1<:AbstractFloat, F2<:AbstractFloat} = (/)(E, promote(a, b))
 =#

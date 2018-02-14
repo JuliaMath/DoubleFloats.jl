@@ -5,11 +5,13 @@ struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     lo::T
 end
 
-@inline hi(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
-@inline lo(x::Double{T,E}) where {T,E<:Emphasis} = x.lo
+@inline HI(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
+@inline LO(x::Double{T,E}) where {T,E<:Emphasis} = x.lo
+@inline HILO(x::Double{T,E}) where {T,E<:Emphasis} = (x.hi, x.lo)
 
-@inline hi(x::T) where {T<:AbstractFloat} = x
-@inline lo(x::T) where {T<:AbstractFloat} = zero(T)
+@inline HI(x::T) where {T<:AbstractFloat} = x
+@inline LO(x::T) where {T<:AbstractFloat} = zero(T)
+@inline HILO(x::T) where {T<:AbstractFloat} = (x, zero(T))
 
 # initializers
 
@@ -46,15 +48,15 @@ Double(x::T) where {T<:String} =
 
 for T in (:Float64, :Float32, :Float16)
   @eval begin
-    $T(x::Double{$T, E}) where E<:Emphasis = x.hi
+    $T(x::Double{$T, E}) where E<:Emphasis = HI(x)
   end
-end    
-Float32(x::Double{Float64, E}) where E<:Emphasis = Float32(x.hi)
-Float16(x::Double{Float64, E}) where E<:Emphasis = Float16(x.hi)
-Float16(x::Double{Float32, E}) where E<:Emphasis = Float16(x.hi)
+end
+Float32(x::Double{Float64, E}) where E<:Emphasis = Float32(HI(x))
+Float16(x::Double{Float64, E}) where E<:Emphasis = Float16(HI(x))
+Float16(x::Double{Float32, E}) where E<:Emphasis = Float16(HI(x))
 
 function BigFloat(x::Double{T, E}, p=precision(BigFloat)) where {T<:AbstractFloat, E<:Emphasis}
-    BigFloat(x.hi, p) + BigFloat(x.lo, p)
+    BigFloat(HI(x), p) + BigFloat(LO(x), p)
 end
 
 function Double{T, E}(x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
@@ -83,18 +85,18 @@ const hash_accuracy_lo = hash(hash(Accuracy), hash_doublefloat_lo)
 const hash_performance_lo = hash(hash(Performance), hash_doublefloat_lo)
 
 function hash(x::Double{T,Accuracy}, h::UInt) where {T}
-    !isnan(hi(x)) ? 
-       ( iszero(lo(x)) ? 
-            hx(fptoui(UInt64, abs(hi(x))), hi(x), h ⊻ hash_accuracy_lo) :
-            hx(fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_accuracy_lo)  
+    !isnan(HI(x)) ?
+       ( iszero(LO(x)) ?
+            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_accuracy_lo) :
+            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_accuracy_lo)
        ) : (hx_NaN ⊻ h)
 end
 
 function hash(x::Double{T,Performance}, h::UInt) where {T}
-    !isnan(hi(x)) ? 
-       ( iszero(lo(x)) ? 
-            hx(fptoui(UInt64, abs(hi(x))), hi(x), h ⊻ hash_performance_lo) :
-            hx(fptoui(UInt64, abs(hi(x))), lo(x), h ⊻ hash_performance_lo)  
+    !isnan(HI(x)) ?
+       ( iszero(LO(x)) ?
+            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_performance_lo) :
+            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_performance_lo)
        ) : (hx_NaN ⊻ h)
 end
 

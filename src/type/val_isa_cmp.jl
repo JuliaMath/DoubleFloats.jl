@@ -2,7 +2,7 @@ import Base: zero, one,
              iszero, isinf, isnan, isfinite, isinteger, isodd, iseven,
              (==), (!=), (<), (<=), (>=), (>), isless, isequal
 
-if VERSION >= v"0.7.0-" 
+if VERSION >= v"0.7.0-"
     import Base:isone
 else
     export isone
@@ -11,60 +11,60 @@ end
 zero(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
     Double(E, zero(T), zero(T))
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    iszero(hi(x)) && iszero(lo(x))
+    iszero(HI(x)) && iszero(LO(x))
 
-one(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
+one(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, one(T), zero(T))
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isone(hi(x)) && iszero(lo(x))
+    isone(HI(x)) && iszero(LO(x))
 
-nan(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
+nan(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, T(NaN), zero(T))
 isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isnan(hi(x)) && iszero(lo(x))
+    isnan(HI(x)) && iszero(LO(x))
 
-inf(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} = 
+inf(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, T(Inf), zero(T))
 isinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isinf(hi(x)) && iszero(lo(x))
+    isinf(HI(x)) && iszero(LO(x))
 
 isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isfinite(hi(x)) && isfinite(lo(x))
+    isfinite(HI(x)) && isfinite(LO(x))
 isinteger(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isinteger(lo(x)) && isinteger(hi(x))
+    isinteger(LO(x)) && isinteger(HI(x))
 isodd(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    iszero(lo(x)) ? isinteger(hi(x)) && isodd(hi(x)) : isinteger(lo(x)) && isodd(lo(x))
+    iszero(LO(x)) ? isinteger(HI(x)) && isodd(HI(x)) : isinteger(LO(x)) && isodd(LO(x))
 iseven(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    iszero(lo(x)) ? isinteger(hi(x)) && iseven(hi(x)) : isinteger(lo(x)) && iseven(lo(x))
+    iszero(LO(x)) ? isinteger(HI(x)) && iseven(HI(x)) : isinteger(LO(x)) && iseven(LO(x))
 
 issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    issubnormal(hi(x)) || issubnormal(lo(x))
+    issubnormal(HI(x)) || issubnormal(LO(x))
 
 
 
-@inline (==)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (lo(x) === lo(y)) && (hi(x) === hi(y))
-@inline (!=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (lo(x) !== lo(y)) || (hi(x) !== hi(y))
-@inline (<)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (hi(x) < hi(y)) || (hi(x) === hi(y) && lo(x) < lo(y))
-@inline (>)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (hi(x) > hi(y)) || (hi(x) === hi(y) && lo(x) > lo(y))
-@inline (<=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (hi(x) < hi(y)) || (hi(x) === hi(y) && lo(x) <= lo(y))
-@inline (>=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (hi(x) > hi(y)) || (hi(x) === hi(y) && lo(x) >= lo(y))
+@inline (==)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (LO(x) === LO(y)) && (HI(x) === HI(y))
+@inline (!=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (LO(x) !== LO(y)) || (HI(x) !== HI(y))
+@inline (<)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
+@inline (>)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) > LO(y))
+@inline (<=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) <= LO(y))
+@inline (>=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) >= LO(y))
 
 @inline isequal(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (x == y)
 @inline isless(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (x < y)
 
 
-@inline (==)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = iszero(lo(x)) && (hi(x) === y)
-@inline (==)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = iszero(lo(y)) && (hi(y) === x)
-@inline (!=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = !iszero(lo(x)) || (hi(x) !== y)
-@inline (!=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = !iszero(lo(y)) || (hi(y) !== x)
-@inline (<)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (hi(x) < y) || ((hi(x) == y) && signbit(lo(x)))
-@inline (<)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x < hi(y)) || ((x == hi(y)) && !signbit(lo(y)))
-@inline (>)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (hi(x) > y) || ((hi(x) == y) && (lo(x) < zero(T)))
-@inline (>)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x > hi(y)) || ((x == hi(y)) && signbit(lo(y)))
-@inline (<=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (hi(x) < y) || ((hi(x) == y) && (lo(x) <= zero(T)))
-@inline (<=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x < hi(y)) || ((x == hi(y)) && (lo(y) >= zero(T)))
-@inline (>=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (hi(x) > y) || ((hi(x) == y) && (lo(x) <= zero(T)))
-@inline (>=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x > hi(y)) || ((x == hi(y)) && (lo(y) >= zero(T)))
+@inline (==)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = iszero(LO(x)) && (HI(x) === y)
+@inline (==)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = iszero(LO(y)) && (HI(y) === x)
+@inline (!=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = !iszero(LO(x)) || (HI(x) !== y)
+@inline (!=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = !iszero(LO(y)) || (HI(y) !== x)
+@inline (<)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (HI(x) < y) || ((HI(x) == y) && signbit(LO(x)))
+@inline (<)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x < HI(y)) || ((x == HI(y)) && !signbit(LO(y)))
+@inline (>)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (HI(x) > y) || ((HI(x) == y) && (LO(x) < zero(T)))
+@inline (>)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x > HI(y)) || ((x == HI(y)) && signbit(LO(y)))
+@inline (<=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (HI(x) < y) || ((HI(x) == y) && (LO(x) <= zero(T)))
+@inline (<=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x < HI(y)) || ((x == HI(y)) && (LO(y) >= zero(T)))
+@inline (>=)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (HI(x) > y) || ((HI(x) == y) && (LO(x) <= zero(T)))
+@inline (>=)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x > HI(y)) || ((x == HI(y)) && (LO(y) >= zero(T)))
 
 @inline isequal(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = (x == y)
 @inline isequal(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = (x == y)

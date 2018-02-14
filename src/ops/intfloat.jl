@@ -4,41 +4,41 @@ import Base: floor, ceil, trunc, fld, cld
 
 function floor(x::Double{T,E}) where {T<:Real,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
-    if isinteger(hi(x))
-        if signbit(lo(x))
-              Double(E, hi(x)-one(T), zero(T))
+    if isinteger(HI(x))
+        if signbit(LO(x))
+              Double(E, HI(x)-one(T), zero(T))
         else
-              Double(E, hi(x), zero(T))
+              Double(E, HI(x), zero(T))
         end
     else
-        Double(E, floor(hi(x)), zero(T))
+        Double(E, floor(HI(x)), zero(T))
     end
 end
 
 
 function ceil(x::Double{T,E}) where {T<:Real,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
-    if isinteger(hi(x))
-        if signbit(lo(x))
-              Double(E, hi(x), zero(T))
+    if isinteger(HI(x))
+        if signbit(LO(x))
+              Double(E, HI(x), zero(T))
         else
-              Double(E, hi(x)+one(T), zero(T))
+              Double(E, HI(x)+one(T), zero(T))
         end
     else
-        Double(E, ceil(hi(x)), zero(T))
+        Double(E, ceil(HI(x)), zero(T))
     end
 end
 
 function trunc(x::Double{T,E}) where {T<:Real,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
-    if isinteger(hi(x))
-        if signbit(lo(x))
-              signbit(hi(x)) ? Double(E, hi(x), zero(T)) : Double(E, hi(x)-one(T), zero(T))
+    if isinteger(HI(x))
+        if signbit(LO(x))
+              signbit(HI(x)) ? Double(E, HI(x), zero(T)) : Double(E, HI(x)-one(T), zero(T))
         else
-              signbit(hi(x)) ? Double(E, hi(x)+one(T), zero(T)) : Double(E, hi(x), zero(T))
+              signbit(HI(x)) ? Double(E, HI(x)+one(T), zero(T)) : Double(E, HI(x), zero(T))
         end
     else
-        signbit(hi(x)) ? Double(E, ceil(hi(x)), zero(T)) :  Double(E, floor(hi(x)), zero(T))
+        signbit(HI(x)) ? Double(E, ceil(HI(x)), zero(T)) :  Double(E, floor(HI(x)), zero(T))
     end
 end
 
@@ -51,14 +51,14 @@ spread complements trunc()
 """
 function spread(x::Double{T,E}) where {T<:Real,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
-    if isinteger(hi(x))
-        if signbit(lo(x))
-              signbit(hi(x)) ? Double(E, hi(x)-one(T), zero(T)) : Double(E, hi(x), zero(T)) 
+    if isinteger(HI(x))
+        if signbit(LO(x))
+              signbit(HI(x)) ? Double(E, HI(x)-one(T), zero(T)) : Double(E, HI(x), zero(T))
         else
-              signbit(hi(x)) ? Double(E, hi(x), zero(T)) : Double(E, hi(x)+one(T), zero(T))
+              signbit(HI(x)) ? Double(E, HI(x), zero(T)) : Double(E, HI(x)+one(T), zero(T))
         end
     else
-        signbit(hi(x)) ? Double(E, floor(hi(x)), zero(T)) :  Double(E, ceil(hi(x)), zero(T))
+        signbit(HI(x)) ? Double(E, floor(HI(x)), zero(T)) :  Double(E, ceil(HI(x)), zero(T))
     end
 end
 

@@ -5,7 +5,7 @@
         Some of these functions have two implementations:
            one designed for accuracy
            one designed for performance
-        
+
         `Accuracy` or `Performance`
            the emphasis is given as type parameter
 =#
@@ -35,7 +35,7 @@ struct Performance <: Emphasis end
 
 
 const EMPHASIS     = Accuracy      # this is the default Emphasis
-const ALT_EMPHASIS = Performance   # this is the other Emphasis 
+const ALT_EMPHASIS = Performance   # this is the other Emphasis
 
 const EMPHASIS_STR     = ""        # these are used in string()
 const ALT_EMPHASIS_STR = "Fast"    # and prepend "Double"

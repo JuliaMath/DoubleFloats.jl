@@ -1,14 +1,14 @@
 module DoubleFloats
 
-export Double, FastDouble,
+export Double, FastDouble
+       Emphasis, Accuracy, Performance
+       HI, LO, HILO,
        sqr, cub,
        MultipartFloat, AbstractDouble,
-       Emphasis, Accuracy, Performance,
-       hi, lo,
        spread, sld, tld,
        nan, inf
 
-import Base: abs, inv, sqrt, cbrt, 
+import Base: abs, inv, sqrt, cbrt,
              (+), (-), (*), (/), (\)
              # div, fld, cld, rem, mod, divrem, fldmod,
              # (^)

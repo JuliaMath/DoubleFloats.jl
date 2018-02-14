@@ -2,17 +2,17 @@
 # use String(x) to obtain a string of a 2-value tuple  (also show(x))
 
 function Base.convert(::Type{String}, x::Double{T,EMPHASIS}) where {T}
-    return string(EMPHASIS_STR,"Double(",x.hi,", ",x.lo,")")
+    return string(EMPHASIS_STR,"Double(",HI(x),", ",LO(x),")")
 end
 function Base.convert(::Type{String}, x::Double{T,ALT_EMPHASIS}) where {T}
-    return string(ALT_EMPHASIS_STR,"Double(",x.hi,", ",x.lo,")")
+    return string(ALT_EMPHASIS_STR,"Double(",HI(x),", ",LO(x),")")
 end
 
 function Base.string(x::Double{T,EMPHASIS}) where {T}
-    return string("(",x.hi,", ",x.lo,")")
+    return string("(",HI(x),", ",LO(x),")")
 end
 function Base.string(x::Double{T,ALT_EMPHASIS}) where {T}
-    return string("(",x.hi,", ",x.lo,")")
+    return string("(",HI(x),", ",LO(x),")")
 end
 
 function Base.show(io::IO, x::Double{T,E}) where  {T, E<:Emphasis}
