@@ -127,7 +127,7 @@ function (div_dd_fl)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
 @inline inv(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis} = one(Double{T,E})/x
 
 function sqrt(x::Double{T, E}) where {T<:IEEEFloat, E<:Emphasis}
-    is_zero(x) && return x
+    iszero(x) && return x
     signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
 
     half = T(0.5)
