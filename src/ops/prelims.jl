@@ -19,30 +19,17 @@ end
     signbit(y) ? -(abs(x)) : abs(x)
 end
 
+
+function frexp(x::Double{T,E}) where {T<:Real, E<:Emphasis}
+    frhi, exphi = frexp(HI(x))
+    frlo, explo = frexp(LO(x))
+    return (frhi, exphi), (frlo, explo), E
+end
+
 function ldexp(x::Double{T,E}, exponent::I) where {T,E,I<:Integer}
     return Double(E, ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function frexp(::Type{E}, x::Double{T,E}) where {T<:Real, E<:Emphasis}
-    frhi, exphi = frexp(HI(x))
-    frlo, explo = frexp(LO(x))
-    return E, frhi, exphi, frlo, explo
-end
-
-function ldexp(::Type{E}, frhi::T, exphi::I, frlo::T, explo::I) where {T<:Real, I<:Integer, E<:Emphasis}
-    zhi = ldexp(frhi, exphi)
-    zlo = ldexp(frlo, explo)
-    return Double(E, zhi, zlo)
-end
-
-function frexp(x::Double{T,E}) where {T,E}
-    frhi, exphi = frexp(HI(x))
-    frlo, explo = frexp(LO(x))
-    return frhi, exphi, frlo, explo
-end
-
-function ldexp(frhi::T, exphi::I, frlo::T, explo::I) where {T<:Real, I<:Integer}
-    zhi = ldexp(frhi, exphi)
-    zlo = ldexp(frlo, explo)
-    return Double(EMPHASIS, zhi, zlo)
+function ldexp(dhi::Tuple{T,T}, dlo::Tuple{T,T}, ::Type{E}) where {T<:Real, E<:Emphasis}
+    return Double(E, ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
