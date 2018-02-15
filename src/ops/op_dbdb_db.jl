@@ -14,11 +14,26 @@ end
 end
 
 
-@inline function mul_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function mul_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Performance}
     xhi, xlo = HILO(x)
     yhi, ylo = HILO(y)
     xhi, xlo = mul_dd_dd(xhi, xlo, yhi, ylo)
     return Double(E, xhi, xlo)
+end
+
+@inline function mul_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Accuracy}
+    xhi, xlo = HILO(x)
+    yhi, ylo = HILO(y)
+    zhi, tlo = mul_2(xhi, yhi)
+    uhi, ulo = mul_2(xhi, ylo)
+    zmd, zlo = mul_2(yhi, xlo)
+    xlo *= ylo
+    uhi, ulo = add_2(uhi, zmd, ulo, zlo)
+    zlo = fma(xlo, ylo, tlo+uhi)
+    # zmd, zlo = add_2(tlo, xlo*ylo)
+    # zmd += uhi
+    # zlo += ulo
+    return Double(E, zhi, zlo)
 end
 
 @inline function dve_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
