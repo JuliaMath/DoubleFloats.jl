@@ -2,8 +2,12 @@
    return abs(x)
 end
 
+@inline function negabs_fp_fp(x::T) where {T<:AbstractFloat}
+   return -abs(x)
+end
+
 @inline function neg_fp_fp(x::T) where {T<:AbstractFloat}
-   return neg(x)
+   return -x
 end
 
 @inline function inv_fp_fp(x::T) where {T<:AbstractFloat}
