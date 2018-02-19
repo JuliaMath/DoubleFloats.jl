@@ -45,7 +45,7 @@ end
 @inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, cₗₒ = Fast2Mult(xₕᵢ, y)
     c = fma(xₗₒ, y, cₗₒ)
-    zₕᵢ, zₗₒ = FastTwoSum(cₕᵢ, c)
+    zₕᵢ, zₗₒ = Fast2Sum(cₕᵢ, c)
     return zₕᵢ, zₗₒ
 end
 
@@ -56,7 +56,7 @@ function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Ab
    t1 = fma(xₕᵢ, yₗₒ, t0)
    c2 = fma(xₗₒ, yₕᵢ, t1)
    c3 = c1 + c2
-   zₕᵢ, zₗₒ = FastTwoSum(cₕᵢ, c3)
+   zₕᵢ, zₗₒ = Fast2Sum(cₕᵢ, c3)
    return zₕᵢ, zₗₒ
 end
 
