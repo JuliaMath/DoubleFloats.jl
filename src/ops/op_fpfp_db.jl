@@ -10,6 +10,6 @@ end
     return Double(E, mul_fpfp_dd(x, y))
 end
 
-@inline function dve_fpfp_db(::Type{E}, x::T, y::T) where {T<:AbstractFloat, E<:Emphasis}
+@inline function dvi_fpfp_db(::Type{E}, x::T, y::T) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, dvi_fpfp_dd(x, y))
 end
