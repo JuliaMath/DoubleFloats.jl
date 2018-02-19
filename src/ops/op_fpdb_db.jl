@@ -1,24 +1,19 @@
 @inline function add_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    yhi, ylo = HILO(y)
-    yhi, ylo = add_2(x, yhi, ylo)
-    return Double(E, yhi, ylo)
+    hi, lo = add_fpdd_dd(x, HILO(y))
+    return Double(E, hi, lo)
 end
 
 @inline function sub_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    yhi, ylo = HILO(y)
-    yhi, ylo = add_2(-x, yhi, ylo)
-    return Double(E, yhi, ylo)
+    hi, lo = sub_fpdd_dd(x, HILO(y))
+    return Double(E, hi, lo) 
 end
 
 @inline function mul_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    yhi, ylo = HILO(y)
-    yhi, ylo = mul_2(x, yhi, ylo)
-    return Double(E, yhi, ylo)
+    hi, lo = mul_fpdd_dd(x, HILO(y))
+    return Double(E, hi, lo)
 end
 
-@inline function dve_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    yhi, ylo = HILO(y)
-    xinv = inv(x)
-    yhi, ylo = mul_2(xinv, yhi, ylo)
-    return Double(E, yhi, ylo)
+@inline function dvi_fpdb_db(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = dvi_fpdd_dd(x, HILO(y))
+    return Double(E, hi, lo)
 end
