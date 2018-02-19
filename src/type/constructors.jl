@@ -7,9 +7,9 @@ const SmallInt = Union{Int32, Int16, Int8}
 intmax(::Type{Float64}) = 2^precision(Float64)
 intmax(::Type{Float32}) = 2^precision(Float32)
 intmax(::Type{Float16}) = 2^precision(Float16)
-intmax2(::Type{Float64}) = Int128(2)^(2*precision(Float64))
-intmax2(::Type{Float32}) = Int128(2)^(2*precision(Float32))
-intmax2(::Type{Float16}) = Int128(2)^(2*precision(Float16))
+intmax2(::Type{Float64}) = Int128(2)^((2*precision(Float64))>>1)
+intmax2(::Type{Float32}) = Int128(2)^((2*precision(Float32))>>1)
+intmax2(::Type{Float16}) = Int128(2)^((2*precision(Float16))>>1)
  
  
 Double() = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
@@ -30,9 +30,9 @@ function Double(x::T) where {T<:Signed}
        hi = Float64(x)
        lo = zero(Float64)
     elseif abs(x) <= intmax2(Float64)
-       ihi, ilo = divrem(Int128(x), intmax(Float64))
-       hi = Float64(Int64(ihi))
-       lo = Float64(Int64(ilo))
+       bf = BigFloat(x)
+       hi = Float64(bf)
+       lo = Float64(bf-hi)
     else
        throw(DomainError("$x"))
     end
@@ -44,9 +44,9 @@ function FastDouble(x::T) where {T<:Signed}
        hi = Float64(x)
        lo = zero(Float64)
     elseif abs(x) <= intmax2(Float64)
-       ihi, ilo = divrem(Int128(x), intmax(Float64))
-       hi = Float64(Int64(ihi))
-       lo = Float64(Int64(ilo))
+       bf = BigFloat(x)
+       hi = Float64(bf)
+       lo = Float64(bf-hi)
     else
        throw(DomainError("$x"))
     end
