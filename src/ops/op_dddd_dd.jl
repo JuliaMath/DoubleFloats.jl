@@ -40,7 +40,13 @@ end
 end
 
 @inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
-    yhi, ylo = inv_dd_dd(y)
-    hi, lo = mul_dddd_dd(x, (yhi,  ylo))
+    yhi, ylo = y
+    hi = inv(yhi)
+    rhi = fma(-yhi, hi, one(T))
+    rlo = ylo * hi
+    rhilo = add_hilo_(rhi, rlo)
+    rhilo = mul_ddfp_dd(rhilo, hi)
+    rhilo = add_ddfp_dd(rhilo, hi)
+    hi, lo = mul_dddd_dd(x, rhilo)
     return hi, lo
 end
