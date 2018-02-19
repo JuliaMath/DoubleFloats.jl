@@ -39,11 +39,12 @@ FastDouble(x::T) where {T<:Union{Int16, Int32, Int64}} = Double(Performance, Flo
 
 @inline Double{T, E}(hilo::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T, E}(hilo[1], hilo[2])
+
 @inline Double{T}(hilo::Tuple{T, T}) where {T<:AbstractFloat} =
     Double{T, Accuracy}(hilo[1], hilo[2])
+
 @inline FastDouble{T}(hilo::Tuple{T, T}) where {T<:AbstractFloat} =
     Double{T, Performance}(hilo[1], hilo[2])
-
 
 
 for T in (:Float64, :Float32, :Float16)
