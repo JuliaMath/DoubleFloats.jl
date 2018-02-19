@@ -71,6 +71,17 @@ function AccurateDWPlusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where 
    return zₕᵢ, zₗₒ
 end
 
+
+# Algorithm 7 in ref
+function DWTimesFP1(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+    cₕᵢ, c1 = Fast2Mult(xₕᵢ, y)
+    c2 = xₗₒ * y
+    tₕᵢ, t1 = Fast2Sum(cₕᵢ, c2)
+    t2 = t1 + c1
+    zₕᵢ, zₗₒ = Fast2Sum(tₕᵢ, t2)
+    return zₕᵢ, zₗₒ
+end
+
 # Algorithm 9 in ref
 @inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, cₗₒ = Fast2Mult(xₕᵢ, y)
