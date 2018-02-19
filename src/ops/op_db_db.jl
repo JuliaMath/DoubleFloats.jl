@@ -44,18 +44,3 @@ function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      r = r * x
      return r
 end
-   
-function inv_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    xhi, xlo = HILO(x)
-    db1 = one(Double{T,E})
-    q0 = one(T) / xhi
-    xq0 = mul_dbfp_db(x, q0)
-    r   = sub_dbdb_db(db1, xq0)
-    q1  = HI(r) / xhi
-    xq1 = mul_dbfp_db(x, q1)
-    r   = sub_dbdb_db(db1, xq1)
-    q2  = HI(r) / xhi
-   
-    xhi, xlo = add_hilo_2(q0, q1, q2)
-    return Double(E, xhi, xlo)
-end
