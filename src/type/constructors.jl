@@ -53,13 +53,13 @@ FastDouble(hi::T) where {T<:AbstractFloat} =
 FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
     Double(Performance, hi, lo)
  
-@inline function bigfloat2hilo(::Type{T}, x::BigFloat) where T<:AbstractFloat
+@inline function bigfloat2hilo(::Type{T}, x::BigFloat) where {T<:AbstractFloat}
      hi = T(x)
      lo = T(x - hi)
      return hi, lo
 end
 
-@inline function bigfloat2hilo(::Type{T}, x::T) where T<:Real
+@inline function bigfloat2hilo(::Type{T}, x::R) where {T<:AbstractFloat, R<:Real}
      y = BigFloat(x)
      hi = T(y)
      lo = T(y - hi)
