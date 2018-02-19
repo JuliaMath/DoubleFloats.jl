@@ -83,8 +83,9 @@ function Double{T, E}(x::BigInt) where {T<:AbstractFloat, E<:Emphasis}
     return Double{T, E}(BigFloat(x))
 end
 
-function Double{T,E}(x::Irrational{S}) where {S<:Symbol, T<:AbstractFloat, E<:Emphasis)
-    return Double{T,E}(BigFloat(x))
+function Double{T,E}(x::Irrational{S}) where {S, T<:AbstractFloat, E<:Emphasis)
+    y = BigFloat(x)
+    return Double{T,E}(y)
 end
 
 function Double{T,E}(x::Type{Rational{I}}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis}
