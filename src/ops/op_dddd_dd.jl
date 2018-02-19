@@ -52,5 +52,6 @@ end
     hi = xhi / yhi
     uh, ul = mul_2(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
+    hi, lo = add_2(hi, lo)
     return hi, lo
 end
