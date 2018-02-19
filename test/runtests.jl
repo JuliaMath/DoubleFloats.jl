@@ -17,14 +17,8 @@ phi_performant = Double{Float64, Performance}(golden)
 @test phi_accurate   == Double(phi)
 @test phi_performant == FastDouble(phi)
 
-invpi_accurate   = inv(pi_accurate)
-invpi_performant = inv(pi_performant)
-invphi_accurate   = inv(phi_accurate)
-invphi_performant = inv(phi_performant)
-
-@test inv(invpi_accurate) / pi_accurate = one_accurate
-@test abs(inv(inv(pi_performant))-pi_performant) <= eps(LO(pi_performant))
-
+@test inv(inv(inv(pi_accurate)) / pi_accurate == one_accurate
+@test abs(inv(inv(pi_performant)) - pi_performant) <= eps(LO(pi_performant))
 @test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= eps(LO(phi_accurate))
 
 
