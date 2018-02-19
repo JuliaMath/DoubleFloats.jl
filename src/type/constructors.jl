@@ -19,12 +19,12 @@ Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
 
 #these always normalize
 
-function Double(::Type{Accuracy}, hilo::Tuple{T, T}) where {T<:AbstractFloat} =
+function Double(::Type{Accuracy}, hilo::Tuple{T, T}) where {T<:AbstractFloat}
     hi, lo = hilo
     hi, lo = add_2(hi, lo)
     return Double(Accuracy, hi, lo)
 end
-function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} =
+function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} 
     hi, lo = hilo
     hi, lo = add_2(hi, lo)
     return Double(Performance, hi, lo)
