@@ -9,6 +9,7 @@ include("op_fpdb_db.jl")
 include("op_dbfp_db.jl")
 include("op_dd_dd.jl")
 include("op_db_db.jl")
+include("op_dddd_dd.jl")
 include("op_dbdb_db.jl")
 
 abs(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = abs_db_db(x)
