@@ -13,6 +13,11 @@ end
     return Double(E, hi, lo)
 end
 
+@inline function inv_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = inv_dd_dd(HILO(x))
+    return Double(E, hi, lo)
+end
+
 function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      iszero(x) && return x
      signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
