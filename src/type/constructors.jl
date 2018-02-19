@@ -66,23 +66,23 @@ end
 
 function Double(hi::T) where {T<:Real}
     bf = BigFloat(hi)
-    hi, lo = bigfloat2hilo(T, bf)
+    hi, lo = bigfloat2hilo(Float64, bf)
     return Double(Accuracy, hi, lo)
 end
 function Double(hi::T, lo::T) where {T<:Real}
     bf = BigFloat(hi) + BigFloat(lo)
-    hi, lo = bigfloat2hilo(T, bf)
+    hi, lo = bigfloat2hilo(Float64, bf)
     return Double(Accuracy, hi, lo)
 end
 
 function FastDouble(hi::T) where {T<:Real}
     bf = BigFloat(hi)
-    hi, lo = bigfloat2hilo(T, bf)
+    hi, lo = bigfloat2hilo(Float64, bf)
     return Double(Performance, hi, lo)
 end
 function FastDouble(hi::T, lo::T) where {T<:Real}
     bf = BigFloat(hi) + BigFloat(lo)
-    hi, lo = bigfloat2hilo(T, bf)
+    hi, lo = bigfloat2hilo(Float64, bf)
     return Double(Performance, hi, lo)
 end
 
