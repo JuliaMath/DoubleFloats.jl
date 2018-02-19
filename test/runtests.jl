@@ -2,6 +2,18 @@ using Test
 using Base.MathConstants
 using DoubleFloats
 
+using Compat
+using Compat.Test
+using AccurateArithmetic
+
+if VERSION >= v"0.7.0-"
+  using Random
+end
+
+srand(1602)
+include("bigfloats.jl")
+include("randfloats.jl")
+
 zero_accurate = Double{Float64, Accuracy}(0.0)
 zero_performant = Double{Float64, Performance}(0.0)
 one_accurate = Double{Float64, Accuracy}(1.0)
