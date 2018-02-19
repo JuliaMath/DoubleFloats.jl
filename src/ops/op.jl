@@ -31,8 +31,8 @@ inv(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = inv_db_db(x)
 
 (/)(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = dvi_fpdb_db(x, y)
 (/)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis} = dvi_dbfp_db(x, y)
-(/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:AbstractFloat, E<:Emphasis} = dvi_dbdb_db(x, y)
-(/)(x::Double{T,Performance}, y::Double{T,Performance}) where {T<:AbstractFloat, E<:Emphasis} = dvi_dbdb_db_fast(x, y)
+(/)(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:AbstractFloat} = dvi_dbdb_db(x, y)
+(/)(x::Double{T,Performance}, y::Double{T,Performance}) where {T<:AbstractFloat} = dvi_dbdb_db_fast(x, y)
 
 
 
