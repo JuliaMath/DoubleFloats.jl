@@ -38,3 +38,9 @@ end
     hi, lo = add_hilo_(hi, t)
     return hi, lo
 end
+
+@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
+    yhi, ylo = inv_dd_dd(HILO(y))
+    hi, lo = mul_dddd_dd(x, (yhi,  ylo))
+    return hi, lo
+end
