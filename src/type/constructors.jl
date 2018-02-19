@@ -59,6 +59,12 @@ FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
      return hi, lo
 end
 
+@inline function bigfloat2hilo(::Type{T}, x::BigFloat) where T<:Real
+     hi = T(x)
+     lo = T(x - hi)
+     return hi, lo
+end
+
 function Double(hi::T) where {T<:Real}
     bf = BigFloat(hi)
     hi, lo = bigfloat2hilo(T, bf)
