@@ -10,13 +10,13 @@ end
     return yhi, ylo
 end
 
-@inline function mul_fpdb_db(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
+@inline function mul_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
     yhi, ylo = mul_2(x, yhi, ylo)
     return yhi, ylo
 end
 
-@inline function dvi_fpdb_db(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
+@inline function dvi_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
     xinv = inv(x)
     yhi, ylo = mul_2(xinv, yhi, ylo)
