@@ -13,9 +13,9 @@ end
 @inline LO(x::Tuple{T,T}) where {T} = x[2]
 @inline HILO(x::Tuple{T,T}) where {T} = x
 
-@inline HI(x::T) where {T<:AbstractFloat} = x
-@inline LO(x::T) where {T<:AbstractFloat} = zero(T)
-@inline HILO(x::T) where {T<:AbstractFloat} = (x, zero(T))
+@inline HI(x::T) where {T<:IEEEFloat} = x
+@inline LO(x::T) where {T<:IEEEFloat} = zero(T)
+@inline HILO(x::T) where {T<:IEEEFloat} = (x, zero(T))
 
 # initializers
 
