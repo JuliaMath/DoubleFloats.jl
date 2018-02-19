@@ -16,7 +16,9 @@ else
 end
 
 import Base: (+), (-), (*), (/), (\), (^), abs, inv,
-             (==), (!=), (<), (<=), (>=), (>), isequal, isless
+             (==), (!=), (<), (<=), (>=), (>), isequal, isless,
+             iszero, isinf, isnan, isinf, isfinite, issubnormal, 
+             isinteger, isodd, iseven, zero, one
 
 using AccurateArithmetic
 
