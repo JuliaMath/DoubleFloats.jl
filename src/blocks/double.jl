@@ -10,7 +10,7 @@
 # Algorithm 1 in ref
 @inline function Fast2Sum(a::T, b::T) where {T<:AbstractFloat}
     s = a + b
-    z = s - z
+    z = s - a
     t = b - z
     return s, t
 end
