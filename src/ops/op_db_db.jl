@@ -1,29 +1,19 @@
 @inline function abs_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    xhi, xlo = HILO(x)
-    if signbit(xhi)
-        xhi = -xhi
-        xlo = -xlo
-    end
-    return Double(E, xhi, xlo)
+    hi, lo = abs_dd_dd(HILO(x))
+    return Double(E, hi, lo)
 end
 
 @inline function neg_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    xhi, xlo = HILO(x)
-    xhi = -xhi
-    xlo = -xlo
-    return Double(E, xhi, xlo)
+    hi, lo = neg_dd_dd(HILO(x))
+    return Double(E, hi, lo)
 end
 
 @inline function negabs_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    xhi, xlo = HILO(x)
-    if !signbit(xhi)
-        xhi = -xhi
-        xlo = -xlo
-    end
-    return Double(E, xhi, xlo)
+    hi, lo = negabs_dd_dd(HILO(x))
+    return Double(E, hi, lo)
 end
 
-@inline function sqrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      iszero(x) && return x
      signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
 
@@ -50,8 +40,7 @@ end
      return r
 end
    
-
-@inline function inv_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function inv_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     xhi, xlo = HILO(x)
     db1 = one(Double{T,E})
     q0 = one(T) / xhi
