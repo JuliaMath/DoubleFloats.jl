@@ -42,3 +42,6 @@ function convert(::Type{Double{T,E}}, x::Type{Rational{I}}) where {I<:Signed, T<
     denom = Double{T,E}(denominator(x))
     return numer/denom
 end
+
+promote_rule(::Type{Double}, ::Type{T}) where {T<:Signed} = Double
+promote_rule(::Type{Double}, ::Type{T}) where {T<:AbstractFloat} = Double
