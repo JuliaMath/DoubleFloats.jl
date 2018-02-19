@@ -9,6 +9,10 @@ end
 @inline LO(x::Double{T,E}) where {T,E<:Emphasis} = x.lo
 @inline HILO(x::Double{T,E}) where {T,E<:Emphasis} = (x.hi, x.lo)
 
+@inline HI(x::Tuple{T,T}) where {T} = x[1]
+@inline LO(x::Tuple{T,T}) where {T} = x[2]
+@inline HILO(x::Tuple{T,T}) where {T} = x
+
 @inline HI(x::T) where {T<:AbstractFloat} = x
 @inline LO(x::T) where {T<:AbstractFloat} = zero(T)
 @inline HILO(x::T) where {T<:AbstractFloat} = (x, zero(T))
@@ -26,10 +30,9 @@ Double(::Type{Performance}, hi::T) where {T<:AbstractFloat} = Double{T, Performa
 Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} = Double{T, Accuracy}(hi, lo)
 Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} = Double{T, Performance}(hi, lo)
 
-Double(x::T) where {T<:AbstractFloat} =
-    Double{Float64, Accuracy}(Float64(x), zero(Float64))
-Double(x::T, y::T) where {T<:AbstractFloat} =
-    Double{Float64, Accuracy}(add_(Float64(x), Float64(y))...,)
+Double(x::T) where {T<:IEEEFloat} = Double{T, Accuracy}(x, zero(Float64))
+Double(x::T) where {T<:Union{Int16, Int32, Int64}} = Double(Float64(x))
+
 Double(x::T) where {T<:String} =
     Double{Float64, Accuracy}(Float64(x), zero(Float64))
 
