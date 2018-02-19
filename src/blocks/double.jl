@@ -19,9 +19,9 @@
   > For dividing a double-word number by a floating-point number,
     use Algorithm 15.
 
- > For dividing two double-word numbers: Algorithm 17 is suggested.
-   If an FMA instruction is available, and accuracy is important,
-   prefer Algorithm 18 (it is slower).
+  > For dividing two double-word numbers: Algorithm 17 is suggested.
+    If an FMA instruction is available, and accuracy is important,
+    prefer Algorithm 18 (it is slower).
 
 =#
 
@@ -160,6 +160,32 @@ function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Abst
    return zₕᵢ, zₗₒ
 end
 
-   
+# inv(...) using Algorithms 17 and 18   
  
-   
+# Algorithm 17 in ref: relerr 15u² + 56u³
+
+function DWInvDW2(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   tₕᵢ = one(T) / yₕᵢ
+   rₕᵢ, rₗₒ = DWTimesFP1(yₕᵢ, yₗₒ, tₕᵢ)
+   dₕᵢ = one(T) - rₕᵢ
+   dₗₒ = -rₗₒ
+   d = dₕᵢ + dₗₒ
+   tₗₒ = d / yₕᵢ
+   zₕᵢ, zₗₒ = Fast2Sum(tₕᵢ, tₗₒ)
+   return zₕᵢ, zₗₒ
+end
+
+# Algorithm 18 in ref: relerr < 10u² (6u² seen)
+# (note DWTimesDW3 replaces DWTimesDW2 per ref) 
+
+function DWInvDW3(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   tₕᵢ = inv(yₕᵢ)
+   rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
+   rₗₒ = -(yₗₒ * tₕᵢ)
+   eₕᵢ, eₗₒ = Fast2Sum(rₕᵢ, rₗₒ)
+   dₕᵢ, dₗₒ = DWTimesFP3(eₕᵢ, eₗₒ, tₕᵢ)
+   mₕᵢ, mₗₒ = DWPlusFP(dₕᵢ, dₗₒ, tₕᵢ)
+   zₕᵢ, zₗₒ = DWTimesDW3(1.0, 0.0, mₕᵢ, mₗₒ)
+   return zₕᵢ, zₗₒ
+end
+
