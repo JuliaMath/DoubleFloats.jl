@@ -61,9 +61,7 @@ end
 
 @inline function bigfloat2hilo(::Type{T}, x::R) where {T<:AbstractFloat, R<:Real}
      y = BigFloat(x)
-     hi = T(y)
-     lo = T(y - hi)
-     return hi, lo
+     return bigfloat2hilo(T, y)
 end
 
 function Double(hi::T) where {T<:Real}
