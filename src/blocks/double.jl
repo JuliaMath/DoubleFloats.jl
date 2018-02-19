@@ -184,8 +184,7 @@ function DWInvDW3(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    rₗₒ = -(yₗₒ * tₕᵢ)
    eₕᵢ, eₗₒ = Fast2Sum(rₕᵢ, rₗₒ)
    dₕᵢ, dₗₒ = DWTimesFP3(eₕᵢ, eₗₒ, tₕᵢ)
-   mₕᵢ, mₗₒ = DWPlusFP(dₕᵢ, dₗₒ, tₕᵢ)
-   zₕᵢ, zₗₒ = DWTimesDW3(1.0, 0.0, mₕᵢ, mₗₒ)
+   zₕᵢ, zₗₒ = DWPlusFP(dₕᵢ, dₗₒ, tₕᵢ)
    return zₕᵢ, zₗₒ
 end
 
