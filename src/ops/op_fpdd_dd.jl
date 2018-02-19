@@ -4,7 +4,7 @@
     return yhi, ylo
 end
 
-@inline function sub_fpdd_ds(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
+@inline function sub_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
     yhi, ylo = sub_2(x, yhi, ylo)
     return yhi, ylo
