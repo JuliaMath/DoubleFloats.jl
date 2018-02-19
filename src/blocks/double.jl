@@ -26,7 +26,8 @@
 =#
 
 
-# Algorithm 1 in ref
+# Algorithm 1 in ref: error-free transformation
+
 @inline function Fast2Sum(a::T, b::T) where {T<:AbstractFloat}
     s = a + b
     z = s - a
@@ -34,7 +35,8 @@
     return s, t
 end
 
-# Algorithm 2 in ref
+# Algorithm 2 in ref: error-free transformation
+
 function TwoSum(a::T, b::T) where {T<:AbstractFloat}
     s  = a + b
     a1 = s - b
@@ -45,14 +47,16 @@ function TwoSum(a::T, b::T) where {T<:AbstractFloat}
     return s, t
 end
 
-# Algorithm 3 in ref
+# Algorithm 3 in ref: error-free transformation
+
 @inline function Fast2Mult(a::T, b::T) where {T<:AbstractFloat}
     s = a * b
     t = fma(a, b, -s)
     return s, t
 end
 
-# Algorithm 4 in ref
+# Algorithm 4 in ref: relerr 2u²
+
 @inline function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     sₕᵢ, sₗₒ = TwoSum(xₕᵢ, y)
     v = xₗₒ + sₗₒ
@@ -60,7 +64,8 @@ end
     return zₕᵢ, zₗₒ
 end
 
-# Algorithm 6 in ref
+# Algorithm 6 in ref: relerr  3u² + 13u³
+
 function AccurateDWPlusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    sₕᵢ, sₗₒ = TwoSum(xₕᵢ, yₕᵢ)
    tₕᵢ, tₗₒ = TwoSum(xₗₒ, yₗₒ)
@@ -72,7 +77,8 @@ function AccurateDWPlusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where 
 end
 
 
-# Algorithm 7 in ref
+# Algorithm 7 in ref: relerr (³/₂)u² + 4u³
+
 function DWTimesFP1(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, c1 = Fast2Mult(xₕᵢ, y)
     c2 = xₗₒ * y
@@ -82,7 +88,8 @@ function DWTimesFP1(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     return zₕᵢ, zₗₒ
 end
 
-# Algorithm 9 in ref
+# Algorithm 9 in ref: relerr 2u²
+
 @inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, cₗₒ = Fast2Mult(xₕᵢ, y)
     c = fma(xₗₒ, y, cₗₒ)
@@ -90,7 +97,8 @@ end
     return zₕᵢ, zₗₒ
 end
 
-# Algorithm 11 in ref
+# Algorithm 11 in ref: relerr 6u²
+
 function DWTimesDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
    t0 = xₗₒ * yₗₒ
@@ -100,7 +108,8 @@ function DWTimesDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Ab
    return zₕᵢ, zₗₒ
 end
 
-# Algorithm 12 in ref
+# Algorithm 12 in ref: relerr 5u²
+
 function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
    t0 = xₗₒ * yₗₒ
@@ -111,7 +120,8 @@ function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Ab
    return zₕᵢ, zₗₒ
 end
 
-# Algorithm 15 in ref
+# Algorithm 15 in ref: relerr 3u²
+
 function DWDivFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
    tₕᵢ = xₕᵢ / y
    pₕᵢ, pₗₒ = Fast2Mult(tₕᵢ, y)
@@ -123,7 +133,8 @@ function DWDivFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
    return zₕᵢ, zₗₒ
 end
 
-# Algorithm 17 in ref
+# Algorithm 17 in ref: relerr 15u² + 56u³
+
 function DWDivDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    tₕᵢ = xₕᵢ / yₕᵢ
    rₕᵢ, rₗₒ = DWTimesFP1(yₕᵢ, yₗₒ, tₕᵢ)
@@ -135,8 +146,9 @@ function DWDivDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Abst
    return zₕᵢ, zₗₒ
 end
 
-# Algorithm 18 in ref 
+# Algorithm 18 in ref: relerr < 10u² (6u² seen)
 # (note DWTimesDW3 replaces DWTimesDW2 per ref) 
+
 function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    tₕᵢ = inv(yₕᵢ)
    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
