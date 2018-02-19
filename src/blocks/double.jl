@@ -34,7 +34,7 @@ end
 end
 
 # Algorithm 4 in ref
-@inline function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T)
+@inline function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     sₕᵢ, sₗₒ = TwoSum(xₕᵢ, y)
     v = xₗₒ + sₗₒ
     zₕᵢ, zₗₒ = TwoSum(sₕᵢ, v)
@@ -42,7 +42,7 @@ end
 end
 
 # Algorithm 9 in ref
-@inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T)
+@inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, cₗₒ = Fast2Mult(xₕᵢ, y)
     c = fma(xₗₒ, y, cₗₒ)
     zₕᵢ, zₗₒ = FastTwoSum(cₕᵢ, c)
@@ -50,7 +50,7 @@ end
 end
 
 # Algorithm 12 in ref
-function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T)
+function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
    t0 = xₗₒ * yₗₒ
    t1 = fma(xₕᵢ, yₗₒ, t0)
@@ -62,7 +62,7 @@ end
 
 # Algorithm 18 in ref 
 # (note DWTimesDW3 replaces DWTimesDW2 per ref) 
-function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T)
+function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    tₕᵢ = inv(yₕᵢ)
    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
    rₗₒ = -(yₗₒ * tₕᵢ)
