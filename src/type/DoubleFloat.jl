@@ -83,7 +83,7 @@ function Double{T, E}(x::BigInt) where {T<:AbstractFloat, E<:Emphasis}
     return Double{T, E}(BigFloat(x))
 end
 
-function Double{T,E}(x::Irrational{S}) where {S, T<:AbstractFloat, E<:Emphasis)
+function Double{T,E}(x::Irrational{S}) where {S, T<:AbstractFloat, E<:Emphasis}
     y = BigFloat(x)
     return Double{T,E}(y)
 end
