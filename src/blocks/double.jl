@@ -49,6 +49,16 @@ end
     return zₕᵢ, zₗₒ
 end
 
+# Algorithm 11 in ref
+function DWTimesDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
+   t0 = xₗₒ * yₗₒ
+   c2 = fma(xₗₒ, yₕᵢ, t0)
+   c3 = c1 + c2
+   zₕᵢ, zₗₒ = Fast2Sum(cₕᵢ, c3)
+   return zₕᵢ, zₗₒ
+end
+
 # Algorithm 12 in ref
 function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
