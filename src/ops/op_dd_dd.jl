@@ -28,6 +28,42 @@ function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     t1 = one(T)
     tuple1 = (t1, t0)
     hi, lo = x
+    est = (inv(hi), t0)
+    est = inv_dd_dd_itr(x, est, tuple1)
+    est = inv_dd_dd_itr(x, est, tuple1)
+    #est = inv_dd_dd_itr(x,est)
+    return est
+end
+
+function inv_dd_dd_itr(x, est, t1)
+    thilo = mul_dddd_dd(est,x)
+    err = sub_dddd_dd(t1, thilo)
+    err = mul_dddd_dd(est, err)
+    est = add_dddd_dd(est, err)
+    return est
+end
+
+function inv_dd_dd_itr(xx::Tuple{T,T}, est::Tuple{T,T}) where {T<:AbstractFloat}
+    err = mul_dddd_dd(x, est)
+    err = sub_dddd_dd((one(T), zero(T)), err)
+    err = mul_dddd_dd(est, err)
+    est = add_dddd_dd(est,err)
+    return est
+end
+
+function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
+    est = (inv(x[1]), zero(T))
+    est = inv_dd_dd_itr1(x, est)
+    est = inv_dd_dd_itr1(x, est)
+    return est
+end
+
+#=
+function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
+    t0 = zero(T)
+    t1 = one(T)
+    tuple1 = (t1, t0)
+    hi, lo = x
     invhi = inv(hi)
     est = (invhi, t0)
     thilo = mul_dddd_dd(est, x)  
@@ -40,6 +76,7 @@ function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     est = add_dddd_dd(est, esterr)
     return est
 end
+=#
 
 function inv_dd_dd_fast(y::Tuple{T,T}) where T<:AbstractFloat
     yhi, ylo = y
