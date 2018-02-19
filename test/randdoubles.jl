@@ -75,3 +75,21 @@ function dvibf_dbdb_db(x::Double{T,E}, y::Tuple{T,E}) where {T,E}
     hi, lo = dvibf_dddd_dd(HILO(x), HILO(y))
     return Double(E,hi,lo)
 end
+
+function tst(n,emin,emax)
+    mx4 = 0.0; mx5=0.0
+    for i in 1:n
+        r1 = randdouble(Float64;emin=emin, emax=emax)
+        r2 = randdouble(Float64;emin=emin, emax=emax)
+        r3 = dvibf_dddd_dd(r1, r2)
+        r4 = DoubleFloats.dvi_dddd_dd(r1, r2); r4 = DoubleFloats.add_2(HI(r4),LO(r4))
+        r5 = DoubleFloats.dvi_dddd_dd_fast(r1, r2); r5 = DoubleFloats.add_2(HI(r5),LO(r5))
+        ulp = eps(LO(r3))/2
+        r4ulps = abs(LO(r3)-LO(r4))/ulp
+        r5ulps = abs(LO(r3)-LO(r5))/ulp
+        mx4 = max(mx4,r4ulps)
+        mx5 = max(mx5,r5ulps)
+    end
+    return mx4, mx5, Float16(mx5/mx4)
+end
+
