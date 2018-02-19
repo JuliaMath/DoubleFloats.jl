@@ -46,3 +46,10 @@ for (U,F) in ((:UInt64, :Float64), (:UInt32, :Float32), (:UInt16, :Float16))
         end
     end
 end
+
+randfloat(::Type{Float64}) = randfloat(Float64,1)[1]
+randfloat(::Type{Float32}) = randfloat(Float32,1)[1]
+randfloat(::Type{Float16}) = randfloat(Float16,1)[1]
+randfloat() = randfloat(Float64,1)[1]
+
+
