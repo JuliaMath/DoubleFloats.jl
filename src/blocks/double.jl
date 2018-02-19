@@ -4,6 +4,25 @@
    Tight and rigourous error bounds for basic building blocks of double-word arithmetic.
    ACM Transactions on Mathematical Software, Association for Computing Machinery,
    2017, 44 (2), pp.1 - 27. <10.1145/3121432>. <hal-01351529v3>
+
+   they recommend
+
+   > For adding two double-word numbers, use Algorithm 6.
+     Use Algorithm 5 only if both operands have the same sign.
+
+  > For multiplying a double-word number by a floating-point number,
+    where FMA is available, use Algorithm 9.
+    
+ > For multiplying two double-word numbers, if an FMA instruction
+   is available, then Algorithm 12 is to be favored.
+
+ > For dividing a double-word number by a floating-point number,
+   use Algorithm 15.
+
+> For dividing two double-word numbers: Algorithm 17 is suggested.
+  If an FMA instruction is available, and accuracy is important,
+  prefer Algorithm 18 (it is slower).
+
 =#
 
 
@@ -41,6 +60,17 @@ end
     return zₕᵢ, zₗₒ
 end
 
+# Algorithm 6 in ref
+function AccurateDWPlusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   sₕᵢ, sₗₒ = TwoSum(xₕᵢ, yₕᵢ)
+   tₕᵢ, tₗₒ = TwoSum(xₗₒ, yₗₒ)
+   c = sₗₒ + tₕᵢ
+   vₕᵢ, vₗₒ = Fast2Sum(sₕᵢ, c)
+   w = tₗₒ + vₗₒ
+   zₕᵢ, zₗₒ = Fast2Sum(vₕᵢ, w)
+   return zₕᵢ, zₗₒ
+end
+
 # Algorithm 9 in ref
 @inline function DWTimesFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, cₗₒ = Fast2Mult(xₕᵢ, y)
@@ -69,6 +99,10 @@ function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Ab
    zₕᵢ, zₗₒ = Fast2Sum(cₕᵢ, c3)
    return zₕᵢ, zₗₒ
 end
+
+# Algorithm 15 in ref
+
+# Algorithm 17 in ref
 
 # Algorithm 18 in ref 
 # (note DWTimesDW3 replaces DWTimesDW2 per ref) 
