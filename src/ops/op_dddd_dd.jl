@@ -48,7 +48,7 @@ end
 
 @inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
-    yhi, ylo = x
+    yhi, ylo = y
     hi = xhi / yhi
     uh, ul = mul_2(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
