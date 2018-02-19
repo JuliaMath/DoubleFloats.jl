@@ -53,6 +53,29 @@ function FastDouble(x::T) where {T<:Signed}
     Double{Float64, Performance}(hi, lo)
 end
 
+function Double(x::BigFloat)
+    if abs(x) <= intmax2(Float64)
+        hi = Float64(bf)
+        lo = Float64(bf-hi)
+    else
+       throw(DomainError("$x"))
+    end
+    Double{Float64, Accuracy}(hi, lo)
+end
+
+function FastDouble(x::BigFloat)
+    if abs(x) <= intmax2(Float64)
+        hi = Float64(bf)
+        lo = Float64(bf-hi)
+    else
+       throw(DomainError("$x"))
+    end
+    Double{Float64, Performance}(hi, lo)
+end
+
+Double(x::BigInt) = Double(BigFloat(x))
+FastDouble(x::BigInt) = FastDouble(BigFloat(x))
+
 
 #=
 Double(::Type{Accuracy}) = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
@@ -92,6 +115,7 @@ function BigFloat(x::Double{T, E}, p=precision(BigFloat)) where {T<:AbstractFloa
     BigFloat(HI(x), p) + BigFloat(LO(x), p)
 end
 
+#=
 function Double{T, E}(x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
     hi = T(x)
     lo = T(x-hi)
@@ -112,7 +136,8 @@ function Double{T,E}(x::Type{Rational{I}}) where {I<:Signed, T<:AbstractFloat, E
     denom = Double{T,E}(denominator(x))
     return numer/denom
 end
-
+=#
+#=
 FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 FastDouble(x::T) where {T<:AbstractFloat} =
     Double{Float64, Performance}(x, zero(Float64))
@@ -123,3 +148,4 @@ FastDouble(x::T) where {T<:Real} =
     FastDouble{Float64, Performance}(Float64(x), zero(Float64))
 FastDouble(x::T, y::T) where {T<:Real} =
     FastDouble{Float64, Performance}(add_(convert(Float64,x), convert(Float64,y))...,)
+=#
