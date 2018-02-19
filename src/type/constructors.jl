@@ -1,9 +1,3 @@
-# initializers
-
-# sizeof(IEEEInt) <= sizeof(Float64)
-const IEEEInt = Union{Int64, Int32, Int16, Int8}
-const SmallInt = Union{Int32, Int16, Int8}
-
 intmax(::Type{Float64}) = 2^precision(Float64)
 intmax(::Type{Float32}) = 2^precision(Float32)
 intmax(::Type{Float16}) = 2^precision(Float16)
@@ -11,7 +5,63 @@ intmax2(::Type{Float64}) = Int128(2)^((2*precision(Float64))>>1)
 intmax2(::Type{Float32}) = Int128(2)^((2*precision(Float32))>>1)
 intmax2(::Type{Float16}) = Int128(2)^((2*precision(Float16))>>1)
  
- 
+# sizeof(IEEEInt) <= sizeof(Float64)
+const IEEEInt = Union{Int64, Int32, Int16, Int8}
+const SmallInt = Union{Int32, Int16, Int8}
+
+#=
+    initializers
+
+    Double(Emphasis, hi, lo) constructs immediately
+
+    Double(Emphasis, (hi, lo)) fully normalizes before construction
+
+    Double((hi, lo), Emphasis) renormalizes, requires (|hi|>=|lo|) 
+
+=#
+
+# these bypass the renormalization
+Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T,Accuracy}(hi, lo)
+Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T,Performance}(hi, lo)
+
+#these always normalize
+function Double(::Type{Accuracy}, hilo::Tuple{T, T}) where {T<:AbstractFloat} =
+    hi, lo = hilo
+    hi, lo = add_2(hi, lo)
+    return Double(Accuracy, hi, lo)
+end
+function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} =
+    hi, lo = hilo
+    hi, lo = add_2(hi, lo)
+    return Double(Performance, hi, lo)
+end
+
+#these always renormalize, require abs(hi)>=abs(lo) !!UNCHECKED!!
+
+function Double(hilo::Tuple{T, T}, ::Type{Accuracy}) where {T<:AbstractFloat}
+    hi, lo = hilo
+    hi, lo = add_hilo_2(hi, lo)
+    return Double(Accuracy, hi, lo)
+end
+function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
+    hi, lo = hilo
+    hi, lo = add_hilo_2(hi, lo)
+    return Double(Performance, hi, lo)
+end
+
+zero(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double(E, zero(T), zero(T))
+one(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double(E, one(T), zero(T))
+inf(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double(E, T(Inf), zero(T))
+nan(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double(E, T(NaN), zero(T))
+
+
+
 Double() = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
 FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 
