@@ -21,6 +21,22 @@ phi_performant = Double{Float64, Performance}(golden)
 @test abs(inv(inv(pi_performant)) - pi_performant) <= eps(LO(pi_performant))
 @test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= eps(LO(phi_accurate))
 
+a = Base.TwicePrecision(3.0) / Base.TwicePrecision(7.0)
+b = Double{Float64, Accuracy}(3.0) / Double{Float64, Accuracy}(7.0)
+c = Base.TwicePrecision(17.0) / Base.TwicePrecision(5.0)
+d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
+
+@test a.hi == b.hi
+@test a.lo == b.lo
+@test (a+c).hi == (b+d).hi
+@test (a+c).lo == (b+d).lo
+@test (a-c).hi == (b-d).hi
+@test (a-c).lo == (b-d).lo
+@test (a*c).hi == (b*d).hi
+@test (a*c).lo == (b*d).lo
+@test (a/c).hi == (b/d).hi
+@test (a/c).lo == (b/d).lo
+
 
 performant_sqrt2   = Double{Accurate,Float64}(sqrt2)
 performant_sqrt2bf = Double{Accurate,Float64}(sqrt2bf)
