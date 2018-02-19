@@ -55,8 +55,8 @@ end
 
 function Double(x::BigFloat)
     if abs(x) <= intmax2(Float64)
-        hi = Float64(bf)
-        lo = Float64(bf-hi)
+        hi = Float64(x)
+        lo = Float64(x-hi)
     else
        throw(DomainError("$x"))
     end
@@ -65,8 +65,8 @@ end
 
 function FastDouble(x::BigFloat)
     if abs(x) <= intmax2(Float64)
-        hi = Float64(bf)
-        lo = Float64(bf-hi)
+        hi = Float64(x)
+        lo = Float64(x-hi)
     else
        throw(DomainError("$x"))
     end
