@@ -24,7 +24,7 @@ end
 end
 
 
-function inv_dd_dd_itr(xx::Tuple{T,T}, est::Tuple{T,T}) where {T<:AbstractFloat}
+function inv_dd_dd_itr(x::Tuple{T,T}, est::Tuple{T,T}) where {T<:AbstractFloat}
     err = mul_dddd_dd(x, est)
     err = sub_dddd_dd((one(T), zero(T)), err)
     err = mul_dddd_dd(est, err)
