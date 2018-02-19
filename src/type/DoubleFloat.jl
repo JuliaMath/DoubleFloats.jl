@@ -79,6 +79,20 @@ function Double{T, E}(x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
     return Double{T, E}(hi, lo)
 end
 
+function Double{T, E}(x::BigInt) where {T<:AbstractFloat, E<:Emphasis}
+    return Double{T, E}(BigFloat(x))
+end
+
+function Double{T,E}(x::Irrational{S}) where {S<:Symbol, T<:AbstractFloat, E<:Emphasis)
+    return Double{T,E}(BigFloat(x))
+end
+
+function Double{T,E}(x::Type{Rational{I}}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis}
+    numer = Double{T,E}(numerator(x))
+    denom = Double{T,E}(denominator(x))
+    return numer/denom
+end
+
 FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 FastDouble(x::T) where {T<:AbstractFloat} =
     Double{Float64, Performance}(x, zero(Float64))
