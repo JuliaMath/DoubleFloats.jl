@@ -13,15 +13,15 @@
   > For multiplying a double-word number by a floating-point number,
     where FMA is available, use Algorithm 9.
     
- > For multiplying two double-word numbers, if an FMA instruction
-   is available, then Algorithm 12 is to be favored.
+  > For multiplying two double-word numbers, if an FMA instruction
+    is available, then Algorithm 12 is to be favored.
 
- > For dividing a double-word number by a floating-point number,
-   use Algorithm 15.
+  > For dividing a double-word number by a floating-point number,
+    use Algorithm 15.
 
-> For dividing two double-word numbers: Algorithm 17 is suggested.
-  If an FMA instruction is available, and accuracy is important,
-  prefer Algorithm 18 (it is slower).
+ > For dividing two double-word numbers: Algorithm 17 is suggested.
+   If an FMA instruction is available, and accuracy is important,
+   prefer Algorithm 18 (it is slower).
 
 =#
 
