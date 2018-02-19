@@ -15,6 +15,8 @@ else
     const IEEEFloat = Union{Float64, Float32, Float16}
 end
 
+import Base: (+), (-), (*), (/), (\), (^), abs, inv,
+             (==), (!=), (<), (<=), (>=), (>), isequal, isless
 
 using AccurateArithmetic
 
