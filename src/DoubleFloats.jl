@@ -20,6 +20,12 @@ import Base: (+), (-), (*), (/), (\), (^), abs, inv,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
              isinteger, isodd, iseven, zero, one
 
+if VERSION >= v"0.7.0-"
+    import Base:isone
+else
+    export isone
+end
+
 using AccurateArithmetic
 
 abstract type MultipartFloat{T} <: AbstractFloat end
