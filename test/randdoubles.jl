@@ -6,7 +6,7 @@ function randdouble(::Type{T}, n::Int=1; emin::Int=exponent_min(T), emax::Int=ex
     return (r1, r2)
 end
 
-bf(x::Tuple{T,T}) = BigFloat(x[1])+BigFloat(x[2])
+bf(x::Tuple{T,T}) where {T} = BigFloat(x[1])+BigFloat(x[2])
 bf(x::Double{T,E}) where {T,E} = BigFloat(HI(x))+BigFloat(LO(x))
 
 function addbf_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T}
