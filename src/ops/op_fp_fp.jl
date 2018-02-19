@@ -1,18 +1,7 @@
-@inline function abs_fp_fp(x::T) where {T<:AbstractFloat}
-    return abs(x)
-end
-
-@inline function negabs_fp_fp(x::T) where {T<:AbstractFloat}
-    return -abs(x)
-end
-
-@inline function neg_fp_fp(x::T) where {T<:AbstractFloat}
-    return -x
-end
-
-@inline function inv_fp_fp(x::T) where {T<:AbstractFloat}
-    return inv(x)
-end
+@inline abs_fp_fp(x::T) where {T<:AbstractFloat} = abs(x)
+@inline negabs_fp_fp(x::T) where {T<:AbstractFloat} = -abs(x)
+@inline neg_fp_fp(x::T) where {T<:AbstractFloat} = -x
+@inline inv_fp_fp(x::T) where {T<:AbstractFloat} = inv(x)
 
 
 @inline function powr2_fp_fp(x::T) where {T<:AbstractFloat}
@@ -41,13 +30,8 @@ end
 end
 
 
-@inline function root2_fp_fp(x::T) where {T<:AbstractFloat}
-    return sqrt(x)
-end
-
-@inline function root3_fp_fp(x::T) where {T<:AbstractFloat}
-    return cbrt(x)
-end
+@inline root2_fp_fp(x::T) where {T<:AbstractFloat} = sqrt(x)
+@inline root3_fp_fp(x::T) where {T<:AbstractFloat} = cbrt(x)
 
 @inline function root4_fp_fp(x::T) where {T<:AbstractFloat}
     return sqrt(sqrt(x))
