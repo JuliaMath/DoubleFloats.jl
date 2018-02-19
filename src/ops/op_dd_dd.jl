@@ -39,6 +39,14 @@ function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     return est
 end
 
+@inline function inv_dd_dd_fast(y::Tuple{T,T}) where T<:AbstractFloat
+    xhi, xlo = one(T), zero(T)
+    yhi, ylo = y
+    hi = xhi / yhi
+    uh, ul = mul_2(hi, yhi)
+    lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
+    return hi, lo
+end
 #=
 function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     t0 = zero(T)
