@@ -14,12 +14,12 @@ end
     return Double(E, hi, lo)
 end
 
-@inline function dvi_dbdb_db(x::Double{Accuracy,E}, y::Double{Accuracy,E}) where {T<:AbstractFloat}
+@inline function dvi_dbdb_db(x::Double{T,Accuracy}, y::Double{T,Accuracy}) where {T<:AbstractFloat}
     hi, lo = dvi_dddd_dd(HILO(x), HILO(y))
     return Double(Accuracy, hi, lo)
 end
 
-@inline function dvi_dbdb_db(x::Double{Performance,E}, y::Double{Performance,E}) where {T<:AbstractFloat}
+@inline function dvi_dbdb_db(x::Double{Performance,E}, y::DoubleTTTPerformance}) where {T<:AbstractFloat}
     hi, lo = dvi_dddd_dd_fast(HILO(x), HILO(y))
     return Double(Performance, hi, lo)
 end
