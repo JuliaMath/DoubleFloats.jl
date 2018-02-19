@@ -9,7 +9,7 @@ end
     return Double(E, hi, lo)
 end
 
-@inline function mul_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Performance}
+@inline function mul_dbdb_db(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = mul_dddd_dd(HILO(x), HILO(y))
     return Double(E, hi, lo)
 end
