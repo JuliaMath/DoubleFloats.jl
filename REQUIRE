@@ -1,3 +1,3 @@
 julia 0.6
 Compat 0.44.0
-AccurateArithmetic 0.0.1
+AccurateArithmetic 0.1.0
