@@ -1,9 +1,3 @@
-if VERSION >= v"0.7.0-"
-    import Base:isone
-else
-    export isone
-end
-
 zero(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
     Double(E, zero(T), zero(T))
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
