@@ -14,6 +14,15 @@ end
    return Double(E, xhi, xlo)
 end
 
+@inline function negabs_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+   xhi, xlo = HILO(x)
+   if !signbit(xhi)
+       xhi = -xhi
+       xlo = -xlo
+   end
+   return Double(E, xhi, xlo)
+end
+
 @inline function sqrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return x
     signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
