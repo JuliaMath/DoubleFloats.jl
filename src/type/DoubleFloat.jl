@@ -20,6 +20,7 @@ end
 # initializers
 
 Double() = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
+FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
 
 Double{T, E}(x::T) where {T<:AbstractFloat, E<:Emphasis} = Double{T, E}(x, zero(T))
 
@@ -31,36 +32,18 @@ Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} = Double{T, Accu
 Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} = Double{T, Performance}(hi, lo)
 
 Double(x::T) where {T<:IEEEFloat} = Double{T, Accuracy}(x, zero(Float64))
-Double(x::T) where {T<:Union{Int16, Int32, Int64}} = Double(Float64(x))
+Double(x::T) where {T<:Union{Int16, Int32, Int64}} = Double(Accuracy, Float64(x))
 
-Double(x::T) where {T<:String} =
-    Double{Float64, Accuracy}(Float64(x), zero(Float64))
-
-Double(::Type{Accuracy}, hi::T) where {T<:Signed} =
-    Double{T, Accuracy}(float(hi), zero(typeof(float(hi))))
-Double(::Type{Performance}, hi::T) where {T<:Signed} =
-    Double{T, Performance}(float(hi), zero(typeof(float(hi))))
-Double(::Type{Accuracy}, hi::T, lo::T) where {T<:Signed} =
-    Double{T, Accuracy}(float(hi), float(lo))
-Double(::Type{Performance}, hi::T, lo::T) where {T<:Signed} =
-    Double{T, Performance}(float(hi), float(lo))
-
-Double(x::T) where {T<:Signed} =
-    Double{Float64, Accuracy}(float(x), zero(typeof(float(x))))
-Double(x::T, y::T) where {T<:Signed} =
-    Double{Float64, Accuracy}(add_(float(x), float(y))...,)
+FastDouble(x::T) where {T<:IEEEFloat} = Double{T, Performance}(x, zero(Float64))
+FastDouble(x::T) where {T<:Union{Int16, Int32, Int64}} = Double(Performance, Float64(x))
 
 @inline Double{T, E}(hilo::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T, E}(hilo[1], hilo[2])
-
-@inline Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} =
-    Double{T, Accuracy}(hi, lo)
-@inline Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
-    Double{T, Performance}(hi, lo)
-@inline Double(::Type{Accuracy}, hilo::Tuple{T,T}) where {T<:AbstractFloat} =
+@inline Double{T}(hilo::Tuple{T, T}) where {T<:AbstractFloat} =
     Double{T, Accuracy}(hilo[1], hilo[2])
-@inline Double(::Type{Performance}, hilo::Tuple{T,T}) where {T<:AbstractFloat} =
+@inline FastDouble{T}(hilo::Tuple{T, T}) where {T<:AbstractFloat} =
     Double{T, Performance}(hilo[1], hilo[2])
+
 
 
 for T in (:Float64, :Float32, :Float16)
