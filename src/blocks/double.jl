@@ -101,8 +101,28 @@ function DWTimesDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Ab
 end
 
 # Algorithm 15 in ref
+function DWDivFP3(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+   tₕᵢ = xₕᵢ / y
+   pₕᵢ, pₗₒ = Fast2Mult(tₕᵢ, y)
+   dₕᵢ = xₕᵢ - pₕᵢ
+   dₗₒ = dₕᵢ - pₗₒ
+   d = dₗₒ + xₗₒ
+   tₗₒ = d / y
+   zₕᵢ, zₗₒ = Fast2Sum(tₕᵢ, tₗₒ)
+   return zₕᵢ, zₗₒ
+end
 
 # Algorithm 17 in ref
+function DWDivDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   tₕᵢ = xₕᵢ / yₕᵢ
+   rₕᵢ, rₗₒ = DWTimesFP1(yₕᵢ, yₗₒ, tₕᵢ)
+   dₕᵢ = xₕᵢ - rₕᵢ
+   dₗₒ = xₗₒ - rₗₒ
+   d = dₕᵢ + dₗₒ
+   tₗₒ = d / yₕᵢ
+   zₕᵢ, zₗₒ = Fast2Sum(tₕᵢ, tₗₒ)
+   return zₕᵢ, zₗₒ
+end
 
 # Algorithm 18 in ref 
 # (note DWTimesDW3 replaces DWTimesDW2 per ref) 
