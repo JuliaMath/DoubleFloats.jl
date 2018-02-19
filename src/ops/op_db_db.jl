@@ -13,9 +13,14 @@ end
     return Double(E, hi, lo)
 end
 
-@inline function inv_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function inv_db_db(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     hi, lo = inv_dd_dd(HILO(x))
-    return Double(E, hi, lo)
+    return Double(Accuracy, hi, lo)
+end
+
+@inline function inv_db_db(x::Double{T,Performance}) where {T<:AbstractFloat}
+    hi, lo = inv_dd_dd_fast(HILO(x))
+    return Double(Performance, hi, lo)
 end
 
 function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
