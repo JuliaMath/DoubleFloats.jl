@@ -10,6 +10,6 @@ end
     return mul_2(x, y)
 end
 
-@inline function dvi_fpfp_dd(::Type{E}, x::T, y::T) where {T<:AbstractFloat}
+@inline function dvi_fpfp_dd(x::T, y::T) where {T<:AbstractFloat}
     return dvi_2(x, y)
 end
