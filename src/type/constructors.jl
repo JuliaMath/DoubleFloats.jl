@@ -1,14 +1,3 @@
-intmax(::Type{Float64}) = 2^precision(Float64)
-intmax(::Type{Float32}) = 2^precision(Float32)
-intmax(::Type{Float16}) = 2^precision(Float16)
-intmax2(::Type{Float64}) = Int128(2)^((2*precision(Float64))>>1)
-intmax2(::Type{Float32}) = Int128(2)^((2*precision(Float32))>>1)
-intmax2(::Type{Float16}) = Int128(2)^((2*precision(Float16))>>1)
- 
-# sizeof(IEEEInt) <= sizeof(Float64)
-const IEEEInt = Union{Int64, Int32, Int16, Int8}
-const SmallInt = Union{Int32, Int16, Int8}
-
 #=
     initializers
 
@@ -16,7 +5,9 @@ const SmallInt = Union{Int32, Int16, Int8}
 
     Double(Emphasis, (hi, lo)) fully normalizes before construction
 
-    Double((hi, lo), Emphasis) renormalizes, requires (|hi|>=|lo|) 
+    Double((hi, lo), Emphasis) renormalizes, requires (|hi|>=|lo|)
+
+    Double{T,E}(hi, lo) constructs immediately, (better to use above)
 
 =#
 
@@ -27,6 +18,7 @@ Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
     Double{T,Performance}(hi, lo)
 
 #these always normalize
+
 function Double(::Type{Accuracy}, hilo::Tuple{T, T}) where {T<:AbstractFloat} =
     hi, lo = hilo
     hi, lo = add_2(hi, lo)
@@ -51,6 +43,48 @@ function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
     return Double(Performance, hi, lo)
 end
 
+Double(hi::T) where {T<:AbstractFloat} = 
+    Double(Accuracy, hi, zero(T))
+Double(hi::T, lo::T) where {T<:AbstractFloat} =
+    Double(Accuracy, hi, lo)
+
+FastDouble(hi::T) where {T<:AbstractFloat} =
+    Double(Performance, hi, zero(T))
+FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
+    Double(Performance, hi, lo)
+ 
+@inline function bigfloat2hilo(::Type{T}, x::BigFloat) where T<:AbstractFloat
+     hi = T(x)
+     lo = T(x - hi)
+     return hi, lo
+end
+
+function Double(hi::T) where {T<:Real}
+    bf = BigFloat(hi)
+    hi, lo = bigfloat2hilo(T, bf)
+    return Double(Accuracy, hi, lo)
+end
+function Double(hi::T, lo::T) where {T<:Real}
+    bf = BigFloat(hi) + BigFloat(lo)
+    hi, lo = bigfloat2hilo(T, bf)
+    return Double(Accuracy, hi, lo)
+end
+
+function FastDouble(hi::T) where {T<:Real}
+    bf = BigFloat(hi)
+    hi, lo = bigfloat2hilo(T, bf)
+    return Double(Performance, hi, lo)
+end
+function FastDouble(hi::T, lo::T) where {T<:Real}
+    bf = BigFloat(hi) + BigFloat(lo)
+    hi, lo = bigfloat2hilo(T, bf)
+    return Double(Performance, hi, lo)
+end
+
+
+     
+#=
+
 zero(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
     Double(E, zero(T), zero(T))
 one(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
@@ -61,6 +95,16 @@ nan(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
     Double(E, T(NaN), zero(T))
 
 
+intmax(::Type{Float64}) = 2^precision(Float64)
+intmax(::Type{Float32}) = 2^precision(Float32)
+intmax(::Type{Float16}) = 2^precision(Float16)
+intmax2(::Type{Float64}) = Int128(2)^((2*precision(Float64))>>1)
+intmax2(::Type{Float32}) = Int128(2)^((2*precision(Float32))>>1)
+intmax2(::Type{Float16}) = Int128(2)^((2*precision(Float16))>>1)
+ 
+# sizeof(IEEEInt) <= sizeof(Float64)
+const IEEEInt = Union{Int64, Int32, Int16, Int8}
+const SmallInt = Union{Int32, Int16, Int8}
 
 Double() = Double{Float64, Accuracy}(zero(Float64), zero(Float64))
 FastDouble() = Double{Float64, Performance}(zero(Float64), zero(Float64))
@@ -125,6 +169,7 @@ end
 
 Double(x::BigInt) = Double(BigFloat(x))
 FastDouble(x::BigInt) = FastDouble(BigFloat(x))
+=#
 
 
 #=
