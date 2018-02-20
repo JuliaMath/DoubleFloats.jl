@@ -20,7 +20,7 @@ function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
     x = inv(hi)^(HI(n_inv))
     
     m = n
-    xon = dvi_ddfp_dd(x, n_fp)
+    xon = dvi_fpfp_dd(x, n_fp)
     xpn = mul_fpfp_dd(x, x)
     m -= 2
     while m > 0
