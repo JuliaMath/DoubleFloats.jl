@@ -90,9 +90,9 @@ function root5_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
     #m = n
     xon = dvi_ddfp_dd(x, n_fp)
     xpn = mul_dddd_dd(x, x)
-    xpn = mul_fpfp_dd(x, xpn)
-    xpn = mul_fpdd_dd(x, xpn)
-    xpn = mul_fpdd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
    #   
     #m -= 2
     #while m > 0
@@ -107,9 +107,9 @@ function root5_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
    # m = n
     xon = dvi_ddfp_dd(x, n_fp)
     xpn = mul_dddd_dd(x, x)
-    xpn = mul_fpfp_dd(x, xpn)
-    xpn = mul_fpdd_dd(x, xpn)
-    xpn = mul_fpdd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
+    xpn = mul_dddd_dd(x, xpn)
 
    # m -= 2
    # while m > 0
