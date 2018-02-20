@@ -33,7 +33,7 @@ to applications involve other's health, wealth, and well-being that are sheparde
 ### how it is used
 
 Were one working with Float32s (a 24-bit significand), the entire result would have become unreliable.
-With `Double`, the relative error accompanying any basic arithmetic operation is 10⋅𝘂² (10*𝘂^𝟐).
+With `Double`, the relative error accompanying any basic arithmetic operation is 10⋅𝘂² (10×𝘂^𝟐).
 It is reasonable to see this squaring as pulling in almost second significand's bits.  Our possibly
 accrued relative error does eat into the number of reliable bits in this second order significance.
 Nonetheless, if your use requires less than one million successive arithimetic operations, the
