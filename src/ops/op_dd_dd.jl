@@ -59,10 +59,10 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
 
     half = T(0.5)
-    dhalf = Double{T,E}(half, zero(T))
+    dhalf = (half, zero(T))
 
     r = inv(sqrt(HI(x)))
-    h = Double{T,E}(HI(x) * half, LO(x) * half)
+    h = (HI(x) * half, LO(x) * half)
 
     r2 = r * r
     hr2 = h * r2
