@@ -43,7 +43,7 @@ function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     return DWInvDW3(HI(x), LO(x))
 end
 
-@inline function inv_dd_dd_fast(y::Tuple{T,T}) where T<:AbstractFloat
+@inline function inv_dd_dd_fast(y::Tuple{T,T}) where {T<:AbstractFloat}
     xhi, xlo = one(T), zero(T)
     yhi, ylo = y
     hi = xhi / yhi
@@ -52,22 +52,31 @@ end
     hi, lo = add_2(hi, lo)
     return hi, lo
 end
-#=
-function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    t0 = zero(T)
-    t1 = one(T)
-    tuple1 = (t1, t0)
-    hi, lo = x
-    invhi = inv(hi)
-    est = (invhi, t0)
-    thilo = mul_dddd_dd(est, x)  
-    err = sub_dddd_dd(tuple1, thilo)
-    esterr = mul_dddd_dd(est, err)
-    est = add_dddd_dd(est, esterr)
-    thilo = mul_dddd_dd(est, x)  
-    err = sub_dddd_dd(tuple1, thilo) 
-    esterr = mul_dddd_dd(est, err)
-    est = add_dddd_dd(est, esterr)
-    return est
+
+
+function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
+    iszero(x) && return x
+    signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
+
+    half = T(0.5)
+    dhalf = Double{T,E}(half, zero(T))
+
+    r = inv(sqrt(HI(x)))
+    h = Double{T,E}(HI(x) * half, LO(x) * half)
+
+    r2 = r * r
+    hr2 = h * r2
+    radj = dhalf - hr2
+    radj = radj * r
+    r = r + radj
+
+    r2 = r * r
+    hr2 = h * r2
+    radj = dhalf - hr2
+    radj = radj * r
+    r = r + radj
+
+    r = r * x
+
+    return r
 end
-=#
