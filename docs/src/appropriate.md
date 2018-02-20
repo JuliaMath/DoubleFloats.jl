@@ -9,7 +9,9 @@ These types are identical in coverage and compatibility. Any function that knows
 Every function that is imported from Base.Math and overloaded in order to just work and work well with
 `Double`s will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
-
+```
+ 
+```
 
 ### Double
 
