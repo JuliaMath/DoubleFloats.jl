@@ -1,5 +1,6 @@
 # DoubleFloats: some good use
 
+
 ## looking ahead
 
 When you are `using DoubleFloats`, two related numeric types become available: `Double` and `FastDouble`.
@@ -8,8 +9,9 @@ These types are identical in coverage and compatibility. Any function that knows
 Every function that is imported from Base.Math and overloaded in order to just work and work well with
 `Double`s will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
+----
 
-### Double
+> ### Double
 
 ### what it is
 
@@ -34,7 +36,9 @@ accrued relative error does eat into the number of reliable bits in this second 
 Nonetheless, if your use requires less than one million successive arithimetic operations, the
 result obtained is reliable as a Float64 or as a Float32.
 
-## FastDouble
+----
+
+> ## FastDouble
 
 `FastDoubles` do not have this way of working; instead, they offer a more performant alternative.
 With computations that are heavily reliant upon elementary functions, `FastDoubles` are helpful.
