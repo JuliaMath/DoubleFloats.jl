@@ -80,3 +80,39 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
 
     return r
 end
+
+# x := x - x * (x^3 - a) / (2*x^3 + y)
+# x -= ( x - (z/(x*x)))*(1/3)
+
+function cbrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
+    iszero(HI(x)) && return x
+    # signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
+
+    third = T(inv(3.0))
+    dthird = inv(Double{T,E}(T(3.0), zero(T)))
+
+    r = inv(cbrt(HI(x)))
+    h = Double{T,E}(HI(x) * third, LO(x) * third)
+
+    r2 = r * r
+    zr2 = x/r2
+    zr2 = x - zr2
+    zr2 = zr2 * dthird
+    r = r - zr2
+   
+     r2 = r * r
+    zr2 = x/r2
+    zr2 = x - zr2
+    zr2 = zr2 * dthird
+    r = r - zr2
+   
+     r2 = r * r
+    zr2 = x/r2
+    zr2 = x - zr2
+    zr2 = zr2 * dthird
+    r = r - zr2
+   
+    #r = r * x
+
+    return r, r*x, r*x*x
+end
