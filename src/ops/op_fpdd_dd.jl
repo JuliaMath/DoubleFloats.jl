@@ -6,7 +6,9 @@ end
 
 @inline function sub_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
-    yhi, ylo = sub_2(x, yhi, ylo)
+   # !!RESTORE THIS!!
+   # yhi, ylo = sub_2(x, yhi, ylo)
+    yhi, ylo = add_2(x, -yhi, -ylo)
     return yhi, ylo
 end
 
