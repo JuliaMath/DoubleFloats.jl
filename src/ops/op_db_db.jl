@@ -29,12 +29,12 @@ end
 end
 
 function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-     iszero(x) && return x
-     signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
+     iszero(HI(x)) && return x
+     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
 
      xhi, xlo = HILO(x)
      half = T(0.5)
-     dhalf = Double{T,E}(half)
+     dhalf = Double{T,E}(half, T(0.0))
 
      r = inv(sqrt(xhi))
      h = Double{T,E}(xhi * half, xlo * half)
