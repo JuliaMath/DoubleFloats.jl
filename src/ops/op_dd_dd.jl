@@ -102,38 +102,42 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = HILO(a)
-    a2 = a*a
+    a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = inv(T(3.0))
     
     a_inv = inv(a)
     tmp = cbrt(HI(a_inv))
     # initial approximation to a^(-2/3)
-    x = tmp * tmp
+    x = mul_fpfp_dd(tmp, tmp)
 
-    x3 = x*x*x
-    x3 = x3 * a2
-    x3 = one1 - x3
-    x3 = x3 * x
-    x3 = x3 * onethird
- 
-    x = x + x3
-
-    x3 = x*x*x
-    x3 = x3 * a2
-    x3 = one1 - x3
-    x3 = x3 * x
-    x3 = x3 * onethird
- 
-    x = x + x3
-        
-    ax = a * x
-    x3 = x * x * x
-    x3 = x3 * a
-    x3 = a - x3
-    x3 = x3 * x
-    x3 = x3 * onethird
+    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_dddd_dd(x3, a2)
+    x3 = sub_fpdd_dd(one1, x3)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_ddfp_dd(x3, onethird)
     
-    ax = ax * x3
+    x = add_dddd_dd(x, x3)
+    
+    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_dddd_dd(x3, a2)
+    x3 = sub_fpdd_dd(one1, x3)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_ddfp_dd(x3, onethird)
+    
+    x = add_dddd_dd(x, x3)
+    
+    ax = mul_dddd_dd(a, x)
+    
+    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_dddd_dd(x3, a)
+    x3 = sub_dddd_dd(a, x3)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_ddfp_dd(x3, onethird)
+    
+    ax = mul_dddd_dd(ax, x3)
     return ax
 end
