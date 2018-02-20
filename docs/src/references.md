@@ -14,7 +14,12 @@ V. Popescu.
 Towards fast and certified multiple-precision librairies.
 2017, thesis.
 ```
-&nbsp; &nbsp; &rarr;  https://hal.archives-ouvertes.fr/tel-01534090/document      
+&nbsp; &nbsp; &rarr;  https://hal.archives-ouvertes.fr/tel-01534090/document
+&nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbsoftware/mpfun-mpfr-v07.tar.gz
+
+```
+```
+
 
 ```
 [Faithful Floats]
