@@ -2,7 +2,7 @@ import Base: floor, ceil, trunc, fld, cld
 
 #export spread, tld, sld
 
-function floor(x::Double{T,E}) where {T<:Real,E<:Emphasis}
+function floor(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
@@ -16,7 +16,7 @@ function floor(x::Double{T,E}) where {T<:Real,E<:Emphasis}
 end
 
 
-function ceil(x::Double{T,E}) where {T<:Real,E<:Emphasis}
+function ceil(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
@@ -29,7 +29,7 @@ function ceil(x::Double{T,E}) where {T<:Real,E<:Emphasis}
     end
 end
 
-function trunc(x::Double{T,E}) where {T<:Real,E<:Emphasis}
+function trunc(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
@@ -49,7 +49,7 @@ the nearest integer to x, away from zero
 
 spread complements trunc()
 """
-function spread(x::Double{T,E}) where {T<:Real,E<:Emphasis}
+function spread(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
@@ -76,7 +76,7 @@ Spread the result of x/y.
 
 for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
-        function $F(x::Double{T,E}, y::T) where {T<:Real,E<:Emphasis}
+        function $F(x::Double{T,E}, y::T) where {T<:AbstractFloat,E<:Emphasis}
             z = x / y
             return $G(z)
         end
