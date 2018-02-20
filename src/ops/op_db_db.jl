@@ -28,29 +28,7 @@ end
     return Double(E, hi, lo)
 end
 
-function root2_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-     iszero(HI(x)) && return x
-     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
-
-     xhi, xlo = HILO(x)
-     half = T(0.5)
-     dhalf = Double{T,E}(half, T(0.0))
-
-     r = inv(sqrt(xhi))
-     h = Double{T,E}(xhi * half, xlo * half)
-
-     r2 = r * r
-     hr2 = h * r2
-     radj = dhalf - hr2
-     radj = radj * r
-     r = r + radj
-
-     r2 = r * r
-     hr2 = h * r2
-     radj = dhalf - hr2
-     radj = radj * r
-     r = r + radj
-
-     r = r * x
-     return r
+@inline function cbrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = cbrt_dd_dd(HILO(x))
+    return Double(E, hi, lo)
 end
