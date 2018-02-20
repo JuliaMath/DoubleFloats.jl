@@ -40,7 +40,7 @@ function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
 end
 =#
 function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    return DWInvDW3(HI(x), LO(x)
+    return DWInvDW3(HI(x), LO(x))
 end
 
 @inline function inv_dd_dd_fast(y::Tuple{T,T}) where T<:AbstractFloat
