@@ -41,14 +41,13 @@ function invinv(n, val)
     end
     return relative_ulp(val, v)
 end
-
-function(n, aply::Vector{Function}, unaply::Vector{Function}, val1, val2)
-    v1 = val1; v2 = val2; v=val1;
-    for fn in aply
-        v = fn(v,v2)
-    end
-    for fn in unaply
-        v = fn(v, v2)
-     end
-    return relative_ulp(v1, v)
-end
+function aua(n, aply::Vector{Function}, unaply::Vector{Function}, val1, val2)
+           v1 = val1; v2 = val2; v=val1; for i in 1:n
+           for fn in aply
+               v = fn(v,v2); 
+           end
+           for fn in unaply
+               v = fn(v, v2); 
+            end; end
+           return relative_ulp(v1, v)
+       end
