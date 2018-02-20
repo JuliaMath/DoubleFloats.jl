@@ -9,8 +9,10 @@ Every function that is imported from Base.Math and overloaded in order to just w
 `Doubles` will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
 
-- `Double` is the accuracy stalwart.  The algorithms and refinements that apply when used with reasonably
-sized values, should limit the accrual of relative error from any basic arithmetic operation 
+- `Double` is the accuracy stalwart.  The algorithms and refinements that apply    
+when used with reasonably sized values, should limit the accrual of relative error    
+from any basic arithmetic operation 
 
-- `FastDoubles` do not have this way of working; instead, they offer a more performant alternative.
-With computations that are heavily reliant upon elementary functions, `FastDoubles` are helpful.
+- `FastDoubles` do not have this way of working; instead, they offer a more    
+performant alternative. With computations that are heavily reliant upon    
+elementary functions, `FastDoubles` are helpful.
