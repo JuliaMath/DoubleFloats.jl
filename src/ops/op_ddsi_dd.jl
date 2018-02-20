@@ -17,7 +17,7 @@ function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
     n_fp = T(n)
     n_inv = inv_fp_dd(n_fp)
     # initial approximation
-    x = inv(hi)^(n_inv)
+    x = inv(hi)^(HI(n_inv))
     
     m = n
     xon = dvi_ddfp_dd(x, n_fp)
