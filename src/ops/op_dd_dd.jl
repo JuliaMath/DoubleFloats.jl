@@ -81,38 +81,59 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     return r
 end
 
+#=
+    from mpfun90.f
+
+cuberoot(A) = A * inv(cuberootsquared(A))
+
+invcuberootsquared(A) is found iteratively using Newton's method with a final approximation from Karp
+
+   adjustx[k] = ((1- x[k]^3 * A^2)*x[k])/3
+   x[k+1] = x[k] + adjustx[k]
+    ...
+   x[n-1] = x[n-2] + adjustx[n-2]
+   x[n] = x[n-1] + adjustx[n-1]
+
+   cuberoot(A) = (A * x[n]) + ((A - (A * x[n])^3)) * x[n] / 3)
+
 # x := x - x * (x^3 - a) / (2*x^3 + y)
 # x -= ( x - (z/(x*x)))*(1/3)
+=#
 
-function cbrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    iszero(HI(x)) && return x
-    # signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
-
-    third = T(inv(3.0))
-    dthird = inv(Double{T,E}(T(3.0), zero(T)))
-
-    r = inv(cbrt(HI(x)))
-    h = Double{T,E}(HI(x) * third, LO(x) * third)
-
-    r2 = r * r
-    zr2 = x/r2
-    zr2 = x - zr2
-    zr2 = zr2 * dthird
-    r = r - zr2
-   
-     r2 = r * r
-    zr2 = x/r2
-    zr2 = x - zr2
-    zr2 = zr2 * dthird
-    r = r - zr2
-   
-     r2 = r * r
-    zr2 = x/r2
-    zr2 = x - zr2
-    zr2 = zr2 * dthird
-    r = r - zr2
-   
-    #r = r * x
-
-    return r, r*x, r*x*x
-end
+function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
+    hi, lo = HILO(a)
+    a2 = a*a
+    one1 = one(T)
+    onethird = inv(T(3.0))
+    
+    a_inv = inv(a)
+    tmp = cbrt(HI(a_inv))
+    # initial approximation to a^(-2/3)
+    x = tmp * tmp
+    
+    x3 = x*x*x
+    x3 = x3 * a2
+    x3 = one1 - x3
+    x3 = x3 * x
+    x3 = x3 * onethird
+ 
+    x = x + x3
+    
+    x3 = x*x*x
+    x3 = x3 * a2
+    x3 = one1 - x3
+    x3 = x3 * x
+    x3 = x3 * onethird
+ 
+    x = x + x3
+        
+    ax = a * x
+    x3 = x * x * x
+    x3 = x3 * a
+    x3 = a - x3
+    x3 = x3 * x
+    x3 = x3 * onethird
+    
+    ax = ax * x3
+    return ax
+end    
