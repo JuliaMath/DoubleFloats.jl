@@ -64,17 +64,17 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     r = inv(sqrt(HI(x)))
     h = (HI(x) * half, LO(x) * half)
 
-    r2 = r * r
-    hr2 = h * r2
-    radj = dhalf - hr2
-    radj = radj * r
-    r = r + radj
+    r2 = mul_dddd_dd(r, r)
+    hr2 = mul_dddd_dd(h, r2)
+    radj = sub_fpdd(half, hr2)
+    radj = mul_ddfp_dd(radj, r)
+    r = add_fpdd_dd(r, radj)
 
-    r2 = r * r
-    hr2 = h * r2
-    radj = dhalf - hr2
-    radj = radj * r
-    r = r + radj
+    r2 = mul_dddd_dd(r, r)
+    hr2 = mul_dddd_dd(h, r2)
+    radj = sub_fpdd(half, hr2)
+    radj = mul_dddd_dd(radj, r)
+    r = add_dddd_dd(r, radj)
 
     r = r * x
 
