@@ -18,7 +18,8 @@ end
 import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
-             isinteger, isodd, iseven, zero, one
+             isinteger, isodd, iseven, zero, one,
+             floor, ceil, trunc, div, fld, cld, rem, mod 
 
 if VERSION >= v"0.7.0-"
     import Base:isone
