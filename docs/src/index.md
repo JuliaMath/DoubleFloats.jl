@@ -1,17 +1,16 @@
 # DoubleFloats
 
 
-~~~~
 
-- Use `Double` and `FastDouble` to obtain reliable `Float64` and `Float32` values.
 
-```julia
-using DoubleFloats
+- ## [Looking Ahead](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
+- ## [General Guidance](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/appropriate.md)
 
-result = Float64.(calculate_result(x::Matrix{Double}))
+- ## [References](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
 
-# or
 
-result = HI(calculate_result(x::Matrix{Double}))
 
-```
+- ## [Looking Ahead](https://github.com/JuliaMath/DoubleFloats.jl/docs/src/lookingahead.md)
+- ## [General Guidance](https://github.com/JuliaMath/DoubleFloats.jl/docs/src/appropriate.md)
+
+- ## [References](https://github.com/JuliaMath/DoubleFloats.jl/docs/src/references.md)
