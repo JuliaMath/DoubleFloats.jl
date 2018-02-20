@@ -16,3 +16,7 @@ should limit the accrual of relative error from any basic arithmetic operation
 - `FastDoubles` do not have this way of working.    
 They offer a more performant alternative. With computations that are heavily    
 reliant upon elementary functions, `FastDoubles` are helpful and resourceful.
+
+----
+
+## [Appropriate Use](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/appropriate.md)
