@@ -62,8 +62,8 @@ It is much easier to be at ease with one's own well-founded importances when one
 ### what it is
 
 `FastDouble` is used interchangably with `Double`.  These are _sticky_ numerical types, feeding
-forward `FastDouble`s will continue calculation with `FastDoubles`.  Providing as the parametric
-form as `Doubles` will compute using `Doubles`. 
+forward `FastDouble`s will continue calculation with `FastDoubles`.  Providing `Doubles` for the
+parametrics will causally entail using `Doubles`.
 
 ### how it is used
 
