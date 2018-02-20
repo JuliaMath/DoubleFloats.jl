@@ -43,7 +43,7 @@ function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
     axn = mul_dddd_dd(a, xpn)
     axn = sub_fpdd_dd(one1, axn)
     xon = mul_dddd_dd(xon, axn)
-    x = add_fpdd_dd(x, xon)
+    x = add_dddd_dd(x, xon)
     
     m = n
     xon = dvi_ddfp_dd(x, n_fp)
@@ -56,7 +56,7 @@ function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
     axn = mul_dddd_dd(a, xpn)
     axn = sub_fpdd_dd(one1, axn)
     xon = mul_dddd_dd(xon, axn)
-    x = add_fpdd_dd(x, xon)
+    x = add_dddd_dd(x, xon)
     
     x = inv_dd_dd(x)
     return x
