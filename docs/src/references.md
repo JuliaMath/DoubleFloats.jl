@@ -23,9 +23,10 @@ A Thread-Safe Arbitrary Precision Computation Package
 David H. Bailey ∗
 March 20, 2017
 ```
-&nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbpapers/mpfun2015.pdf
-&nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbsoftware/mpfun-fort-v15.tar.gz
+&nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbpapers/mpfun2015.pdf    
+&nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbsoftware/mpfun-fort-v15.tar.gz    
 &nbsp; &nbsp; &rarr;  http://www.davidhbailey.com/dhbsoftware/mpfun-mpfr-v07.tar.gz
+
 
 
 ```
