@@ -47,6 +47,16 @@ function TwoSum(a::T, b::T) where {T<:AbstractFloat}
     return s, t
 end
 
+function TwoDiff(a::T, b::T) where {T<:AbstractFloat}
+    s  = a - b
+    a1 = s + b
+    b1 = s - a1
+    da = a - a1
+    db = b - b1
+    t  = da + db
+    return s, t
+end
+
 # Algorithm 3 in ref: error-free transformation
 
 @inline function Fast2Mult(a::T, b::T) where {T<:AbstractFloat}
@@ -57,8 +67,15 @@ end
 
 # Algorithm 4 in ref: relerr 2u²
 
-@inline function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     sₕᵢ, sₗₒ = TwoSum(xₕᵢ, y)
+    v = xₗₒ + sₗₒ
+    zₕᵢ, zₗₒ = TwoSum(sₕᵢ, v)
+    return zₕᵢ, zₗₒ
+end
+
+function DWMinusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+    sₕᵢ, sₗₒ = TwoDiff(xₕᵢ, y)
     v = xₗₒ + sₗₒ
     zₕᵢ, zₗₒ = TwoSum(sₕᵢ, v)
     return zₕᵢ, zₗₒ
@@ -69,6 +86,16 @@ end
 function AccurateDWPlusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    sₕᵢ, sₗₒ = TwoSum(xₕᵢ, yₕᵢ)
    tₕᵢ, tₗₒ = TwoSum(xₗₒ, yₗₒ)
+   c = sₗₒ + tₕᵢ
+   vₕᵢ, vₗₒ = Fast2Sum(sₕᵢ, c)
+   w = tₗₒ + vₗₒ
+   zₕᵢ, zₗₒ = Fast2Sum(vₕᵢ, w)
+   return zₕᵢ, zₗₒ
+end
+
+function AccurateDWMinusDW(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
+   sₕᵢ, sₗₒ = TwoDiff(xₕᵢ, yₕᵢ)
+   tₕᵢ, tₗₒ = TwoDiff(xₗₒ, yₗₒ)
    c = sₗₒ + tₕᵢ
    vₕᵢ, vₗₒ = Fast2Sum(sₕᵢ, c)
    w = tₗₒ + vₗₒ
