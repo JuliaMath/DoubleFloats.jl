@@ -140,15 +140,17 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
         
     ax = mul_dddd_dd(a, x)
     
-    return ax
+    # return ax
+    #                                      amax3
+    #                    ax      +     (a  -  ax^3) * x /3
+    #   cuberoot(A) = (A * x[n]) + ((A - (A * x[n])^3)) * x[n] / 3)
+
+    ax3 = mul_dddd_dd(ax, ax)
+    ax3 = mul_dddd_dd(ax3, ax)
+    amax3 = sub_dddd_dd(a, ax3)
+    amax3 = mul_dddd_dd(amax3, x)
+    amax3 = mul_ddfp_dd(amax3, onethird)
     
-    x3 = mul_dddd_dd(x,x)
-    x3 = mul_dddd_dd(x3, x)
-    x3 = mul_dddd_dd(x3, a)
-    x3 = sub_dddd_dd(a, x3)
-    x3 = mul_dddd_dd(x3, x)
-    x3 = mul_ddfp_dd(x3, onethird)
-    
-    ax = mul_dddd_dd(ax, x3)
+    ax = add_dddd_dd(ax, amax3)
     return ax
 end
