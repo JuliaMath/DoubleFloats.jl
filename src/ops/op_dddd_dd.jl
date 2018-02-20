@@ -39,12 +39,21 @@ end
     return hi, lo
 end
 
+#=
+# reltime 60
 @inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     yinv = inv_dd_dd(y)
     hi, lo = mul_dddd_dd(x, yinv)
     return hi, lo
 end
+=#
+# reltime 107
 
+@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return DWDivDW3(HI(x), LO(x), HI(y), LO(y))
+end
+
+# reltime 40
 
 @inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
