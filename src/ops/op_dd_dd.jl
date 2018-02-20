@@ -31,12 +31,16 @@ function inv_dd_dd_itr(x::Tuple{T,T}, est::Tuple{T,T}) where {T<:AbstractFloat}
     est = add_dddd_dd(est,err)
     return est
 end
-
+#=
 function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     est = (inv(x[1]), zero(T))
     est = inv_dd_dd_itr(x, est)
     est = inv_dd_dd_itr(x, est)
     return est
+end
+=#
+function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
+    return DWInvDW3(HI(x), LO(x)
 end
 
 @inline function inv_dd_dd_fast(y::Tuple{T,T}) where T<:AbstractFloat
