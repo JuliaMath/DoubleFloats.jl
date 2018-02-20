@@ -9,17 +9,18 @@ These types are identical in coverage and compatibility. Any function that knows
 Every function that is imported from Base.Math and overloaded in order to just work and work well with
 `Double`s will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
-----
 
-> ### Double
 
-### what it is
+### Double
+
 
 `Double` is the accuracy stalwart.  The algorithms and refinements that apply when used with reasonably
 sized values, should limit the accrual of relative error from any basic arithmetic operation to 10⋅𝘂²,    
 where 𝘂 is the relative rounding unit, the unit_in_the_last_place of the significand, often `eps(x)/2`.   
 It is possible to accrue relative error steadily; so some experimentation guided algorithmic selection.
 At worst, a sequence of 100_000 arithmetic operations might admit a relative error of 100_000 * 10⋅𝘂².
+
+### what it is
 
 What is that? 𝘂 is the last bit of the significand as a quantity, so a result that has a relative error
 of 1_000_000⋅𝘂 is as a report that the final `ceil(Int, log2(1_000_000))` bits of the result's significand
@@ -36,9 +37,9 @@ accrued relative error does eat into the number of reliable bits in this second 
 Nonetheless, if your use requires less than one million successive arithimetic operations, the
 result obtained is reliable as a Float64 or as a Float32.
 
-----
+~~~~~
 
-> ## FastDouble
+## FastDouble
 
 `FastDoubles` do not have this way of working; instead, they offer a more performant alternative.
 With computations that are heavily reliant upon elementary functions, `FastDoubles` are helpful.
@@ -49,7 +50,7 @@ With computations that are heavily reliant upon elementary functions, `FastDoubl
 
 ### how it is used
 
-.   
+
 
 
 #### the basic arithmetic operations
