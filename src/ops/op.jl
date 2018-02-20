@@ -18,6 +18,7 @@ negabs(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = negabs_db_db(x)
 inv(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = inv_db_db(x)
 
 sqrt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = sqrt_db_db(x)
+cbrt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cbrt_db_db(x)
 
 (+)(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = add_fpdb_db(x, y)
 (+)(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis} = add_dbfp_db(x, y)
