@@ -52,3 +52,23 @@ function mul(ahilo, bhilo)
     return zhi, zlo
 end
 
+#=
+#   roundnearest2(ahi,amd,alo)::(zhi,zmd)
+#   roundnearest1(amd,alo)::(carry_borrow_able,zmd)
+#   roundnearest2(ahi,amd,alo)
+#      zhi = ahi + carry_borrow_able
+#      zmd = roundnearest(alo)
+#      zhi, zmd
+=#
+
+function roundnearest(hi::T, md::T, lo::T) where {T<:AbstractFloat}
+
+end
+
+largest_significand(::Type{Float64}) = prevfloat(one(Float64))
+second_significand(::Type{Float64})  = nextfloat(one(Float64)/2)
+largest_significand(::Type{Float32}) = prevfloat(one(Float32))
+second_significand(::Type{Float32})  = nextfloat(one(Float32)/2)
+largest_significand(::Type{Float16}) = prevfloat(one(Float16))
+second_significand(::Type{Float16})  = nextfloat(one(Float16)/2)
+
