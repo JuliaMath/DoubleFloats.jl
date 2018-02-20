@@ -129,9 +129,18 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     
     x = add_dddd_dd(x, x3)
     
-    return x
+    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_dddd_dd(x3, a2)
+    x3 = sub_fpdd_dd(one1, x3)
+    x3 = mul_dddd_dd(x3, x)
+    x3 = mul_ddfp_dd(x3, onethird)
     
+    x = add_dddd_dd(x, x3)
+        
     ax = mul_dddd_dd(a, x)
+    
+    return ax
     
     x3 = mul_dddd_dd(x,x)
     x3 = mul_dddd_dd(x3, x)
