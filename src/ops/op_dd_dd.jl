@@ -110,7 +110,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     tmp = cbrt(HI(a_inv))
     # initial approximation to a^(-2/3)
     x = tmp * tmp
-    
+
     x3 = x*x*x
     x3 = x3 * a2
     x3 = one1 - x3
@@ -118,7 +118,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     x3 = x3 * onethird
  
     x = x + x3
-    
+
     x3 = x*x*x
     x3 = x3 * a2
     x3 = one1 - x3
@@ -136,4 +136,4 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     
     ax = ax * x3
     return ax
-end    
+end
