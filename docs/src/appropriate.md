@@ -49,11 +49,39 @@ result obtained is reliable as a Float64 or as a Float32.
 `FastDoubles` do not have this way of working; instead, they offer a more performant alternative.
 With computations that are heavily reliant upon elementary functions, `FastDoubles` are helpful.
 
+When your work involves significant computational time, and your computations are numerical,
+and they are sensitive, running through the work using `FastDoubles` is a good way to gain
+insight into what is to come, an with that to better select your approach and its qualifications.
+It may be that `FastDoubles` provide the scenario with ample assuredness.  Or, you may see that
+there is no need to go beyond the usual IEEE754-2008 floating point types (Float64, Float32).
+And there will be occasions wherewith `Double` is want well-met.
+
+It is much easier to be at ease with one's own well-founded importances when one sees the ease.
+
+
 ### what it is
 
-
+`FastDouble` is used interchangably with `Double`.  These are _sticky_ numerical types, feeding
+forward `FastDouble`s will continue calculation with `FastDoubles`.  Providing as the parametric
+form as `Doubles` will compute using `Doubles`. 
 
 ### how it is used
+
+It is unwise to provide a mix of `Double` and `FastDouble` to the same flow.
+
+This design provides that `Accuracy` subsume `Performance`.  Once given reason
+to prefer a more accurate valuation, there is scant likelihood that redressing this would
+be of beneift.  Should the need arise, it is quite simple to interconvert these types:
+
+```julia
+using DoubleFloats
+
+an_accurate_variable  = 4 * inv(Double(pi))
+a_performant_variable = FastDouble(golden)^2 - 1
+
+henceforth_performant = FastDouble(an_accurate_variable)
+hencefort_accurate    = Double(a_performant_variable)
+```
 
 
 
