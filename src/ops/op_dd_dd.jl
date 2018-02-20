@@ -106,7 +106,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     one1 = one(T)
     onethird = inv(T(3.0))
     
-    a_inv = inv(a)
+    a_inv = inv_dd_dd(a)
     tmp = cbrt(HI(a_inv))
     # initial approximation to a^(-2/3)
     x = mul_fpfp_dd(tmp, tmp)
