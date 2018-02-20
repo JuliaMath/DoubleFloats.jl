@@ -55,8 +55,8 @@ end
 
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    iszero(x) && return x
-    signbit(x) && throw(DomainError("sqrt(x) expects x >= 0"))
+    iszero(HI(x)) && return x
+    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
 
     half = T(0.5)
     dhalf = Double{T,E}(half, zero(T))
