@@ -104,7 +104,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = HILO(a)
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
-    onethird = inv(T(3.0))
+    onethird = (0.3333333333333333, 1.850371707708594e-17)
     
     a_inv = inv_dd_dd(a)
     tmp = cbrt(HI(a_inv))
@@ -116,7 +116,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)
     x3 = mul_dddd_dd(x3, x)
-    x3 = mul_ddfp_dd(x3, onethird)
+    x3 = mul_dddd_dd(x3, onethird)
     
     x = add_dddd_dd(x, x3)
     
@@ -125,7 +125,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)
     x3 = mul_dddd_dd(x3, x)
-    x3 = mul_ddfp_dd(x3, onethird)
+    x3 = mul_dddd_dd(x3, onethird)
     
     x = add_dddd_dd(x, x3)
     
@@ -134,7 +134,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)
     x3 = mul_dddd_dd(x3, x)
-    x3 = mul_ddfp_dd(x3, onethird)
+    x3 = mul_dddd_dd(x3, onethird)
     
     x = add_dddd_dd(x, x3)
         
@@ -149,7 +149,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     ax3 = mul_dddd_dd(ax3, ax)
     amax3 = sub_dddd_dd(a, ax3)
     amax3 = mul_dddd_dd(amax3, x)
-    amax3 = mul_ddfp_dd(amax3, onethird)
+    amax3 = mul_dddd_dd(amax3, onethird)
     
     ax = add_dddd_dd(ax, amax3)
     return ax
