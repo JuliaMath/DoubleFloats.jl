@@ -10,7 +10,15 @@ Rapport de recherche n 5702 — Septembre 2005 — 67 pages
 
 # Algorithm 3.3
 
-function renorm3(hi::T, md::T, lo::T) where {T<:AbstractFloat}
+function renorm(hi::T, md::T, lo::T) where {T<:AbstractFloat}
+    md, lo = add_2(md, lo)
+    hi, m  = add_2(hi, md)
+    md, lo = add_2(m,  md)
+    return hi, md, lo
+end
+
+
+function renorm_hilo(hi::T, md::T, lo::T) where {T<:AbstractFloat}
     md, lo = add_2(md, lo)
     hi, m  = add_2(hi, md)
     md, lo = add_2(m,  md)
@@ -19,7 +27,7 @@ end
 
 # Algorithm 4.1  (relerr 4.5 .. 16 u^2)
 
-function add(ahilo, bhilo)
+function add222(ahilo, bhilo)
     ahi, alo = ahilo
     bhi, blo = bhilo
     if abs(ahi) >= abs(bhi)
@@ -40,7 +48,7 @@ end
 
 # Algorithm 4.6  (relerr 16 u^2)
 
-function mul(ahilo, bhilo)
+function mul222(ahilo, bhilo)
     ahi, alo = ahilo
     bhi, blo = bhilo
     t1, t2 = mul_2(ahi, bhi)
@@ -57,7 +65,7 @@ end
 # Algorithm 5.1 (Add33)
 # (ahi,amd,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
 
-function add(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = add_2(ahi, bhi
     t2, t3 = add_2(amd, bmd)
     t7, t4 = add_2(t1, t2)
@@ -68,14 +76,14 @@ function add(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractF
     return zhi, zmd, zlo
 end
 
-@inline add(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
-    return add(a[1], a[2], a[3], b[1], b[2], b[3])
+@inline add333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
 # Algorithm 5.2 (Add233)
 # (ahi,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
 
-function add(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+function add233(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = add_2(ahi, bhi)
     t2, t3  = add_2(alo, bmd)
     t4, t5  = add_2(t1, t2)
@@ -85,14 +93,14 @@ function add(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     return zhi, zmd, zlo
 end
 
-@inline add(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
-    return add(a[1], a[2], b[1], b[2], b[3])
+@inline add233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return add223(a[1], a[2], b[1], b[2], b[3])
 end
 
 # Algorithm 6.1
 # (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
 
-function mul_3(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
+function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = mul_2(ahi, bhi)
     t2, t3 = mul_2(ahi, blo)
     t4, t5 = mul_2(alo, bhi)
@@ -103,8 +111,8 @@ function mul_3(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     return zhi, zmd, zlo
 end
 
-@inline mul_3(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
-    return mul_3(a[1], a[2], b[1], b[2])
+@inline mul223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return mul223(a[1], a[2], b[1], b[2])
 end
 
 
