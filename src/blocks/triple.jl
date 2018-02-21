@@ -108,6 +108,20 @@ end
 end
 
 # Algorithm 6.1
-# (ahi,amd,alo) * (bhi,bmd,blo) :: (zhi,zmd,zlo)
+# (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
 
-    
+function mul_3(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = mul_2(ahi, bhi)
+    t2, t3 = mul_2(ahi, blo)
+    t4, t5 = mul_2(alo, bhi)
+    t6 = alo * blo
+    t7, t8 - add_2(t2, t3, t4, t5)
+    t9, t10 = add_2(t1, t6)
+    zmd, zlo = add_2(t7, t8, t9, t10)
+    return zhi, zmd, zlo
+end
+
+@inline mul_3(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return mul_3(a[1], a[2], b[1], b[2])
+end
+
