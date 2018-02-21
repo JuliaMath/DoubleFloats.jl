@@ -209,13 +209,22 @@ end
 @inline round_tozero(fn::Function, a::T, b::T, c::T, d::T) where {T<:AbstractFloat} =
     rounded(fn, a, b, c, d, RoundToZero)
 
-# BigFloats
+@inline round_fromzero(fn::Function, a::T) where {T<:BigFloat} =
+    rounded(fn, a, RoundFromZero)
+@inline round_fromzero(fn::Function, a::T, b::T) where {T<:BigFloat} =
+    rounded(fn, a, b, RoundFromZero)
+@inline round_fromzero(fn::Function, a::T, b::T, c::T) where {T<:BigFloat} =
+    rounded(fn, a, b, c, RoundFromZero)
+@inline round_fromzero(fn::Function, a::T, b::T, c::T, d::T) where {T<:BigFloat} =
+    rounded(fn, a, b, c, d, RoundFromZero)
+
+# other Floats
 
 @inline round_fromzero(fn::Function, a::T) where {T<:AbstractFloat} =
-    rounded(fn, a, RoundFromZero)
+    -rounded(fn, -a, RoundToZero)
 @inline round_fromzero(fn::Function, a::T, b::T) where {T<:AbstractFloat} =
-    rounded(fn, a, b, RoundFromZero)
+    -rounded(fn, -a, -b, RoundToZero)
 @inline round_fromzero(fn::Function, a::T, b::T, c::T) where {T<:AbstractFloat} =
-    rounded(fn, a, b, c, RoundFromZero)
+    -rounded(fn, -a, -b, -c, RoundToZero)
 @inline round_fromzero(fn::Function, a::T, b::T, c::T, d::T) where {T<:AbstractFloat} =
-    rounded(fn, a, b, c, d, RoundFromZero)
+    -rounded(fn, -a, -b, -c, -d, RoundToZero)
