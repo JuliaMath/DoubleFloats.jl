@@ -62,6 +62,13 @@ end
     return zhi, zlo    
 end
 
+@inline function cube_dd_dd(a::T) where {T<:AbstractFloat}
+    zhi, zlo = square_dd_dd(a)
+    zhi, zlo = mul_dddd_dd((zhi, zlo), a)
+    return zhi, zlo
+end
+
+
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     iszero(HI(x)) && return x
     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
