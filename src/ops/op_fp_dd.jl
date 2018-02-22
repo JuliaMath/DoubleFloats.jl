@@ -14,7 +14,19 @@ end
     return inv_2(x)
 end
 
+@inline function square_fp_dd(a::T) where {T<:AbstractFloat}
+    zhi = a * a
+    zlo = fma(a, a, -zhi)
+    return zhi, zlo
+end
 
+@inline function cube_fp_dd(a::T) where {T<:AbstractFloat}
+    zhi, zlo = square_fp_dd(a)
+    zhi, zlo = mul_dddd_dd((zhi, zlo), (a, zero(T)))
+    return zhi, zlo
+end
+
+    
 @inline function powr2_fp_dd(x::T) where {T<:AbstractFloat}
     return powr2_(x)
 end
