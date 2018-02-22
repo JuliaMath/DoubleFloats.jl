@@ -3,7 +3,7 @@ module DoubleFloats
 export Double, FastDouble,
        Emphasis, Accuracy, Performance,
        HI, LO, HILO,
-       sqr, cub,
+       square, cube,
        MultipartFloat, AbstractDouble,
        spread, sld, tld,
        nan, inf,
