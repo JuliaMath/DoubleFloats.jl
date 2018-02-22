@@ -23,13 +23,18 @@ end
     return Double(Performance, hi, lo)
 end
 
-@inline function sqrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    hi, lo = sqrt_dd_dd(HILO(x))
+@inline function square_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = square_dd_dd(HILO(x))
     return Double(E, hi, lo)
 end
 
-@inline function square_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    hi, lo = square_dd_dd(HILO(x))
+@inline function cube_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = cube_dd_dd(HILO(x))
+    return Double(E, hi, lo)
+end
+
+@inline function sqrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = sqrt_dd_dd(HILO(x))
     return Double(E, hi, lo)
 end
 
