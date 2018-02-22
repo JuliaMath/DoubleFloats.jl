@@ -19,6 +19,9 @@ abs(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = abs_db_db(x)
 negabs(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = negabs_db_db(x)
 inv(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = inv_db_db(x)
 
+square(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = square_db_db(x)
+cube(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cube_db_db(x)
+
 sqrt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = sqrt_db_db(x)
 cbrt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cbrt_db_db(x)
 
