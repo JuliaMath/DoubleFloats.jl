@@ -28,6 +28,11 @@ end
     return Double(E, hi, lo)
 end
 
+@inline function square_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi, lo = square_dd_dd(HILO(x))
+    return Double(E, hi, lo)
+end
+
 @inline function cbrt_db_db(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = cbrt_dd_dd(HILO(x))
     return Double(E, hi, lo)
