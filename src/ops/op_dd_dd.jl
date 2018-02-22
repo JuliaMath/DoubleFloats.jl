@@ -53,6 +53,14 @@ end
     return hi, lo
 end
 
+@inline function square_dd_dd(a::T) where {T<:AbstractFloat}
+    ahi, alo = HILO(a)
+    zhi = ahi * ahi
+    zlo = fma(ahi, ahi, -zhi)   
+    zlo += (ahi * alo) * 2
+    zlo += alo * alo
+    return zhi, zlo    
+end
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     iszero(HI(x)) && return x
