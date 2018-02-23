@@ -8,7 +8,7 @@ function ready_exponent(x::Float64)
     reinterpret(Int64, (((u >> 52) & 0x7ff) - 0x3ff))
 end
 
-function unsigned_significand(a::Float64)
+function signed_significand(a::Float64)
     fr, ex = frexp(a)
     ldexp(a, (-ex))
 end
