@@ -20,3 +20,6 @@ function sigexp(signif::Float64, exponent::Int)
 end
 
 
+function restore_biased_exponent(ex)
+   (reinterpret(UInt64, ex) + 0x3ff) << 52
+end
