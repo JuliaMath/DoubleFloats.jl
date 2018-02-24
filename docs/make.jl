@@ -18,6 +18,7 @@ makedocs(
 
 deploydocs(
     repo = "github.com/JuliaMath/DoubleFloats.jl.git",
+    julia = 0.6.2
     target = "build",
     deps = nothing,
     make = nothing,
