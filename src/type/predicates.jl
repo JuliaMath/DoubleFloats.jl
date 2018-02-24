@@ -6,17 +6,16 @@ The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 
 These are the predicates made available for use with DoubleFloats:
 
-> iszero, isone                            #  value == 0, value == 1
+> iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
   ispositive, isnegative,                  #  value >  0, value <  0
-  isnonnegative, isnonpositive,            #  value >= 0, value <= 0
-  isinteger,                               #  value == round(value) 
+  isnonnegative, isnonpositive,            #  value >= 0, value <= 0   
+  isinteger, isfractional                  #  value == round(value) 
   isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan                                    #  value is not a number (eg 0/0)
-  
-  
-  
+    
 """
+
 
 #=
 
