@@ -53,25 +53,4 @@ int arf_is_finite(arf_t x)
 
 
 function iszero(x::Double{T,E}) where {T<:FLOPT, E<:Emphasis}
-    
-   
-
-"""" numerical predicates
-
-This the predicates available to DoubleFloats, and their implementations.
-
-recognized by DoubleFloats.
-
-impl
-and with some domain extended typesnumbers
-types and only meaningful floats or domain extended for floating point values (
-that are a floating point type.
-tThe standard floating point types `Float64, Float32, Float161Floating point types valuestypes.
-.Integer types relate to Integer types and others to Floating Pontspecific to Integer types, others are meaningful
-
-
-the type of numalmost all most numerical types.
-given for values of most numerical type (almost).
-with almost all numerical types.for values of (almost) any number type.
-of values of (almost) any numerical type of numerical value of (almost) anthe ovalue one?" of a numerical value(almost) All numerical types let you ask "Is this zero?" and "Is this one?" identification of a "zero" and of a "one".
-and the additive idemotentcy `iszero(value)`, `isone(value)`, ` 
+  
