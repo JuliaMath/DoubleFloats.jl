@@ -4,33 +4,63 @@ You can ask of a number "Is this zero?" or "Is this one?" and these predicates
 (`iszero`, `isone`) will work as expected with almost all numerical types.
 The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 These are the predicates made available for use with DoubleFloats:
+
 > iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
   ispositive, isnegative,                  #  value >  0, value <  0
-  isnonnegative, isnonpositive,            #  value >= 0, value <= 0   
-  isinteger, isfractional                  #  value == round(value) 
+  isnonnegative, isnonpositive,            #  value >= 0, value <= 0
   isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
   isposinf, isneginf,                      #  value == Inf, value == -Inf
-  isnan                                    #  value is not a number (eg 0/0)
+  isnan,                                   #  value is not a number (eg 0/0)
+  issubnormal,                             #  value contains a subnormal part
+  isinteger, isfractional                  #  value == round(value)
+  iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """    
 
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    iszero(HI(x)) && iszero(LO(x))
-    
+    iszero(HI(x)) # && iszero(LO(x))
+
+isnonzero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    !iszero(HI(x)) # || !iszero(LO(x))
+
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isone(HI(x)) && iszero(LO(x))
     
-isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isnan(HI(x)) && iszero(LO(x))
-    
+ispositive(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    !signbit(HI(x)) && !iszero(HI(x))
+
+isnegative(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    signbit(HI(x))
+
+isnonnegative(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    !signbit(HI(x))
+
+isnonpositive(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    signbit(HI(x)) || iszero(HI(x))
+ 
+isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    isfinite(HI(x)) ## && isfinite(LO(x))
+
 isinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isinf(HI(x)) && iszero(LO(x))
 
-isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isfinite(HI(x)) && isfinite(LO(x))
-    
+isposinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    isinf(HI(x)) && !signbit(HI(x))
+
+isneginf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    isinf(HI(x)) && signbit(HI(x))
+
+isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    isnan(HI(x)) ## && iszero(LO(x))
+
+issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    issubnormal(LO(x)) || issubnormal(HI(x))
+
 isinteger(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isinteger(LO(x)) && isinteger(HI(x))
-    
+    isinteger((x)) && isinteger(HI(x))
+
+isfractional(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+    !isinteger(LO(x)) || !isinteger(HI(x))
+
 isodd(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     iszero(LO(x)) ? 
         isinteger(HI(x)) && isodd(HI(x)) :
@@ -41,6 +71,4 @@ iseven(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
         isinteger(HI(x)) && iseven(HI(x)) :
         isinteger(LO(x)) && iseven(LO(x))
 
-issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    issubnormal(HI(x)) || issubnormal(LO(x))
 
