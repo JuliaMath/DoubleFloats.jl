@@ -16,6 +16,6 @@ These are the predicates made available for use with DoubleFloats:
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan                                    #  value is not a number (eg 0/0)
     
-"""
+""" predicates
 
 
