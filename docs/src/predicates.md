@@ -8,7 +8,7 @@ The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 
 These are the predicates made available for use with DoubleFloats:    
 ```julia
-> iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
+  iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
   ispositive, isnegative,                  #  value >  0, value <  0
   isnonnegative, isnonpositive,            #  value >= 0, value <= 0   
   isinteger, isfractional                  #  value == round(value) 
