@@ -20,6 +20,10 @@ deploydocs(
     repo = "github.com/JuliaMath/DoubleFloats.jl.git",
     julia = 0.6.2
     target = "build",
-    deps = nothing,
+    deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
     make = nothing,
+)
+
+deploydocs(
+    # ...
 )
