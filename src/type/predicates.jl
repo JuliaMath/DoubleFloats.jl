@@ -54,3 +54,16 @@ int arf_is_finite(arf_t x)
 
 function iszero(x::Double{T,E}) where {T<:FLOPT, E<:Emphasis}
   
+
+end
+
+  iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
+  ispositive, isnegative,                  #  value >  0, value <  0
+  isnonnegative, isnonpositive,            #  value >= 0, value <= 0   
+  isinteger, isfractional                  #  value == round(value) 
+  isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
+  isposinf, isneginf,                      #  value == Inf, value == -Inf
+  isnan
+
+end
+  
