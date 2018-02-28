@@ -67,14 +67,14 @@ end
 
 # Algorithm 4 in ref: relerr 2u²  [reltime 26]
 
-function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+@inline function DWPlusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     sₕᵢ, sₗₒ = TwoSum(xₕᵢ, y)
     v = xₗₒ + sₗₒ
     zₕᵢ, zₗₒ = TwoSum(sₕᵢ, v)
     return zₕᵢ, zₗₒ
 end
 
-function DWMinusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+@inline function DWMinusFP(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     sₕᵢ, sₗₒ = TwoDiff(xₕᵢ, y)
     v = xₗₒ + sₗₒ
     zₕᵢ, zₗₒ = TwoSum(sₕᵢ, v)
@@ -106,7 +106,7 @@ end
 
 # Algorithm 7 in ref: relerr (³/₂)u² + 4u³  [reltime 18]
 
-function DWTimesFP1(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
+@inline function DWTimesFP1(xₕᵢ::T, xₗₒ::T, y::T) where {T<:AbstractFloat}
     cₕᵢ, c1 = Fast2Mult(xₕᵢ, y)
     c2 = xₗₒ * y
     tₕᵢ, t1 = Fast2Sum(cₕᵢ, c2)
