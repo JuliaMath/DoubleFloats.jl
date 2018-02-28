@@ -191,38 +191,6 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   return calc_exp(a)
 end
 
-function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	
-  is_neg = signbit(HI(a))
-  xabs = is_neg ? -a : a
-  
-  xint = Int64(HI(round(xabs, RoundDown)))
-  xfrac = xabs - T(xint)
-  
-  if 0 < xint <= 64
-     zint = exp_int[xint]
-  elseif xint === zero(Int64)
-     zint = zero(Double{T,E})
-  else
-     dv, rm = divrem(xint, 64)
-     zint = exp_int[64]^dv
-     if rm > 0
-	zint = zint * exp_int[rm]
-     end
-  end
-	
-  # exp(xfrac)
-  
-  zfrac = calc_exp_frac(xfrac)
-
-  z = zint * zfrac		
-  if is_neg
-      z = inv(z)
-  end
-	
-  return z
-end
-
 # ratio of polys from
 # https://github.com/sukop/doubledouble/blob/master/doubledouble.py
 function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
