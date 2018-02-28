@@ -49,6 +49,6 @@ include("ops/prelims.jl")
 include("ops/intfloat.jl")
 
 include("ops/op.jl")
-
+include("math/explog.jl")
 
 end # module DoubleFloats
