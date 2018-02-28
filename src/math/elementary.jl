@@ -21,7 +21,24 @@ const double_log10 = Double{Float64, Accuracy}(2.302585092994046, -2.17075622338
 const double_eps = Double{Float64, Accuracy}(4.93038065763132e-32, 0.0) # 2^-104
 
 # Precomputed values
-const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
+# inverse(factorial(3:17))
+const inv_fact = [
+   Double{Float64,Accuracy}(0.16666666666666666, 9.25185853854297e-18),    
+   Double{Float64,Accuracy}(0.041666666666666664, 2.3129646346357427e-18), 
+   Double{Float64,Accuracy}(0.008333333333333333, 1.1564823173178714e-19), 
+   Double{Float64,Accuracy}(0.001388888888888889, -5.300543954373577e-20), 
+   Double{Float64,Accuracy}(0.0001984126984126984, 1.7209558293420705e-22),
+   Double{Float64,Accuracy}(2.48015873015873e-5, 2.1511947866775882e-23),  
+   Double{Float64,Accuracy}(2.7557319223985893e-6, -1.858393274046472e-22),
+   Double{Float64,Accuracy}(2.755731922398589e-7, 2.3767714622250297e-23), 
+   Double{Float64,Accuracy}(2.505210838544172e-8, -1.448814070935912e-24),  
+   Double{Float64,Accuracy}(2.08767569878681e-9, -1.20734505911326e-25),    
+   Double{Float64,Accuracy}(1.6059043836821613e-10, 1.2585294588752098e-26),
+   Double{Float64,Accuracy}(1.1470745597729725e-11, 2.0655512752830745e-28),
+   Double{Float64,Accuracy}(7.647163731819816e-13, 7.03872877733453e-30),   
+   Double{Float64,Accuracy}(4.779477332387385e-14, 4.399205485834081e-31),  
+   Double{Float64,Accuracy}(2.8114572543455206e-15, 1.6508842730861433e-31) ]	
+
 const ninv_fact = length(inv_fact)
 
 
