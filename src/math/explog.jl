@@ -1,5 +1,5 @@
 # [exp(i) for i in 1:64]
-const exp_int[
+const exp_int = [
  Double(2.718281828459045, 1.4456468917292502e-16),
  Double(7.38905609893065, -1.7971139497839148e-16),
  Double(20.085536923187668, -1.8275625525512858e-16),
@@ -170,17 +170,65 @@ const kinv_512 = 0.001953125
 const keps_inv_512 = eps(kinv_512)
 const klog2 = Double{Float64,Accuracy}(0.6931471805599453, 2.3190468138462996e-17)
 
+
 function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-  if iszero(a)
+  if iszero(HI(a))
     return one(Double{T,E})
-  elseif isone(a)
-    return Double(E, 2.718281828459045, 1.4456468917292502e-16)
-  elseif isone(-a)
-    return Double(E, 0.36787944117144233, -1.2428753672788363e-17)
-  elseif (HI(a) <= -709.0)
-    return zero(Double{T,E})
-  elseif (HI(a) >=  709.0)
-    return inf(Double{T,E})
+  elseif isone(abs(HI(a))) && iszero(LO(a))
+    if HI(a) >= zero(T)		
+        return Double(E, 2.718281828459045, 1.4456468917292502e-16
+    else # isone(-HI(a)) && iszero(LO(a))
+        return Double(E, 0.36787944117144233, -1.2428753672788363e-17)
+    end				
+  elseif abs(HI(a)) >= 709.0
+      if (HI(a) <= -709.0)
+         return zero(Double{T,E})
+      else (HI(a) >=  709.0)
+         return inf(Double{T,E})
+      end
+  end
+
+  is_neg = isnegative(HI(a))
+  xabs = is_neg ? a : -a
+  
+  xint = round(Int64, xabs, RoundDown)
+  xfrac = xabs - xint
+  
+  if 0 < xint <= 64
+     zint = exp_int[xint]
+  elseif xint === zero(Int64)
+     zint = zero(Double{T,E})
+  else
+     dv, rm = divrem(xint, 64)
+     zint = exp_int[64]^dv
+     if rm > 0
+	zint = zint * exp_int[rm]
+     end
+  end
+
+  # exp(xfrac)
+  zfrac = Double{T,E}(mul_2(exp(HI(xfrac)), exp(LO(xfrac))))		
+  z = zint * zfrac		
+
+   return z
+end
+			
+#=
+function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+  if iszero(HI(a))
+    return one(Double{T,E})
+  elseif isone(abs(HI(a))) && iszero(LO(a))
+    if HI(a) >= zero(T)		
+        return Double(E, 2.718281828459045, 1.4456468917292502e-16
+    else # isone(-HI(a)) && iszero(LO(a))
+        return Double(E, 0.36787944117144233, -1.2428753672788363e-17)
+    end				
+  elseif abs(HI(a)) >= 709.0
+      if (HI(a) <= -709.0)
+         return zero(Double{T,E})
+      else (HI(a) >=  709.0)
+         return inf(Double{T,E})
+      end
   end
   
    #= Strategy:  We first reduce the size of x by noting that
@@ -261,7 +309,9 @@ end
   s = mul_pow2(s, Int(m))
   return s # ldexp(s, static_cast<int>(m));
 end
+		
 =#
+
 #=
 /* Logarithm.  Computes log(x) in double-double precision.
    This is a natural logarithm (i.e., base e).            */
