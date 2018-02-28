@@ -58,7 +58,7 @@ Double(hi::T) where {T<:Union{Float64, Float32, Float16}} =
     Double(Accuracy, hi, zero(T))
 Double(hi::T) where {T<:Union{Int32, Int16, Int8}} = 
     Double(Accuracy, Float64(hi), zero(Float64))
-function Double(hi::T) where {T<:Union{Int128, Int64}} = 
+Double(hi::T) where {T<:Union{Int128, Int64}} = 
     Double(Accuracy, Float64(hi), zero(Float64))
 
 Double(hi::T) where {T<:AbstractFloat} = 
