@@ -42,6 +42,9 @@ end
 function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     return DWInvDW3(HI(x), LO(x))
 end
+function inv_dd_dd_faster(x::Tuple{T,T}) where {T<:AbstractFloat}
+    return DWInvDW2(HI(x), LO(x))
+end
 
 @inline function inv_dd_dd_fast(y::Tuple{T,T}) where {T<:AbstractFloat}
     xhi, xlo = one(T), zero(T)
