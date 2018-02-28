@@ -243,7 +243,7 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    y = DoubleDouble(log(HI(x)))
+    y = Double(E, log(HI(x)), zero(T))
     z = exp(y)
     adj = (z - x) / (z + x)
     adj = mul_by_two(adj)
