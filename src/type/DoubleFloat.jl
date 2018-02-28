@@ -1,6 +1,6 @@
 import Base: Float16, Float32, Float64, BigFloat
 
-struct Double{T, E<:Emphasis} <: AbstractFloat{T}
+struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
     lo::T
 end
@@ -18,7 +18,7 @@ end
 @inline HILO(x::T) where {T<:IEEEFloat} = (x, zero(T))
 
 # this and the four inlines below are present so `zero(FastDouble)` etc just work
-struct FastDouble{T} <: AbstractFloat{T}
+struct FastDouble{T} <: AbstractDouble{T}
     hi::T
     lo::T
     
