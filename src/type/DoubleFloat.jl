@@ -1,6 +1,6 @@
 import Base: Float16, Float32, Float64, BigFloat
 
-struct Double{T, E<:Emphasis} <: AbstractDouble{T}
+struct Double{T, E<:Emphasis} <: AbstractFloat{T}
     hi::T
     lo::T
 end
@@ -18,7 +18,7 @@ end
 @inline HILO(x::T) where {T<:IEEEFloat} = (x, zero(T))
 
 # this and the four inlines below are present so `zero(FastDouble)` etc just work
-struct FastDouble{T} <: AbstractDouble{T}
+struct FastDouble{T} <: AbstractFloat{T}
     hi::T
     lo::T
     
@@ -27,12 +27,12 @@ struct FastDouble{T} <: AbstractDouble{T}
     end
 end
 
-@inline FastDouble(x::Double{T, Performance}) where {T<:AbstractDouble} = x
-@inline FastDouble(x::Double{T, Accuracy}) where {T<:AbstractDouble} =
+@inline FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat} = x
+@inline FastDouble(x::Double{T, Accuracy}) where {T<:AbstractFloat} =
     Double(Performance, HI(x), LO(x))
 
-@inline FastDouble(hi::T) where {T<:AbstractDouble} = Double{T,Performance}(hi, zero(T))
-@inline FastDouble(hi::T, lo::T) where {T<:AbstractDouble} = Double(Performance, hi, lo)
+@inline FastDouble(hi::T) where {T<:AbstractFloat} = Double{T,Performance}(hi, zero(T))
+@inline FastDouble(hi::T, lo::T) where {T<:AbstractFloat} = Double(Performance, hi, lo)
 
 
 # a fast type specific hash function helps
