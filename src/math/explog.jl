@@ -28,6 +28,10 @@ function mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, hi, lo)
 end
 
+function mul_pwr2(r::Double{T,E}, n::Real) where {T<:AbstractFloat, E<:Emphasis}
+    return Double(E, HI(r)*n, LO(r)*n)
+end
+
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
     if (n == 0)
         iszero(a) && throw(DomainError("0^0"))
@@ -110,6 +114,52 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return inf(Double{T,E})
   end
   
+   #= Strategy:  We first reduce the size of x by noting that
+
+          exp(kr + m * log(2)) = 2^m * exp(r)^k
+
+     where m and k are integers.  By choosing m appropriately
+     we can make |kr| <= log(2) / 2 = 0.347.  Then exp(r) is
+     evaluated using the familiar Taylor series.  Reducing the
+     argument substantially speeds up the convergence.       =#
+
+    m = floor(a.hi / HI(klog2) + 0.5)
+    r = mul_pwr2(a - klog2 * m, kinv_512)
+
+	#
+    p = square(r)
+    s = r + mul_pwr2(p, 0.5)
+    p *= r
+    t = p * inv_fact[1]
+
+
+ 	i = 1
+    while true
+	 	s = s + t
+	 	p = p * r
+	 	i = i + 1
+	 	t = p * inv_fact[i]
+
+	 	if abs(HI(t)) < keps_inv_512 || i > 6
+	 		break
+	 	end
+  	end
+
+    s = s + t
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = mul_by_two(s); s = s + square(s)
+    s = s + 1.0
+
+    return ldexp(s, convert(Int, m))
+end
+#=
   m = floor(HI(a) / HI(klog2) + 0.5)
   t = klog2 * m
   t = a - t
