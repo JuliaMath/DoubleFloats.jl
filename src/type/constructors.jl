@@ -12,42 +12,65 @@
 =#
 
 # these bypass the renormalization
+
 Double(::Type{Accuracy}, hi::T, lo::T) where {T<:AbstractFloat} =
     Double{T,Accuracy}(hi, lo)
 Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
     Double{T,Performance}(hi, lo)
+Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat} =
+    Double{T,Accuracy}(hi, zero(T))
+Double(::Type{Performance}, hi::T) where {T<:AbstractFloat} =
+    Double{T,Performance}(hi, zero(T))
 
 #these always normalize
 
-function Double(::Type{Accuracy}, hilo::Tuple{T, T}) where {T<:AbstractFloat}
+function Double(::Type{E}, hilo::Tuple{T, T}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = hilo
     hi, lo = add_2(hi, lo)
-    return Double(Accuracy, hi, lo)
+    return Double(E, hi, lo)
 end
+function Double(::Type{E}, hilo::Tuple{T}) where {T<:AbstractFloat, E<:Emphasis}
+    return Double(E, hi, zero(T))
+end
+#=
 function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} 
     hi, lo = hilo
     hi, lo = add_2(hi, lo)
     return Double(Performance, hi, lo)
 end
+=#
 
 #these always renormalize, require abs(hi)>=abs(lo) !!UNCHECKED!!
 
-function Double(hilo::Tuple{T, T}, ::Type{Accuracy}) where {T<:AbstractFloat}
+function Double(hilo::Tuple{T, T}, ::Type{E}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = hilo
     hi, lo = add_hilo_2(hi, lo)
     return Double(Accuracy, hi, lo)
 end
+#=
 function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
     hi, lo = hilo
     hi, lo = add_hilo_2(hi, lo)
     return Double(Performance, hi, lo)
 end
+=#
+Double(hi::T) where {T<:Union{Float64, Float32, Float16}} = 
+    Double(Accuracy, hi, zero(T))
+Double(hi::T) where {T<:Union{Int32, Int16, Int8}} = 
+    Double(Accuracy, Float64(hi), zero(Float64))
+function Double(hi::T) where {T<:Union{Int128, Int64}} = 
+    Double(Accuracy, Float64(hi), zero(Float64))
 
 Double(hi::T) where {T<:AbstractFloat} = 
     Double(Accuracy, hi, zero(T))
 Double(hi::T, lo::T) where {T<:AbstractFloat} =
-    Double(Accuracy, hi, lo)
- 
+    Double{T,Accuracy}(hi, lo)
+
+FastDouble(hi::T) where {T<:AbstractFloat} = 
+    Double(Performance, Float64(hi), Float64(hizero(T))
+FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T,Performance}(hi, lo)
+  
 @inline function bigfloat2hilo(::Type{T}, x::BigFloat) where {T<:AbstractFloat}
      hi = T(x)
      lo = T(x - hi)
