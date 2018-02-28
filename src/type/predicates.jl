@@ -14,7 +14,7 @@ These are the predicates made available for use with DoubleFloats:
   issubnormal,                             #  value contains a subnormal part
   isinteger, isfractional                  #  value == round(value)
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
-"""    
+""" predicates
 
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     iszero(HI(x)) # && iszero(LO(x))
