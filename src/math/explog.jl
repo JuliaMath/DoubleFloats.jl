@@ -300,6 +300,19 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 =#
 
+
+
+function Base.Math.expm1(a::Double)
+   u = exp(a)
+   if (u == one(Double))
+       x
+   elseif (u-1.0 == -one(Double))
+       -one(Double)
+   else
+       a*(u-1.0) / log(u)
+   end
+end
+
 function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     y = Double(E, log(HI(x)), zero(T))
     z = exp(y)
@@ -307,6 +320,24 @@ function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     adj = mul_by_two(adj)
     y = y - adj
     return y
+end
+
+
+function Base.Math.log1p(x::Double)
+    u = 1.0 + x
+    if u == one(Double)
+        x
+    else
+        log(u)*x/(u-1.0)
+    end
+end
+
+function Base.Math.log2(x::Double)
+    log(x) / log2
+end
+
+function Base.Math.log10(x::Double)
+    log(x) / log10
 end
 
 #=
