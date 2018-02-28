@@ -23,28 +23,15 @@ end
     return hi, lo
 end
 
-
-function inv_dd_dd_itr(x::Tuple{T,T}, est::Tuple{T,T}) where {T<:AbstractFloat}
-    err = mul_dddd_dd(x, est)
-    err = sub_dddd_dd((one(T), zero(T)), err)
-    err = mul_dddd_dd(est, err)
-    est = add_dddd_dd(est,err)
-    return est
-end
-#=
-function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    est = (inv(x[1]), zero(T))
-    est = inv_dd_dd_itr(x, est)
-    est = inv_dd_dd_itr(x, est)
-    return est
-end
-=#
 function inv_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
     return DWInvDW3(HI(x), LO(x))
 end
-function inv_dd_dd_faster(x::Tuple{T,T}) where {T<:AbstractFloat}
+function inv_dd_dd_fast(x::Tuple{T,T}) where {T<:AbstractFloat}
     return DWInvDW2(HI(x), LO(x))
 end
+
+#=
+   slightly faster than inv_dd_dd_fast, without analytic relerr though
 
 @inline function inv_dd_dd_fast(y::Tuple{T,T}) where {T<:AbstractFloat}
     xhi, xlo = one(T), zero(T)
@@ -55,7 +42,7 @@ end
     hi, lo = add_2(hi, lo)
     return hi, lo
 end
-
+=#
 @inline function square_dd_dd(a::T) where {T<:AbstractFloat}
     ahi, alo = HILO(a)
     zhi = ahi * ahi
