@@ -47,11 +47,6 @@ Double(hi::T) where {T<:AbstractFloat} =
     Double(Accuracy, hi, zero(T))
 Double(hi::T, lo::T) where {T<:AbstractFloat} =
     Double(Accuracy, hi, lo)
-
-FastDouble(hi::T) where {T<:AbstractFloat} =
-    Double(Performance, hi, zero(T))
-FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
-    Double(Performance, hi, lo)
  
 @inline function bigfloat2hilo(::Type{T}, x::BigFloat) where {T<:AbstractFloat}
      hi = T(x)
