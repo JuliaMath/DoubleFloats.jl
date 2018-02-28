@@ -9,6 +9,10 @@ end
 struct FastDouble{T} <: AbstractDouble{T}
     hi::T
     lo::T
+    
+    function FastDouble{T}(z::Double{T,Accuracy})
+        return Double{T,Performance}(HI(z), Lo(z))
+    end
 end
     
 @inline FastDouble(x::Double{T, Performance}) where {T<:AbstractDouble} = x
