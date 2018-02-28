@@ -188,11 +188,17 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
       end
   end
 
-  is_neg = isnegative(HI(a))
-  xabs = is_neg ? a : -a
+  return calc_exp(a)
+end
+
+function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+	
+  is_neg = signbit(HI(a))
+  xabs = is_neg ? -a : a
   
   xint = Int64(HI(round(xabs, RoundDown)))
   xfrac = xabs - T(xint)
+println(xabs, "  ", xint, " ", xfrac)
   
   if 0 < xint <= 64
      zint = exp_int[xint]
@@ -205,11 +211,16 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	zint = zint * exp_int[rm]
      end
   end
-
+println(xint, " ", xfrac)
+	
   # exp(xfrac)
   zfrac = Double{T,E}(mul_2(exp(HI(xfrac)), exp(LO(xfrac))))		
   z = zint * zfrac		
-
+println(zint," ", zfrac)
+   if is_neg
+       z = inv(z)
+   end
+	
    return z
 end
 			
