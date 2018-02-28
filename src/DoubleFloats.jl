@@ -49,9 +49,7 @@ include("ops/prelims.jl")
 include("ops/intfloat.jl")
 
 include("ops/op.jl")
-#=
-include("ops/floatarith.jl")
-include("ops/arith.jl")
-=#
+include("math/elementary.jl")
+
 
 end # module DoubleFloats
