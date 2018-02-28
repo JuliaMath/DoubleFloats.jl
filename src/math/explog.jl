@@ -213,7 +213,7 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	
   # exp(xfrac)
   
-  zfrac = calc_exp_frac(x)
+  zfrac = calc_exp_frac(xfrac)
 
   z = zint * zfrac		
   if is_neg
