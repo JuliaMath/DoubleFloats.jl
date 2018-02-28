@@ -90,7 +90,7 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   s = r + mul_pwr2(p, 0.5)
   p = p * r
   t = p * inv_fact[1]
-  int i = 0
+  i = 0
   while t > keps_inv_512 && i < 5 
     s = s + t
     p = p * r
