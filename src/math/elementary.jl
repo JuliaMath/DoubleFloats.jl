@@ -15,7 +15,8 @@ Base.ldexp(a::Double{T,E}, exp::Int) where {T<:AbstractFloat, E<:Emphasis} =
 	mul_pwr2(a::Double{T,E}, b::Float64)
 `a` * `b`,  where `b` is a power of 2.
 """
-mul_pwr2(a::Double{T,E}, b::Float64) = Double{T,E}(HI(a) * b, LO(a) * b)
+mul_pwr2(a::Double{T,E}, b::Float64) where {T<:AbstractFloat, E<:Emphasis} =
+    Double{T,E}(HI(a) * b, LO(a) * b)
 
 function Base.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    #= Strategy:  We first reduce the size of x by noting that
