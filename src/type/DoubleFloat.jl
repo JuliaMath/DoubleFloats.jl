@@ -5,6 +5,7 @@ struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     lo::T
 end
 
+# this and the four inlines below are present so `zero(FastDouble)` etc just work
 struct FastDouble{T} <: AbstractDouble{T}
     hi::T
     lo::T
