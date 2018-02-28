@@ -214,6 +214,15 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   return u
 end
 
+function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    y = DoubleDouble(log(HI(x)))
+    z = exp(y)
+    adj = (z - x) / (z + x)
+    adj = mul_by_two(adj)
+    y = y - adj
+    return y
+end
+
 #=
 /* Logarithm.  Computes log(x) in double-double precision.
    This is a natural logarithm (i.e., base e).            */
