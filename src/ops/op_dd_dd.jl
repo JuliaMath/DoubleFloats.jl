@@ -43,7 +43,7 @@ end
     return hi, lo
 end
 =#
-@inline function square_dd_dd(a::T) where {T<:AbstractFloat}
+@inline function square_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     ahi, alo = HILO(a)
     zhi = ahi * ahi
     zlo = fma(ahi, ahi, -zhi)   
@@ -52,7 +52,7 @@ end
     return zhi, zlo    
 end
 
-@inline function cube_dd_dd(a::T) where {T<:AbstractFloat}
+@inline function cube_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     zhi, zlo = square_dd_dd(a)
     zhi, zlo = mul_dddd_dd((zhi, zlo), a)
     return zhi, zlo
