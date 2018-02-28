@@ -18,6 +18,16 @@ function mul_by_2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, hi, lo)
 end
 
+function mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi += n
+    xplo += n
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo)
+end
+
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
     if (n == 0)
         iszero(a) && throw(DomainError("0^0"))
@@ -103,7 +113,7 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   m = floor(HI(a) / HI(klog2) + 0.5)
   t = klog2 * m
   t = a - t
-  r = mul_pwr2(t, kinv_512);
+  r = mul_pow2(t, -9)
   
   p = square(r)
   s = r + mul_by_half(p)
