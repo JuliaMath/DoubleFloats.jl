@@ -11,7 +11,9 @@ end
 end
 
 @inline function mul_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
-    zhi, zlo = mul_2((x, zero(T)), y)
+    ahi, alo = mul_2(x, HI(y))
+    bhi, blo = mul_2(x, LO(y))
+    zhi, zlo = add_2(ahi, bhi, alo, blo)
     return zhi, zlo
 end
 
