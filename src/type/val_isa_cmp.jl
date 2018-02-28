@@ -2,21 +2,29 @@ zero(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
     Double(E, zero(T), zero(T))
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     iszero(HI(x)) && iszero(LO(x))
+zero(::Type{Double}) = zero(Double{Float64, Accuracy})
+zero(::Type{FastDouble}) = zero(Double{Float64, Performance})
 
 one(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, one(T), zero(T))
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isone(HI(x)) && iszero(LO(x))
+one(::Type{Double}) = one(Double{Float64, Accuracy})
+one(::Type{FastDouble}) = one(Double{Float64, Performance})
 
 nan(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, T(NaN), zero(T))
 isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isnan(HI(x)) && iszero(LO(x))
+nan(::Type{Double}) = nan(Double{Float64, Accuracy})
+nan(::Type{FastDouble}) = nan(Double{Float64, Performance})
 
 inf(::Type{Double{T,E}}) where {T<:Real,E<:Emphasis} =
    Double(E, T(Inf), zero(T))
 isinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isinf(HI(x)) && iszero(LO(x))
+inf(::Type{Double}) = inf(Double{Float64, Accuracy})
+inf(::Type{FastDouble}) = inf(Double{Float64, Performance})
 
 isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isfinite(HI(x)) && isfinite(LO(x))
@@ -30,8 +38,6 @@ iseven(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
 issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     issubnormal(HI(x)) || issubnormal(LO(x))
 
-
-
 @inline (==)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (LO(x) === LO(y)) && (HI(x) === HI(y))
 @inline (!=)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (LO(x) !== LO(y)) || (HI(x) !== HI(y))
 @inline (<)(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
@@ -41,7 +47,6 @@ issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
 
 @inline isequal(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (x == y)
 @inline isless(x::Double{T,E}, y::Double{T,E}) where {T<:Real,E<:Emphasis} = (x < y)
-
 
 @inline (==)(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis} = iszero(LO(x)) && (HI(x) === y)
 @inline (==)(x::T, y::Double{T,E}) where {T<:Real, E<:Emphasis} = iszero(LO(y)) && (HI(y) === x)
