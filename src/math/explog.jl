@@ -242,7 +242,7 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
                    23465490048000.0)*x + 154872234316800.0)*x -
                    647647525324800.0)*x + 1295295050649600.0
 
-  u = u/c		
+  u = u/v		
   return u
 end
 
