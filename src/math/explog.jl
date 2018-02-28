@@ -5,7 +5,7 @@ function mul_by_half(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasi
     xplo -= 1
     hi = ldexp(frhi, xphi)
     lo = ldexp(frlo, xplo)
-    return Double(E, hi, lo
+    return Double(E, hi, lo)
 end
 
 function mul_by_2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
@@ -15,7 +15,7 @@ function mul_by_2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     xplo += 1
     hi = ldexp(frhi, xphi)
     lo = ldexp(frlo, xplo)
-    return Double(E, hi, lo
+    return Double(E, hi, lo)
 end
 
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
