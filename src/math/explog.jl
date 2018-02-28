@@ -66,6 +66,74 @@ const exp_int = [
  Double(6.235149080811617e27, 1.3899738872492847e11),
 ];
 
+const n_inv_fact = 32
+const inv_fact = Double{Float64,Accuracy}[
+  Double(1.0,0.0),
+  Double(0.5,0.0),
+  Double(0.16666666666666666,9.25185853854297e-18),
+  Double(0.041666666666666664,2.3129646346357427e-18),
+  Double(0.008333333333333333,1.1564823173178714e-19),
+  Double(0.001388888888888889,-5.300543954373577e-20),
+  Double(0.0001984126984126984,1.7209558293420705e-22),
+  Double(2.48015873015873e-5,2.1511947866775882e-23),
+  Double(2.7557319223985893e-6,-1.858393274046472e-22),
+  Double(2.755731922398589e-7,2.3767714622250297e-23),
+  Double(2.505210838544172e-8,-1.448814070935912e-24),
+  Double(2.08767569878681e-9,-1.20734505911326e-25),
+  Double(1.6059043836821613e-10,1.2585294588752098e-26),
+  Double(1.1470745597729725e-11,2.0655512752830745e-28),
+  Double(7.647163731819816e-13,7.03872877733453e-30),
+  Double(4.779477332387385e-14,4.399205485834081e-31),
+  Double(2.8114572543455206e-15,1.6508842730861433e-31),
+  Double(1.5619206968586225e-16,1.1910679660273754e-32),
+  Double(8.22063524662433e-18,2.2141894119604265e-34),
+  Double(4.110317623312165e-19,1.4412973378659527e-36),
+  Double(1.9572941063391263e-20,-1.3643503830087908e-36),
+  Double(8.896791392450574e-22,-7.911402614872376e-38),
+  Double(3.868170170630684e-23,-8.843177655482344e-40),
+  Double(1.6117375710961184e-24,-3.6846573564509766e-41),
+  Double(6.446950284384474e-26,-1.9330404233703465e-42),
+  Double(2.4795962632247976e-27,-1.2953730964765229e-43),
+  Double(9.183689863795546e-29,1.4303150396787322e-45),
+  Double(3.279889237069838e-30,1.5117542744029879e-46),
+  Double(1.1309962886447716e-31,1.0498015412959506e-47),
+  Double(3.7699876288159054e-33,2.5870347832750324e-49),
+  Double(1.216125041553518e-34,5.586290567888806e-51),
+  Double(3.8003907548547434e-36,1.7457158024652518e-52)
+];
+
+
+function exp_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+  x = a
+  x2 = x*x
+  x3 = x*x2
+  x4 = x2*x2
+  x5 = x2*x3
+  x10 = x5*x5
+  x15 = x5*x10
+  x20 = x10*x10
+  x25 = x10*x15
+
+  z = x + inv_fact[2]*x2 + inv_fact[3]*x3 + inv_fact[4]*x4
+  z2 = x5 * (inv_fact[5] + x*inv_fact[6] + x2*inv_fact[7] + x3*inv_fact[8] + x4*inv_fact[9])
+  z3 = x10 * (inv_fact[10] + x*inv_fact[11] + x2*inv_fact[12] + x3*inv_fact[13] + x4*inv_fact[14])
+  z4 = x15 * (inv_fact[15] + x*inv_fact[16] + x2*inv_fact[17] + x3*inv_fact[18] + x4*inv_fact[19])
+  z5 = x20 * (inv_fact[20] + x*inv_fact[21] + x2*inv_fact[22] + x3*inv_fact[23] + x4*inv_fact[24])
+  z6 = x25 * (inv_fact[25] + x*inv_fact[26] + x2*inv_fact[27])
+
+  ((((z6+z5)+z4)+z3)+z2)+z + one(Double{T,E})
+end
+
+@inline exp_zero_half(a::Double) = exp_taylor(a)
+
+@inline function exp_half_one(a::Double)
+    z = mul_by_half(a)
+    z = exp_zero_half(z)
+    z = square(z)
+    return z
+end
+
+
 function mul_by_half(r::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     frhi, xphi = frexp(HI(r))
     frlo, xplo = frexp(LO(r))
@@ -146,31 +214,6 @@ function Base.:(^)(r::Int, n::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    end
 end
 
-n_inv_fact = 15;
-inv_fact = [
-  Double{Float64,Accuracy}( 1.66666666666666657e-01,  9.25185853854297066e-18),
-  Double{Float64,Accuracy}( 4.16666666666666644e-02,  2.31296463463574266e-18),
-  Double{Float64,Accuracy}( 8.33333333333333322e-03,  1.15648231731787138e-19),
-  Double{Float64,Accuracy}( 1.38888888888888894e-03, -5.30054395437357706e-20),
-  Double{Float64,Accuracy}( 1.98412698412698413e-04,  1.72095582934207053e-22),
-  Double{Float64,Accuracy}( 2.48015873015873016e-05,  2.15119478667758816e-23),
-  Double{Float64,Accuracy}( 2.75573192239858925e-06, -1.85839327404647208e-22),
-  Double{Float64,Accuracy}( 2.75573192239858883e-07,  2.37677146222502973e-23),
-  Double{Float64,Accuracy}( 2.50521083854417202e-08, -1.44881407093591197e-24),
-  Double{Float64,Accuracy}( 2.08767569878681002e-09, -1.20734505911325997e-25),
-  Double{Float64,Accuracy}( 1.60590438368216133e-10,  1.25852945887520981e-26),
-  Double{Float64,Accuracy}( 1.14707455977297245e-11,  2.06555127528307454e-28),
-  Double{Float64,Accuracy}( 7.64716373181981641e-13,  7.03872877733453001e-30),
-  Double{Float64,Accuracy}( 4.77947733238738525e-14,  4.39920548583408126e-31),
-  Double{Float64,Accuracy}( 2.81145725434552060e-15,  1.65088427308614326e-31)
-]
-
-const k512 = 512.0
-const kinv_512 = 0.001953125
-const keps_inv_512 = eps(kinv_512)
-const klog2 = Double{Float64,Accuracy}(0.6931471805599453, 2.3190468138462996e-17)
-
-
 function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   if iszero(HI(a))
     return one(Double{T,E})
@@ -210,7 +253,20 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   end
 	
   # exp(xfrac)
-  zfrac = calc_exp_frac(xfrac)
+  if HI(xfrac) < 0.5
+      zfrac = exp_zero_half(xfrac)
+  elseif HI(xfrac) > 0.5
+      zfrac = exp_half_one(xfrac)
+  else
+      if LO(xfrac) == 0.0
+          zfrac = Double(1.6487212707001282, -4.731568479435833e-17)
+      elseif signbit(LO(xfrac))
+          zfrac = exp_zero_half(xfrac)
+      else
+          zfrac = exp_half_one(xfrac)
+      end		
+  end
+	
   z = HI(zint) == zero(T) ? zfrac : zint * zfrac		
   if is_neg
       z = inv(z)
@@ -219,6 +275,7 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   return z
 end
 
+#=
 # ratio of polys from
 # https://github.com/sukop/doubledouble/blob/master/doubledouble.py
 function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
@@ -241,6 +298,7 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   u = u/v		
   return u
 end
+=#
 
 function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     y = Double(E, log(HI(x)), zero(T))
