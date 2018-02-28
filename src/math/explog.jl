@@ -192,6 +192,7 @@ end
   s = mul_pow2(s, Int(m))
   return s # ldexp(s, static_cast<int>(m));
 end
+=#
 #=
 /* Logarithm.  Computes log(x) in double-double precision.
    This is a natural logarithm (i.e., base e).            */
