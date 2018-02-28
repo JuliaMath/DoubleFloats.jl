@@ -3,6 +3,23 @@
     https://github.com/saschatimme/HigherPrecision.jl/blob/master/src/double_funcs.jl
 =#
 
+# these are used internally
+const double_π = Double{Float64, Accuracy}(3.141592653589793, 1.2246467991473532e-16)
+const double_2pi = Double{Float64, Accuracy}(6.283185307179586, 2.4492935982947064e-16)
+const double_pi = Double{Float64, Accuracy}(3.141592653589793, 1.2246467991473532e-16)
+const double_pi2 = Double{Float64, Accuracy}(1.5707963267948966, 6.123233995736766e-17)
+const double_pi4 = Double{Float64, Accuracy}(0.7853981633974483, 3.061616997868383e-17)
+const double_pi16 = Double{Float64, Accuracy}(0.19634954084936207, 7.654042494670958e-18)
+const double_3pi4 = Double{Float64, Accuracy}(2.356194490192345, 9.184850993605148e-17)
+const double_nan = nan(Double{Float64, Accuracy})
+const double_inf = inf(Double{Float64, Accuracy})
+const double_e = Double{Float64, Accuracy}(2.718281828459045, 1.4456468917292502e-16)
+
+const double_log2 = Double{Float64, Accuracy}(0.6931471805599453, 2.3190468138462996e-17)
+const double_log10 = Double{Float64, Accuracy}(2.302585092994046, -2.1707562233822494e-16)
+
+const double_eps = Double{Float64, Accuracy}(4.93038065763132e-32, 0.0) # 2^-104
+
 # Precomputed values
 const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
 const ninv_fact = length(inv_fact)
