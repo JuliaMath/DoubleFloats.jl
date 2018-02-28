@@ -67,7 +67,7 @@ Double(hi::T, lo::T) where {T<:AbstractFloat} =
     Double{T,Accuracy}(hi, lo)
 
 FastDouble(hi::T) where {T<:AbstractFloat} = 
-    Double(Performance, Float64(hi), Float64(hizero(T))
+    Double(Performance, Float64(hi), zero(T))
 FastDouble(hi::T, lo::T) where {T<:AbstractFloat} =
     Double{T,Performance}(hi, lo)
   
