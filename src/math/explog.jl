@@ -1,3 +1,22 @@
+function mul_by_half(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi -= 1
+    xplo -= 1
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo
+end
+
+function mul_by_2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi += 1
+    xplo += 1
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo
+end
 
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
     if (n == 0)
@@ -87,7 +106,7 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   r = mul_pwr2(t, kinv_512);
   
   p = square(r)
-  s = r + mul_pwr2(p, 0.5)
+  s = r + mul_by_half(p)
   p = p * r
   t = p * inv_fact[1]
   i = 0
@@ -99,15 +118,15 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   end
   
   s = s + t
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
-  s = mul_pwr2(s, 2.0); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
+  s = mul_by_2(s); s = s + square(s)
   s = s + 1.0
 
   s = mul_pwr2(s, m)
