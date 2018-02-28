@@ -11,7 +11,7 @@ struct FastDouble{T} <: AbstractDouble{T}
     lo::T
     
     function FastDouble{T}(z::Double{T,Accuracy}) where {T}
-        return Double{T,Performance}(HI(z), Lo(z))
+        return Double{T,Performance}(HI(z), LO(z))
     end
 end
     
