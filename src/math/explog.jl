@@ -198,7 +198,6 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   
   xint = Int64(HI(round(xabs, RoundDown)))
   xfrac = xabs - T(xint)
-println(xabs, "  ", xint, " ", xfrac)
   
   if 0 < xint <= 64
      zint = exp_int[xint]
@@ -211,19 +210,42 @@ println(xabs, "  ", xint, " ", xfrac)
 	zint = zint * exp_int[rm]
      end
   end
-println(xint, " ", xfrac)
 	
   # exp(xfrac)
-  zfrac = Double{T,E}(mul_2(exp(HI(xfrac)), exp(LO(xfrac))))		
+  
+  zfrac = calc_exp_frac(x)
+
   z = zint * zfrac		
-println(zint," ", zfrac)
-   if is_neg
-       z = inv(z)
-   end
+  if is_neg
+      z = inv(z)
+  end
 	
-   return z
+  return z
 end
-			
+
+# ratio of polys from
+# https://github.com/sukop/doubledouble/blob/master/doubledouble.py
+function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+  u = (((((((((((x +
+                   156.0)*x + 12012.0)*x +
+                   600600.0)*x + 21621600.0)*x +
+                   588107520.0)*x + 12350257920.0)*x +
+                   201132771840.0)*x + 2514159648000.0)*x +
+                   23465490048000.0)*x + 154872234316800.0)*x +
+                   647647525324800.0)*x + 1295295050649600.0
+
+   v = (((((((((((x -
+                   156.0)*x + 12012.0)*x -
+                   600600.0)*x + 21621600.0)*x -
+                   588107520.0)*x + 12350257920.0)*x -
+                   201132771840.0)*x + 2514159648000.0)*x -
+                   23465490048000.0)*x + 154872234316800.0)*x -
+                   647647525324800.0)*x + 1295295050649600.0
+
+  u = u/c		
+  return u
+end
+
 #=
 function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   if iszero(HI(a))
