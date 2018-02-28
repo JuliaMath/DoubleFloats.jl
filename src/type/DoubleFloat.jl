@@ -5,21 +5,6 @@ struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     lo::T
 end
 
-# this and the four inlines below are present so `zero(FastDouble)` etc just work
-struct FastDouble{T} <: AbstractDouble{T}
-    hi::T
-    lo::T
-    
-    function FastDouble{T}(z::Double{T,Accuracy}) where {T}
-        return Double{T,Performance}(HI(z), LO(z))
-    end
-end
-    
-@inline FastDouble(x::Double{T, Performance}) where {T<:AbstractDouble} = x
-
-@inline FastDouble(hi::T) where {T<:AbstractDouble} = Double{T,Performance}(hi, zero(T))
-@inline FastDouble(hi::T, lo::T) where {T<:AbstractDouble} = Double(Performance, hi, lo)
-
 @inline HI(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
 @inline LO(x::Double{T,E}) where {T,E<:Emphasis} = x.lo
 @inline HILO(x::Double{T,E}) where {T,E<:Emphasis} = (x.hi, x.lo)
@@ -31,6 +16,24 @@ end
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(T)
 @inline HILO(x::T) where {T<:IEEEFloat} = (x, zero(T))
+
+# this and the four inlines below are present so `zero(FastDouble)` etc just work
+struct FastDouble{T} <: AbstractDouble{T}
+    hi::T
+    lo::T
+    
+    function FastDouble(z::FastDouble{T}) where {T}
+        return new{T}(HI(z), LO(z))
+    end
+end
+
+@inline FastDouble(x::Double{T, Performance}) where {T<:AbstractDouble} = x
+@inline FastDouble(x::Double{T, Accuracy}) where {T<:AbstractDouble} =
+    Double(Performance, HI(x), LO(x))
+
+@inline FastDouble(hi::T) where {T<:AbstractDouble} = Double{T,Performance}(hi, zero(T))
+@inline FastDouble(hi::T, lo::T) where {T<:AbstractDouble} = Double(Performance, hi, lo)
+
 
 # a fast type specific hash function helps
 import Base: hash, hx, fptoui
