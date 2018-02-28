@@ -4,7 +4,7 @@
 =#
 
 # Precomputed values
-const inv_fact = [DoubleFloat64(1.0 / BigFloat(factorial(k))) for k = 3:17]
+const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
 const ninv_fact = length(inv_fact)
 
 
@@ -33,7 +33,7 @@ function Base.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	if HI(a) ≥ 709.0
-		convert(DoubleFloat64, Inf)
+		inf(Double)
 	end
 
     if iszero(a)
@@ -408,7 +408,7 @@ function Base.atan2(y::Double{T,E}, x::Double{T,E}) where {T<:AbstractFloat, E<:
 	yy = y / r
 
 	# Compute double precision approximation to atan.
-	z = DoubleFloat64(atan2(convert(Float64, y), convert(Float64, x)))
+	z = Double(atan2(convert(Float64, y), convert(Float64, x)))
 
 	if abs(xx.hi) > abs(yy.hi)
 		# Use Newton iteration 1.  z' = z + (y - sin(z)) / cos(z)
