@@ -65,7 +65,7 @@ inv_fact = [
 
 const k512 = 512.0
 const kinv_512 = 0.001953125
-const keps_inv_512 = eps(kinv_k512)
+const keps_inv_512 = eps(kinv_512)
 const klog2 = Double{Float64,Accuracy}(0.6931471805599453, 2.3190468138462996e-17)
 
 function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
