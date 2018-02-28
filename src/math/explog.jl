@@ -113,14 +113,14 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   m = floor(HI(a) / HI(klog2) + 0.5)
   t = klog2 * m
   t = a - t
-  r = t * k_inv512 # mul_pow2(t, -9)
+  r = t * kinv_512 # mul_pow2(t, -9)
   
   p = square(r)
   s = r + mul_by_half(p)
   p = p * r
   t = p * inv_fact[1]
   i = 0
-  while t > keps_inv_512 && i < 5 
+  while t > keps_inv_512 && i < 6 
     s = s + t
     p = p * r
     i = i + 1
