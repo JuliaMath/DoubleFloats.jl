@@ -176,7 +176,7 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return one(Double{T,E})
   elseif isone(abs(HI(a))) && iszero(LO(a))
     if HI(a) >= zero(T)		
-        return Double(E, 2.718281828459045, 1.4456468917292502e-16
+        return Double(E, 2.718281828459045, 1.4456468917292502e-16)
     else # isone(-HI(a)) && iszero(LO(a))
         return Double(E, 0.36787944117144233, -1.2428753672788363e-17)
     end				
@@ -191,8 +191,8 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   is_neg = isnegative(HI(a))
   xabs = is_neg ? a : -a
   
-  xint = round(Int64, xabs, RoundDown)
-  xfrac = xabs - xint
+  xint = Int64(HI(round(xabs, RoundDown)))
+  xfrac = xabs - T(xint)
   
   if 0 < xint <= 64
      zint = exp_int[xint]
