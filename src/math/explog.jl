@@ -29,7 +29,8 @@ function mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function mul_pwr2(r::Double{T,E}, n::Real) where {T<:AbstractFloat, E<:Emphasis}
-    return Double(E, HI(r)*n, LO(r)*n)
+    m = 2.0^n	
+    return Double(E, HI(r)*m, LO(r)*m)
 end
 
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
