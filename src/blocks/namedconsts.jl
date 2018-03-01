@@ -16,11 +16,13 @@ const k_inv1pi = val{:k_inv1pi} # 0.31
 const k_inv2pi = val{:k_inv2pi} # 0.15
 const k_inv3pi = val{:k_inv3pi} # 0.10
 const k_inv4pi = val{:k_inv4pi} # 0.07
+const k_inv6pi = val{:k_inv6pi} # 0.07
 
-const k_1pi2  = Val{:k_1pi2}  # 1.57..
-const k_1pi3  = Val{:k_1pi3}  # 1.04..
-const k_1pi4  = Val{:k_1pi4}  # 0.78..
-const k_1pi6  = Val{:k_1pi6}  # 0.52..
+const k_1pi2 = val{:k_1pi2} # 1pi/2
+const k_1pi3 = val{:k_1pi3} # pi/3
+const k_1pi4 = val{:k_1pi4} # pi/4
+const k_1pi6 = val{:k_1pi6} # pi/6
+
 const k_2pi3  = Val{:k_2pi3}  # 2.09..
 const k_5pi6  = Val{:k_5pi3}  # 2.61..
 
@@ -52,6 +54,3 @@ const k_tan6pi89  = Val{:k_tan6pi89}
 const k_tan31pi89 = Val{:k_tan31pi89}
 const k_tan58pi89 = Val{:k_tan58pi89}
 const k_tan83pi89 = Val{:k_tan83pi89}
-
-
-
