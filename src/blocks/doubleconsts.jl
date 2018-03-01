@@ -34,9 +34,7 @@ Double{Float64,E}(k_inv4pi) where {E<:Emphasis} =
     Double(E, 0.07957747154594767, -4.9196691687956215e-18)
 
 
-const k_1pi2  = :k_1pi2  # 1.57..
-const k_1pi3  = :k_1pi3  # 1.04..
-const k_1pi4  = :k_1pi4  # 0.78..
+
 const k_1pi6  = :k_1pi6  # 0.52..
 const k_2pi3  = :k_2pi3  # 2.09..
 const k_5pi6  = :k_5pi3  # 2.61..
