@@ -1,10 +1,10 @@
 const k_exp1     = Val{:k_exp1}     # 2.71..
 const k_expneg1  = Val{:k_expneg1}  # 0.36..
 
-const k_log2     = Val{:k_log2} # 0.69..
-const k_log10    = Val{:k_log2} # 2.30..
-const k_log10of2 = Val{:log10of2} # 0.30..
-const k_log2of10 = Val{:log2of10} # 3.32..
+const k_log2     = Val{:k_log2}     # 0.69..
+const k_log10    = Val{:k_log10}    # 2.30..
+const k_log10of2 = Val{:log10of2}   # 0.30..
+const k_log2of10 = Val{:log2of10}   # 3.32..
 
 const k_pi    = Val{:k_pi}    # 3.14...
 const k_2pi   = Val{:k_2pi}   # 6.28..
