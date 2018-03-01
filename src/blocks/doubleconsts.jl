@@ -11,14 +11,29 @@ Double{Float64,E}(k_log2of10) where {E<:Emphasis} =
 Double{Float64,E}(k_log10of2) where {E<:Emphasis} =
     Double(E, 0.3010299956639812, -2.8037281277851704e-18)
 
+Double{Float64,E}(k_pi) where {E<:Emphasis} =
+    Double(E, 3.141592653589793, 1.2246467991473532e-16)
+Double{Float64,E}(k_1pi) where {E<:Emphasis} =
+    Double(E, 3.141592653589793, 1.2246467991473532e-16)
+Double{Float64,E}(k_2pi) where {E<:Emphasis} =
+    Double(E, 6.283185307179586, 2.4492935982947064e-16)
+Double{Float64,E}(k_3pi) where {E<:Emphasis} =
+    Double(E, 9.42477796076938, 3.6739403974420594e-16)
+Double{Float64,E}(k_4pi) where {E<:Emphasis} =
+    Double(E, 12.566370614359172, 4.898587196589413e-16)
+
+Double{Float64,E}(k_invpi) where {E<:Emphasis} =
+    Double(E, 0.3183098861837907, -1.9678676675182486e-17)
+Double{Float64,E}(k_inv1pi) where {E<:Emphasis} =
+    Double(E, 0.3183098861837907, -1.9678676675182486e-17)
+Double{Float64,E}(k_inv2pi) where {E<:Emphasis} =
+    Double(E, 0.15915494309189535, -9.839338337591243e-18)
+Double{Float64,E}(k_inv3pi) where {E<:Emphasis} =
+    Double(E, 0.1061032953945969, -6.559558891727496e-18)
+Double{Float64,E}(k_inv4pi) where {E<:Emphasis} =
+    Double(E, 0.07957747154594767, -4.9196691687956215e-18)
 
 
-
-
-const k_pi    = :k_pi    # 3.14...
-const k_2pi   = :k_2pi   # 6.28..
-const k_3pi   = :k_3pi   # 9.42..
-const k_4pi   = :k_2pi   # 12.4..
 const k_1pi2  = :k_1pi2  # 1.57..
 const k_1pi3  = :k_1pi3  # 1.04..
 const k_1pi4  = :k_1pi4  # 0.78..
