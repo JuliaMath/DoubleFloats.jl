@@ -6,10 +6,17 @@ const k_log10    = Val{:k_log10}    # 2.30..
 const k_log10of2 = Val{:log10of2}   # 0.30..
 const k_log2of10 = Val{:log2of10}   # 3.32..
 
-const k_pi    = Val{:k_pi}    # 3.14...
-const k_2pi   = Val{:k_2pi}   # 6.28..
-const k_3pi   = Val{:k_3pi}   # 9.42..
-const k_4pi   = Val{:k_2pi}   # 12.4..
+const k_pi     = Val{:k_pi}     # 3.14...
+const k_1pi    = Val{:k_1pi}    # 3.14...
+const k_2pi    = Val{:k_2pi}    # 6.28..
+const k_3pi    = Val{:k_3pi}    # 9.42..
+const k_4pi    = Val{:k_4pi}    # 12.4..
+const k_invpi  = val{:k_invpi}  # 0.31
+const k_inv1pi = val{:k_inv1pi} # 0.31
+const k_inv2pi = val{:k_inv2pi} # 0.15
+const k_inv3pi = val{:k_inv3pi} # 0.10
+const k_inv4pi = val{:k_inv4pi} # 0.07
+
 const k_1pi2  = Val{:k_1pi2}  # 1.57..
 const k_1pi3  = Val{:k_1pi3}  # 1.04..
 const k_1pi4  = Val{:k_1pi4}  # 0.78..
