@@ -64,10 +64,7 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
-[pkg-0.4-img]: http://pkg.julialang.org/badges/DoubleFloats_0.4.svg
-[pkg-0.4-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.4
-[pkg-0.5-img]: http://pkg.julialang.org/badges/DoubleFloats_0.5.svg
-[pkg-0.5-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.5
+
 [pkg-0.6-img]: http://pkg.julialang.org/badges/DoubleFloats_0.6.svg
 [pkg-0.6-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.6
 [pkg-0.7-img]: http://pkg.julialang.org/badges/DoubleFloats_0.7.svg
