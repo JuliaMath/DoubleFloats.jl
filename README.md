@@ -13,7 +13,8 @@
 
 # DoubleFloats
 
-*A documentation generator for Julia.*
+*Floating point math with greater accuracy than Float32, Float64 types obtain."
+
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
