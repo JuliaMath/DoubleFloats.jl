@@ -18,7 +18,7 @@
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![][docs-stable-img]][docs-current-url]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
+| [![][docs-current-img]][docs-current-url]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
 
 
 ## Installation
