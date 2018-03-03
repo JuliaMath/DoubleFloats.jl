@@ -18,7 +18,7 @@
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![][docs-stable-img]][docs-stable-url] [![][docs-latest-img]][docs-latest-url] | [![][pkg-0.6-img]][pkg-0.6-url] [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
+| [![][docs-stable-img]][docs-current-url]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
 
 
 ## Installation
@@ -31,16 +31,14 @@ julia> Pkg.add("DoubleFloats")
 
 ## Documentation
 
-- [**STABLE**][docs-stable-url] &mdash; **most recently tagged version of the documentation.**
-- [**LATEST**][docs-latest-url] &mdash; *in-development version of the documentation.*
-
+- [**CURRENT**][docs-current-rl] &mdash; **most recently tagged version of the documentation.**
 ## Project Status
 
 The package is tested against Julia `0.6` and *current* `0.7-dev` on Linux, OS X, and Windows.
 
 ## Questions and Contributions
 
-Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url] under the `doublefloats` tag, and/or in the [JuliaMath Gitter chat room][gitter-url].
+Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Write your question using the topic `Numerics` (a "Discipline").
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests and contributing code.
 
@@ -48,11 +46,8 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats
 [gitter-url]: https://gitter.im/juliamath/users
 
-[docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
-[docs-latest-url]: https://juliamath.github.io/DoubleFloats.jl/latest
-
-[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://juliamath.github.io/DoubleFloats.jl/stable
+[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[docs-current-url]: https://juliamath.github.io/DoubleFloats.jl
 
 [travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl
