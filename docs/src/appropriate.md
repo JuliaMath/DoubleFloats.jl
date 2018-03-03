@@ -85,4 +85,10 @@ hencefort_accurate    = Double(a_performant_variable)
 - reciprocation, division, square root, cube root, fourth root
 
 
+#### elementary mathematical functions
+ - log, exp
+ - sin, cos, tan, csc, sec, cot
+ - sinh, cosh, tanh, csch, sech, coth
+
+#### inverses of the elementary functions
 
