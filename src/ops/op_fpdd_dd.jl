@@ -18,7 +18,13 @@ end
 end
 
 @inline function dvi_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
-    xinv = inv(x)
-    zhi, zlo = mul_2((xinv, zero(T)), y)
+    yinv = inv_dd_dd(y)
+    zhi, zlo = mul_fpdd_dd(x, yinv)
+    return zhi, zlo
+end
+
+@inline function dvi_fpdd_dd_fast(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
+    yinv = inv_dd_dd_fast(y)
+    zhi, zlo = mul_fpdd_dd(x, yinv)
     return zhi, zlo
 end
