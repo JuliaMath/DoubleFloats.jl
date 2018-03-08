@@ -54,7 +54,7 @@ function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
     return Double(Performance, hi, lo)
 end
 =#
-Double(hi::T) where {T<:IEEFloat} = 
+Double(hi::T) where {T<:IEEEFloat} = 
     Double(Accuracy, hi, zero(T))
 Double(hi::T) where {T<:Union{Int32, Int16, Int8}} = 
     Double(Accuracy, Float64(hi), zero(Float64))
