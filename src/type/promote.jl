@@ -16,6 +16,12 @@ Double{Float16, E}(x::AbstractFloat) where {E<:Emphasis} = Double(E, Float16(x))
 Double{Float32, E}(x::AbstractFloat) where {E<:Emphasis} = Double(E, Float32(x))
 Double{Float64, E}(x::AbstractFloat) where {E<:Emphasis} = Double(E, Float64(x))
 
+promote_rule(::Type{Double{T,E}}, ::Type{F}) where {F<:AbstractFloat, T<:AbstractFloat, E<:Emphasis} =
+    Double{T,E}
+
+convert(::Type{Double{T,E}}, x::F) where {F<:AbstractFloat, T<:AbstractFloat, E<:Emphasis} =
+    Double(E, T(x))
+
 promote_rule(::Type{Double{T,E}}, ::Type{BigFloat}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
