@@ -35,6 +35,7 @@ abstract type AbstractDouble{T} <: MultipartFloat{T} end
 
 
 include("blocks/double.jl")
+include("blocks/triple.jl")
 include("blocks/namedconsts.jl")
 
 include("traits.jl")
