@@ -37,23 +37,3 @@ Double{Float64,E}(k_2invpi) where {E<:Emphasis} =
     Double(E, 0.6366197723675814, -3.935735335036497e-17)
 Double{Float64,E}(k_4invpi) where {E<:Emphasis} =
     Double(E, 1.2732395447351628, -7.871470670072994e-17)
-
-
-const k_1pi6  = :k_1pi6  # 0.52..
-const k_2pi3  = :k_2pi3  # 2.09..
-const k_5pi6  = :k_5pi3  # 2.61..
-
-const k_pipow2 = :k_pipow2 # 9.86..
-const k_pipow3 = :k_pipow3 # 31.0..
-const k_pipow4 = :k_pipow4 # 97.4..
-const k_invpipow2 = :k_invpipow2 # 0.10..
-const k_invpipow3 = :k_invpipow3 # 0.03..
-const k_invpipow4 = :k_invpipow4 # 0.01..
-
-# [6//89, 31//89, 58//89, 83//89] .* pi (values for which sin(x), cos(x) are well tabled)
-# [0.06744, 0.3484, 0.6520, 0.9326] (approx)
-const k_6pi89  = :k_6pi89
-const k_31pi89 = :k_31pi89
-const k_58pi89 = :k_58pi89
-const k_83pi89 = :k_83pi89
-
