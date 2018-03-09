@@ -106,7 +106,7 @@ end
 
 const sinfuncs = [ x->sinq1(x), x->cosq1(x), x->-sinq1(x), x->-cosq1(x)]
 
-function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sine(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     quadrant, radians = quadrant_angle(x)
     return sinfuncs[quadrant](radians)
 end
@@ -120,13 +120,13 @@ function sinq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
     return sinx
 end
 
-@inline function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function cosine(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     y = x + d_halfpi
     quadrant, radians = quadrant_angle(y)
     return sinfuncs[quadrant](radians)
 end
 
-function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function tangent(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return sin(x) / cos(x)
 end
 
