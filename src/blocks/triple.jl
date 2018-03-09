@@ -66,7 +66,7 @@ end
 # (ahi,amd,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
 
 function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
-    zhi, t1 = add_2(ahi, bhi
+    zhi, t1 = add_2(ahi, bhi)
     t2, t3 = add_2(amd, bmd)
     t7, t4 = add_2(t1, t2)
     t6 = alo + blo
