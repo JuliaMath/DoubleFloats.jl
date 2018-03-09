@@ -134,12 +134,9 @@ end
     cosq1(Double(Accuracy,HI(radians),LO(radians)))
     
 function cosq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
-    radians < 9/64 && return cos_taylor(radians)
+    # radians < 9/64 && return cos_taylor(radians)
     
-    rad13th = radians / 13.0
-    sin13th = cos_taylor(rad13th)
-    sinx = sin13x(sin13th)
-    return sinx
+    return cos_taylor(radians)
 end
 
 
