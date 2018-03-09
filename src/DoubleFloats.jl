@@ -34,14 +34,13 @@ abstract type AbstractDouble{T} <: MultipartFloat{T} end
 
 
 include("blocks/double.jl")
+include("blocks/namedconsts.jl")
 
 include("traits.jl")
 
-include("blocks/namedconsts.jl")
+include("type/DoubleFloat.jl")
 include("blocks/doubleconsts.jl")
 
-
-include("type/DoubleFloat.jl")
 include("type/promote.jl")
 include("type/string_show.jl")
 
