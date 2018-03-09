@@ -111,6 +111,15 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return sinfuncs[quadrant](radians)
 end
 
+function sinq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
+    radians < 9/64 && return sin_taylor(radians)
+    
+    rad13th = radians / 13.0
+    sin13th = cos_taylor(rad13th)
+    sinx = sin13x(sin13th)
+    return sinx
+end
+
 @inline function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     y = x + d_halfpi
     quadrant, radians = quadrant_angle(y)
