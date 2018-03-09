@@ -44,7 +44,7 @@ function modhalfpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
 end
 
 function modqrtrpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = mul322(triple_invqrtrpi, HILO(x))
+   y = mul322(triple_inv_qrtrpi, HILO(x))
    z = fracpart(y)
    return z
 end
@@ -69,7 +69,7 @@ function modhalfpi(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function modqrtrpi(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = mul_dddd_dd(double_invqrtrpi, HILO(x))
+   y = mul_dddd_dd(double_inv_qrtrpi, HILO(x))
    z = fracpart(y)
    return z
 end 
