@@ -1,4 +1,7 @@
-import Base: promote_rule, convert
+import Base: promote_rule, promote_type, convert
+
+promote_rule(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} =
+    Double{T, Accuracy}
 
 promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
