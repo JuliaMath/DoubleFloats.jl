@@ -86,13 +86,13 @@ end
 
 Double(x::BigFloat) = Double(Accuracy, bigfloat2hilo(Float64, x)...,)
 FastDouble(x::BigFloat) = Double(Performance, bigfloat2hilo(Float64, x)...,)
-Double(x::BigFloat) where {T<:AbstractFloat} = Double(Accuracy, bigfloat2hilo(T, x)...,)
-FastDouble(x::BigFloat) where {T<:AbstractFloat} = Double(Performance, bigfloat2hilo(T, x)...,)
+Double{T}(x::BigFloat) where {T<:AbstractFloat} = Double(Accuracy, bigfloat2hilo(T, x)...,)
+FastDouble{T}(x::BigFloat) where {T<:AbstractFloat} = Double(Performance, bigfloat2hilo(T, x)...,)
 
 Double(x::BigInt) = Double(Accuracy, bigfloat2hilo(Float64, BigFloat(x))...,)
 FastDouble(x::BigInt) = Double(Performance, bigfloat2hilo(Float64, BigFloat(x))...,)
-Double(x::BigInt) where {T<:AbstractFloat} = Double(Accuracy, bigfloat2hilo(T, BigFloat(x))...,)
-FastDouble(x::BigInt) where {T<:AbstractFloat} = Double(Performance, bigfloat2hilo(T, BigFloat(x))...,)
+Double{T}(x::BigInt) where {T<:AbstractFloat} = Double(Accuracy, bigfloat2hilo(T, BigFloat(x))...,)
+FastDouble{T}(x::BigInt) where {T<:AbstractFloat} = Double(Performance, bigfloat2hilo(T, BigFloat(x))...,)
 
 function Double(hi::T) where {T<:Real}
     bf = BigFloat(hi)
