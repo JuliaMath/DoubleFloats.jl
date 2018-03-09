@@ -61,6 +61,7 @@ include("ops/prelims.jl")
 include("ops/intfloat.jl")
 
 include("ops/op.jl")
+include("math/sequences.jl")
 include("math/explog.jl")
 include("math/pi_maps.jl")
 
