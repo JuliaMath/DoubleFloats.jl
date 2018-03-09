@@ -118,7 +118,7 @@ function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 @inline sinq1(radians::Double{T,Performance}) where {T<:AbstractFloat} =
-    sinq1(Double(Accuracy,HI(radians),LO(radians))
+    sinq1(Double(Accuracy,HI(radians),LO(radians)))
     
 function sinq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
     radians < 9/64 && return sin_taylor(radians)
