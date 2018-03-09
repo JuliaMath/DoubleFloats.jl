@@ -44,6 +44,10 @@ const BigNumber    = Union{BigInt,BigFloat,Rational{BigInt}}
      return hi, lo
 end
 
+@inline function big2hilo(x::B) where {B<:BigNumber}
+     return big2hilo(Float64, x)
+end
+
 Double(::Type{E}, hi::T, lo::T) where {T<:SmallInteger, E<:Emphasis} =
     Double(E, (Float64(hi), Float64(lo)))
 Double(::Type{E}, hi::T) where {T<:SmallInteger, E<:Emphasis} =
