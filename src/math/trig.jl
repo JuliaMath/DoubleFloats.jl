@@ -1,5 +1,4 @@
 # adopted wholesale from HigherPrecision
-
 #
 # ROUNDING
 #
@@ -24,7 +23,6 @@
      Double(E, hi, lo)
 end
 
-
 # constants
 
 const d_eps = Double(4.930380657631324e-32, 0.0)
@@ -35,15 +33,15 @@ const d_nan = Double(NaN, 0.0)
 
 # Precomputed values
 
-const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
-const ninv_fact = length(inv_fact)
+const inv_factorial = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
+const ninv_factorial = length(inv_factorial)
 
 const sin_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
 const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 
 
 """
-	sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+	sin_taylor(a::Double{T,E})
 Computes sin(a) using Taylor series. Assumes |a| <= π/32.
 """
 function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
@@ -60,10 +58,10 @@ function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	r = a
 	while true
 		r *= x
-		t = r * inv_fact[i]
+		t = r * inv_factorial[i]
 		s += t
 		i += 2
-		if i > ninv_fact || abs(convert(Float64, t)) < thresh
+		if i > ninv_factorial || abs(convert(Float64, t)) < thresh
 			break
 		end
 	end
@@ -88,10 +86,10 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	i = 2
 	while true
 		r *= x
-		t = r * inv_fact[i]
+		t = r * inv_factorial[i]
 		s += t
 		i += 2
-		if i > ninv_fact || abs(convert(Float64, t)) < thresh
+		if i > ninv_factorial || abs(convert(Float64, t)) < thresh
 			break
 		end
 	end
