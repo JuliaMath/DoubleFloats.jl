@@ -3,7 +3,7 @@ import Base: promote_rule, convert
 promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
-convert(::Type{Double{T,E}}, x::Type{T}) where {T<:IEEEFloat, E<:Emphasis} =
+convert(::Type{Double{T,E}}, x::T) where {T<:IEEEFloat, E<:Emphasis} =
     Double{T,E}(x, zero(T))
 
 promote_rule(::Type{Double{T,E}}, ::Type{I}) where {I<:Integer, T<:AbstractFloat, E<:Emphasis} =
@@ -25,10 +25,7 @@ convert(::Type{Double{T,E}}, x::F) where {F<:AbstractFloat, T<:AbstractFloat, E<
 promote_rule(::Type{Double{T,E}}, ::Type{BigFloat}) where {T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
-promote_rule(::Type{Double{T,E}}, ::Type{BigInt}) where {T<:AbstractFloat, E<:Emphasis} =
-    Double{T,E}
-
-function convert(::Type{Double{T,E}}, x::Type{BigFloat}) where {T<:AbstractFloat, E<:Emphasis}
+function convert(::Type{Double{T,E}}, x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
     hi = T(x)
     lo = T(x - hi)
     return Double{T,E}(hi, lo)
@@ -40,7 +37,10 @@ function convert(::Type{BigFloat}, x::Double{T,E}) where {T<:AbstractFloat, E<:E
     return hi+lo
 end
 
-function convert(::Type{Double{T,E}}, x::Type{BigInt}) where {T<:AbstractFloat, E<:Emphasis}
+promote_rule(::Type{Double{T,E}}, ::Type{BigInt}) where {T<:AbstractFloat, E<:Emphasis} =
+    Double{T,E}
+
+function convert(::Type{Double{T,E}}, x::BigInt) where {T<:AbstractFloat, E<:Emphasis}
     return Double{T,E}(BigFloat(x))
 end
 
@@ -53,7 +53,7 @@ end
 promote_rule(::Type{Double{T,E}}, ::Type{Rational{I}}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
-function convert(::Type{Double{T,E}}, x::Type{Rational{I}}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis}
+function convert(::Type{Double{T,E}}, x::Rational{I}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis}
     numer = Double{T,E}(numerator(x))
     denom = Double{T,E}(denominator(x))
     return numer/denom
