@@ -116,7 +116,7 @@ function sinq1(radians::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, add_dddd_dd(a, b))
 end
 
-function cosq1(radians{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cosq1(radians::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi,lo = HILO(radians)
     a = mul_fpfp_db(cos(hi), cos(lo))
     b = mul_fpfp_dp(sin(hi), sin(lo))
