@@ -24,6 +24,8 @@
      Double(E, hi, lo)
 end
 
+@inline roundnearest(x::Float64) = Base.round(x)
+
 """
 	mulby_powerof2(a::DoubleFloat64, b::Float64)
 `a` * `b`,  where `b` is a power of 2.
