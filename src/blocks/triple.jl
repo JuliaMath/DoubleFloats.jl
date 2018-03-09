@@ -93,7 +93,7 @@ function add233(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     return zhi, zmd, zlo
 end
 
-@inline add233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+@inline function add233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return add223(a[1], a[2], b[1], b[2], b[3])
 end
 
