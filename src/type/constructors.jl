@@ -129,6 +129,13 @@ FastDouble(hi::T) where {T<:BigNumber} =
 FastDouble(hi::T, lo::T) where {T<:BigNumber} = 
     FastDouble(big2hilo(hi+lo)...,)
 
+Double(x::Irrational{S}) where {S<:Symbol} =
+   Double(BigFloat(x))
+FastDouble(x::Irrational{S}) where {S<:Symbol} =
+   FastDouble(BigFloat(x))
+
+
+
 
 Float64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
     Float64(HI(x)) + Float64(LO(x))
