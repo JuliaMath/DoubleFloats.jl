@@ -109,16 +109,16 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return sinfuncs[quadrant](radians)
 end
 
-function sinq1(radians)
+function sinq1(radians::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi,lo = HILO(radians)
-    a = mul_fpfp_db(sin(hi), cos(lo))
-    b = mul_fpfp_dp(cos(hi), sin(lo))
-    return a + b
+    a = mul_fpfp_dd(sin(hi), cos(lo))
+    b = mul_fpfp_dd(cos(hi), sin(lo))
+    return Double(E, add_dddd_dd(a, b))
 end
 
-function cosq1(radians)
+function cosq1(radians{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi,lo = HILO(radians)
     a = mul_fpfp_db(cos(hi), cos(lo))
     b = mul_fpfp_dp(sin(hi), sin(lo))
-    return a - b
+    return Double(E, sub_dddd_dd(a, b))
 end
