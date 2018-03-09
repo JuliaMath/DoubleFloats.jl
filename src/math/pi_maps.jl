@@ -109,6 +109,14 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return sinfuncs[quadrant](radians)
 end
 
+@inline function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    return sin(x + double_halfpi)
+end
+
+function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    return sin(x) / cos(x)
+end
+
 @inline sinq1(radians::Double{T,Performance}) where {T<:AbstractFloat} =
     sinq1(Double(Accuracy,HI(radians),LO(radians))
     
@@ -119,13 +127,6 @@ function sinq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
     sin13th = sin_taylor(rad13th)
     sinx = sin13x(sin13th)
     return sinx
-end
-
-function cosq1(radians::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    hi,lo = HILO(radians)
-    a = mul_fpfp_db(cos(hi), cos(lo))
-    b = mul_fpfp_dp(sin(hi), sin(lo))
-    return Double(E, sub_dddd_dd(a, b))
 end
 
 
