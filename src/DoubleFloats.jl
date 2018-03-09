@@ -66,5 +66,6 @@ include("ops/op.jl")
 include("math/sequences.jl")
 include("math/explog.jl")
 include("math/pi_maps.jl")
+include("math/trig.jl")
 
 end # module DoubleFloats
