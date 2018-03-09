@@ -200,7 +200,7 @@ end
       
     •    RoundDown
 =#
-
+#=
 @inline function rounded(fn::Function, a::T, 
                          mode::RoundingMode) where {T<:AbstractFloat}
      setrounding(T, mode) do
@@ -303,3 +303,4 @@ end
     -rounded(fn, -a, -b, -c, RoundToZero)
 @inline round_fromzero(fn::Function, a::T, b::T, c::T, d::T) where {T<:AbstractFloat} =
     -rounded(fn, -a, -b, -c, -d, RoundToZero)
+=#
