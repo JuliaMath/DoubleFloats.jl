@@ -76,7 +76,7 @@ function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:Abstra
     return zhi, zmd, zlo
 end
 
-@inline add333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+@inline function add333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
@@ -111,7 +111,7 @@ function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     return zhi, zmd, zlo
 end
 
-@inline mul223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+@inline function mul223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return mul223(a[1], a[2], b[1], b[2])
 end
 
