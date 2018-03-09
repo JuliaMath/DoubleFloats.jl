@@ -92,11 +92,11 @@ function quadrant_angle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     if signbit(LO(y))
         q += HI(y) > single_halfpi  
         q += HI(y) > single_1pi
-        q += HI(y) > single_threehalvespi
+        q += HI(y) > single_3halvespi
     else   
         q += HI(y) >= single_halfpi  
         q += HI(y) >= single_1pi
-        q += HI(y) >= single_threehalvespi
+        q += HI(y) >= single_3halvespi
     end
     y = modhalfpi(x)
     return q, y
