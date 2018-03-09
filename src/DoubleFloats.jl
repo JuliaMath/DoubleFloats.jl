@@ -48,6 +48,7 @@ include("type/string_show.jl")
 
 include("type/predicates.jl")
 include("type/val_isa_cmp.jl")
+include("type/parts.jl")
 
 include("ops/prelims.jl")
 include("ops/intfloat.jl")
