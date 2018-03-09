@@ -105,7 +105,7 @@ function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     t2, t3 = mul_2(ahi, blo)
     t4, t5 = mul_2(alo, bhi)
     t6 = alo * blo
-    t7, t8 - add_2(t2, t3, t4, t5)
+    t7, t8 = add_2(t2, t3, t4, t5)
     t9, t10 = add_2(t1, t6)
     zmd, zlo = add_2(t7, t8, t9, t10)
     return zhi, zmd, zlo
