@@ -1,4 +1,5 @@
 # adopted wholesale from HigherPrecision
+
 #
 # ROUNDING
 #
@@ -22,6 +23,12 @@
 
      Double(E, hi, lo)
 end
+
+"""
+	mulby_powerof2(a::DoubleFloat64, b::Float64)
+`a` * `b`,  where `b` is a power of 2.
+"""
+mulby_powerof2(a::DoubleFloat64, b::Float64) = DoubleFloat64(a.hi * b, a.lo * b)
 
 # constants
 
@@ -82,7 +89,7 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	x = -square(a)
 	r = x
-	s = 1.0 + mul_pwr2(r, 0.5)
+	s = 1.0 + mulby_powerof2(r, 0.5)
 	i = 2
 	while true
 		r *= x
@@ -390,7 +397,7 @@ function Base.sinh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 	if a > 0.05 || a < -0.05
 		ea = exp(a)
-		return mul_pwr2(ea - inv(ea), 0.5)
+		return mulby_powerof2(ea - inv(ea), 0.5)
 	end
 
 	# The computation below didn't yield a satisfying accuracy
@@ -428,7 +435,7 @@ function Base.cosh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		return one(a)
 	end
 	ea = exp(a)
-	mul_pwr2(ea + inv(ea), 0.5)
+	mulby_powerof2(ea + inv(ea), 0.5)
 end
 
 """
@@ -443,8 +450,8 @@ function sincosh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	else
 		ea = exp(a)
 		inv_ea = inv(ea)
-		s = mul_pwr2(ea - inv_ea, 0.5)
-		c = mul_pwr2(ea + inv_ea, 0.5)
+		s = mulby_powerof2(ea - inv_ea, 0.5)
+		c = mulby_powerof2(ea + inv_ea, 0.5)
 	end
 	s, c
 end
