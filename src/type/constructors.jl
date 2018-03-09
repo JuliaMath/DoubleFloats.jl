@@ -134,7 +134,57 @@ Double(x::Irrational{S}) where {S} =
 FastDouble(x::Irrational{S}) where {S} =
    FastDouble(BigFloat(x))
 
+Double{Float64}(x::T) where {T<:AbstractFloat} =
+    Double(Accuracy, (Float64(x), Float64(x-Float64(x))))
+Double{Float32}(x::T) where {T<:AbstractFloat} =
+    Double(Accuracy, (Float32(x), Float32(x-Float32(x))))
+Double{Float16}(x::T) where {T<:AbstractFloat} =
+    Double(Accuracy, (Float16(x), Float16(x-Float16(x))))
 
+function Double{Float64}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float64(xy)
+    yy = Float64(xy - xx)
+    return Double(Accuracy, (xx, yy))
+end
+function Double{Float32}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float32(xy)
+    yy = Float32(xy - xx)
+    return Double(Accuracy, (xx, yy))
+end
+function Double{Float16}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float16(xy)
+    yy = Float16(xy - xx)
+    return Double(Accuracy, (xx, yy))
+end
+    
+FastDouble{Float64}(x::T) where {T<:AbstractFloat} =
+    Double(Performance, (Float64(x), Float64(x-Float64(x))))
+FastDouble{Float32}(x::T) where {T<:AbstractFloat} =
+    Double(Performance, (Float32(x), Float32(x-Float32(x))))
+FastDouble{Float16}(x::T) where {T<:AbstractFloat} =
+    Double(Performance, (Float16(x), Float16(x-Float16(x))))
+
+function FastDouble{Float64}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float64(xy)
+    yy = Float64(xy - xx)
+    return Double(Performance, (xx, yy))
+end
+function FastDouble{Float32}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float32(xy)
+    yy = Float32(xy - xx)
+    return Double(Performance, (xx, yy))
+end
+function FastDouble{Float16}(x::T, y::T) where {T<:AbstractFloat}
+    xy = x + y
+    xx = Float16(xy)
+    yy = Float16(xy - xx)
+    return Double(Performance, (xx, yy))
+end
 
 
 Float64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
