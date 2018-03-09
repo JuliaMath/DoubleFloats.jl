@@ -1,5 +1,29 @@
 # adopted wholesale from HigherPrecision
 
+#
+# ROUNDING
+#
+@inline function Base.round(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi = round(a.hi)
+    lo = 0.0
+
+    if hi == a.hi
+        # High word is an integer already.  Round the low word.
+        lo = round(a.lo)
+
+        # Renormalize. This is needed if hi = some integer, lo = 1/2.
+        hi, lo = add_hilo_2(hi, lo)
+    else
+        # High word is not an integer.
+        if abs(hi-a.hi) == 0.5 && a.lo < 0.0
+            # There is a tie in the high word, consult the low word to break the tie.
+            hi -= 1.0
+        end
+    end
+
+     Double(E, hi, lo)
+end
+
 
 # constants
 
