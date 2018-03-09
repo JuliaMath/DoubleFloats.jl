@@ -55,5 +55,6 @@ include("ops/intfloat.jl")
 
 include("ops/op.jl")
 include("math/explog.jl")
+include("math/pi_maps.jl")
 
 end # module DoubleFloats
