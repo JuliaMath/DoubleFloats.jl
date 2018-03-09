@@ -123,7 +123,7 @@ const tan_coeff = Double{Float64,Accuracy}[
    Double(1.0597268320104654e-6, 2.3670525505213632e-24),
 ];
 
-# http://mathworld.wolfram.com/Multiple-AngleFormulas.html find Bromwichf
+# http://mathworld.wolfram.com/Multiple-AngleFormulas.html find Bromwich
 # sin(13*x) = (sin13x_numer ./ oddfact7) .* xs7(x)
 sinnumer7(n)=[n, -n*(n^2-1^2), n*(n^2-1^2)*(n^2-3^2), -n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2), n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2),-n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2),n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2)*(n^2-11^2), -n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2)*(n^2-11^2)*(n^2-13^2)];
 sin13x_numer = [13, -2184, 349440, -50319360, 6038323200, -531372441600, 25505877196800]
