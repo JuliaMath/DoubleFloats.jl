@@ -1,3 +1,7 @@
+const single_halfpi = 1.5707963267948966
+const single_1pi = 3.141592653589793
+const single_3halvespi = 4.71238898038469
+
 const triple_4pi = (12.566370614359172, 4.898587196589413e-16, -1.1979079238873359e-32)
 const double_4pi = (12.566370614359172, 4.898587196589413e-16)
 const triple_2pi = (6.283185307179586, 2.4492935982947064e-16, -5.989539619436679e-33)
@@ -26,58 +30,95 @@ const double_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18)
 
 
 function mod2pi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = mul322(triple_inv_2pi, HILO(x))
-   y = fracpart(y)
-   z = mul322(triple_2pi, y)
-   return z
+    y = mul322(triple_inv_2pi, HILO(x))
+    y = fracpart(y)
+    z = mul322(triple_2pi, y)
+    return z
 end
 
 function modpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = mul322(triple_inv_1pi, HILO(x))
-   y = fracpart(y)
-   z = mul322(triple_1pi, y)
-   return z
+    y = mul322(triple_inv_1pi, HILO(x))
+    y = fracpart(y)
+    z = mul322(triple_1pi, y)
+    return z
 end
 
 function modhalfpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = mul322(triple_inv_halfpi, HILO(x))
-   y = fracpart(y)
-   z = mul322(triple_halfpi, y)
-   return z
+    y = mul322(triple_inv_halfpi, HILO(x))
+    y = fracpart(y)
+    z = mul322(triple_halfpi, y)
+    return z
 end
 
 function modqrtrpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = mul322(triple_inv_qrtrpi, HILO(x))
-   y = fracpart(y)
-   z = mul322(triple_qrtrpi, y)
-   return z
+    y = mul322(triple_inv_qrtrpi, HILO(x))
+    y = fracpart(y)
+    z = mul322(triple_qrtrpi, y)
+    return z
 end
 
 
 function mod2pi(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = mul_dddd_dd(double_inv_2pi, HILO(x))
-   y = fracpart(y)
-   z = mul_dddd_dd(double_2pi, y)
-   return z
+    y = mul_dddd_dd(double_inv_2pi, HILO(x))
+    y = fracpart(y)
+    z = mul_dddd_dd(double_2pi, y)
+    return z
 end
 
 function modpi(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = mul_dddd_dd(double_inv_1pi, HILO(x))
-   y = fracpart(y)
-   z = mul_dddd_dd(double_1pi, y)
-   return z
+    y = mul_dddd_dd(double_inv_1pi, HILO(x))
+    y = fracpart(y)
+    z = mul_dddd_dd(double_1pi, y)
+    return z
 end
 
 function modhalfpi(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = mul_dddd_dd(double_inv_halfpi, HILO(x))
-   y = fracpart(y)
-   z = mul_dddd_dd(double_halfpi, y)
-   return z
+    y = mul_dddd_dd(double_inv_halfpi, HILO(x))
+    y = fracpart(y)
+    z = mul_dddd_dd(double_halfpi, y)
+    return z
 end
 
 function modqrtrpi(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = mul_dddd_dd(double_inv_qrtrpi, HILO(x))
-   y = fracpart(y)
-   z = mul_dddd_dd(double_qrtrpi, y)
-   return z
-end 
+    y = mul_dddd_dd(double_inv_qrtrpi, HILO(x))
+    y = fracpart(y)
+    z = mul_dddd_dd(double_qrtrpi, y)
+    return z
+end
+
+function quadrant_angle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    y = mod2pi(x)
+    q = 1
+    if signbit(LO(y))
+        q += HI(y) > single_halfpi  
+        q += HI(y) > single_pi
+        q += HI(y) > single_threehalvespi
+    else   
+        q += HI(y) >= single_halfpi  
+        q += HI(y) >= single_pi
+        q += HI(y) >= single_threehalvespi
+    end
+    y = modhalfpi(x)
+    return q, y
+end
+
+const sinfuncs = [ x->sinq1(x), x->cosq1(x), x->-sinq1(x), x->-cosq1(x)]
+
+function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    quadrant, radians = quadrant_angle(x)
+    return sinfunc[quadrant](radians)
+end
+
+function sinq1(radians)
+    hi,lo = HILO(radians)
+    a = mul_fpfp_db(sin(hi), cos(lo))
+    b = mul_fpfp_dp(cos(hi), sin(lo))
+    return a + b
+end
+
+function cosq1(radians)
+    hi,lo = HILO(radians)
+    a = mul_fpfp_db(cos(hi), cos(lo))
+    b = mul_fpfp_dp(sin(hi), sin(lo))
+    return a - b
+end
