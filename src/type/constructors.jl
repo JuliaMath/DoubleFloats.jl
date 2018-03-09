@@ -130,6 +130,39 @@ FastDouble(hi::T, lo::T) where {T<:BigNumber} =
     FastDouble(big2hilo(hi+lo)...,)
 
 
+Float64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Float64(HI(x)) + Float64(LO(x))
+Float32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Float32(Float64(x))
+Float16(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Float16(Float64(x))
+
+Int64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Int64(Float64(x))
+Int32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Int32(Int64(x))
+Int16(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Int16(Int64(x))
+Int8(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    Int8(Int64(x))
+
+UInt64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    UInt64(Int64(x))
+UInt32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    UInt32(UInt64(x))
+UInt16(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    UInt16(UInt64(x))
+UInt8(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    UInt8(UInt64(x))
+
+BigFloat(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    BigFloat(HI(x)) + BigFloat(LO(x))
+BigInt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    BigInt(HI(x)) + BigInt(LO(x))
+Rational{BigInt}(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    convert(Rational{BigInt}, BigFloat(HI(x)) + BigFloat(LO(x)))
+
+
 #=
 Double(hi::T) where {T<:Rea} = 
     Double(Accuracy, Float64(hi), zero(Float64))
