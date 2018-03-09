@@ -26,6 +26,9 @@ const k_1pi6 = val{:k_1pi6} # pi/6
 const k_2pi3  = Val{:k_2pi3}  # 2.09..
 const k_5pi6  = Val{:k_5pi3}  # 2.61..
 
+const k_2invpi = Val{:k_2invpi}
+const k_4invpi = Val{:k_4invpi}
+
 const k_pipow2 = Val{:k_pipow2} # 9.86..
 const k_pipow3 = Val{:k_pipow3} # 31.0..
 const k_pipow4 = Val{:k_pipow4} # 97.4..
