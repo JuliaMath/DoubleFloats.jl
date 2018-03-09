@@ -5,8 +5,8 @@
 const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
 const ninv_fact = length(inv_fact)
 
-const sin_table = [Double{T,E}(sin(k * big(π) * 0.0625)) for k = 1:4]
-const cos_table = [Double{T,E}(cos(k * big(π) * 0.0625)) for k = 1:4]
+const sin_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
+const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 
 
 """
