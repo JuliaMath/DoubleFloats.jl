@@ -28,6 +28,8 @@ const double_inv_qrtrpi = (1.2732395447351628, -7.871470670072994e-17)
 const triple_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18, -2.698859476966472e-34)
 const double_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18)
 
+const d_halfpi = Double{Float64,Accuracy}(1.5707963267948966, 6.123233995736766e-17)
+
 
 function mod2pi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     y = mul322(triple_inv_2pi, HILO(x))
@@ -110,8 +112,9 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 @inline function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    x = Double{T,E}( add_dddd_dd(HILO(x), double_halfpi)..., )
-    return sin(x)
+    y = x + d_halfpi
+    quadrant, radians = quadrant_angle(y)
+    return sinfuncs[quadrant](radians)
 end
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
