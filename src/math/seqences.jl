@@ -122,3 +122,39 @@ const tan_coeff = Double{Float64,Accuracy}[
    Double(2.6147711512907546e-6, -9.313685621299801e-23),
    Double(1.0597268320104654e-6, 2.3670525505213632e-24),
 ];
+
+# sin(13*x) = (sin13x_numer ./ oddfact7) .* xs7(x)
+sinnumer7(n)=[n, -n*(n^2-1^2), n*(n^2-1^2)*(n^2-3^2), -n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2), n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2),-n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2),n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2)*(n^2-11^2), -n*(n^2-1^2)*(n^2-3^2)*(n^2-5^2)*(n^2-7^2)*(n^2-9^2)*(n^2-11^2)*(n^2-13^2)];
+sin13x_numer = [13, -2184, 349440, -50319360, 6038323200, -531372441600, 25505877196800]
+sin13x_denom = [1, 6, 120, 5040, 362880, 39916800, 6227020800]
+sin13x_coeff = [13, -364, 2912, -9984, 16640, -13312, 4096]
+    
+[factorial(i) for i in 1:2:13];
+zs7(x)=[x,x^3,x^5,x^7,x^9,x^11,x^13];
+xs7(x)=zs7(sin(x));
+
+sin13x_coeff = (13.0, -364.0, 2912.0, -9984.0, 16640.0, -13312.0, 4096.0)
+
+function xs7(s)
+    s2 = s*s
+    s3 = s2*s
+    s4 = s2*s2
+    s5 = s3*s2
+    s6 = s3*s3
+    s7 = s4*s3
+    s9 = s5*s4
+    s11 = s6*s5
+    s13 = s7*s6
+    return (s,s3,s5,s7,s9,s11,s13)
+end
+
+# x in 0.0 .. 9/64
+function sin13x(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s = sin_taylor(x)
+    xs = xs7(s)
+    result = zero(typeof(x))
+    for i in 1:7
+        result += sin13x_coeff[i] * xs[i]
+    end
+    return result
+end
