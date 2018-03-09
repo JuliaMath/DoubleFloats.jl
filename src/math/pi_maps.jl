@@ -109,7 +109,10 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return sinfuncs[quadrant](radians)
 end
 
-function sinq1(radians::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline sinq1(radians::Double{T,Performance}) where {T<:AbstractFloat} =
+    sinq1(Double(Accuracy,HI(radians),LO(radians))
+    
+function sinq1(radians::Double{T,Accuracy}) where {T<:AbstractFloat}
     radians < 9/64 && return sin_taylor(radians)
     
     rad13th = radians / 13.0
@@ -163,7 +166,7 @@ function sin13x(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
-
+# a <= 9/64
 function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   x = a
   x2 = x*x
@@ -186,4 +189,53 @@ function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   z4 = z4+z2
   z  = z + z4
   return z # (z + ((z4+z3)+z2))
+end
+
+# a <= 9/64
+function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+  x = a
+  x2 = x*x
+  x4 = x2*x2
+  x6 = x2*x4
+  x8 = x4*x4
+  x16 = x8*x8
+  x24 = x8*x16
+
+  z = (-inv_fact[2]*x2 + inv_fact[4]*x4 - inv_fact[6]*x6)
+  z2 = x8 * (inv_fact[8] - x2*inv_fact[10] + x4*inv_fact[12] - x6*inv_fact[14])
+  z3 = x16 * (inv_fact[16] - x2*inv_fact[18] + x4*inv_fact[20] - x6*inv_fact[22])
+  z4 = x24 * (inv_fact[24] - x2*inv_fact[26] + x4*inv_fact[28] - x6*inv_fact[30])
+
+  #((z4+z3)+z2)+z + 1.0
+  z4 = z4 + z3
+  z4 = z4 + z2
+  z  = z  + z4
+  z  = z  + one(Double{T,E})
+  return z
+end
+
+# for a < 9/64 0.140625
+function tan_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+  x = a
+  x2 = x*x
+  x3 = x*x2
+  x4 = x2*x2
+  x5 = x2*x3
+  x6 = x3*x3
+  x7 = x3*x4
+  x8 = x4*x4
+  x9 = x4*x5
+  x17 = x8*x9
+  x25 = x17*x8
+
+  z = x + x*(tan_coeff[2]*x2 + tan_coeff[3]*x4 + tan_coeff[4]*x6)
+  z2 = x9 * (tan_coeff[5] + x2*tan_coeff[6] + x4*tan_coeff[7] + x6*tan_coeff[8])
+  z3 = x17 * (tan_coeff[9] + x2*tan_coeff[10] + x4*tan_coeff[11] + x6*tan_coeff[12])
+  z4 = x25 * (tan_coeff[13] + x2*tan_coeff[14] + x4*tan_coeff[15] + x6*tan_coeff[16])
+
+  # (z + ((z4+z3)+z2))
+  z4 = z4 + z3
+  z4 = z4 + z2
+  z  = z  + z4
+  return z
 end
