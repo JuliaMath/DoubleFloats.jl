@@ -27,7 +27,8 @@ import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-using Base.MathConstants: catalan, ℯ, eulergamma, golden, pi
+import Base.MathConstants: catalan, ℯ, eulergamma, golden, pi
+golden = Base.MathConstants.golden
 
 if VERSION >= v"0.7.0-"
     import Base:isone
