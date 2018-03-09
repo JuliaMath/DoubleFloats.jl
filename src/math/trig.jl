@@ -46,9 +46,15 @@ const d_nan = Double(NaN, 0.0)
 const inv_factorial = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
 const ninv_factorial = length(inv_factorial)
 
-const sin_series_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
-const cos_series_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 
+# const sin_series_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
+# const cos_series_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
+const sin_series_table = (
+   Double(0.19509032201612828, -7.991079068461731e-18), Double(0.3826834323650898, -1.0050772696461588e-17), Double(0.5555702330196022, 4.709410940561677e-17), Double(0.7071067811865476, -4.833646656726457e-17)
+)
+const cos_series_table = (
+    Double(0.9807852804032304, 1.8546939997825006e-17), Double(0.9238795325112867, 1.7645047084336677e-17), Double(0.8314696123025452, 1.4073856984728024e-18), Double(0.7071067811865476, -4.833646656726457e-17)
+)
 
 """
 	sin_taylor_series(a::Double{T,E})
