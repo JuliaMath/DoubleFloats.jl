@@ -13,7 +13,12 @@ end
     return Double(E, hi, lo)
 end
 
-@inline function dvi_dbfp_db(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
-    hi, lo = dvi_ddfp_dd(HILO(x), y)
-    return Double(E, hi, lo)
+@inline function dvi_fpdb_db(x::T, y::Double{T,Accuracy}) where {T<:AbstractFloat}
+    hi, lo = dvi_fpdd_dd(x, HILO(y))
+    return Double(Accuracy, hi, lo)
+end
+
+@inline function dvi_fpdb_db(x::T, y::Double{T,Performance}) where {T<:AbstractFloat}
+    hi, lo = dvi_fpdd_dd_fast(x, HILO(y))
+    return Double(Performance, hi, lo)
 end
