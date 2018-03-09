@@ -106,7 +106,7 @@ const sinfuncs = [ x->sinq1(x), x->cosq1(x), x->-sinq1(x), x->-cosq1(x)]
 
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     quadrant, radians = quadrant_angle(x)
-    return sinfunc[quadrant](radians)
+    return sinfuncs[quadrant](radians)
 end
 
 function sinq1(radians)
