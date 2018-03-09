@@ -3,13 +3,13 @@
 #
 # ROUNDING
 #
-@inline function round(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    hi = round(a.hi)
+@inline function roundnearest(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hi = roundnearest(a.hi)
     lo = 0.0
 
     if hi == a.hi
         # High word is an integer already.  Round the low word.
-        lo = round(a.lo)
+        lo = roundnearest(a.lo)
 
         # Renormalize. This is needed if hi = some integer, lo = 1/2.
         hi, lo = add_hilo_2(hi, lo)
@@ -129,7 +129,7 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / d_2pi)
+	z = roundnearest(a / d_2pi)
 	r = a - d_2pi * z
 
 		# approximately reduce modulo pi/2 and then modulo pi/16.
@@ -187,7 +187,7 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / d_2pi)
+	z = roundnearest(a / d_2pi)
 	r = a - d_2pi * z
 
 		# approximately reduce modulo pi/2 and then modulo pi/16.
@@ -246,7 +246,7 @@ function _sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / d_2pi)
+	z = roundnearest(a / d_2pi)
 	r = a - d_2pi * z
 
 	# approximately reduce modulo pi/2 and then modulo pi/16.
