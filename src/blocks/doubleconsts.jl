@@ -33,6 +33,10 @@ Double{Float64,E}(k_inv3pi) where {E<:Emphasis} =
 Double{Float64,E}(k_inv4pi) where {E<:Emphasis} =
     Double(E, 0.07957747154594767, -4.9196691687956215e-18)
 
+Double{Float64,E}(k_2invpi) where {E<:Emphasis} =
+    Double(E, 0.6366197723675814, -3.935735335036497e-17)
+Double{Float64,E}(k_4invpi) where {E<:Emphasis} =
+    Double(E, 1.2732395447351628, -7.871470670072994e-17)
 
 
 const k_1pi6  = :k_1pi6  # 0.52..
