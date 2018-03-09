@@ -32,6 +32,50 @@ end
 function Double(::Type{E}, hilo::Tuple{T}) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, hi, zero(T))
 end
+
+# Float64 can accomodate any SmallInteger
+const SmallInteger = Union{Int8, Int16, Int32, UInt8, UInt16, UInt32}
+const LargeInteger = Union{Int64, Int128, UInt64, UInt128}
+const BigNumber    = Union{BigInt,BigFloat,Rational{BigInt}}
+
+@inline function big2hilo(::Type{T}, x::B) where {T<:AbstractFloat, B<:BigNumber}
+     hi = T(x)
+     lo = T(x - hi)
+     return hi, lo
+end
+
+Double(::Type{E}, hi::T, lo::T) where {T<:SmallInteger, E<:Emphasis} =
+    Double(E, (Float64(hi), Float64(lo)))
+Double(::Type{E}, hi::T) where {T<:SmallInteger, E<:Emphasis} =
+    Double(E, (Float64(hi), zero(Float64)))
+
+# !!TODO!! special case largest values
+Double(::Type{E}, hi::T, lo::T) where {T<:LargeInteger, E<:Emphasis} =
+    Double(E, (Float64(hi), Float64(lo)))
+Double(::Type{E}, hi::T) where {T<:LargeInteger, E<:Emphasis} =
+    Double(E, (Float64(hi), zero(Float64)))
+
+function Double(::Type{E}, hi::T, lo::T) where {T<:BigNumber, E<:Emphasis}
+    fhi, flo = big2hilo(Float64, hi+lo)
+    return Double(E, fhi, flo)
+end
+
+function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
+    fhi, flo = big2hilo(Float64, hi)
+    return Double(E, fhi, flo)
+end
+
+#=
+Double(::Type{E}, hi::T, lo::T) where {T<:Union{Int8,Int16,Int32,Int8,Int16,Int32}, E<:Emphasis} =
+    Double(E, (Float64(hi), Float64(lo)))
+
+Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
+    Double{T,Performance}(hi, lo)
+Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat} =
+    Double{T,Accuracy}(hi, zero(T))
+Double(::Type{Performance}, hi::T) where {T<:AbstractFloat} =
+    Double{T,Performance}(hi, zero(T))
+=#
 #=
 function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} 
     hi, lo = hilo
@@ -54,9 +98,12 @@ function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
     return Double(Performance, hi, lo)
 end
 =#
+
 Double(hi::T) where {T<:IEEEFloat} = 
     Double(Accuracy, hi, zero(T))
-Double(hi::T) where {T<:Signed} = 
+
+#=
+Double(hi::T) where {T<:Rea} = 
     Double(Accuracy, Float64(hi), zero(Float64))
 
 Double(hi::T) where {T<:AbstractFloat} = 
@@ -78,12 +125,14 @@ FastDouble{T}(hi) where {T<:IEEEFloat} =
 FastDouble{T}(hi, lo) where {T<:AbstractFloat} =
     Double(Performance,(T(hi+lo), T(hi+lo-T(hi+lo))))
 
+=#
 
-@inline function bigfloat2hilo(::Type{T}, x::BigFloat) where {T<:AbstractFloat}
-     hi = T(x)
-     lo = T(x - hi)
-     return hi, lo
-end
+
+
+
+
+
+#=
 
 @inline function bigfloat2hilo(::Type{T}, x::R) where {T<:AbstractFloat, R<:Real}
      y = BigFloat(x)
@@ -150,3 +199,4 @@ function BigFloat(x::Double{T, E}, p=precision(BigFloat)) where {T<:AbstractFloa
     BigFloat(HI(x), p) + BigFloat(LO(x), p)
 end
 
+=#
