@@ -110,7 +110,8 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 @inline function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    return sin(x + double_halfpi)
+    x = Double{T,E}( add_dddd_dd(HILO(x), double_halfpi) )
+    return sin(x)
 end
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
