@@ -3,7 +3,7 @@
 #
 # ROUNDING
 #
-@inline function Base.round(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function round(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     hi = round(a.hi)
     lo = 0.0
 
@@ -44,15 +44,15 @@ const d_nan = Double(NaN, 0.0)
 const inv_factorial = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
 const ninv_factorial = length(inv_factorial)
 
-const sin_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
-const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
+const sin_series_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
+const cos_series_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 
 
 """
-	sin_taylor(a::Double{T,E})
+	sin_taylor_series(a::Double{T,E})
 Computes sin(a) using Taylor series. Assumes |a| <= π/32.
 """
-function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin_taylor_series(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	thresh = 0.5 * abs(convert(Float64, a)) * d_eps
 
 
@@ -69,7 +69,7 @@ function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		t = r * inv_factorial[i]
 		s += t
 		i += 2
-		if i > ninv_factorial || abs(convert(Float64, t)) < thresh
+		if i > ninv_factorial || abs(Float64(t)) < thresh
 			break
 		end
 	end
@@ -78,10 +78,10 @@ function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 """
-	cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+	cos_taylor_series(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 Computes cos(a) using Taylor series. Assumes |a| <= π/32.
 """
-function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos_taylor_series(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	thresh = 0.5 * d_eps
 
 	if iszero(a)
@@ -97,7 +97,7 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		t = r * inv_factorial[i]
 		s += t
 		i += 2
-		if i > ninv_factorial || abs(convert(Float64, t)) < thresh
+		if i > ninv_factorial || abs(Float64(t)) < thresh
 			break
 		end
 	end
@@ -105,18 +105,18 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	s
 end
 
-function sincos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sincos_taylor_series(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
 		zero(a), one(a)
 	end
 
-  	sin_a = sin_taylor(a)
+  	sin_a = sin_taylor_series(a)
   	cos_a = sqrt(1.0 - square(sin_a))
 
   	sin_a, cos_a
 end
 
-function Base.sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   #= Strategy.  To compute sin(x), we choose integers a, b so that
        x = s + a * (pi/2) + b * (pi/16)
      and |s| <= pi/32.  Using the fact that
@@ -136,10 +136,10 @@ function Base.sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	q = floor(r.hi / d_pi2.hi + 0.5)
 	t = r - d_pi2 * q
-	j = convert(Int, q)
+	j = Int(q)
 	q = floor(t.hi / d_pi16.hi + 0.5)
 	t -= d_pi16 * q
-	k = convert(Int, q)
+	k = Int(q)
 	abs_k = abs(k)
 
 	if j < -2 || j > 2
@@ -154,19 +154,19 @@ function Base.sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	if k == 0
 		if j == 0
-			return sin_taylor(t)
+			return sin_taylor_series(t)
 		elseif j == 1
-			return cos_taylor(t)
+			return cos_taylor_series(t)
 		elseif j == -1
-			return -cos_taylor(t)
+			return -cos_taylor_series(t)
 		else
-			return -sin_taylor(t)
+			return -sin_taylor_series(t)
 		end
 	end
 
-	u = cos_table[abs_k]
-	v = sin_table[abs_k]
-  	sin_t, cos_t = sincos_taylor(t)
+	u = cos_series_table[abs_k]
+	v = sin_series_table[abs_k]
+  	sin_t, cos_t = sincos_taylor_series(t)
 
 	if j == 0
 		r = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
@@ -181,7 +181,7 @@ function Base.sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	r
 end
 
-function Base.cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
 		return one(a)
 	end
@@ -194,10 +194,10 @@ function Base.cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	q = floor(r.hi / d_pi2.hi + 0.5)
 	t = r - d_pi2 * q
-	j = convert(Int, q)
+	j = Int(q)
 	q = floor(t.hi / d_pi16.hi + 0.5)
 	t -= d_pi16 * q
-	k = convert(Int, q)
+	k = Int(q)
 	abs_k = abs(k)
 
 	if j < -2 || j > 2
@@ -212,19 +212,19 @@ function Base.cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	if k == 0
 		if j == 0
-			return cos_taylor(t)
+			return cos_taylor_series(t)
 		elseif j == 1
-			return -sin_taylor(t)
+			return -sin_taylor_series(t)
 		elseif j == -1
-			return sin_taylor(t)
+			return sin_taylor_series(t)
 		else
-			return -cos_taylor(t)
+			return -cos_taylor_series(t)
 		end
 	end
 
-	u = cos_table[abs_k]
-	v = sin_table[abs_k]
-  	sin_t, cos_t = sincos_taylor(t)
+	u = cos_series_table[abs_k]
+	v = sin_series_table[abs_k]
+  	sin_t, cos_t = sincos_taylor_series(t)
 
 	if j == 0
 		r = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
@@ -252,11 +252,11 @@ function _sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	# approximately reduce modulo pi/2 and then modulo pi/16.
 	q = floor(r.hi / d_pi2.hi + 0.5)
 	t = r - d_pi2 * q
-	j = convert(Int, q)
+	j = Int(q)
 	abs_j = abs(j)
 	q = floor(t.hi / d_pi16.hi + 0.5)
 	t -= d_pi16 * q
-	k = convert(Int, q)
+	k = Int(q)
 	abs_k = abs(k)
 
 	if abs_j > 2
@@ -269,14 +269,14 @@ function _sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		return d_nan, d_nan
 	end
 
-  	sin_t, cos_t = sincos_taylor(t)
+  	sin_t, cos_t = sincos_taylor_series(t)
 
 	if abs_k == 0
 		s = sin_t
 		c = cos_t
 	else
-		u = cos_table[abs_k]
-		v = sin_table[abs_k]
+		u = cos_series_table[abs_k]
+		v = sin_series_table[abs_k]
 
 		s = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
 		c = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
@@ -294,7 +294,7 @@ function _sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 # if VERSION > v"0.7.0-DEV.1319"
-# 	@inline Base.sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = _sincos(a)
+# 	@inline sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = _sincos(a)
 # else
 export sincos
 """
@@ -305,9 +305,9 @@ separetly.
 @inline sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = _sincos(a)
 # end
 
-Base.atan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = atan2(a, one(a))
+atan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = atan2(a, one(a))
 
-function Base.atan2(y::Double{T,E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function atan2(y::Double{T,E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	#= Strategy: Instead of using Taylor series to compute
      arctan, we instead use Newton's iteration to solve
      the equation
@@ -358,12 +358,12 @@ function Base.atan2(y::Double{T,E}, x::Double{T,E}) where {T<:AbstractFloat, E<:
 	z
 end
 
-function Base.tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	s, c = _sincos(a)
 	s / c
 end
 
-function Base.asin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function asin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	abs_a = abs(a)
 
 	if abs_a > 1.0
@@ -377,7 +377,7 @@ function Base.asin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	atan2(a, sqrt(1.0 - square(a)))
 end
 
-function Base.acos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function acos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	abs_a = abs(a)
 
 	if abs_a > 1.0
@@ -392,7 +392,7 @@ function Base.acos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 
-function Base.sinh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sinh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
 		return zero(a)
 	end
@@ -431,7 +431,7 @@ function Base.sinh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	# s
 end
 
-function Base.cosh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cosh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
 		return one(a)
 	end
@@ -457,7 +457,7 @@ function sincosh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	s, c
 end
 
-function Base.tanh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function tanh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
 		return zero(a)
 	end
