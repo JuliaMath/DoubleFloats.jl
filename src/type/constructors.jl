@@ -40,7 +40,7 @@ const BigNumber    = Union{BigInt,BigFloat,Rational{BigInt}}
 
 @inline function big2hilo(::Type{T}, x::B) where {T<:AbstractFloat, B<:BigNumber}
      hi = T(x)
-     lo = T(x - hi)
+     lo = T(x - B(hi))
      return hi, lo
 end
 
