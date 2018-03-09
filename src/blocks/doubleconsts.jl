@@ -22,6 +22,19 @@ Double{Float64,E}(k_3pi) where {E<:Emphasis} =
 Double{Float64,E}(k_4pi) where {E<:Emphasis} =
     Double(E, 12.566370614359172, 4.898587196589413e-16)
 
+Double{Float64,E}(k_1pi1) where {E<:Emphasis} =
+    Double(E, 3.141592653589793, 1.2246467991473532e-16)
+Double{Float64,E}(k_1pi2) where {E<:Emphasis} =
+    Double(1.5707963267948966, 6.123233995736766e-17)
+Double{Float64,E}(k_1pi3) where {E<:Emphasis} =
+    Double(1.0471975511965979, -1.072081766451091e-16)
+Double{Float64,E}(k_1pi4) where {E<:Emphasis} =
+    Double(0.7853981633974483, 3.061616997868383e-17)
+Double{Float64,E}(k_1pi5) where {E<:Emphasis} =
+    Double(0.6283185307179586, 2.4492935982947062e-17)
+Double{Float64,E}(k_1pi6) where {E<:Emphasis} =
+    Double(0.5235987755982989, -5.360408832255455e-17)
+
 Double{Float64,E}(k_invpi) where {E<:Emphasis} =
     Double(E, 0.3183098861837907, -1.9678676675182486e-17)
 Double{Float64,E}(k_inv1pi) where {E<:Emphasis} =
