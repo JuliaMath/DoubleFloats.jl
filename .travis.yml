@@ -16,7 +16,7 @@ git:
   depth: 99999999
 ## uncomment the following lines to override the default test script
 #script:
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("AccurateArithmetic"); Pkg.test("AccurateArithmetic"; coverage=true)'
+#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Documenter"); using Documenter; include(joinpath("docs", "make.jl"))';
   - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
