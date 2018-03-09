@@ -1,5 +1,14 @@
 # adopted wholesale from HigherPrecision
 
+
+# constants
+
+const d_eps = Double(4.930380657631324e-32, 0.0)
+const d_2pi = Double(6.283185307179586, 2.4492935982947064e-16)
+const d_pi2 = Double(1.5707963267948966, 6.123233995736766e-17)
+const d_pi16 = Double(0.19634954084936207, 7.654042494670958e-18)
+const d_nan = Double(NaN, 0.0)
+
 # Precomputed values
 
 const inv_fact = [Double(1.0 / BigFloat(factorial(k))) for k = 3:17]
@@ -14,7 +23,7 @@ const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 Computes sin(a) using Taylor series. Assumes |a| <= π/32.
 """
 function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	thresh = 0.5 * abs(convert(Float64, a)) * double_eps
+	thresh = 0.5 * abs(convert(Float64, a)) * d_eps
 
 
 	if iszero(a)
@@ -43,7 +52,7 @@ end
 Computes cos(a) using Taylor series. Assumes |a| <= π/32.
 """
 function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	thresh = 0.5 * double_eps
+	thresh = 0.5 * d_eps
 
 	if iszero(a)
 		return one(a)
@@ -90,27 +99,27 @@ function Base.sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / double_2pi)
-	r = a - double_2pi * z
+	z = round(a / d_2pi)
+	r = a - d_2pi * z
 
 		# approximately reduce modulo pi/2 and then modulo pi/16.
 
-	q = floor(r.hi / double_pi2.hi + 0.5)
-	t = r - double_pi2 * q
+	q = floor(r.hi / d_pi2.hi + 0.5)
+	t = r - d_pi2 * q
 	j = convert(Int, q)
-	q = floor(t.hi / double_pi16.hi + 0.5)
-	t -= double_pi16 * q
+	q = floor(t.hi / d_pi16.hi + 0.5)
+	t -= d_pi16 * q
 	k = convert(Int, q)
 	abs_k = abs(k)
 
 	if j < -2 || j > 2
 		# Cannot reduce modulo pi/2.
-		return double_nan
+		return d_nan
 	end
 
 	if (abs_k > 4)
 		# Cannot reduce modulo pi/16.
-		return double_nan
+		return d_nan
 	end
 
 	if k == 0
@@ -148,27 +157,27 @@ function Base.cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / double_2pi)
-	r = a - double_2pi * z
+	z = round(a / d_2pi)
+	r = a - d_2pi * z
 
 		# approximately reduce modulo pi/2 and then modulo pi/16.
 
-	q = floor(r.hi / double_pi2.hi + 0.5)
-	t = r - double_pi2 * q
+	q = floor(r.hi / d_pi2.hi + 0.5)
+	t = r - d_pi2 * q
 	j = convert(Int, q)
-	q = floor(t.hi / double_pi16.hi + 0.5)
-	t -= double_pi16 * q
+	q = floor(t.hi / d_pi16.hi + 0.5)
+	t -= d_pi16 * q
 	k = convert(Int, q)
 	abs_k = abs(k)
 
 	if j < -2 || j > 2
 		# Cannot reduce modulo pi/2.
-		return double_nan
+		return d_nan
 	end
 
 	if (abs_k > 4)
 		# Cannot reduce modulo pi/16.
-		return double_nan
+		return d_nan
 	end
 
 	if k == 0
@@ -207,27 +216,27 @@ function _sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	# approximately reduce modulo 2*pi
-	z = round(a / double_2pi)
-	r = a - double_2pi * z
+	z = round(a / d_2pi)
+	r = a - d_2pi * z
 
 	# approximately reduce modulo pi/2 and then modulo pi/16.
-	q = floor(r.hi / double_pi2.hi + 0.5)
-	t = r - double_pi2 * q
+	q = floor(r.hi / d_pi2.hi + 0.5)
+	t = r - d_pi2 * q
 	j = convert(Int, q)
 	abs_j = abs(j)
-	q = floor(t.hi / double_pi16.hi + 0.5)
-	t -= double_pi16 * q
+	q = floor(t.hi / d_pi16.hi + 0.5)
+	t -= d_pi16 * q
 	k = convert(Int, q)
 	abs_k = abs(k)
 
 	if abs_j > 2
 		# Cannot reduce modulo pi/2.
-		return double_nan, double_nan
+		return d_nan, d_nan
 	end
 
 	if abs_k > 4
 		# Cannot reduce modulo pi/16.
-		return double_nan, double_nan
+		return d_nan, d_nan
 	end
 
   	sin_t, cos_t = sincos_taylor(t)
@@ -283,20 +292,20 @@ function Base.atan2(y::Double{T,E}, x::Double{T,E}) where {T<:AbstractFloat, E<:
   	=#
 	if iszero(x)
 		if iszero(y)
-			double_nan
+			d_nan
 		end
 
-		return y.hi > 0.0 ? double_pi2 : -double_pi2
+		return y.hi > 0.0 ? d_pi2 : -d_pi2
 	elseif iszero(y)
-		return x.hi > 0.0 ? zero(x) : double_pi
+		return x.hi > 0.0 ? zero(x) : d_pi
 	end
 
 	if x == y
-		return y.hi > 0.0 ? double_pi4 : -double_3pi4
+		return y.hi > 0.0 ? d_pi4 : -d_3pi4
 	end
 
 	if x == -y
-		return y.hi > 0.0 ? double_3pi4 : -double_pi4
+		return y.hi > 0.0 ? d_3pi4 : -d_pi4
 	end
 
 	r = sqrt(square(x) + square(y))
@@ -332,7 +341,7 @@ function Base.asin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	if isone(abs_a)
-		return a.hi > 0.0 ? double_pi2 : -double_pi2
+		return a.hi > 0.0 ? d_pi2 : -d_pi2
 	end
 
 	atan2(a, sqrt(1.0 - square(a)))
@@ -346,7 +355,7 @@ function Base.acos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	end
 
 	if isone(abs_a)
-		return a.hi > 0.0 ? zero(a) : -double_pi
+		return a.hi > 0.0 ? zero(a) : -d_pi
 	end
 
 	atan2(sqrt(1.0 - square(a)), a)
@@ -375,7 +384,7 @@ function Base.sinh(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	# t = a
 	# r = square(t)
 	# m = 1.0
-	# thresh = abs(convert(Float64, a)) * double_eps
+	# thresh = abs(convert(Float64, a)) * d_eps
 	#
 	# while true
 	# 	m += 2.0
