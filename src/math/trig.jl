@@ -28,7 +28,8 @@ end
 	mulby_powerof2(a::DoubleFloat64, b::Float64)
 `a` * `b`,  where `b` is a power of 2.
 """
-mulby_powerof2(a::DoubleFloat64, b::Float64) = DoubleFloat64(a.hi * b, a.lo * b)
+mulby_powerof2(a::Double{T,E}, b::Float64) where {T<:AbstractFloat, E<:Emphasis} =
+    Double(E, a.hi * b, a.lo * b)
 
 # constants
 
