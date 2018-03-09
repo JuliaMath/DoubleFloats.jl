@@ -98,7 +98,7 @@ function quadrant_angle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
         q += HI(y) >= single_1pi
         q += HI(y) >= single_3halvespi
     end
-    y = modhalfpi(x)
+    y = Double(E, modhalfpi(x))
     return q, y
 end
 
