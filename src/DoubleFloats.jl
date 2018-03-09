@@ -20,7 +20,13 @@ import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
              isinteger, isodd, iseven, zero, one,
              floor, ceil, trunc, div, fld, cld, rem, mod,
-             modf, frexp, ldexp
+             modf, frexp, ldexp,
+             log, exp, log1p, expm1, log2, log10,
+             sin, cos, tan, csc, sec, cot,
+             asin, acos, atan, acsc, asec, acot,
+             sinh, cosh, tanh, csch, sech, coth,
+             asinh, acosh, atanh, acsch, asech, acoth
+
 
 if VERSION >= v"0.7.0-"
     import Base:isone
