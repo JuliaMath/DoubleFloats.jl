@@ -79,8 +79,20 @@ end
 
 @inline function bigfloat2hilo(::Type{T}, x::R) where {T<:AbstractFloat, R<:Real}
      y = BigFloat(x)
-     return bigfloat2hilo(T, y)
+     hi = T(y)
+     lo = T(y - hi)
+     return hi, lo
 end
+
+Double(x::BigFloat) = Double(Accuracy, bigfloat2hilo(Float64, x)...,)
+FastDouble(x::BigFloat) = Double(Performance, bigfloat2hilo(Float64, x)...,)
+Double{T,Accuracy}(x::BigFloat) = Double(Accuracy, bigfloat2hilo(T, x)...,)
+Double{T,Performance}(x::BigFloat) = Double(Performance, bigfloat2hilo(T, x)...,)
+FastDouble(x::BigFloat) = Double(Performance, bigfloat2hilo(Float64, x)...,)
+Double(x::BigInt) = Double(Accuracy, bigfloat2hilo(Float64, BigFloat(x))...,)
+Double{T,Accuracy}(x::BigInt) = Double(Accuracy, bigfloat2hilo(BigFloat(T), x)...,)
+Double{T,Performance}(x::BigInt) = Double(Performance, bigfloat2hilo(BigFloat(T), x)...,)
+FastDouble(x::BigInt) = Double(Performance, bigfloat2hilo(Float64, BigFloat(x))...,)
 
 function Double(hi::T) where {T<:Real}
     bf = BigFloat(hi)
