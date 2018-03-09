@@ -27,7 +27,7 @@ import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-using Base.MathConstants: catalan, e, eulergamma, golden, pi
+using Base.MathConstants: catalan, γ, eulergamma, golden, pi
 
 if VERSION >= v"0.7.0-"
     import Base:isone
