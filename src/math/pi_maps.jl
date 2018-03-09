@@ -27,49 +27,57 @@ const double_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18)
 
 function mod2pi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = mul322(triple_inv_2pi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul322(triple_2pi, y)
    return z
 end
 
 function modpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = mul322(triple_inv_1pi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul322(triple_1pi, y)
    return z
 end
 
 function modhalfpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = mul322(triple_inv_halfpi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul322(triple_halfpi, y)
    return z
 end
 
 function modqrtrpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = mul322(triple_inv_qrtrpi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul322(triple_qrtrpi, y)
    return z
 end
 
 
 function mod2pi(x::Double{T,Performance}) where {T<:AbstractFloat}
    y = mul_dddd_dd(double_inv_2pi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul_dddd_dd(double_2pi, y)
    return z
 end
 
 function modpi(x::Double{T,Performance}) where {T<:AbstractFloat}
    y = mul_dddd_dd(double_inv_1pi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul_dddd_dd(double_1pi, y)
    return z
 end
 
 function modhalfpi(x::Double{T,Performance}) where {T<:AbstractFloat}
    y = mul_dddd_dd(double_inv_halfpi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul_dddd_dd(double_halfpi, y)
    return z
 end
 
 function modqrtrpi(x::Double{T,Performance}) where {T<:AbstractFloat}
    y = mul_dddd_dd(double_inv_qrtrpi, HILO(x))
-   z = fracpart(y)
+   y = fracpart(y)
+   z = mul_dddd_dd(double_qrtrpi, y)
    return z
 end 
