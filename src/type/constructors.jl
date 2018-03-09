@@ -101,6 +101,34 @@ end
 
 Double(hi::T) where {T<:IEEEFloat} = 
     Double(Accuracy, hi, zero(T))
+Double(hi::T, lo::T) where {T<:IEEEFloat} = 
+    Double(Accuracy, (hi, lo))
+
+FastDouble(hi::T) where {T<:IEEEFloat} = 
+    Double(Performance, hi, zero(T))
+FastDouble(hi::T, lo::T) where {T<:IEEEFloat} = 
+    Double(Performance, (hi, lo))
+
+Double(hi::T) where {T<:Integer} = 
+    Double(Float64(hi))
+Double(hi::T, lo::T) where {T<:Integer} = 
+    Double(Float(hi), Float64(lo))
+
+FastDouble(hi::T) where {T<:Integer} = 
+    FastDouble(Float64(hi))
+FastDouble(hi::T, lo::T) where {T<:Integer} = 
+    FastDouble(Float(hi), Float64(lo))
+
+Double(hi::T) where {T<:BigNumber} = 
+    Double(big2hilo(Float64,hi)...,)
+Double(hi::T, lo::T) where {T<:BigNumber} = 
+    Double(big2hilo(hi+lo)...,)
+
+FastDouble(hi::T) where {T<:BigNumber} = 
+    FastDouble(big2hilo(Float64,hi)...,)
+FastDouble(hi::T, lo::T) where {T<:BigNumber} = 
+    FastDouble(big2hilo(hi+lo)...,)
+
 
 #=
 Double(hi::T) where {T<:Rea} = 
