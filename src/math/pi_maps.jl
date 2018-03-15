@@ -35,28 +35,28 @@ function mod2pi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     y = mul322(triple_inv_2pi, HILO(x))
     y = fracpart(y)
     z = mul322(triple_2pi, y)
-    return z
+    return Double(Accuracy, z[1], z[2])
 end
 
 function modpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     y = mul322(triple_inv_1pi, HILO(x))
     y = fracpart(y)
     z = mul322(triple_1pi, y)
-    return z
+    return Double(Accuracy, z[1], z[2])
 end
 
 function modhalfpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     y = mul322(triple_inv_halfpi, HILO(x))
     y = fracpart(y)
     z = mul322(triple_halfpi, y)
-    return z
+    return Double(Accuracy, z[1], z[2])
 end
 
 function modqrtrpi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     y = mul322(triple_inv_qrtrpi, HILO(x))
     y = fracpart(y)
     z = mul322(triple_qrtrpi, y)
-    return z
+    return Double(Accuracy, z[1], z[2])
 end
 
 
@@ -64,28 +64,28 @@ function mod2pi(x::Double{T,Performance}) where {T<:AbstractFloat}
     y = mul_dddd_dd(double_inv_2pi, HILO(x))
     y = fracpart(y)
     z = mul_dddd_dd(double_2pi, y)
-    return z
+    return Double(Performance, z[1], z[2])
 end
 
 function modpi(x::Double{T,Performance}) where {T<:AbstractFloat}
     y = mul_dddd_dd(double_inv_1pi, HILO(x))
     y = fracpart(y)
     z = mul_dddd_dd(double_1pi, y)
-    return z
+    return Double(Performance, z[1], z[2])
 end
 
 function modhalfpi(x::Double{T,Performance}) where {T<:AbstractFloat}
     y = mul_dddd_dd(double_inv_halfpi, HILO(x))
     y = fracpart(y)
     z = mul_dddd_dd(double_halfpi, y)
-    return z
+    return Double(Performance, z[1], z[2])
 end
 
 function modqrtrpi(x::Double{T,Performance}) where {T<:AbstractFloat}
     y = mul_dddd_dd(double_inv_qrtrpi, HILO(x))
     y = fracpart(y)
     z = mul_dddd_dd(double_qrtrpi, y)
-    return z
+    return Double(Performance, z[1], z[2])
 end
 
 function quadrant_angle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
