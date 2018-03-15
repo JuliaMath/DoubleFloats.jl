@@ -30,7 +30,7 @@ function cos2pi(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 # sin(x in 0.0..pi/2)
-function quadrant_sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    bf = BigFloat(x.hi) + BigFloat(x.lo)
    bf = sin(bf)
    hi = T(bf)
@@ -39,7 +39,7 @@ function quadrant_sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 # cos(x in 0.0..pi/2)
-function quadrant_cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    bf = BigFloat(x.hi) + BigFloat(x.lo)
    bf = cos(bf)
    hi = T(bf)
