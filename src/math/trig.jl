@@ -6,12 +6,22 @@ end
 const quadrant_sin = [x ->  sin_quadrant(x), x ->  cos_quadrant(x),
                       x -> -sin_quadrant(x), x -> -cos_quadrant(x)]
 
-function sin2pi(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    n = x / double_halfpi
+function sin2pi(x::Double{T, Accuracy}) where {T<:AbstractFloat}
+    n = x / halfpi_accurate
     n += 0.5
     n = floor(n)
     quadrant = Int64(n) + 1 
-    x = x - (n * double_halfpi)
+    x = x - (n * halfpi_accurate)
+    z = quadrant_sin[quadrant](x)
+    return z
+end
+
+function sin2pi(x::Double{T, Performance}) where {T<:AbstractFloat}
+    n = x / halfpi_performant
+    n += 0.5
+    n = floor(n)
+    quadrant = Int64(n) + 1 
+    x = x - (n * halfpi_performant)
     z = quadrant_sin[quadrant](x)
     return z
 end
@@ -19,12 +29,22 @@ end
 const quadrant_cos = [x ->  cos_quadrant(x), x -> -sin_quadrant(x),
                       x -> -cos_quadrant(x), x ->  sin_quadrant(x)]
 
-function cos2pi(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    n = x / double_halfpi
+function cos2pi(x::Double{T, Accuracy}) where {T<:AbstractFloat}
+    n = x / halfpi_accurate
     n += 0.5
     n = floor(n)
     quadrant = Int64(n) + 1 
-    x = x - (n * double_halfpi)
+    x = x - (n * halfpi_accurate)
+    z = quadrant_cos[quadrant](x)
+    return z
+end
+
+function cos2pi(x::Double{T, Performance}) where {T<:AbstractFloat}
+    n = x / halfpi_performant
+    n += 0.5
+    n = floor(n)
+    quadrant = Int64(n) + 1 
+    x = x - (n * halfpi_performant)
     z = quadrant_cos[quadrant](x)
     return z
 end
