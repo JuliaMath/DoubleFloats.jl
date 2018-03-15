@@ -28,7 +28,11 @@ const double_inv_qrtrpi = (1.2732395447351628, -7.871470670072994e-17)
 const triple_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18, -2.698859476966472e-34)
 const double_inv_sixthpi = (1.909859317102744, -7.049757588579267e-18)
 
-const d_halfpi = Double{Float64,Accuracy}(1.5707963267948966, 6.123233995736766e-17)
+const halfpi_accurate   = Double(Accuracy, 1.5707963267948966, 6.123233995736766e-17)
+const qrtrpi_accurate   = Double(Accuracy, 0.7853981633974483, 3.061616997868383e-17)
+
+const halfpi_performant = Double(Performance, 1.5707963267948966, 6.123233995736766e-17)
+const qrtrpi_performant = Double(Performance, 0.7853981633974483, 3.061616997868383e-17)
 
 
 function mod2pi(x::Double{T,Accuracy}) where {T<:AbstractFloat}
