@@ -4,7 +4,9 @@ for (F,P) in ((:sin, :sin2pi), (:cos, :cos2pi), (:tan, :tan2pi),
 end
 
 const quadrant_sin = [x ->  sin_quadrant(x), x ->  cos_quadrant(x),
-                      x -> -sin_quadrant(x), x -> -cos_quadrant(x)]
+                      x -> -sin_quadrant(x), x -> -cos_quadrant(x),
+                      x ->  sin_quadrant(x), x ->  cos_quadrant(x),
+                      x -> -sin_quadrant(x), x -> -cos_quadrant(x) ]
 
 function sin2pi(x::Double{T, Accuracy}) where {T<:AbstractFloat}
     n = x / halfpi_accurate
@@ -27,6 +29,8 @@ function sin2pi(x::Double{T, Performance}) where {T<:AbstractFloat}
 end
 
 const quadrant_cos = [x ->  cos_quadrant(x), x -> -sin_quadrant(x),
+                      x -> -cos_quadrant(x), x ->  sin_quadrant(x),
+                      x ->  cos_quadrant(x), x -> -sin_quadrant(x),
                       x -> -cos_quadrant(x), x ->  sin_quadrant(x)]
 
 function cos2pi(x::Double{T, Accuracy}) where {T<:AbstractFloat}
