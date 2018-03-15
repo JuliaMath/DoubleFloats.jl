@@ -1,5 +1,5 @@
-for (F,P) in ((:sin, :sin2pi), ), (:cos, :cos2pi), (:tan, :tan2pi), 
-              (:csc, :csc2pi), ), (:sec, :sec2pi), (:cot, :cot2pi))
+for (F,P) in ((:sin, :sin2pi), (:cos, :cos2pi), (:tan, :tan2pi), 
+              (:csc, :csc2pi), (:sec, :sec2pi), (:cot, :cot2pi))
   @eval $F(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = $P(mod2pi(x))
 end
 
