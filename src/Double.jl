@@ -33,21 +33,6 @@ function Double{T, Accuracy}(hi::T) where {T<:AbstractFloat}
     return Double(Accuracy, hi, zero(T))
 end
 
-HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
-LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
-HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
-
-HI(x::T) where {T<:IEEEFloat} = x
-LO(x::T) where {T<:IEEEFloat} = zero(T)
-HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
-
-HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
-LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
-HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
-
-
-
-
 function Double{T, Performance}(hi::T) where {T<:AbstractFloat}
     return Double(Performance, hi, zero(T))
 end
@@ -67,3 +52,16 @@ end
 function FastDouble(hi::T) where {T<:AbstractFloat}
     return Double{T, Performance}(hi)
 end
+
+
+HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
+LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
+HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
+
+HI(x::T) where {T<:IEEEFloat} = x
+LO(x::T) where {T<:IEEEFloat} = zero(T)
+HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
+
+HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
+LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
+HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
