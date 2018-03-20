@@ -123,5 +123,6 @@ function Base.parse(::Type{Double{T, Performance}}, str::AbstractString) where {
     return Double{T, Performance}(hi, lo)
 end
 
-       
-    
+Base.parse(Double, str::AbstractString) =  Base.parse(Double{Float64, Accuracy}, str)
+
+Base.parse(FastDouble, str::AbstractString) =  Base.parse(Double{Float64, Performance}, str)
