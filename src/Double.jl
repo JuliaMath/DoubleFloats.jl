@@ -84,3 +84,44 @@ function show(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     str = string(x)
     print(StdOutStream, str)
 end
+
+function Base.parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:AbstractFloat}
+    if startswith(str, "FastDouble")
+        str = str[5:end]
+    end
+    if !startswith(str,"Double")
+        throw(ErrorException("$str is not recognized as a Double"))
+    end
+    str = str[7,end-1]
+    if contains(str, ", ")
+        histr, lostr = split(str, ", ")
+    else
+        histr, lostr = split(str, ",")
+    end
+    hi = parse(T, histr)
+    lo = parse(T, lostr)
+    hi, lo = two_sum(hi, lo)
+    return Double{T, Accuracy}(hi, lo)
+end
+
+function Base.parse(::Type{Double{T, Performance}}, str::AbstractString) where {T<:AbstractFloat}
+    if startswith(str, "Double")
+        str = string("Fast", str)
+    end
+    if !startswith(str,"FastDouble")
+        throw(ErrorException("$str is not recognized as a FastDouble"))
+    end
+    str = str[11,end-1]
+    if contains(str, ", ")
+        histr, lostr = split(str, ", ")
+    else
+        histr, lostr = split(str, ",")
+    end
+    hi = parse(T, histr)
+    lo = parse(T, lostr)
+    hi, lo = two_sum(hi, lo)
+    return Double{T, Performance}(hi, lo)
+end
+
+       
+    
