@@ -162,3 +162,27 @@ parse(Double, str::AbstractString) = parse(Double{Float64, Accuracy}, str)
 
 parse(::Type{Val{FastDouble}}, str::AbstractString) = parse(Double{Float64, Performance}, str)
 
+
+# a fast type specific hash function helps
+import Base: hash, hx, fptoui
+
+const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
+const hash_0_dfloat_lo = hash(zero(UInt), hash_doublefloat_lo)
+const hash_accuracy_lo = hash(hash(Accuracy), hash_doublefloat_lo)
+const hash_performance_lo = hash(hash(Performance), hash_doublefloat_lo)
+
+function hash(x::Double{T,Accuracy}, h::UInt) where {T}
+    !isnan(HI(x)) ?
+       ( iszero(LO(x)) ?
+            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_accuracy_lo) :
+            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_accuracy_lo)
+       ) : (hx_NaN ⊻ h)
+end
+
+function hash(x::Double{T,Performance}, h::UInt) where {T}
+    !isnan(HI(x)) ?
+       ( iszero(LO(x)) ?
+            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_performance_lo) :
+            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_performance_lo)
+       ) : (hx_NaN ⊻ h)
+end
