@@ -92,7 +92,7 @@ function Base.parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:A
     if !startswith(str,"Double")
         throw(ErrorException("$str is not recognized as a Double"))
     end
-    str = str[7,end-1]
+    str = str[8:end-1]
     if contains(str, ", ")
         histr, lostr = split(str, ", ")
     else
@@ -111,7 +111,7 @@ function Base.parse(::Type{Double{T, Performance}}, str::AbstractString) where {
     if !startswith(str,"FastDouble")
         throw(ErrorException("$str is not recognized as a FastDouble"))
     end
-    str = str[11,end-1]
+    str = str[12:end-1]
     if contains(str, ", ")
         histr, lostr = split(str, ", ")
     else
