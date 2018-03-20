@@ -22,7 +22,7 @@ else
 end
 
 
-import Base: promote_rule, convert, string, show,
+import Base: promote_rule, convert, string, show, parse,
              (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
