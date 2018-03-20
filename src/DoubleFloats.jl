@@ -18,7 +18,8 @@ else
 end
 
 
-import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
+import Base: promote_rule, convert, string, show,
+             (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
              isinteger, isodd, iseven, zero, one,
