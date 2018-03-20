@@ -6,7 +6,7 @@ export MultipartFloat,
        HI, LO, HILO,
        ispos, isneg, isnonpos, isnonneg,
        isnonzero, isposinf, isneginf, isfractional,
-       intpart, fracpart, fmod,
+       intpart, fracpart, fmod
        #square, cube,
        #spread, sld, tld,
        #nan, inf,
