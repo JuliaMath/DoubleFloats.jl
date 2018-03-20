@@ -68,11 +68,11 @@ HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
 
 
 function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
-    return string("Double(",HI(x),", ",LO(X),")")
+    return string("Double(",HI(x),", ",LO(x),")")
 end
 
 function string(x::Double{T, Performance}) where {T<:AbstractFloat}
-    return string("FastDouble(",HI(x),", ",LO(X),")")
+    return string("FastDouble(",HI(x),", ",LO(x),")")
 end
 
 function show(io::IO, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
