@@ -125,4 +125,5 @@ end
 
 parse(Double, str::AbstractString) = parse(Double{Float64, Accuracy}, str)
 
-parse(FastDouble, str::AbstractString) = parse(Double{Float64, Performance}, str)
+parse(::Type{Val{FastDouble}}, str::AbstractString) = parse(Double{Float64, Performance}, str)
+
