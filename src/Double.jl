@@ -85,7 +85,7 @@ function show(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     print(StdOutStream, str)
 end
 
-function Base.parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:AbstractFloat}
+function parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:AbstractFloat}
     if startswith(str, "FastDouble")
         str = str[5:end]
     end
@@ -104,7 +104,7 @@ function Base.parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:A
     return Double{T, Accuracy}(hi, lo)
 end
 
-function Base.parse(::Type{Double{T, Performance}}, str::AbstractString) where {T<:AbstractFloat}
+function parse(::Type{Double{T, Performance}}, str::AbstractString) where {T<:AbstractFloat}
     if startswith(str, "Double")
         str = string("Fast", str)
     end
@@ -123,6 +123,6 @@ function Base.parse(::Type{Double{T, Performance}}, str::AbstractString) where {
     return Double{T, Performance}(hi, lo)
 end
 
-Base.parse(Double, str::AbstractString) =  Base.parse(Double{Float64, Accuracy}, str)
+parse(Double, str::AbstractString) = parse(Double{Float64, Accuracy}, str)
 
-Base.parse(FastDouble, str::AbstractString) =  Base.parse(Double{Float64, Performance}, str)
+parse(FastDouble, str::AbstractString) = parse(Double{Float64, Performance}, str)
