@@ -77,7 +77,8 @@ function Double{Float16}(x::T, y::T) where {T<:AbstractFloat}
     yy = Float16(xy - xx)
     return Double(Accuracy, (xx, yy))
 end
-    
+
+#=
 FastDouble{Float64}(x::T) where {T<:AbstractFloat} = 
     Double(Performance, (Float64(x), Float64(x-Float64(x))))
 FastDouble{Float32}(x::T) where {T<:AbstractFloat} =
@@ -103,7 +104,7 @@ function FastDouble{Float16}(x::T, y::T) where {T<:AbstractFloat}
     yy = Float16(xy - xx)
     return Double(Performance, (xx, yy))
 end
-
+=#
 
 Float64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
     Float64(HI(x)) + Float64(LO(x))
