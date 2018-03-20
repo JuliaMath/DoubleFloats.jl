@@ -3,7 +3,9 @@ module DoubleFloats
 export MultipartFloat, 
        Emphasis, Accuracy, Performance,
        Double, FastDouble,
-       HI, LO, HILO
+       HI, LO, HILO,
+       ispos, isneg, isnonpos, isnonneg,
+       isnonzero, isposinf, isneginf, isfractional
        #square, cube,
        #spread, sld, tld,
        #nan, inf,
@@ -43,6 +45,8 @@ abstract type MultipartFloat{T} <: AbstractFloat end
 
 include("Emphasis.jl") # Accuracy, Performance
 include("Double.jl")   # Double, FastDouble
+
+include("type/predicates.jl")
 
 #=
 include("blocks/double.jl")
