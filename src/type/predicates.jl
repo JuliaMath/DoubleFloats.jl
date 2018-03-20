@@ -56,7 +56,7 @@ issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
 isinteger(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    isinteger((x)) && isinteger(HI(x))
+    isinteger(HI(x)) && isinteger(LO(x))
 
 isfractional(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     !isinteger(LO(x)) || !isinteger(HI(x))
