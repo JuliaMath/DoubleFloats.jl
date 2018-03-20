@@ -37,3 +37,7 @@ function fmod(fpart::Double{T,E}, ipart::Double{T,E}) where {T<:AbstractFloat, E
    return ipart + fpart
 end
 
+function fmod(parts::Tuple{Double{T,E}, Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis}
+   return parts[1] + parts[2]
+end
+
