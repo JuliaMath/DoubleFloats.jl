@@ -19,6 +19,24 @@ function Double(::Type{Performance}, hi::T) where {T<:AbstractFloat}
     return Double(Performance, hi, zero(T))
 end
 
+function Double(::Type{Accuracy}, hi::Tuple{T}) where {T<:AbstractFloat}
+    return Double(Accuracy, hi[1], zero(T))
+end
+
+function Double(::Type{Performance}, hi::Tuple{T}) where {T<:AbstractFloat}
+    return Double(Performance, hi[1], zero(T))
+end
+
+function Double(::Type{Accuracy}, hilo::Tuple{T,T}) where {T<:AbstractFloat}
+    hi, lo = two_sum(hilo[1], hilo[2])
+    return Double(Accuracy, hi, lo)
+end
+
+function Double(::Type{Performance}, hilo::Tuple{T,T}) where {T<:AbstractFloat}
+    hi, lo = two_sum(hilo[1], hilo[2])
+    return Double(Performance, hi, lo)
+end
+
 function Double{T, Accuracy}(hi::T, lo::T) where {T<:AbstractFloat}
     hi, lo = two_sum(hi, lo)
     return Double(Accuracy, hi, lo)
