@@ -3,11 +3,11 @@ module DoubleFloats
 export MultipartFloat, 
        Emphasis, Accuracy, Performance,
        Double, FastDouble,
-       HI, LO, HILO,
-       square, cube,
-       spread, sld, tld,
-       nan, inf,
-       signs
+       HI, LO, HILO
+       #square, cube,
+       #spread, sld, tld,
+       #nan, inf,
+       #signs
 
 if VERSION >= v"0.7.0-"
     import Base.IEEEFloat
