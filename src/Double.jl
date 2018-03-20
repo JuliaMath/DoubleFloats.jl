@@ -82,5 +82,5 @@ end
 
 function show(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     str = string(x)
-    print(STDOUT, str)
+    print(StdOutStream, str)
 end
