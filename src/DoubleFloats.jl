@@ -39,14 +39,15 @@ end
 using AccurateArithmetic
 
 abstract type MultipartFloat{T} <: AbstractFloat end
-abstract type AbstractDouble{T} <: MultipartFloat{T} end
 
+include("Emphasis.jl")
+include("DoubleFloat.jl")
 
+#=
 include("blocks/double.jl")
 include("blocks/triple.jl")
 include("blocks/namedconsts.jl")
 
-include("traits.jl")
 
 include("type/DoubleFloat.jl")
 include("blocks/doubleconsts.jl")
@@ -67,5 +68,6 @@ include("math/sequences.jl")
 include("math/explog.jl")
 include("math/pi_maps.jl")
 include("math/trig.jl")
+=#
 
 end # module DoubleFloats
