@@ -10,10 +10,13 @@ export MultipartFloat,
        #signs
 
 if VERSION >= v"0.7.0-"
-    import Base.IEEEFloat
+    import Base: IEEEFloat, isone
+    using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 else
     const IEEEFloat = Union{Float64, Float32, Float16}
+    export isone
 end
+
 
 import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
@@ -27,21 +30,14 @@ import Base: (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
-
-if VERSION >= v"0.7.0-"
-    import Base:isone
-else
-    export isone
-end
 
 using AccurateArithmetic
 
 abstract type MultipartFloat{T} <: AbstractFloat end
 
-include("Emphasis.jl")
-include("Double.jl")
+include("Emphasis.jl") # Accuracy, Performance
+include("Double.jl")   # Double, FastDouble
 
 #=
 include("blocks/double.jl")
