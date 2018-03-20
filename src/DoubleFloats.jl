@@ -41,7 +41,7 @@ using AccurateArithmetic
 abstract type MultipartFloat{T} <: AbstractFloat end
 
 include("Emphasis.jl")
-include("DoubleFloat.jl")
+include("Double.jl")
 
 #=
 include("blocks/double.jl")
