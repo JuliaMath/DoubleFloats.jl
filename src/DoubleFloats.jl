@@ -46,6 +46,8 @@ abstract type MultipartFloat{T} <: AbstractFloat end
 include("Emphasis.jl") # Accuracy, Performance
 include("Double.jl")   # Double, FastDouble
 
+include("type/promote.jl")
+include("type/constructors.jl")
 include("type/predicates.jl")
 
 #=
