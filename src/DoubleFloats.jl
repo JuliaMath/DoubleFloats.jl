@@ -1,10 +1,10 @@
 module DoubleFloats
 
-export Double, FastDouble,
+export MultipartFloat, 
        Emphasis, Accuracy, Performance,
+       Double, FastDouble,
        HI, LO, HILO,
        square, cube,
-       MultipartFloat, AbstractDouble,
        spread, sld, tld,
        nan, inf,
        signs
