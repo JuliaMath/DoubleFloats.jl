@@ -5,7 +5,8 @@ export MultipartFloat,
        Double, FastDouble,
        HI, LO, HILO,
        ispos, isneg, isnonpos, isnonneg,
-       isnonzero, isposinf, isneginf, isfractional
+       isnonzero, isposinf, isneginf, isfractional,
+       intpart, fracpart, fmod,
        #square, cube,
        #spread, sld, tld,
        #nan, inf,
@@ -49,6 +50,8 @@ include("Double.jl")   # Double, FastDouble
 include("type/promote.jl")
 include("type/constructors.jl")
 include("type/predicates.jl")
+include("type/intfrac.jl")
+
 
 #=
 include("blocks/double.jl")
