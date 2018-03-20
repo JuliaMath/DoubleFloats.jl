@@ -52,7 +52,12 @@ include("type/constructors.jl")
 include("type/predicates.jl")
 include("type/values.jl")
 
+include("ops/prelims.jl")
+include("ops/op.jl")
+include("ops/floorceil.jl")
+
 include("type/intfrac.jl")
+
 
 
 #=
