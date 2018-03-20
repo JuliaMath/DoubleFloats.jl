@@ -69,39 +69,16 @@ function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
     return Double(E, fhi, flo)
 end
 
-#=
-Double(::Type{E}, hi::T, lo::T) where {T<:Union{Int8,Int16,Int32,Int8,Int16,Int32}, E<:Emphasis} =
-    Double(E, (Float64(hi), Float64(lo)))
 
-Double(::Type{Performance}, hi::T, lo::T) where {T<:AbstractFloat} =
-    Double{T,Performance}(hi, lo)
-Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat} =
-    Double{T,Accuracy}(hi, zero(T))
-Double(::Type{Performance}, hi::T) where {T<:AbstractFloat} =
-    Double{T,Performance}(hi, zero(T))
-=#
-#=
-function Double(::Type{Performance}, hilo::Tuple{T, T}) where {T<:AbstractFloat} 
-    hi, lo = hilo
-    hi, lo = add_2(hi, lo)
-    return Double(Performance, hi, lo)
-end
-=#
 
 #these always renormalize, require abs(hi)>=abs(lo) !!UNCHECKED!!
 
 function Double(hilo::Tuple{T, T}, ::Type{E}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = hilo
     hi, lo = add_hilo_2(hi, lo)
-    return Double(Accuracy, hi, lo)
+    return Double(E, hi, lo)
 end
-#=
-function Double(hilo::Tuple{T, T}, ::Type{Performance}) where {T<:AbstractFloat}
-    hi, lo = hilo
-    hi, lo = add_hilo_2(hi, lo)
-    return Double(Performance, hi, lo)
-end
-=#
+
 
 Double(hi::T) where {T<:IEEEFloat} = 
     Double(Accuracy, hi, zero(T))
