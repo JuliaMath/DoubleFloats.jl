@@ -10,9 +10,13 @@ export MultipartFloat,
        #signs
 
 if VERSION >= v"0.7.0-"
-    import Base: IEEEFloat, isone
+    import Base.stdout
+    const StdOutStream = Base.stdout
+    import Base: IEEEFloat, isone, stdout
     using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 else
+    import Base.STDOUT
+    const StdOutStream = Base.STDOUT
     const IEEEFloat = Union{Float64, Float32, Float16}
     export isone
 end
