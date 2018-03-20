@@ -52,6 +52,8 @@ include("type/constructors.jl")
 include("type/predicates.jl")
 include("type/values.jl")
 
+include("buildingblocks/double.jl")
+
 include("ops/prelims.jl")
 include("ops/op.jl")
 include("ops/floorceil.jl")
