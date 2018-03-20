@@ -72,6 +72,23 @@ function FastDouble(hi::T) where {T<:AbstractFloat}
 end
 
 
+function Double(x::Double{T, Performance}) where {T<:AbstractFloat}
+    return Double(Accuracy, HILO(x))
+end
+
+function FastDouble(x::Double{T, Accuracy}) where {T<:AbstractFloat}
+    return Double(Performance, HILO(x))
+end
+
+function Double(x::Double{T, Accuracy}) where {T<:AbstractFloat}
+    return x
+end
+
+function FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat}
+    return x
+end
+
+
 HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
 LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
 HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
