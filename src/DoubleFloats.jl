@@ -6,10 +6,10 @@ export MultipartFloat,
        HI, LO, HILO,
        ispos, isneg, isnonpos, isnonneg,
        isnonzero, isposinf, isneginf, isfractional,
+       nan, inf,
        intpart, fracpart, fmod
-       #square, cube,
+       square, cube
        #spread, sld, tld,
-       #nan, inf,
        #signs
 
 if VERSION >= v"0.7.0-"
@@ -31,7 +31,7 @@ import Base: hash, promote_type, promote_rule, convert, string, show, parse,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
              isinteger, isodd, iseven, zero, one,
              floor, ceil, trunc, div, fld, cld, rem, mod,
-             modf, frexp, ldexp,
+             modf, frexp, ldexp, sqrt, cbrt,
              log, exp, log1p, expm1, log2, log10,
              sin, cos, tan, csc, sec, cot,
              asin, acos, atan, acsc, asec, acot,
