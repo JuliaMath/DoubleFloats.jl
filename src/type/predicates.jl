@@ -6,8 +6,8 @@ The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 These are the predicates made available for use with DoubleFloats:
 
 > iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
-  ispositive, isnegative,                  #  value >  0, value <  0
-  isnonnegative, isnonpositive,            #  value >= 0, value <= 0
+  ispos, isneg,                            #  value >  0, value <  0
+  isnonneg, isnonpos,                      #  value >= 0, value <= 0
   isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan,                                   #  value is not a number (eg 0/0)
@@ -25,16 +25,16 @@ isnonzero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isone(HI(x)) && iszero(LO(x))
     
-ispositive(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+ispos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     !signbit(HI(x)) && !iszero(HI(x))
 
-isnegative(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isneg(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     signbit(HI(x))
 
-isnonnegative(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnonneg(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     !signbit(HI(x))
 
-isnonpositive(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnonpos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     signbit(HI(x)) || iszero(HI(x))
  
 isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
