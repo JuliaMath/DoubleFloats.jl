@@ -44,6 +44,7 @@ Double(hi::T, lo::T) where {T<:BigNumber} = Double(big2hilo(hi+lo)...,)
 FastDouble(hi::T) where {T<:BigNumber} = FastDouble(big2hilo(Float64,hi)...,)
 FastDouble(hi::T, lo::T) where {T<:BigNumber} = FastDouble(big2hilo(hi+lo)...,)
 =#
+
 Double(hi::T) where {T<:IEEEFloat} = Double(Accuracy, hi, zero(T))
 Double(hi::T, lo::T) where {T<:IEEEFloat} = Double(Accuracy, (hi, lo))
 
@@ -57,8 +58,8 @@ FastDouble(hi::T) where {T<:Integer} = FastDouble(Float64(hi))
 FastDouble(hi::T, lo::T) where {T<:Integer} = FastDouble(Float(hi), Float64(lo))
 
 
-Double(x::Irrational{S}) where {S} = Double(BigFloat(x))
-FastDouble(x::Irrational{S}) where {S} = FastDouble(BigFloat(x))
+Double(x::Irrational{S}) where {S} = Double{Float64, Accuracy}(BigFloat(x))
+FastDouble(x::Irrational{S}) where {S} = Double{Float64, Performance}(BigFloat(x))
 
 Double{T,Accuracy}(x::Irrational{S}) where {S, T<:AbstractFloat} = Double{T,Accuracy}(BigFloat(x))
 Double{T,Performance}(x::Irrational{S}) where {S, T<:AbstractFloat} = Double{T,Performance}(BigFloat(x))
