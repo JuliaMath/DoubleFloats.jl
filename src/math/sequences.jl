@@ -1,5 +1,5 @@
 # 1 / factorial(i)
-const n_inv_fact = 32
+const ninv_fact = 32
 const inv_fact = Double{Float64,Accuracy}[
   Double(1.0,0.0),
   Double(0.5,0.0),
