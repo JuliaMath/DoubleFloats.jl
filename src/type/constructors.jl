@@ -35,6 +35,9 @@ function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
 end
 
 Double{T,E}(x::B) where {T<:AbstractFloat, E<:Emphasis, B<:BigNumber} = Double(E, x)
+Double(::Type{Accuracy}, x::B) where {B<:BigNumber} = Double{Float64, Accuracy}(x)
+Double(::Type{Performance}, x::B) where {B<:BigNumber} = Double{Float64, Performance}(x)
+
 
 Double(hi::T) where {T<:IEEEFloat} = Double(Accuracy, hi, zero(T))
 Double(hi::T, lo::T) where {T<:IEEEFloat} = Double(Accuracy, (hi, lo))
