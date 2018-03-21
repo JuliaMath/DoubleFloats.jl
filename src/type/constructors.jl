@@ -1,3 +1,12 @@
+Double{Float64,Accuracy}(x::Float64) = Double(Accuracy, x, 0.0)
+Double{Float32,Accuracy}(x::Float32) = Double(Accuracy, x, 0.0f0)
+Double{Float16,Accuracy}(x::Float16) = Double(Accuracy, x, zero(Float16))
+Double{Float64,Performance}(x::Float64) = Double(Performance, x, 0.0)
+Double{Float32,Performance}(x::Float32) = Double(Performance, x, 0.0f0)
+Double{Float16,Performance}(x::Float16) = Double(Performance, x, zero(Float16))
+
+
+
 # Float64 can accomodate any SmallInteger
 const SmallInteger = Union{Int8, Int16, Int32, UInt8, UInt16, UInt32}
 const LargeInteger = Union{Int64, Int128, UInt64, UInt128}
