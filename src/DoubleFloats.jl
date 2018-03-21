@@ -32,7 +32,7 @@ else
 end
 
 
-import Base: hash, promote_type, promote_rule, convert, string, show, parse,
+using Base: hash, promote_type, promote_rule, convert, string, show, parse,
              (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
