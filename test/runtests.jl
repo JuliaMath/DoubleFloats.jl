@@ -2,8 +2,6 @@ using Test
 using Base.MathConstants
 using DoubleFloats
 
-using Compat
-using Compat.Test
 using AccurateArithmetic
 
 if VERSION >= v"0.7.0-"
