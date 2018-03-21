@@ -39,9 +39,9 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test a.hi == b.hi
 @test a.lo == b.lo
 @test (a+c).hi == (b+d).hi
-@test (a+c).lo == (b+d).lo
+@test abs((a+c).lo - (b+d).lo) < eps((a+c).lo)
 @test (a-c).hi == (b-d).hi
-@test (a-c).lo == (b-d).lo
+@test abs((a-c).lo - (b-d).lo) < eps((a-c).lo)
 @test (a*c).hi == (b*d).hi
 @test (a*c).lo == (b*d).lo
 @test (a/c).hi == (b/d).hi
