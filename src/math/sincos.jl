@@ -1,17 +1,17 @@
 const double_eps = eps(eps(1.0))
-const twopi_accuracy    = Double(Accuracy, 6.283185307179586, 2.4492935982947064e-16)
-const twopi_performance = Double(Performance, 6.283185307179586, 2.4492935982947064e-16)
+const twopi_accuracy     = Double(Accuracy, 6.283185307179586, 2.4492935982947064e-16)
+const twopi_performance  = Double(Performance, 6.283185307179586, 2.4492935982947064e-16)
 const halfpi_accuracy    = Double(Accuracy, 1.5707963267948966, 6.123233995736766e-17)
 const halfpi_performance = Double(Performance, 1.5707963267948966, 6.123233995736766e-17)
-const pio16_accuracy    = Double(Accuracy, 0.19634954084936207, 7.654042494670958e-18)
-const pio16_performance = Double(Performance, 0.19634954084936207, 7.654042494670958e-18)
+const pio16_accuracy     = Double(Accuracy, 0.19634954084936207, 7.654042494670958e-18)
+const pio16_performance  = Double(Performance, 0.19634954084936207, 7.654042494670958e-18)
 
-twopi(::Type{Accuracy}) = twopi_accuracy
-twopi(::Type{Performance}) = twopi_performance
-halfpi(::Type{Accuracy}) = halfpi_accuracy
+twopi(::Type{Accuracy})     = twopi_accuracy
+twopi(::Type{Performance})  = twopi_performance
+halfpi(::Type{Accuracy})    = halfpi_accuracy
 halfpi(::Type{Performance}) = halfpi_performance
-pio16(::Type{Accuracy}) = pio16_accuracy
-pio16(::Type{Performance}) = pio16_performance
+pio16(::Type{Accuracy})     = pio16_accuracy
+pio16(::Type{Performance})  = pio16_performance
 
 const sin_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
 const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
