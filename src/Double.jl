@@ -2,20 +2,23 @@ struct Double{T, E} <: MultipartFloat{T}
     hi::T
     lo::T
 
-   function Double{T, E}(hi::T, lo::T) where {T<:Float64, E<:Accuracy}
-        hi, lo =  add_2(hi, lo)
-        new{T, Accuracy}(hi, lo)
+   function Double(::Type{Accuracy}, hi::Float64, lo::Float64)
+       new{Float64, Accuracy}(hi, lo)
    end
-   function Double{T, Performance}(hi::T, lo::T) where {T<:IEEEFloat}
-        hi, lo =  add_2(hi, lo)
-        new{T, Performance}(hi, lo)
+   function Double(::Type{Accuracy}, hi::Float32, lo::Float32)
+       new{Float32, Accuracy}(hi, lo)
    end
-   function Double(::Type{Accuracy}, hi::T, lo::T)  where {T<:IEEEFloat}
-       new{T, Accuracy}(hi, lo)
+   function Double(::Type{Accuracy}, hi::Float16, lo::Float16)
+       new{Float16, Accuracy}(hi, lo)
    end
-
-   function Double(::Type{Performance}, hi::T, lo::T)  where {T<:IEEEFloat}
-       new{T, Performance}(hi, lo)
+   function Double(::Type{Performance}, hi::Float64, lo::Float64)
+       new{Float64, Performance}(hi, lo)
+   end
+   function Double(::Type{Performance}, hi::Float32, lo::Float32)
+       new{Float32, Performance}(hi, lo)
+   end
+   function Double(::Type{Performance}, hi::Float16, lo::Float16)
+       new{Float16, Performance}(hi, lo)
    end
 end
 
