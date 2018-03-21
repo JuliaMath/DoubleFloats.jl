@@ -26,9 +26,8 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      increases the convergence of the sine Taylor series.
   =#
 
-	if iszero(a)
-		return zero(a)
-	end
+	iszero(a) && return zero(a)
+	!isfinite(a) && return nan(typeof(a))
 
 	# approximately reduce modulo 2*pi
 	z = round(a / twopi(E))
@@ -84,10 +83,10 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	if iszero(a)
-		return one(a)
-	end
 
+	iszero(a) && return one(a)
+	!isfinite(a) && return nan(typeof(a))
+	
 	# approximately reduce modulo 2*pi
 	z = round(a / twopi(E))
 	r = a - twopi(E) * z
@@ -268,6 +267,10 @@ function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+
+    iszero(a) && return zero(a)
+    !isfinite(a) && return nan(typeof(a))
+    
     s, c = sincos(a)
     return s/c
 end
