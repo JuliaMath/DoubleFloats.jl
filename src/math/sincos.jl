@@ -71,11 +71,11 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	u = cos_table[abs_k]
 	v = sin_table[abs_k]
-  sin_t, cos_t = sincos_taylor(t)
+        sin_t, cos_t = sincos_taylor(t)
 
 	if j == 0
 		r = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
-  elseif j == 1
+        elseif j == 1
 		r = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
 	elseif j == -1
 		r = k > 0 ? v * sin_t - u * cos_t : -u * cos_t - v * sin_t
@@ -129,11 +129,11 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	u = cos_table[abs_k]
 	v = sin_table[abs_k]
-  sin_t, cos_t = sincos_taylor(t)
+        sin_t, cos_t = sincos_taylor(t)
 
 	if j == 0
 		r = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
-  elseif j == 1
+        elseif j == 1
 		r = k > 0 ? -u * sin_t - v * cos_t : v * cos_t - u * sin_t
 	elseif j == -1
 		r = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
@@ -149,6 +149,8 @@ end
 	sin_taylor(a)
 
 Computes sin(a) using Taylor series. Assumes |a| <= π/32.
+
+sin(x) = x^1/1! - x^3/3! + x^5/5! - +
 """
 function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	thresh = 0.5 * abs(convert(Float64, a)) * double_eps
@@ -157,7 +159,7 @@ function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		return zero(a)
 	end
 
-	i = 1
+	i = 3
 	x = -square(a)
 	s = a
 	r = a
@@ -188,8 +190,9 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	x = -square(a)
 	r = x
-	s = 1.0 + mul_pwr2(r, 0.5)
-	i = 2
+	s = Double{T,E}(HI(x)*0.5, LO(x)*0.5)
+	s = 1.0 + s
+	i = 4
 	while true
 		r *= x
 		t = r * inv_fact[i]
@@ -202,6 +205,7 @@ function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
 	s
 end
+
 
 function sincos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	if iszero(a)
