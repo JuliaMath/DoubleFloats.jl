@@ -39,18 +39,18 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     t = r - halfpi(E) * q
     j = convert(Int, q)
     q = floor(t.hi / pio16(E).hi + 0.5)
-    t -= pio16(E) * q
+    t = t - pio16(E) * q
     k = convert(Int, q)
     abs_k = abs(k)
 
     if j < -2 || j > 2
         # Cannot reduce modulo pi/2.
-        return double_nan
+        return nan(Double{T,E})
     end
 
     if (abs_k > 4)
         # Cannot reduce modulo pi/16.
-        return double_nan
+        return nan(Double{T,E})
     end
 
     if k == 0
@@ -67,11 +67,11 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
     u = cos_table[abs_k]
     v = sin_table[abs_k]
-        sin_t, cos_t = sincos_taylor(t)
+    sin_t, cos_t = sincos_taylor(t)
 
     if j == 0
         r = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
-        elseif j == 1
+    elseif j == 1
         r = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
     elseif j == -1
         r = k > 0 ? v * sin_t - u * cos_t : -u * cos_t - v * sin_t
@@ -96,18 +96,18 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     t = r - halfpi(E) * q
     j = convert(Int, q)
     q = floor(t.hi / pio16(E).hi + 0.5)
-    t -= pio16(E) * q
+    t = t - pio16(E) * q
     k = convert(Int, q)
     abs_k = abs(k)
 
     if j < -2 || j > 2
         # Cannot reduce modulo pi/2.
-        return double_nan
+        return nan(Double{T,E})
     end
 
     if (abs_k > 4)
         # Cannot reduce modulo pi/16.
-        return double_nan
+      return nan(Double{T,E})
     end
 
     if k == 0
@@ -124,11 +124,11 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
     u = cos_table[abs_k]
     v = sin_table[abs_k]
-        sin_t, cos_t = sincos_taylor(t)
+    sin_t, cos_t = sincos_taylor(t)
 
     if j == 0
         r = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
-        elseif j == 1
+    elseif j == 1
         r = k > 0 ? -u * sin_t - v * cos_t : v * cos_t - u * sin_t
     elseif j == -1
         r = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
