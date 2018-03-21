@@ -47,10 +47,6 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test (a/c).hi == (b/d).hi
 @test (a/c).lo == (b/d).lo
 
-
-performant_sqrt2   = Double{Float64, Accuracy}(sqrt2)
-performant_sqrt2bf = Double{Float64, Accuracy}(sqrt2bf)
-
 y = 0.1
 by = big(y)
 sy = Single(y)
