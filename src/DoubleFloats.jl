@@ -66,34 +66,6 @@ include("ops/intfrac.jl")
 
 include("math/sequences.jl")
 include("math/explog.jl")
-
-
-
-#=
-include("blocks/double.jl")
-include("blocks/triple.jl")
-include("blocks/namedconsts.jl")
-
-
-include("type/DoubleFloat.jl")
-include("blocks/doubleconsts.jl")
-
-include("type/promote.jl")
-include("type/string_show.jl")
-
-
-include("type/predicates.jl")
-include("type/val_isa_cmp.jl")
-include("type/parts.jl")
-
-include("ops/prelims.jl")
-include("ops/intfloat.jl")
-
-include("ops/op.jl")
-include("math/sequences.jl")
-include("math/explog.jl")
-include("math/pi_maps.jl")
-include("math/trig.jl")
-=#
+include("math/sincos.jl")
 
 end # module DoubleFloats
