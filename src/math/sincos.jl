@@ -16,16 +16,16 @@ pio16(::Type{Performance}) = pio16_performance
 const sin_table = [Double(sin(k * big(π) * 0.0625)) for k = 1:4]
 const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 
-function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-  #=
+#=
      Strategy.  To compute sin(x), we choose integers a, b so that
        x = s + a * (pi/2) + b * (pi/16)
      and |s| <= pi/32.  Using the fact that
        sin(pi/16) = 0.5 * sqrt(2 - sqrt(2 + sqrt(2)))
      we can compute sin(x) from sin(s), cos(s).  This greatly
      increases the convergence of the sine Taylor series.
-  =#
+=#
 
+function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(a) && return zero(a)
     !isfinite(a) && return nan(typeof(a))
 
@@ -83,7 +83,6 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-
     iszero(a) && return one(a)
     !isfinite(a) && return nan(typeof(a))
 
@@ -138,6 +137,83 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     end
 
     r
+end
+
+
+
+
+function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    iszero(a) && return zero(a), one(a)
+
+    # approximately reduce modulo 2*pi
+    z = round(a / twopi(E))
+    r = a - twopi(E) * z
+
+    # approximately reduce modulo pi/2 and then modulo pi/16.
+    q = floor(r.hi / pio2(E).hi + 0.5)
+    t = r - pio2(E) * q
+    j = convert(Int, q)
+    abs_j = abs(j)
+    q = floor(t.hi / pio16(E).hi + 0.5)
+    t -= pio16(E) * q
+    k = convert(Int, q)
+    abs_k = abs(k)
+
+    if abs_j > 2
+        # Cannot reduce modulo pi/2.
+        return double_nan, double_nan
+    end
+
+    if abs_k > 4
+        # Cannot reduce modulo pi/16.
+        return double_nan, double_nan
+    end
+
+        sin_t, cos_t = sincos_taylor(t)
+
+    if abs_k == 0
+        s = sin_t
+        c = cos_t
+    else
+        u = cos_table[abs_k]
+        v = sin_table[abs_k]
+
+        s = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
+        c = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
+    end
+
+    if j == 0
+        s, c
+      elseif j == 1
+        c, -s
+    elseif j == -1
+        -c, s
+    else
+        -s, -c
+    end
+end
+
+function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    iszero(a) && return zero(a)
+    !isfinite(a) && return nan(typeof(a))
+
+    s, c = sincos(a)
+    return s/c
+end
+
+function csc(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s = sin(a)
+    return inv(s)
+end
+
+function sec(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    c = cos(a)
+    return inv(c)
+end
+
+function cot(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    t = tan(a)
+    return inv(t)
 end
 
 
@@ -209,83 +285,4 @@ function sincos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
       cos_a = sqrt(1.0 - square(sin_a))
 
       sin_a, cos_a
-end
-
-
-
-function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    if iszero(a)
-        return zero(a), one(a)
-    end
-
-    # approximately reduce modulo 2*pi
-    z = round(a / twopi(E))
-    r = a - twopi(E) * z
-
-    # approximately reduce modulo pi/2 and then modulo pi/16.
-    q = floor(r.hi / pio2(E).hi + 0.5)
-    t = r - pio2(E) * q
-    j = convert(Int, q)
-    abs_j = abs(j)
-    q = floor(t.hi / pio16(E).hi + 0.5)
-    t -= pio16(E) * q
-    k = convert(Int, q)
-    abs_k = abs(k)
-
-    if abs_j > 2
-        # Cannot reduce modulo pi/2.
-        return double_nan, double_nan
-    end
-
-    if abs_k > 4
-        # Cannot reduce modulo pi/16.
-        return double_nan, double_nan
-    end
-
-        sin_t, cos_t = sincos_taylor(t)
-
-    if abs_k == 0
-        s = sin_t
-        c = cos_t
-    else
-        u = cos_table[abs_k]
-        v = sin_table[abs_k]
-
-        s = k > 0 ? u * sin_t + v * cos_t : u * sin_t - v * cos_t
-        c = k > 0 ? u * cos_t - v * sin_t : u * cos_t + v * sin_t
-    end
-
-    if j == 0
-        s, c
-      elseif j == 1
-        c, -s
-    elseif j == -1
-        -c, s
-    else
-        -s, -c
-    end
-end
-
-function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-
-    iszero(a) && return zero(a)
-    !isfinite(a) && return nan(typeof(a))
-
-    s, c = sincos(a)
-    return s/c
-end
-
-function csc(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    s = sin(a)
-    return inv(s)
-end
-
-function sec(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    c = cos(a)
-    return inv(c)
-end
-
-function cot(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    t = tan(a)
-    return inv(t)
 end
