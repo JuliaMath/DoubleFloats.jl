@@ -243,7 +243,7 @@ function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		return double_nan, double_nan
 	end
 
-  sin_t, cos_t = sincos_taylor(t)
+        sin_t, cos_t = sincos_taylor(t)
 
 	if abs_k == 0
 		s = sin_t
@@ -265,4 +265,24 @@ function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	else
 		-s, -c
 	end
+end
+
+function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s, c = sincos(a)
+    return s/c
+end
+
+function csc(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s = sin(a)
+    return inv(s)
+end
+
+function sec(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    c = cos(a)
+    return inv(c)
+end
+
+function cot(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    t = tan(a)
+    return inv(t)
 end
