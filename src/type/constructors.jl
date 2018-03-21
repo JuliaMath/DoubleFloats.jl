@@ -34,8 +34,8 @@ function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
     return Double(E, fhi, flo)
 end
 
-Double{BigFloat, Accuracy}(x::BigFloat) = Double(Accuracy, big2hilo(Float64, x)...,)
-Double{BigFloat, Performance}(x::BigFloat) = Double(Performance, big2hilo(Float64, x)...,)
+#Double{T, Accuracy}(x::BigFloat) where{T<: = Double(Accuracy, big2hilo(Float64, x)...,)
+#Double{BigFloat, Performance}(x::BigFloat) = Double(Performance, big2hilo(Float64, x)...,)
 Double{T, Accuracy}(x::T) where {T<:BigFloat} = Double(Accuracy, big2hilo(Float64, x)...,)
 Double{T, Performance}(x::T) where {T<:BigFloat} = Double(Performance, big2hilo(Float64, x)...,)
 
