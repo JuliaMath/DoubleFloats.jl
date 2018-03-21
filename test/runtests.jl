@@ -39,18 +39,17 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test a.hi == b.hi
 @test a.lo == b.lo
 @test (a+c).hi == (b+d).hi
-@test abs((a+c).lo - (b+d).lo) <= eps((a+c).lo)
+@test (a+c).lo == (b+d).lo
 @test (a-c).hi == (b-d).hi
 @test abs((a-c).lo - (b-d).lo) <= eps((a-c).lo)
 @test (a*c).hi == (b*d).hi
-@test abs((a*c).lo - (b*d).lo) <= eps((a*c).lo)
 @test (a*c).lo == (b*d).lo
 @test (a/c).hi == (b/d).hi
 @test (a/c).lo == (b/d).lo
 
 
-performant_sqrt2   = Double{Accurate,Float64}(sqrt2)
-performant_sqrt2bf = Double{Accurate,Float64}(sqrt2bf)
+performant_sqrt2   = Double{Float64, Accuracy}(sqrt2)
+performant_sqrt2bf = Double{Float64, Accuracy}(sqrt2bf)
 
 y = 0.1
 by = big(y)
