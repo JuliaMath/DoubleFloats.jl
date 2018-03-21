@@ -57,8 +57,10 @@ include("buildingblocks/double.jl")
 include("ops/prelims.jl")
 include("ops/op.jl")
 include("ops/floorceil.jl")
+include("ops/intfrac.jl")
 
-include("type/intfrac.jl")
+include("math/sequences.jl")
+include("math/explog.jl")
 
 
 
