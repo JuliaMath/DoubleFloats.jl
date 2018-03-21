@@ -5,6 +5,8 @@ Double{T,E}(x::T) where {T<:Float64, E<:Performance} = Double(E, x, 0.0)
 Double{T,E}(x::T) where {T<:Float32, E<:Performance} = Double(E, x, 0.0f0)
 Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16))
 
+Double{T,Accuracy}(x::T) where {T<:Float64} = Double(Accuracy, x, 0.0)
+Double{T,Performance}(x::T) where {T<:Float64} = Double(Performance, x, 0.0)
 
 
 # Float64 can accomodate any SmallInteger
