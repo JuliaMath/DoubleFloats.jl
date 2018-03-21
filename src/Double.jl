@@ -2,7 +2,7 @@ struct Double{T, E} <: MultipartFloat{T}
     hi::T
     lo::T
 
-   function Double{T, Accuracy}(hi::T, lo::T) where {T<:IEEEFloat}
+   function Double{T, E}(hi::T, lo::T) where {T<:Float64, E<:Accuracy}
         hi, lo =  add_2(hi, lo)
         new{T, Accuracy}(hi, lo)
    end
