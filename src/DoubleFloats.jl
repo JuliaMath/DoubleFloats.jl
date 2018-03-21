@@ -69,6 +69,6 @@ include("ops/intfrac.jl")
 
 include("math/sequences.jl")
 include("math/explog.jl")
-include("math/sincos.jl")
+#include("math/sincos.jl")
 
 end # module DoubleFloats
