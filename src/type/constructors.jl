@@ -48,6 +48,8 @@ end
 
 Double{T, Accuracy}(x::T) where {T<:BigFloat} = Double(Accuracy, big2hilo(Float64, x)...,)
 Double{T, Performance}(x::T) where {T<:BigFloat} = Double(Performance, big2hilo(Float64, x)...,)
+Double{Float64, Accuracy}(x::BigFloat) = Double(Accuracy, big2hilo(Float64, x)...,)
+Double{Float64, Performance}(x::BigFloat) = Double(Performance, big2hilo(Float64, x)...,)
 
 Double(::Type{Accuracy}, x::B) where {B<:BigNumber} = Double{Float64, Accuracy}(x)
 Double(::Type{Performance}, x::B) where {B<:BigNumber} = Double{Float64, Performance}(x)
