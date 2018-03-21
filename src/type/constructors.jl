@@ -34,7 +34,10 @@ function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
     return Double(E, fhi, flo)
 end
 
-Double{T,E}(x::B) where {T<:AbstractFloat, E<:Emphasis, B<:BigNumber} = Double(E, x)
+Double{T,E}(x::BigFloat) where {T<:AbstractFloat, E<:Emphasis} = Double(E, x)
+Double{T,E}(x::BigInt) where {T<:AbstractFloat, E<:Emphasis} = Double(E, BigFloat(x))
+Double{T,E}(x::Rational{BigInt}) where {T<:AbstractFloat, E<:Emphasis} = Double(E, BigFloat(x))
+
 Double(::Type{Accuracy}, x::B) where {B<:BigNumber} = Double{Float64, Accuracy}(x)
 Double(::Type{Performance}, x::B) where {B<:BigNumber} = Double{Float64, Performance}(x)
 #=
