@@ -268,15 +268,3 @@ function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 		-s, -c
 	end
 end
-
-
-function sincos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	  if iszero(a)
-		    zero(a), one(a)
-	  end
-
-  	sin_a = sin_taylor(a)
-  	cos_a = sqrt(1.0 - square(sin_a))
-
-  	sin_a, cos_a
-end
