@@ -3,6 +3,14 @@ import Base: Float16, Float32, Float64, BigFloat
 struct Double{T, E<:Emphasis} <: AbstractDouble{T}
     hi::T
     lo::T
+    
+    function Double{T, E}(x::T) where {T<:IEEEFloat, E<:Emphasis}
+        new{T,E}(x, zero(T))
+    end
+    function Double{T, E}(x::T, y::T) where {T<:IEEEFloat, E<:Emphasis}
+        hi, lo = add_2(x, y)
+        new{T,E}(hi, lo)
+    end
 end
 
 @inline HI(x::Double{T,E}) where {T,E<:Emphasis} = x.hi
