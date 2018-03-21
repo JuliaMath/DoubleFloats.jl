@@ -1,9 +1,9 @@
-Double{Float64,Accuracy}(x::Float64) = Double(Accuracy, x, 0.0)
-Double{Float32,Accuracy}(x::Float32) = Double(Accuracy, x, 0.0f0)
-Double{Float16,Accuracy}(x::Float16) = Double(Accuracy, x, zero(Float16))
-Double{Float64,Performance}(x::Float64) = Double(Performance, x, 0.0)
-Double{Float32,Performance}(x::Float32) = Double(Performance, x, 0.0f0)
-Double{Float16,Performance}(x::Float16) = Double(Performance, x, zero(Float16))
+Double{T,E}(x::T) where {T<:Float64, E<:Accuracy} = Double(E, x, 0.0)
+Double{T,E}(x::T) where {T<:Float32, E<:Accuracy} = Double(E, x, 0.0f0)
+Double{T,E}(x::T) where {T<:Float16, E<:Accuracy} = Double(E, x, zero(Float16))
+Double{T,E}(x::T) where {T<:Float64, E<:Performance} = Double(E, x, 0.0)
+Double{T,E}(x::T) where {T<:Float32, E<:Performance} = Double(E, x, 0.0f0)
+Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16))
 
 
 
