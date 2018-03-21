@@ -57,6 +57,7 @@ include("Double.jl")   # Double, FastDouble
 include("type/promote.jl")
 include("type/constructors.jl")
 include("type/predicates.jl")
+include("type/compare.jl")
 include("type/values.jl")
 
 include("buildingblocks/double.jl")
