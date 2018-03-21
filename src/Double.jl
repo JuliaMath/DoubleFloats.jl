@@ -2,18 +2,11 @@ struct Double{T, E} <: MultipartFloat{T}
     hi::T
     lo::T
 
-   function Double{T,E}(::Type{E}, hi::T, lo::T) where {T<:Float64, E<:Accuracy}
+   function Double(::Type{Accuracy}, hi::Float64, lo::Float64)
        new{Float64, Accuracy}(hi, lo)
    end
-   function Double{T,E}(::Type{E}, hi::T, lo::T) where {T<:Float64, E<:Performance}
-       new{Float64, Performance}(hi, lo)
-   end
-   function Double{T,E}(::Type{E}, hi::T, lo::T) where {T<:IEEEFloat, E<:Emphasis}
-       new{T, E}(hi, lo)
-   end
-   #= 
    function Double(::Type{Accuracy}, hi::Float32, lo::Float32)
-       new{Float32, Accuracy}(hi, lo)
+       new{Float32, Performance}(hi, lo)
    end
    function Double(::Type{Accuracy}, hi::Float16, lo::Float16)
        new{Float16, Accuracy}(hi, lo)
@@ -27,7 +20,6 @@ struct Double{T, E} <: MultipartFloat{T}
    function Double(::Type{Performance}, hi::Float16, lo::Float16)
        new{Float16, Performance}(hi, lo)
    end
-   =#
 end
 
 function Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat}
