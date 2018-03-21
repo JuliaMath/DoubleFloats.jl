@@ -1,9 +1,7 @@
-import Base: floor, ceil, trunc, fld, cld
-
 #export spread, tld, sld
 
 function floor(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
-    (!isfinite(x) || isinteger(x)) && return x
+    (isinteger(x) || !isfinite(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
               Double(E, HI(x)-one(T), zero(T))
@@ -17,7 +15,7 @@ end
 
 
 function ceil(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
-    (!isfinite(x) || isinteger(x)) && return x
+    (isinteger(x) || !isfinite(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
               Double(E, HI(x), zero(T))
@@ -30,7 +28,7 @@ function ceil(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
 end
 
 function trunc(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
-    (!isfinite(x) || isinteger(x)) && return x
+    (isinteger(x) || !isfinite(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
               signbit(HI(x)) ? Double(E, HI(x), zero(T)) : Double(E, HI(x)-one(T), zero(T))
@@ -39,6 +37,15 @@ function trunc(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
         end
     else
         signbit(HI(x)) ? Double(E, ceil(HI(x)), zero(T)) :  Double(E, floor(HI(x)), zero(T))
+    end
+end
+
+function round(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    if isnonneg(x)
+        trunc(x + 0.5)
+    else
+        trunc(x - 0.5)
     end
 end
 
