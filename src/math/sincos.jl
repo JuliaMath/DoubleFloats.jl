@@ -18,13 +18,9 @@ const cos_table = [Double(cos(k * big(π) * 0.0625)) for k = 1:4]
 function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   #= 
      Strategy.  To compute sin(x), we choose integers a, b so that
-
        x = s + a * (pi/2) + b * (pi/16)
-
      and |s| <= pi/32.  Using the fact that
-
        sin(pi/16) = 0.5 * sqrt(2 - sqrt(2 + sqrt(2)))
-
      we can compute sin(x) from sin(s), cos(s).  This greatly
      increases the convergence of the sine Taylor series.
   =#
@@ -37,7 +33,7 @@ function sin(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 	z = round(a / twopi(E))
 	r = a - twopi(E) * z
 
-		# approximately reduce modulo pi/2 and then modulo pi/16.
+	# approximately reduce modulo pi/2 and then modulo pi/16.
 
 	q = floor(r.hi / halfpi(E).hi + 0.5)
 	t = r - halfpi(E) * q
@@ -147,9 +143,7 @@ end
 
 """
 	sin_taylor(a)
-
 Computes sin(a) using Taylor series. Assumes |a| <= π/32.
-
 sin(x) = x^1/1! - x^3/3! + x^5/5! - +
 """
 function sin_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
@@ -178,7 +172,6 @@ end
 
 """
 	cos_taylor(a)
-
 Computes cos(a) using Taylor series. Assumes |a| <= π/32.
 """
 function cos_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
