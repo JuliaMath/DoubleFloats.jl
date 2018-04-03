@@ -90,7 +90,7 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = round(a / twopi(E))
     r = a - twopi(E) * z
 
-        # approximately reduce modulo pi/2 and then modulo pi/16.
+    # approximately reduce modulo pi/2 and then modulo pi/16.
 
     q = floor(r.hi / halfpi(E).hi + 0.5)
     t = r - halfpi(E) * q
@@ -143,33 +143,30 @@ end
 
 
 function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    iszero(a) && return zero(a), one(a)
-
-    # approximately reduce modulo 2*pi
-    z = round(a / twopi(E))
-    r = a - twopi(E) * z
+    iszero(a) && return (zero(a), one(a))
+    !isfinite(a) && return (double_nan, double_nan)
 
     # approximately reduce modulo pi/2 and then modulo pi/16.
-    q = floor(r.hi / pio2(E).hi + 0.5)
-    t = r - pio2(E) * q
+
+    q = floor(r.hi / halfpi(E).hi + 0.5)
+    t = r - halfpi(E) * q
     j = convert(Int, q)
-    abs_j = abs(j)
     q = floor(t.hi / pio16(E).hi + 0.5)
-    t -= pio16(E) * q
+    t = t - pio16(E) * q
     k = convert(Int, q)
     abs_k = abs(k)
 
-    if abs_j > 2
+    if j < -2 || j > 2
         # Cannot reduce modulo pi/2.
-        return double_nan, double_nan
+        return (double_nan, double_nan)
     end
 
-    if abs_k > 4
+    if (abs_k > 4)
         # Cannot reduce modulo pi/16.
-        return double_nan, double_nan
+      return (double_nan, double_nan)
     end
 
-        sin_t, cos_t = sincos_taylor(t)
+    sin_t, cos_t = sincos_taylor(t)
 
     if abs_k == 0
         s = sin_t
@@ -183,14 +180,21 @@ function sincos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     end
 
     if j == 0
-        s, c
-      elseif j == 1
-        c, -s
+        r = k > 0 ? (u * sin_t + v * cos_t, u * cos_t - v * sin_t) :
+                    (u * sin_t - v * cos_t, u * cos_t + v * sin_t)
+    elseif j == 1
+        r = k > 0 ? (u * cos_t - v * sin_t, -u * sin_t - v * cos_t) :
+                    (u * cos_t + v * sin_t,  v * cos_t - u * sin_t)
     elseif j == -1
-        -c, s
+        r = k > 0 ? ( v * sin_t - u * cos_t, u * sin_t + v * cos_t) :
+                    (-u * cos_t - v * sin_t, u * sin_t - v * cos_t)
     else
-        -s, -c
+        r = k > 0 ? (-u * sin_t - v * cos_t,  v * sin_t - u * cos_t) :
+                    ( v * cos_t - u * sin_t, -u * cos_t - v * sin_t)
+  
     end
+
+    r
 end
 
 function tan(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
