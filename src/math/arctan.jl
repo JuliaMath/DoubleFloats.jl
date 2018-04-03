@@ -22,6 +22,26 @@ function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
    return z
 end
 
+function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+     xabs = abs(x)
+     xabs > 1.0 && throw(DomainError("$x"))
+     y = xabs / (1.0 - square(xabs))
+     y = atan(y)
+     y = copysign(y, x)
+     return y
+end
+
+function asin(x::Double{T,Performance}) where {T<:AbstractFloat}
+     xabs = abs(x)
+     xabs > 1.0 && throw(DomainError("$x"))
+     y = xabs / (1.0 - square(xabs))
+     y = atan(y)
+     y = copysign(y, x)
+     return y
+end
+
+      
+     
 #=
 http://mathworld.wolfram.com/InverseTangent.html cites Acton 1990
 =#
