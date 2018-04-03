@@ -26,12 +26,18 @@ function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function asin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+   y = Double{T,E}(asin(x.hi))
+   s,c = sin(y), cos(y)
+   z = y - (s - x)*c
+   return z
+    #=  
      xabs = abs(x)
-     xabs > 1.0 && throw(DomainError("$x"))
+     abs(x > 1.0 && throw(DomainError("$x"))
      y = xabs / (1.0 - square(xabs))
      y = atan(y)
      y = copysign(y, x)
      return y
+   =#
 end
 
 function acos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
