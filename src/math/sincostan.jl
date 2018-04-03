@@ -412,8 +412,8 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
-    result = sin_npio32[idx]*cos_rest
-    result += cos_npio32[idx]*sin_rest
+    result = sin_part*cos_rest
+    result += cos_part*sin_rest
     return result
 end
 
@@ -429,6 +429,21 @@ function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
+function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    idx = index_npio32(x)
+    pipart = npio32[idx]
+    rest = x - pipart
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    s = sin_part*cos_rest
+    s += cos_part*sin_rest
+    c = cos_part*cos_rest
+    c -= sin_part*sin_rest
+    return s, c
+end
+    
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     s, c = sin(x), cos(x)
     return s/c
