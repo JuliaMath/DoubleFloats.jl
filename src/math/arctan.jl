@@ -22,7 +22,7 @@ function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
    return z
 end
 
-function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+function asin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      xabs = abs(x)
      xabs > 1.0 && throw(DomainError("$x"))
      y = xabs / (1.0 - square(xabs))
@@ -31,12 +31,10 @@ function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
      return y
 end
 
-function asin(x::Double{T,Performance}) where {T<:AbstractFloat}
-     xabs = abs(x)
-     xabs > 1.0 && throw(DomainError("$x"))
-     y = xabs / (1.0 - square(xabs))
+function acos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+     abs(x) > 1.0 && throw(DomainError("$x"))
+     y = (1.0 - square(x)) / x
      y = atan(y)
-     y = copysign(y, x)
      return y
 end
 
