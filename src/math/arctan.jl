@@ -31,14 +31,6 @@ function asin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    s,c = sin(y), cos(y)
    z = y - (s - x)/c
    return z
-    #=  
-     xabs = abs(x)
-     abs(x > 1.0 && throw(DomainError("$x"))
-     y = xabs / (1.0 - square(xabs))
-     y = atan(y)
-     y = copysign(y, x)
-     return y
-   =#
 end
 
 function acos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
