@@ -18,7 +18,7 @@ function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
    y = Double{T,Accuracy}(atan(x.hi))
    s, c = sin(y), cos(y)
    t = s/c
-   z = y - (t - x)*(1-s) # z - (tan(x)-x)*(cos(x)^2)
+   z = y - (t - x)*(square(c)) # z - (tan(x)-x)*(cos(x)^2)
    return z
 end
 
