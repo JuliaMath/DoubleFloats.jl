@@ -430,7 +430,6 @@ function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
