@@ -70,5 +70,6 @@ include("ops/intfrac.jl")
 include("math/sequences.jl")
 include("math/explog.jl")
 include("math/sincostan.jl")
+include("math/arctan.jl")
 
 end # module DoubleFloats
