@@ -6,6 +6,9 @@ julia-0.7> t=atan(BigFloat(x));thi=Float64(t);tlo=Float64(t-thi);thi,tlo
 (0.4636476090008061, 2.2698777452961687e-17)
 =#
 
+const k_pio2 = Double(1.5707963267948966, 6.123233995736766e-17)
+
+
 function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = Double{T,Accuracy}(atan(x.hi))
    s, c = sin(y), cos(y)
