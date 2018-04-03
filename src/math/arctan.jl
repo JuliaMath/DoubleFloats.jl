@@ -38,7 +38,18 @@ function acos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      return y
 end
 
-      
+acsc(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = asin(inv(x))
+asec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = acos(inv(x))
+
+function acot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+   iszero(x) && return k_pio2
+   if x.hi > 0.0
+      k_pio2 - atan(x)
+   else
+      -k_pio2 - atan(x)
+   end
+end
+
      
 #=
 http://mathworld.wolfram.com/InverseTangent.html cites Acton 1990
