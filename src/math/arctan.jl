@@ -29,6 +29,8 @@ function asin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    y = Double{T,E}(asin(x.hi))
    s,c = sin(y), cos(y)
    z = y - (s - x)*c
+   s,c = sin(z), cos(z)
+   z = z - (s - x)*c
    return z
     #=  
      xabs = abs(x)
