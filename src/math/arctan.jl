@@ -26,6 +26,7 @@ function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function asin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+   abs(x) > 1.0 && throw(DomainError("$x"))
    y = Double{T,E}(asin(x.hi))
    s,c = sin(y), cos(y)
    z = y - (s - x)/c
@@ -42,9 +43,10 @@ end
 
 function acos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
      abs(x) > 1.0 && throw(DomainError("$x"))
-     y = (1.0 - square(x)) / x
-     y = atan(y)
-     return y
+     y = Double{T,E}(acos(x.hi))
+     s,c = sin(y), cos(y)
+     z = y + (c - x)/s
+     return z
 end
 
 acsc(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = asin(inv(x))
