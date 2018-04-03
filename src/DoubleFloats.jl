@@ -40,7 +40,7 @@ import Base: hash, promote_type, promote_rule, convert, string, show, parse,
              floor, ceil, trunc, round, div, fld, cld, rem, mod,
              modf, frexp, ldexp, sqrt, cbrt,
              log, exp, log1p, expm1, log2, log10,
-             sin, cos, tan, csc, sec, cot,
+             sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
