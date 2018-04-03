@@ -7,19 +7,19 @@ julia-0.7> t=atan(BigFloat(x));thi=Float64(t);tlo=Float64(t-thi);thi,tlo
 =#
 
 function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = atan(x.hi)
-   s, c = sincos(x)
+   y = Double{T,Accuracy}(atan(x.hi))
+   s, c = sin(y), cos(y)
    t = s/c
-   z = Double(Accuracy, y)
-   return z - (t - x)*(square(c)) # z - (tan(x)-x)*(cos(x)^2)
+   z = y - (t - x)*(square(c)) # z - (tan(x)-x)*(cos(x)^2)
+   return z
 end
 
 function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = atan(x.hi)
-   s, c = sincos(x)
+   y = Double{T,Accuracy}(atan(x.hi))
+   s, c = sin(y), cos(y)
    t = s/c
-   z = Double(Performance, y)
-   return z - (t - x)*(1.0-s) # z - (tan(x)-x)*(cos(x)^2)
+   z = y - (t - x)*(1-s) # z - (tan(x)-x)*(cos(x)^2)
+   return z
 end
 
 #=
