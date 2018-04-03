@@ -46,11 +46,11 @@ asec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = acos(inv(x))
 
 function acot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    iszero(x) && return k_pio2
-   z = k_pio2 - atan(x)
    if signbit(x.hi)
-      z = -z
+      atan(x) - k_pio2
+   else
+      k_pio2 - atan(x)
    end
-   return z
 end
 
      
