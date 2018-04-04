@@ -2,7 +2,7 @@
 
 ## looking ahead
 
-When you are `using DoubleFloats`, two related numeric types become available: `Double` and `FastDouble`.
+When you are `using DoubleFloats`, two numeric types are available: `Double` and `FastDouble`.
 
 These types are identical in coverage and compatibility. Any function that knows of one knows of both.
 Every function that is imported from Base.Math and overloaded in order to just work and work well with
