@@ -18,7 +18,8 @@
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![][docs-current-img]][(https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
+|[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://JuliaMath.github.io/DoubleFloats.jl/latest) 
+[![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
 
 
 ## Installation
