@@ -419,7 +419,7 @@ end
 
 function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     idx = index_npio32(x)
-    pipart = npio64[idx]
+    pipart = npio32[idx]
     rest = x - pipart
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
@@ -496,24 +496,6 @@ function sincos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
     return s, c
 end
 
-function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    s, c = sin(x), cos(x)
-    return s/c
-end
-
-function csc(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    return inv(sin(x))
-end
-
-function sec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    return inv(cos(x))
-end
-
-function cot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    s, c = sin(x), cos(x)
-    return c/s
-end
-
 function sin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
@@ -553,7 +535,7 @@ function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    s, c = sin(x), cos(x)
+    s, c = sincos(x)
     return s/c
 end
 
