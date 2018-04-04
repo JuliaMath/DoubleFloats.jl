@@ -499,8 +499,11 @@ end
 function sin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x) / twopi_accuracy
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_accuracy
+       y = y / twopi_accuracy
+       y = modf(y)[1]
+    end
     z = sin_circle(y)
     z = copysign(z, x)
     return z
@@ -509,8 +512,11 @@ end
 function cos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x) / twopi_accuracy
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_accuracy
+       y = y / twopi_accuracy
+       y = modf(y)[1]
+    end
     z = cos_circle(y)
     return z
 end
@@ -519,8 +525,11 @@ end
 function sincos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return (zero(typeof(x)), one(typeof(x)))
     !isfinite(x) && return (nan(typeof(x)), nan(typeof(x)))
-    y = abs(x) / twopi_accuracy
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_accuracy
+       y = y / twopi_accuracy
+       y = modf(y)[1]
+    end
     s = sin_circle(y)
     s = copysign(s, x)
     c = cos_circle(y)
@@ -531,8 +540,11 @@ end
 function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x) / twopi_performance
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_performance
+       y = y / twopi_performance
+       y = modf(y)[1]
+    end
     z = sin_circle(y)
     z = copysign(z, x)
     return z
@@ -541,8 +553,11 @@ end
 function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x) / twopi_performance
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_performance
+       y = y / twopi_performance
+       y = modf(y)[1]
+    end    
     z = cos_circle(y)
     return z
 end
@@ -550,8 +565,11 @@ end
 function sincos(x::Double{T,Performance}) where {T<:AbstractFloat}
     iszero(x) && return (zero(typeof(x)), one(typeof(x)))
     !isfinite(x) && return (nan(typeof(x)), nan(typeof(x)))
-    y = abs(x) / twopi_performance
-    y = modf(y)[1]
+    y = abs(x)
+    if y >= twopi_performance
+       y = y / twopi_performance
+       y = modf(y)[1]
+    end   
     s = sin_circle(y)
     s = copysign(s, x)
     c = cos_circle(y)
