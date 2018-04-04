@@ -24,6 +24,3 @@ deploydocs(
     make = nothing,
 )
 
-deploydocs(
-    # ...
-)
