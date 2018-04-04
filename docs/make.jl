@@ -18,9 +18,8 @@ makedocs(
 
 deploydocs(
     repo = "github.com/JuliaMath/DoubleFloats.jl.git",
-    julia = 0.7-
     target = "build",
-    deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
+    deps = nothing,
     make = nothing,
 )
 
