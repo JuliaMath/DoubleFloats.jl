@@ -439,7 +439,7 @@ function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     sin_rest, cos_rest = sincos_taylor(rest)
     result1 = mul223(cos_part.hi, cos_part.lo, cos_rest.hi, cos_rest.lo)
     result2 = mul223(sin_part.hi, sin_part.lo, sin_rest.hi, sin_rest.lo)
-    result = add332(result1, result2)
+    result = sub332(result1, result2)
     return Double(Accuracy, result)
 end
 
