@@ -31,7 +31,7 @@ julia> Pkg.add("DoubleFloats")
 
 ## Documentation
 
-- [**CURRENT**][(https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)] &mdash; **most recently tagged version of the documentation.**
+- [**CURRENT**][https://juliamath.github.io/DoubleFloats.jl/latest/] &mdash; **most recently tagged version of the documentation.**
 ## Project Status
 
 The package is tested `0.7-dev` on Linux, OS X, and Windows.
