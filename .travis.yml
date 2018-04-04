@@ -17,6 +17,7 @@ git:
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)'
 after_success:
-  - julia -e 'Pkg.add("Documenter"); cd(Pkg.dir("DoubleFloats")); using Documenter; include(joinpath("docs", "make.jl"))';
+  - julia -e 'Pkg.add("Documenter"); using Documenter;'
+  - julia -e 'cd(Pkg.dir("DoubleFloats")); include(joinpath("docs", "make.jl"))'
   - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
  
