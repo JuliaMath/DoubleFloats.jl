@@ -80,6 +80,21 @@ end
     return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
+function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t6 = alo - blo
+    t5 = t3 + t4
+    t8 = t5 + t6
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+@inline function sub333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return sub333(a[1], a[2], a[3], b[1], b[2], b[3])
+end
+
 function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = add_2(ahi, bhi)
     t2, t3 = add_2(amd, bmd)
@@ -94,6 +109,22 @@ end
 @inline function add332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return add332(a[1], a[2], a[3], b[1], b[2], b[3])
 end
+
+function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t6 = alo - blo
+    t5 = t3 + t4
+    t8 = t5 + t6
+    zmd = t7 + t8
+    return zhi, zmd
+end
+
+@inline function sub332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return sub332(a[1], a[2], a[3], b[1], b[2], b[3])
+end
+
 
 # Algorithm 5.2 (Add233)
 # (ahi,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
