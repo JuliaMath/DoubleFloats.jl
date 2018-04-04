@@ -18,7 +18,7 @@
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-|[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://github.com/JuliaMath/DoubleFloats.jl/tree/gh-pages/latest) 
+|[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://github.com/JuliaMath/DoubleFloats.jl/tree/gh-pages/latest/index.html) 
 [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
 
 
