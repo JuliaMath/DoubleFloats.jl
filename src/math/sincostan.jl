@@ -515,8 +515,21 @@ function cos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     return z
 end
 
+
+function sincos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    iszero(x) && return (zero(typeof(x)), one(typeof(x)))
+    !isfinite(x) && return (nan(typeof(x)), nan(typeof(x)))
+    y = abs(x) / twopi_accuracy
+    y = modf(y)[1]
+    s = sin_circle(y)
+    s = copysign(s, x)
+    c = cos_circle(y)
+    return s, c
+end
+
+
 function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
-    iszero(x) && return zero(x)
+    iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     y = abs(x) / twopi_performance
     y = modf(y)[1]
@@ -526,12 +539,23 @@ function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
-    iszero(x) && return one(x)
+    iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     y = abs(x) / twopi_performance
     y = modf(y)[1]
     z = cos_circle(y)
     return z
+end
+
+function sincos(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return (zero(typeof(x)), one(typeof(x)))
+    !isfinite(x) && return (nan(typeof(x)), nan(typeof(x)))
+    y = abs(x) / twopi_performance
+    y = modf(y)[1]
+    s = sin_circle(y)
+    s = copysign(s, x)
+    c = cos_circle(y)
+    return s, c
 end
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
