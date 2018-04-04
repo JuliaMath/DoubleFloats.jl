@@ -424,10 +424,10 @@ function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
-    result1 = mul223(sin_part.hi, sin_part.lo, cos_rest.hi, cos_rest.lo)
-    result2 = mul223(cos_part.hi, cos_part.lo, sin_rest.hi, sin_rest.lo)
-    result  = add332(result1, result2)
-    return Double(Accuracy, result)
+    result1 = sin_part * cos_rest
+    result2 = cos_part * sin_rest
+    result  = result1 + result2
+    return result
 end
 
 function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
@@ -437,10 +437,10 @@ function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
-    result1 = mul223(cos_part.hi, cos_part.lo, cos_rest.hi, cos_rest.lo)
-    result2 = mul223(sin_part.hi, sin_part.lo, sin_rest.hi, sin_rest.lo)
-    result = sub332(result1, result2)
-    return Double(Accuracy, result)
+    result1 = cos_part * cos_rest
+    result2 = sin_part * sin_rest
+    result  = result1 - result2
+    return result
 end
 
 function sincos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
@@ -450,12 +450,15 @@ function sincos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
-    s = sin_part*cos_rest
-    s += cos_part*sin_rest
-    c = cos_part*cos_rest
-    c -= sin_part*sin_rest
+    s1 = sin_part * cos_rest
+    s2 = cos_part * sin_rest
+    s  = s1 + s2
+    c1 = cos_part * cos_rest
+    c2 = sin_part * sin_rest
+    c  = c1 - c2
     return s, c
 end
+
 
 
 function sin_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
