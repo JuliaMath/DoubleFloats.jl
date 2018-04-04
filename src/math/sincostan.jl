@@ -472,8 +472,8 @@ sin_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = sin_circle(
 cos_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cos_circle(x)
 
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    iszero(a) && return zero(a)
-    !isfinite(a) && return nan(typeof(a))
+    iszero(x) && return zero(x)
+    !isfinite(x) && return nan(typeof(x))
 
     n = x / halfpi_accuracy
     n += 0.5
@@ -485,8 +485,8 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    iszero(a) && return one(a)
-    !isfinite(a) && return nan(typeof(a))
+    iszero(x) && return one(x)
+    !isfinite(x) && return nan(typeof(x))
     
     n = x / halfpi_accuracy
     n += 0.5
