@@ -416,7 +416,7 @@ end
    cos(a+b) = cos(a)*cos(b) - sin(a)*sin(b)
 =#
 
-function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -428,7 +428,7 @@ function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
-function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -440,7 +440,7 @@ function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
-function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -454,48 +454,81 @@ function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return s, c
 end
 
-const quadrant_sin = [x ->  sin_quadrant(x), x ->  cos_quadrant(x),
-                      x -> -sin_quadrant(x), x -> -cos_quadrant(x),
-                      x ->  sin_quadrant(x), x ->  cos_quadrant(x),
-                      x -> -sin_quadrant(x), x -> -cos_quadrant(x) ]
+function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    idx = index_npio64(x)
+    pipart = npio64[idx]
+    rest = x - pipart
+    sin_part = sin_npio64[idx]
+    cos_part = cos_npio64[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    result = sin_part*cos_rest
+    result += cos_part*sin_rest
+    return result
+end
 
+function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    idx = index_npio32(x)
+    pipart = npio64[idx]
+    rest = x - pipart
+    sin_part = sin_npio64[idx]
+    cos_part = cos_npio64[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    result = cos_part*cos_rest
+    result = result - sin_part*sin_rest
+    return result
+end
 
-const quadrant_cos = [x ->  cos_quadrant(x), x -> -sin_quadrant(x),
-                      x -> -cos_quadrant(x), x ->  sin_quadrant(x),
-                      x ->  cos_quadrant(x), x -> -sin_quadrant(x),
-                      x -> -cos_quadrant(x), x ->  sin_quadrant(x)]
+function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    idx = index_npio64(x)
+    pipart = npio64[idx]
+    rest = x - pipart
+    sin_part = sin_npio64[idx]
+    cos_part = cos_npio64[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    s = sin_part*cos_rest
+    s += cos_part*sin_rest
+    c = cos_part*cos_rest
+    c -= sin_part*sin_rest
+    return s, c
+end
 
-# sin(x in 0.0..pi/2)
-sin_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = sin_circle(x)
+function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s, c = sin(x), cos(x)
+    return s/c
+end
 
-# cos(x in 0.0..pi/2)
-cos_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cos_circle(x)
+function csc(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    return inv(sin(x))
+end
+
+function sec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    return inv(cos(x))
+end
+
+function cot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    s, c = sin(x), cos(x)
+    return c/s
+end
 
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
-
-    n = x / halfpi_accuracy
-    n += 0.5
-    n = floor(n)
-    quadrant = Int64(n) + 1 
-    x = x - (n * halfpi_accuracy)
-    z = quadrant_sin[quadrant](x)
+    y = abs(x) / twopi_accuracy
+    y = modf(y)[1]
+    z = sin_circle(y)
+    z = copysign(z, x)
     return z
 end
 
 function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
-    
-    n = x / halfpi_accuracy
-    n += 0.5
-    n = floor(n)
-    quadrant = Int64(n) + 1 
-    x = x - (n * halfpi_accuracy)
-    z = quadrant_cos[quadrant](x)
+    y = abs(x) / twopi_accuracy
+    y = modf(y)[1]
+    z = cos_circle(y)
     return z
 end
+
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     s, c = sin(x), cos(x)
     return s/c
