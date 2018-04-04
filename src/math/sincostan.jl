@@ -416,31 +416,34 @@ end
    cos(a+b) = cos(a)*cos(b) - sin(a)*sin(b)
 =#
 
-function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+
+function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    idx = index_npio32(x)
+    pipart = npio64[idx]
+    rest = x - pipart
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    result1 = mul223(sin_part.hi, sin_part.lo, cos_rest.hi, cos_rest.lo)
+    result2 = mul223(cos_part.hi, cos_part.lo, sin_rest.hi, sin_rest.lo)
+    result  = add332(result1, result2)
+    return Double(Accuracy, result)
+end
+
+function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
     sin_part = sin_npio32[idx]
     cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
-    result = sin_part*cos_rest
-    result += cos_part*sin_rest
-    return result
+    result1 = mul223(cos_part.hi, cos_part.lo, cos_rest.hi, cos_rest.lo)
+    result2 = mul223(sin_part.hi, sin_part.lo, sin_rest.hi, sin_rest.lo)
+    result = add332(result1, result2)
+    return Double(Accuracy, result)
 end
 
-function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    pipart = npio32[idx]
-    rest = x - pipart
-    sin_part = sin_npio32[idx]
-    cos_part = cos_npio32[idx]
-    sin_rest, cos_rest = sincos_taylor(rest)
-    result = cos_part*cos_rest
-    result = result - sin_part*sin_rest
-    return result
-end
-
-function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sincos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -454,36 +457,37 @@ function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return s, c
 end
 
-function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio64(x)
-    pipart = npio64[idx]
+
+function sin_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
+    idx = index_npio32(x)
+    pipart = npio32[idx]
     rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     result = sin_part*cos_rest
     result += cos_part*sin_rest
     return result
 end
 
-function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
     idx = index_npio32(x)
-    pipart = npio64[idx]
+    pipart = npio32[idx]
     rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     result = cos_part*cos_rest
     result = result - sin_part*sin_rest
     return result
 end
 
-function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio64(x)
-    pipart = npio64[idx]
+function sincos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
+    idx = index_npio32(x)
+    pipart = npio32[idx]
     rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     s = sin_part*cos_rest
     s += cos_part*sin_rest
@@ -510,7 +514,7 @@ function cot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return c/s
 end
 
-function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
     y = abs(x) / twopi_accuracy
@@ -520,10 +524,29 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return z
 end
 
-function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
     y = abs(x) / twopi_accuracy
+    y = modf(y)[1]
+    z = cos_circle(y)
+    return z
+end
+
+function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return zero(x)
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x) / twopi_performance
+    y = modf(y)[1]
+    z = sin_circle(y)
+    z = copysign(z, x)
+    return z
+end
+
+function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return one(x)
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x) / twopi_performance
     y = modf(y)[1]
     z = cos_circle(y)
     return z
