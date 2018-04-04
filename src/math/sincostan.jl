@@ -479,7 +479,7 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     n += 0.5
     n = floor(n)
     quadrant = Int64(n) + 1 
-    x = x - (n * halfpi_accurate)
+    x = x - (n * halfpi_accuracy)
     z = quadrant_sin[quadrant](x)
     return z
 end
@@ -492,7 +492,7 @@ function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     n += 0.5
     n = floor(n)
     quadrant = Int64(n) + 1 
-    x = x - (n * halfpi_accurate)
+    x = x - (n * halfpi_accuracy)
     z = quadrant_cos[quadrant](x)
     return z
 end
