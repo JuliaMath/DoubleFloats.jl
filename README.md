@@ -18,7 +18,7 @@
 
 | **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![][docs-current-img]](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
+| [![][docs-current-img]][(https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)]  [![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] [![][codecov-img]][codecov-url] |
 
 
 ## Installation
@@ -31,7 +31,7 @@ julia> Pkg.add("DoubleFloats")
 
 ## Documentation
 
-- [**CURRENT**][(https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)] &mdash; **most recently tagged version of the documentation.**
+- [**CURRENT**](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md) &mdash; **most recently tagged version of the documentation.**
 ## Project Status
 
 The package is tested against Julia `0.6` and *current* `0.7-dev` on Linux, OS X, and Windows.
