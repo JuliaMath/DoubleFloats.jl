@@ -9,7 +9,7 @@ Every function that is imported from Base.Math and overloaded in order to just w
 `Doubles` will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
 
-- `Double` is the accuracy stalwart.    
+- `Double` is the default type, emphasizing accuracy.    
 The algorithms and refinements that apply when used with reasonably sized values,    
 should limit the accrual of relative error from any basic arithmetic operation 
 
