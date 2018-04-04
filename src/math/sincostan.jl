@@ -484,7 +484,7 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return z
 end
 
-function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
     
