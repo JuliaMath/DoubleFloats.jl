@@ -61,6 +61,7 @@ include("type/compare.jl")
 include("type/values.jl")
 
 include("buildingblocks/double.jl")
+include("buildingblocks/triple.jl")
 
 include("ops/prelims.jl")
 include("ops/op.jl")
