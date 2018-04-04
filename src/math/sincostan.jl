@@ -1,3 +1,12 @@
+
+const double_eps = eps(eps(1.0))
+const twopi_accuracy     = Double(Accuracy, 6.283185307179586, 2.4492935982947064e-16)
+const twopi_performance  = Double(Performance, 6.283185307179586, 2.4492935982947064e-16)
+const halfpi_accuracy    = Double(Accuracy, 1.5707963267948966, 6.123233995736766e-17)
+const halfpi_performance = Double(Performance, 1.5707963267948966, 6.123233995736766e-17)
+const pio16_accuracy     = Double(Accuracy, 0.19634954084936207, 7.654042494670958e-18)
+const pio16_performance  = Double(Performance, 0.19634954084936207, 7.654042494670958e-18)
+
 const inv_factorial = [
     Double(1.66666666666666657e-01,  9.25185853854297066e-18),
     Double(4.16666666666666644e-02,  2.31296463463574266e-18),
@@ -407,7 +416,7 @@ end
    cos(a+b) = cos(a)*cos(b) - sin(a)*sin(b)
 =#
 
-function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -419,7 +428,7 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
-function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -431,7 +440,7 @@ function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return result
 end
 
-function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -445,44 +454,48 @@ function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     return s, c
 end
 
+const quadrant_sin = [x ->  sin_quadrant(x), x ->  cos_quadrant(x),
+                      x -> -sin_quadrant(x), x -> -cos_quadrant(x),
+                      x ->  sin_quadrant(x), x ->  cos_quadrant(x),
+                      x -> -sin_quadrant(x), x -> -cos_quadrant(x) ]
+
+
+const quadrant_cos = [x ->  cos_quadrant(x), x -> -sin_quadrant(x),
+                      x -> -cos_quadrant(x), x ->  sin_quadrant(x),
+                      x ->  cos_quadrant(x), x -> -sin_quadrant(x),
+                      x -> -cos_quadrant(x), x ->  sin_quadrant(x)]
+
+# sin(x in 0.0..pi/2)
+sin_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = sin_circle(x)
+
+# cos(x in 0.0..pi/2)
+cos_quadrant(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = cos_circle(x)
+
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio64(x)
-    pipart = npio64[idx]
-    rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
-    sin_rest, cos_rest = sincos_taylor(rest)
-    result = sin_part*cos_rest
-    result += cos_part*sin_rest
-    return result
+    iszero(a) && return zero(a)
+    !isfinite(a) && return nan(typeof(a))
+
+    n = x / halfpi_accuracy
+    n += 0.5
+    n = floor(n)
+    quadrant = Int64(n) + 1 
+    x = x - (n * halfpi_accurate)
+    z = quadrant_sin[quadrant](x)
+    return z
 end
 
-function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    pipart = npio64[idx]
-    rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
-    sin_rest, cos_rest = sincos_taylor(rest)
-    result = cos_part*cos_rest
-    result = result - sin_part*sin_rest
-    return result
+function cos(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    iszero(a) && return one(a)
+    !isfinite(a) && return nan(typeof(a))
+    
+    n = x / halfpi_accuracy
+    n += 0.5
+    n = floor(n)
+    quadrant = Int64(n) + 1 
+    x = x - (n * halfpi_accurate)
+    z = quadrant_cos[quadrant](x)
+    return z
 end
-
-function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio64(x)
-    pipart = npio64[idx]
-    rest = x - pipart
-    sin_part = sin_npio64[idx]
-    cos_part = cos_npio64[idx]
-    sin_rest, cos_rest = sincos_taylor(rest)
-    s = sin_part*cos_rest
-    s += cos_part*sin_rest
-    c = cos_part*cos_rest
-    c -= sin_part*sin_rest
-    return s, c
-end
-
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     s, c = sin(x), cos(x)
     return s/c
