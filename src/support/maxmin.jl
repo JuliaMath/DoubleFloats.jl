@@ -2,11 +2,16 @@
     minmax() functions from SortingNetworks.jl
 =#
 
-@inline magnitude(x::T) where {T} = flipsign(x,x)
-@inline maxmin(a::T, b::T) where {T} = abs(hi(x))minmax(a,b)
+
+# from Base
+maxmin(x::T, y::T) where {T<:Real} = x < y ? (y, x) : (x, y)
+maxmin(x::T, y::T) where {T<:AbstractFloat} =
+    ifelse(isnan(x) | isnan(y), ifelse(isnan(x), (y,y), (x,x)),
+           ifelse((y > x) | (signbit(x) > signbit(y)), (y,x), (x,y)))
+
 
 """
-    min_to_max(x𝘪, x𝘫, x𝘬)
+    maxmin(x𝘪, x𝘫, x𝘬)
 
 
 sorts three values using minmax thrice   
@@ -15,7 +20,52 @@ sorts three values using minmax thrice
 >       implementation is parallel-ready.
 >   The three stages are independent.
 """
-@inlinw function min_to_max(a::T, b::T, c::T) where {T}
+@inline function maxmin(a::T, b::T, c::T) where {T}
+                        #          parallel A, B, C
+    b, c = maxmin(b, c) # stage A
+    
+    a, c = maxmin(a, c) # stage B
+    
+    a, b = maxmin(a, b) # stage C
+
+    return a, b, c
+end
+
+"""
+    maxmin(x𝘩, x𝘪, x𝘫, x𝘬)
+
+
+sorts four values using maxmin five times
+
+>   This implementation is parallel-ready.
+>   The three stages are independent.
+"""
+@inline function maxmin(a::T, b::T, c::T, d::T) where {T}
+                            #          parallel A, B, C
+    a, b = maxmin(a, b)     # stage A
+    c, d = maxmin(c, d)     #   sequential: two maxmin
+
+    a, c = maxmin(a, c)     # stage B
+    b, d = maxmin(b, d)     #   sequential: two maxmin
+
+    b, c = maxmin(b, c)     # stage C
+
+    return a, b, c, d
+end
+
+
+
+"""
+    minmax(x𝘪, x𝘫, x𝘬)
+
+
+sorts three values using minmax thrice   
+
+>   Each line of source text in this
+>       implementation is parallel-ready.
+>   The three stages are independent.
+"""
+@inlinw function minmax(a::T, b::T, c::T) where {T}
                         #          parallel A, B, C
     b, c = minmax(b, c) # stage A
     
@@ -27,7 +77,7 @@ sorts three values using minmax thrice
 end
 
 """
-    min_to_max(x𝘩, x𝘪, x𝘫, x𝘬)
+    minmax(x𝘩, x𝘪, x𝘫, x𝘬)
 
 
 sorts four values using minmax five times
@@ -35,7 +85,7 @@ sorts four values using minmax five times
 >   This implementation is parallel-ready.
 >   The three stages are independent.
 """
-@inline function min_to_max(a::T, b::T, c::T, d::T) where {T}
+@inline function minmax(a::T, b::T, c::T, d::T) where {T}
                             #          parallel A, B, C
     a, b = minmax(a, b)     # stage A
     c, d = minmax(c, d)     #   sequential: two minmax
@@ -49,48 +99,4 @@ sorts four values using minmax five times
 end
 
 
-""
-    min_to_max!(x𝘪, x𝘫, x𝘬)
-
-
-sorts three values using minmax thrice   
-
->   Each line of source text in this
->       implementation is parallel-ready.
->   The three stages are independent.
-"""
-function min_to_max!(a::T, b::T, c::T) where {T}
-
-    b, c = minmax(b, c)
-    a, c = minmax(a, c)
-    a, b = minmax(a, b)
-
-    return a, b, c
-end
-
-"""
-    min_to_max!(x𝘩, x𝘪, x𝘫, x𝘬)
-
-
-sorts four values using minmax five times
-
->   This implementation is parallel-ready.
->   The three stages are independent.
-"""
-function min_to_max!(a::T, b::T, c::T, d::T) where {T}
-                            #          parallel A, B, C
-    a, b = minmax(a, b)     # stage A
-    c, d = minmax(c, d)     #   sequential: two minmax
-
-    a, c = minmax(a, c)     # stage B
-    b, d = minmax(b, d)     #   sequential: two minmax
-
-    b, c = minmax(b, c)     # stage C
-
-    return a, b, c, d
-end
-
-
-
-function max_to_min!
 
