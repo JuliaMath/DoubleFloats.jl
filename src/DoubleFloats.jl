@@ -38,7 +38,7 @@ import Base: hash, promote_type, promote_rule, convert, string, show, parse,
              iszero, isinf, isnan, isinf, isfinite, issubnormal, 
              isinteger, isodd, iseven, zero, one,
              floor, ceil, trunc, round, div, fld, cld, rem, mod,
-             modf, frexp, ldexp, sqrt, cbrt,
+             modf, frexp, ldexp, sqrt, cbrt, hypot,
              log, exp, log1p, expm1, log2, log10,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
@@ -72,5 +72,6 @@ include("math/sequences.jl")
 include("math/explog.jl")
 include("math/sincostan.jl")
 include("math/arctan.jl")
+include("math/moremath.jl")
 
 end # module DoubleFloats
