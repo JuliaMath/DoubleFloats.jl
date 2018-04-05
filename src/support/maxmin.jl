@@ -1,5 +1,6 @@
 #=
-    minmax() functions from SortingNetworks.jl
+    minmax()s functions from SortingNetworks.jl
+    maxmin()s are order predicate duals of minmax()s
 =#
 
 
