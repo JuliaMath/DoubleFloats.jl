@@ -21,3 +21,22 @@ function hypot(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Empha
     end
     return rr
  end   
+
+"""
+    normalize(x,y)
+
+    x_normalized^2 + y_normalized^2 == one(promote_type(typeof(x),typeof(y)))
+"""
+function normalize(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    hypotenuse = hypot(x, y)
+    if !iszero(hypotenuse) && isfinite(hypotenuse)
+        xnorm = x / hypotenuse
+        ynorm = y / hypotenuse
+    else
+        # try for xnorm, ynorm such that xnorm + ynorm == 1
+        xnorm = x/(x+y)
+        ynorm = y/(x+y)
+    end
+    return xnorm, ynorm
+end
+
