@@ -2,12 +2,11 @@ __precompile__()
 
 module DoubleFloats
 
-export MultipartFloat, 
+export Double, FastDouble,
        Emphasis, Accuracy, Performance,
-       Double, FastDouble,
-       HI, LO, HILO,
-       ispos, isneg, isnonpos, isnonneg,
-       isnonzero, isposinf, isneginf, isfractional,
+       MultipartFloat,
+       isnonzero, ispos, isneg, isnonpos, isnonneg,
+       isposinf, isneginf, isfractional,
        nan, inf,
        intpart, fracpart, fmod,
        square, cube
@@ -62,6 +61,8 @@ include("type/values.jl")
 
 include("buildingblocks/double.jl")
 include("buildingblocks/triple.jl")
+
+include("support/maxmin.jl")
 
 include("ops/prelims.jl")
 include("ops/op.jl")
