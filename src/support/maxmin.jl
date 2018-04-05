@@ -1,8 +1,9 @@
 #=
-    min_to_max() functions from SortingNetworks.jl
+    minmax() functions from SortingNetworks.jl
 =#
 
-@inline min_to_max(a::T, b::T) where {T} = minmax(a,b)
+@inline magnitude(x::T) where {T} = flipsign(x,x)
+@inline maxmin(a::T, b::T) where {T} = abs(hi(x))minmax(a,b)
 
 """
     min_to_max(x𝘪, x𝘫, x𝘬)
