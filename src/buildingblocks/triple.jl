@@ -143,6 +143,28 @@ end
     return add223(a[1], a[2], b[1], b[2], b[3])
 end
 
+function add232(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, bhi)
+    t2, t3  = add_2(alo, bmd)
+    t4, t5  = add_2(t1, t2)
+    t6 = t3 + blo
+    zlo = t6 + t5
+    zlo += t4
+    return zhi, zlo
+end
+
+@inline function add232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return add232(a[1], a[2], b[1], b[2], b[3])
+end
+
+@inline function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
+    return add232(bhi, blo, ahi, amd, alo)
+end
+
+@inline function add322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return add232(b[1], b[2], a[1], a[2], a[3])
+end
+
 # Algorithm 6.1
 # (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
 
@@ -233,35 +255,35 @@ end
 
 #=
     •    RoundNearest (default)
-      
+
     •    RoundNearestTiesAway
-      
+
     •    RoundNearestTiesUp
-      
+
     •    RoundToZero
-      
+
     •    RoundFromZero (BigFloat only)
-      
+
     •    RoundUp
-      
+
     •    RoundDown
 =#
 #=
-@inline function rounded(fn::Function, a::T, 
+@inline function rounded(fn::Function, a::T,
                          mode::RoundingMode) where {T<:AbstractFloat}
      setrounding(T, mode) do
          fn(a)
      end
 end
 
-@inline function rounded(fn::Function, a::T, b::T, 
+@inline function rounded(fn::Function, a::T, b::T,
                          mode::RoundingMode) where {T<:AbstractFloat}
      setrounding(T, mode) do
          fn(a, b)
      end
 end
 
-@inline function rounded(fn::Function, a::T, b::T, c::T, 
+@inline function rounded(fn::Function, a::T, b::T, c::T,
                          mode::RoundingMode) where {T<:AbstractFloat}
      setrounding(T, mode) do
          fn(a, b, c)
