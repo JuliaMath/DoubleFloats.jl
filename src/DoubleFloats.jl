@@ -4,7 +4,7 @@ module DoubleFloats
 
 export Double, FastDouble,
        Emphasis, Accuracy, Performance,
-       MultipartFloat,
+       MultipartFloat, HI, LO, HILO,
        isnonzero, ispos, isneg, isnonpos, isnonneg,
        isposinf, isneginf, isfractional,
        nan, inf,
