@@ -22,6 +22,20 @@ struct Double{T, E} <: MultipartFloat{T}
    end
 end
 
+
+@inline HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
+@inline LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
+@inline HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
+
+@inline HI(x::T) where {T<:IEEEFloat} = x
+@inline LO(x::T) where {T<:IEEEFloat} = zero(T)
+@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
+
+@inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
+@inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
+@inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
+
+
 function Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat}
     return Double(Accuracy, hi, zero(T))
 end
@@ -63,7 +77,19 @@ function Double{T, Accuracy}(hi::T) where {T<:AbstractFloat}
 end
 
 function Double{T, Performance}(hi::T) where {T<:AbstractFloat}
-    return Double(Performance, hi, zero(T))
+    return Double(Performance, hi, zero(T
+@inline HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
+@inline LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
+@inline HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
+
+@inline HI(x::T) where {T<:IEEEFloat} = x
+@inline LO(x::T) where {T<:IEEEFloat} = zero(T)
+@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
+
+@inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
+@inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
+@inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
+))
 end
 
 function Double(hi::T, lo::T) where {T<:AbstractFloat}
@@ -99,18 +125,6 @@ function FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat}
     return x
 end
 
-
-HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
-LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
-HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
-
-HI(x::T) where {T<:IEEEFloat} = x
-LO(x::T) where {T<:IEEEFloat} = zero(T)
-HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
-
-HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
-LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
-HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
 
 
 function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
