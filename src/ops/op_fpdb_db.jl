@@ -43,7 +43,7 @@ end
     return Double(E, z, zero(Double{T,E}))
 end
 
-@inline function dvi_fpdb_db_nonfinite(x::T, y::Double{T,E) where {T<:AbstractFloat, E<:Emphasis}
+@inline function dvi_fpdb_db_nonfinite(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = div(x, HI(y))
     return Double(E, z, zero(Double{T,E}))
 end
