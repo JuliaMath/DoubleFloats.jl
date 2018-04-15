@@ -2,41 +2,47 @@
 
 function floor(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (isinteger(x) || !isfinite(x)) && return x
+    # !isinteger(LO(x)), LO(x) is mixed or fractional
     if isinteger(HI(x))
-        if signbit(LO(x))
-              Double(E, HI(x)-one(T), zero(T))
-        else
-              Double(E, HI(x), zero(T))
+        if isfractional(LO(x))
+            if signbit(LO(x))
+                Double(E, HI(x)-one(T), zero(T))
+            else
+                Double(E, HI(x), zero(T))
+            end
+        else # LO(x) is mixed: +/- int.frac
+            Double(E, HI(x), floor(LO(x)))
         end
-    else
+    else # HI(x) is mixed or fractional
         Double(E, floor(HI(x)), zero(T))
     end
 end
 
-
 function ceil(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (isinteger(x) || !isfinite(x)) && return x
+    # !isinteger(LO(x)), LO(x) is mixed or fractional
     if isinteger(HI(x))
-        if signbit(LO(x))
-              Double(E, HI(x), zero(T))
-        else
-              Double(E, HI(x)+one(T), zero(T))
+        if isfractional(LO(x))
+            if signbit(LO(x))
+                Double(E, HI(x), zero(T))
+            else
+                Double(E, HI(x)+one(T), zero(T))
+            end
+        else # LO(x) is mixed: +/- int.frac
+            Double(E, HI(x), ceil(LO(x)))
         end
-    else
+    else # HI(x) is mixed or fractional
         Double(E, ceil(HI(x)), zero(T))
     end
 end
 
+
 function trunc(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     (isinteger(x) || !isfinite(x)) && return x
-    if isinteger(HI(x))
-        if signbit(LO(x))
-              signbit(HI(x)) ? Double(E, HI(x), zero(T)) : Double(E, HI(x)-one(T), zero(T))
-        else
-              signbit(HI(x)) ? Double(E, HI(x)+one(T), zero(T)) : Double(E, HI(x), zero(T))
-        end
+    if isneg(x)
+        ceil(x)
     else
-        signbit(HI(x)) ? Double(E, ceil(HI(x)), zero(T)) :  Double(E, floor(HI(x)), zero(T))
+        floor(x)
     end
 end
 
@@ -45,9 +51,39 @@ function round(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
     if isnonneg(x)
         trunc(x + 0.5)
     else
-        trunc(x - 0.5)
+        -trunc(-x + 0.5)
     end
 end
+
+function round(x::Double{T,E}, ::RoundingMode{:Up}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    return ceil(x)
+end
+
+function round(x::Double{T,E}, ::RoundingMode{:Down}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    return floor(x)
+end
+
+function round(x::Double{T,E}, ::RoundingMode{:RoundToZero}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    return isneg(x) ? ceil(x) : floor(x)
+end
+
+function round(x::Double{T,E}, ::RoundingMode{:RoundFromZero}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    return isneg(x) ? floor(x) : ceil(x)
+end
+
+function round(x::Double{T,E}, ::RoundingMode{:RoundNearest}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    if isnonneg(x)
+        trunc(x + 0.5)
+    else
+        -trunc(-x + 0.5)
+    end
+end
+
 
 """
      spread(x)
