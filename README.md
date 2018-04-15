@@ -1,5 +1,5 @@
 # DoubleFloats.jl
-### Floating point math with 100+ bit accurate significand; fast ops with 88+ bit accuracy.
+### Floating point math with 96+ bit accurate significand; faster type with 75+ bits.
 
 ## [Introduction](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
 
