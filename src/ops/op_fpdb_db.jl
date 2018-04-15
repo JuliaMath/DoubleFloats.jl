@@ -28,7 +28,7 @@ end
     return Double(Performance, hi, lo)
 end
 
-@inline funcHI(y)tion add_fpdb_db_nonfinite(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+@inline function add_fpdb_db_nonfinite(x::T, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = x + HI(y)
     return Double(E, z, zero(Double{T,E}))
 end
