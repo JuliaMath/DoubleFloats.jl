@@ -1,6 +1,6 @@
 # DoubleFloats.jl
 ### Math with 90+ accurate bits; faster math with 75+ good bits.
-#### _results may exceed those accuracies_
+#### _single operations exceed above accuracies_
 
 ## [Introduction](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
 
