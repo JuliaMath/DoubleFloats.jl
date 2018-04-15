@@ -31,10 +31,11 @@ else
 end
 
 
-import Base: hash, promote_type, promote_rule, convert, string, show, parse,
+import Base: hash, promote_type, promote_rule, convert,
+             string, show, parse,
              (+), (-), (*), (/), (\), (^), abs, inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
-             iszero, isinf, isnan, isinf, isfinite, issubnormal, 
+             iszero, isinf, isnan, isinf, isfinite, issubnormal,
              isinteger, isodd, iseven, zero, one,
              floor, ceil, trunc, round, div, fld, cld, rem, mod,
              modf, frexp, ldexp, sqrt, cbrt, hypot,
@@ -71,8 +72,10 @@ include("ops/intfrac.jl")
 
 include("math/sequences.jl")
 include("math/explog.jl")
-include("math/sincostan.jl")
-include("math/arctan.jl")
+include("math/trig.jl")
+include("math/arctrig.jl")
+include("math/trigh.jl")
+include("math/arctrigh.jl")
 include("math/moremath.jl")
 
 end # module DoubleFloats

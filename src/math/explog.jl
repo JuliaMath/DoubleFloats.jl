@@ -60,11 +60,11 @@ function mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function mul_pwr2(r::Double{T,E}, n::Real) where {T<:AbstractFloat, E<:Emphasis}
-    m = 2.0^n	
+    m = 2.0^n
     return Double(E, HI(r)*m, LO(r)*m)
 end
 
-function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}  
+function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     if (n == 0)
         iszero(a) && throw(DomainError("0^0"))
         return one(Double{T,E})
@@ -86,14 +86,14 @@ function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     else
         s = r
     end
-  
+
     if (n < 0)
         s = inv(s)
     end
     return s
 end
 
-function Base.:(^)(r::Double{T,E}, n::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}  
+function Base.:(^)(r::Double{T,E}, n::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    if isinteger(n)
       return r^Int(n)
    else
@@ -101,7 +101,7 @@ function Base.:(^)(r::Double{T,E}, n::Double{T,E}) where {T<:AbstractFloat, E<:E
    end
 end
 
-function Base.:(^)(r::Int, n::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}  
+function Base.:(^)(r::Int, n::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
    if isinteger(n)
       return r^Int(n)
    else
@@ -113,11 +113,11 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   if iszero(HI(a))
     return one(Double{T,E})
   elseif isone(abs(HI(a))) && iszero(LO(a))
-    if HI(a) >= zero(T)		
+    if HI(a) >= zero(T)
         return Double(E, 2.718281828459045, 1.4456468917292502e-16)
     else # isone(-HI(a)) && iszero(LO(a))
         return Double(E, 0.36787944117144233, -1.2428753672788363e-17)
-    end				
+    end
   elseif abs(HI(a)) >= 709.0
       if (HI(a) <= -709.0)
          return zero(Double{T,E})
@@ -128,13 +128,16 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 
   return calc_exp(a)
 end
+
 function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-	
+
   is_neg = signbit(HI(a))
-  xabs = is_neg ? -a : a  
-  xint = Int64(HI(round(xabs, RoundDown)))
+  xabs = is_neg ? -a : a
+  xintpart = modf(xabs)[2]
+  xintpart = xintpart.hi + xintpart.lo
+  xint = Int64(xintpart)
   xfrac = xabs - T(xint)
-  
+
   if 0 < xint <= 64
      zint = exp_int[xint]
   elseif xint === zero(Int64)
@@ -146,7 +149,7 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
         	zint = zint * exp_int[rm]
      end
   end
-	
+
   # exp(xfrac)
   if HI(xfrac) < 0.5
       zfrac = exp_zero_half(xfrac)
@@ -159,14 +162,14 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
           zfrac = exp_zero_half(xfrac)
       else
           zfrac = exp_half_one(xfrac)
-      end		
+      end
   end
-	
-  z = HI(zint) == zero(T) ? zfrac : zint * zfrac		
+
+  z = HI(zint) == zero(T) ? zfrac : zint * zfrac
   if is_neg
       z = inv(z)
   end
-	
+
   return z
 end
 
@@ -190,7 +193,7 @@ function calc_exp_frac(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
                    23465490048000.0)*x + 154872234316800.0)*x -
                    647647525324800.0)*x + 1295295050649600.0
 
-  u = u/v		
+  u = u/v
   return u
 end
 =#
@@ -248,10 +251,10 @@ dd_real log(const dd_real &a) {
 
      using Newton iteration.  The iteration is given by
 
-         x' = x - f(x)/f'(x) 
+         x' = x - f(x)/f'(x)
             = x - (1 - a * exp(-x))
             = x + a * exp(-x) - 1.
-           
+
      Only one iteration is needed, since Newton's iteration
      approximately doubles the number of digits per iteration. */
 
