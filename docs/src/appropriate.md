@@ -1,6 +1,6 @@
 # DoubleFloats: Appropriate Use
 
-## [Looking Ahead](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
+## [Introduction](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
 
 ```
  
