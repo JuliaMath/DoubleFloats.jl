@@ -22,6 +22,11 @@ struct Double{T, E} <: MultipartFloat{T}
    end
 end
 
+@inline HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
+@inline LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
+@inline HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = (x.hi, x.lo)
+
+
 function Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat}
     return Double(Accuracy, hi, zero(T))
 end
