@@ -16,10 +16,10 @@
 *Floating point math with greater accuracy than Float32, Float64 types obtain."
 
 
-| **Documentation**                                                               | **PackageEvaluator**                                                                            | **Build Status**                                                                                |
+| **Documentation**                                                               | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
 |[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://JuliaMath.github.io/DoubleFloats.jl/latest) 
-[![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url]] [![][codecov-img]][codecov-url] |
+[![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url]] |
 
 
 ## Installation
