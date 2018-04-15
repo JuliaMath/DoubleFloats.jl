@@ -1,6 +1,6 @@
 
 
-## looking ahead
+## Introduction
 
 When you are `using DoubleFloats`, two numeric types are available: `Double` and `FastDouble`.
 
