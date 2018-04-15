@@ -3,8 +3,23 @@ import Base: signbit, sign, abs, (-), flipsign, copysign,
 
 @inline signbit(a::Double{T,E}) where {T,E} = signbit(HI(a))
 @inline sign(a::Double{T,E}) where {T,E} = sign(HI(a))
-@inline abs(a::Double{T,E}) where {T,E} = signbit(a) ? Double(E, -HI(a), -LO(a)) : a
-@inline (-)(a::Double{T,E}) where {T,E} = Double(E, -HI(a), -LO(a))
+
+@inline function (-)(a::Double{T,E}) where {T,E}
+    if iszero(LO(a))
+        Double(E, -HI(a), LO(a))
+    else
+        Double(E, -HI(a), -LO(a))
+    end
+end
+
+@inline function abs(a::Double{T,E}) where {T,E}
+    if HI(a) >= 0.0
+        a
+    else # HI(a) < 0.0
+        -a
+    end
+end
+
 
 @inline function flipsign(x::Double{T,E}, y::T) where {T<:Real, E<:Emphasis}
     signbit(y) ? -x : x
