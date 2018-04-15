@@ -1,4 +1,4 @@
-# DoubleFloats: Appropriate Use
+# Details
 
 ## [Introduction](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
 
