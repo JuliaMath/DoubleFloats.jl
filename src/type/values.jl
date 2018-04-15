@@ -1,3 +1,6 @@
+nan(::Type{T}) where T<:AbstractFloat = T(NaN)
+inf(::Type{T}) where T<:AbstractFloat = T(Inf)
+
 zero(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, zero(T), zero(T))
 zero(::Type{Double{T}}) where {T<:AbstractFloat} = Double(Accuracy, zero(T), zero(T))
 
@@ -9,3 +12,9 @@ nan(::Type{Double{T}}) where {T<:AbstractFloat} = Double(Accuracy, T(NaN), zero(
 
 inf(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, T(Inf), zero(T))
 inf(::Type{Double{T}}) where {T<:AbstractFloat} = Double(Accuracy, T(Inf), zero(T))
+
+function convert(::Type{Double{T,E}}, x::AbstractFloat) where {T<:AbstractFloat,E<:Emphasis}
+    isnan(x) && return nan(Double{T,E})
+    isinf(x) && return inf(Double{T,E})
+    return Double(E, x)
+end
