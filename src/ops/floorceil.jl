@@ -77,13 +77,24 @@ end
 
 function round(x::Double{T,E}, ::RoundingMode{:Nearest}) where {T<:AbstractFloat,E<:Emphasis}
     (isinteger(x) || !isfinite(x)) && return x
-    if isnonneg(x)
-        trunc(x + 0.5)
-    else
-        -trunc(-x + 0.5)
-    end
+    isneg(x) && return -round(-x, RoundNearest)
+    a = trunc(x + 0.5)
+    return iseven(a) ? a : trunc(x - 0.5)
 end
 
+function round(x::Double{T,E}, ::RoundingMode{:NearestTiesAway}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    isneg(x) && return -round(-x, RoundNearestTiesAway)
+    !isinteger(x - 0.5) && return round(x, RoundNearest)
+    return round(x + 0.5, RoundNearest)
+end
+
+function round(x::Double{T,E}, ::RoundingMode{:NearestTiesUp}) where {T<:AbstractFloat,E<:Emphasis}
+    (isinteger(x) || !isfinite(x)) && return x
+    isneg(x) && return -round(-x, RoundNearestTiesUp)
+    !isinteger(x - 0.5) && return round(x, RoundUp)
+    return round(x + 0.5, RoundNearest)
+end
 
 """
      spread(x)
