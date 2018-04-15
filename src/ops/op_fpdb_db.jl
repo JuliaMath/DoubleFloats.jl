@@ -18,7 +18,7 @@ end
 
 @inline function dvi_fpdb_db(x::T, y::Double{T,Accuracy}) where {T<:AbstractFloat}
     !(isfinite(x) & isfinite(y)) && return dvi_fpdb_db_nonfinite(x,y)
-    hi, lo = dvi_fpdd_dd(x, HILO(y))1
+    hi, lo = dvi_fpdd_dd(x, HILO(y))
     return Double(Accuracy, hi, lo)
 end
 
