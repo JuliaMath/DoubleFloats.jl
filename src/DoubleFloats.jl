@@ -46,7 +46,8 @@ import Base: hash, promote_type, promote_rule, convert,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
-             asinh, acosh, atanh, acsch, asech, acoth
+             asinh, acosh, atanh, acsch, asech, acoth,
+             muladd, fma
 
 
 
