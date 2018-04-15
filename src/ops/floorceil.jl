@@ -75,7 +75,7 @@ function round(x::Double{T,E}, ::RoundingMode{:RoundFromZero}) where {T<:Abstrac
     return isneg(x) ? floor(x) : ceil(x)
 end
 
-function round(x::Double{T,E}, ::RoundingMode{:RoundNearest}) where {T<:AbstractFloat,E<:Emphasis}
+function round(x::Double{T,E}, ::RoundingMode{:Nearest}) where {T<:AbstractFloat,E<:Emphasis}
     (isinteger(x) || !isfinite(x)) && return x
     if isnonneg(x)
         trunc(x + 0.5)
