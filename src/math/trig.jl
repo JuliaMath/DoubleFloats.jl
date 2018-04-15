@@ -187,7 +187,7 @@ function spi32()
 end
 =#
 
-npio32 = (
+const npio32 = (
 Double(0.0, 0.0),
 Double(0.09817477042468103, 3.827021247335479e-18),
 Double(0.19634954084936207, 7.654042494670958e-18),
@@ -255,7 +255,7 @@ Double(6.1850105367549055, -9.19645688054118e-17),
 #Double(6.283185307179586, 2.4492935982947064e-16)
 )
 
-sin_npio32 = (
+const sin_npio32 = (
 Double(0.0, 0.0),
 Double(0.0980171403295606, -1.634582362244256e-18),
 Double(0.19509032201612828, -7.99107906846173e-18),
@@ -323,7 +323,7 @@ Double(-0.0980171403295606, 1.6345823622442672e-18),
 #Double(5.989539619436679e-33, -2.2249084417267306e-49)
 )
 
-cos_npio32 = (
+const cos_npio32 = (
 Double(1.0, 0.0),
 Double(0.9951847266721969, -4.248691367830441e-17),
 Double(0.9807852804032304, 1.8546939997825006e-17),
@@ -417,7 +417,7 @@ end
 =#
 
 
-function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+@inline function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -430,7 +430,7 @@ function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     return result
 end
 
-function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+@inline function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -560,7 +560,7 @@ function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
     if y >= twopi_performance
        y = y / twopi_performance
        y = modf(y)[1]
-    end    
+    end
     z = cos_circle(y)
     return z
 end
@@ -572,7 +572,7 @@ function sincos(x::Double{T,Performance}) where {T<:AbstractFloat}
     if y >= twopi_performance
        y = y / twopi_performance
        y = modf(y)[1]
-    end   
+    end
     s = sin_circle(y)
     s = copysign(s, x)
     c = cos_circle(y)
