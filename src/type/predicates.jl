@@ -1,5 +1,5 @@
 """
-__Predicates__ are functions that ask "yes or no" questions of their argument[s].     
+__Predicates__ are functions that ask "yes or no" questions of their argument[s].
 You can ask of a number "Is this zero?" or "Is this one?" and these predicates
 (`iszero`, `isone`) will work as expected with almost all numerical types.
 The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
@@ -16,6 +16,13 @@ These are the predicates made available for use with DoubleFloats:
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
 
+isnonzero(x::T) where {T<:Real} = !iszero(x)
+ispos(x::T) where {T<:Real} = !isneg(x) && isnonzero(x)
+isnonneg(x::T) where {T<:Real} = !isneg(x)
+isnonpos(x::T) where {T<:Real} = isneg(x) || iszero(x)
+isfractional(x::T) where {T<:Real} = abs(x) < one(T)
+
+
 iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     iszero(HI(x)) # && iszero(LO(x))
 
@@ -24,7 +31,7 @@ isnonzero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
 
 isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isone(HI(x)) && iszero(LO(x))
-    
+
 ispos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     !signbit(HI(x)) && !iszero(HI(x))
 
@@ -36,7 +43,7 @@ isnonneg(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
 
 isnonpos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     signbit(HI(x)) || iszero(HI(x))
- 
+
 isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     isfinite(HI(x)) ## && isfinite(LO(x))
 
@@ -62,13 +69,11 @@ isfractional(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     !isinteger(LO(x)) || !isinteger(HI(x))
 
 isodd(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
-    iszero(LO(x)) ? 
+    iszero(LO(x)) ?
         isinteger(HI(x)) && isodd(HI(x)) :
         isinteger(LO(x)) && isodd(LO(x))
-        
+
 iseven(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
     iszero(LO(x)) ?
         isinteger(HI(x)) && iseven(HI(x)) :
         isinteger(LO(x)) && iseven(LO(x))
-
-
