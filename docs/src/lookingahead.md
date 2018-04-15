@@ -19,4 +19,4 @@ reliant upon elementary functions, `FastDoubles` are helpful and resourceful.
 
 ----
 
-## [Appropriate Use](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/appropriate.md)
+## [Details](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/appropriate.md)
