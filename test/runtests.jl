@@ -51,3 +51,6 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test zero(Double(0.0, 0.0)) == Double(0.0, 0.0)
 @test one(Double(0.0, 0.0)) == Double(1.0, 0.0)
 
+@test round(Double(123456.0, 1.0e-17), RoundUp) == Double(123457.0, 0.0)
+@test round(Double(123456.0, -1.0e-17), RoundUp) == Double(123456.0, 0.0)
+@test round(Double(123456.0, -1.0e-17), RoundDown) == Double(123455.0, 0.0)
