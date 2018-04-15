@@ -80,15 +80,19 @@ hencefort_accurate    = Double(a_performant_variable)
 
 
 #### the basic arithmetic operations
-- addition, subtraction, 
-- multiplication, square, cube, fourth power
-- reciprocation, division, square root, cube root, fourth root
+- addition, subtraction 
+- multiplication, square, cube
+- reciprocation, division, square root, cube root
 
+#### rounding
+- RoundNearest, RoundUp, RoundDown
+- RoundToZero, RoundFromZero
+- RoundNearestTiesAway, RoundNearestTiesUp
 
 #### elementary mathematical functions
  - log, exp
  - sin, cos, tan, csc, sec, cot
+ - asin, acos, atan, acsc, asec, acot
  - sinh, cosh, tanh, csch, sech, coth
-
-#### inverses of the elementary functions
+ - asinh, acosh, atanh, acsch, asech, acoth
 
