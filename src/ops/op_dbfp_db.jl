@@ -24,20 +24,20 @@ end
 
 @inline function add_dbfp_db_nonfinite(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) + y
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function sub_dbfp_db_nonfinite(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) - y
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function mul_dbfp_db_nonfinite(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) * y
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function dvi_dbfp_db_nonfinite(x::Double{T,E}, y::T) where {T<:AbstractFloat, E<:Emphasis}
     z = div(HI(x), y)
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
