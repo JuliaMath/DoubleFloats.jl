@@ -82,4 +82,6 @@ include("math/trigh.jl")
 include("math/arctrigh.jl")
 include("math/moremath.jl")
 
+include("support/random.jl")
+
 end # module DoubleFloats
