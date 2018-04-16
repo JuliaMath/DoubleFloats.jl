@@ -61,3 +61,6 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test isnan(FastDouble(Inf) + FastDouble(-Inf))
 @test isinf(FastDouble(Inf) + FastDouble(Inf))
 @test isnan(Double(NaN) - 1)
+
+@test typeof(rand(Double)) == Double{Float64, Accuracy}
+@test typeof(rand(FastDouble)) == Double{Float64, Precision}
