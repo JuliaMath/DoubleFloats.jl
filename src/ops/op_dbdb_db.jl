@@ -31,20 +31,20 @@ end
 
 @inline function add_dbdb_db_nonfinite(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) + HI(y)
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function sub_dbdb_db_nonfinite(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) - HI(y)
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function mul_dbdb_db_nonfinite(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = HI(x) * HI(y)
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
 
 @inline function dvi_dbdb_db_nonfinite(x::Double{T,E}, y::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = div(HI(x), HI(y))
-    return Double(E, z, zero(Double{T,E}))
+    return Double(E, z, zero(T))
 end
