@@ -17,5 +17,6 @@ rand(::Type{Double{T,E}}) where {T<:AbstractFloat, E<:Emphasis} =
 rand(::Type{Double}) = rand(Double{Float64, Accuracy})
 rand(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = rand(Double{T,E})
 
-rand(x::Function) = (x == FastDouble) ? rand(Double{Float64,Performance}) :
-                                        throw(DomainError(string(x)))
+rand(x::Function) = (x == FastDouble) ?
+                    rand(Double{Float64,Performance}) :
+                    throw(DomainError(string(x)))
