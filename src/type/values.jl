@@ -18,3 +18,13 @@ function convert(::Type{Double{T,E}}, x::AbstractFloat) where {T<:AbstractFloat,
     isinf(x) && return inf(Double{T,E})
     return Double(E, x)
 end
+
+typemax(::Type{Double}) = Double(Accuracy, typemax(Float64))
+typemin(::Type{Double}) = Double(Accuracy, typemin(Float64))
+typemax(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, typemax(T))
+typemin(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, typemin(T))
+
+realmax(::Type{Double}) = Double(Accuracy, realmax(Float64))
+realmin(::Type{Double}) = Double(Accuracy, realmin(Float64))
+realmax(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, realmax(T))
+realmin(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, realmin(T))
