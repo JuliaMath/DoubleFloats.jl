@@ -20,3 +20,9 @@ rand(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = rand(Double{T,E})
 rand(x::Function) = (x == FastDouble) ?
                     rand(Double{Float64,Performance}) :
                     throw(DomainError(string(x)))
+
+rand(::Type{Double}, n::Int) = [rand(Double) for i=1:n]
+
+rand(x::Function, n::Int) = (x == FastDouble) ?
+                    [rand(Double{Float64,Performance}) for i=1:n] :
+                    throw(DomainError(string(x)))
