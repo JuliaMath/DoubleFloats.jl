@@ -54,3 +54,10 @@ d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
 @test round(Double(123456.0, 1.0e-17), RoundUp) == Double(123457.0, 0.0)
 @test round(Double(123456.0, -1.0e-17), RoundUp) == Double(123456.0, 0.0)
 @test round(Double(123456.0, -1.0e-17), RoundDown) == Double(123455.0, 0.0)
+
+@test typemax(Double) == Double(typemax(Float64))
+@test realmin(Double) == Double(realmin(Float64))
+
+@test isnan(FastDouble(Inf) + FastDouble(-Inf))
+@test isinf(FastDouble(Inf) + FastDouble(Inf))
+@test isnan(Double(NaN) - 1)
