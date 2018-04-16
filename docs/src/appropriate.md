@@ -96,3 +96,8 @@ hencefort_accurate    = Double(a_performant_variable)
  - sinh, cosh, tanh, csch, sech, coth
  - asinh, acosh, atanh, acsch, asech, acoth
 
+#### work in process
+ - random values in [0,1)
+ - random vectors
+ 
+ > any contributions from you 
