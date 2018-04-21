@@ -188,6 +188,7 @@ end
 =#
 
 const npio32 = (
+Double(0.0, 0.0),
 Double(0.09817477042468103, 3.827021247335479e-18),
 Double(0.19634954084936207, 7.654042494670958e-18),
 Double(0.2945243112740431, 1.1481063742006436e-17),
@@ -391,24 +392,13 @@ Double(0.9951847266721969, -4.248691367830441e-17),
 )
 
 function index_npio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    result = 1
-    for nx in npio32
-        x < nx && break
+    result = 0
+    while nx < npio32[result]
         result += 1
     end
     return result
 end
 
-index_sin_npio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
-    sin_npio32[index_pio32(x)]
-
-index_cos_npio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
-    cos_npio32[index_pio32(x)]
-
-function index_sincos_pio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    return sin_npio32[idx], cos_npio32[idx]
-end
 
 #=
    sin(a+b) = sin(a)*cos(b) + cos(a)*sin(b)
