@@ -1,20 +1,23 @@
-#promote_type(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} = Double{T, Accuracy}
+promote_type(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} = Double{T, Accuracy}
+promote_type(::Type{Double{T, Performance}}, ::Type{Double{T, Accuracy}}) where {T<:AbstractFloat} = Double{T, Accuracy}
+promote_type(::Type{Double{Float64, Accuracy}}, ::Type{Double{Float64, Performance}}) = Double{Float64, Accuracy}
+promote_type(::Type{Double{Float64, Performance}}, ::Type{Double{Float64, Accuracy}}) = Double{Float64, Accuracy}
+promote_type(::Type{Double{Float32, Accuracy}}, ::Type{Double{Float32, Performance}}) = Double{Float32, Accuracy}
+promote_type(::Type{Double{Float32, Performance}}, ::Type{Double{Float32, Accuracy}}) = Double{Float32, Accuracy}
+promote_type(::Type{Double{Float16, Accuracy}}, ::Type{Double{Float16, Performance}}) = Double{Float16, Accuracy}
+promote_type(::Type{Double{Float16, Performance}}, ::Type{Double{Float16, Accuracy}}) = Double{Float16, Accuracy}
 
-#promote_type(::Type{Double{T, Performance}}, ::Type{Double{T, Accuracy}}) where {T<:AbstractFloat} = Double{T, Accuracy}
+convert(::Type{Double{T, Accuracy}}, x::Double{T, Performance}) where {T<:AbstractFloat} = Double{T, Accuracy}(HI(x), LO(x))
 
-promote_rule(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} =
-    Double{T, Accuracy}
-
-convert(::Type{Double{T, Accuracy}}, x::Double{T, Performance}) where {T<:AbstractFloat} = Double(Accuracy, HILO(x))
+promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:IEEEFloat, E<:Emphasis} = Double{T,E}
+convert(::Type{Double{T,E}}, x::T) where {T<:IEEEFloat, E<:Emphasis} = Double{T,E}(x, zero(T))
 
 convert(::Type{Double{T, Accuracy}}, x::Double{T, Accuracy}) where {T<:AbstractFloat} = x
 convert(::Type{Double{T, Performance}}, x::Double{T, Performance}) where {T<:AbstractFloat} = x
 
-promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:AbstractFloat, E<:Emphasis} =
-    Double{T,E}
+promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:AbstractFloat, E<:Emphasis} = Double{T,E}
 
-convert(::Type{Double{T,E}}, x::T) where {T<:IEEEFloat, E<:Emphasis} =
-    Double{T,E}(x, zero(T))
+convert(::Type{Double{T,E}}, x::T) where {T<:IEEEFloat, E<:Emphasis} = Double{T,E}(x, zero(T))
 
 promote_rule(::Type{Double{T,E}}, ::Type{I}) where {I<:Integer, T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
