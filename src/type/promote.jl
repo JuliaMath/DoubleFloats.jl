@@ -17,8 +17,6 @@ convert(::Type{Double{T, Performance}}, x::Double{T, Performance}) where {T<:Abs
 
 promote_rule(::Type{Double{T,E}}, ::Type{T}) where {T<:AbstractFloat, E<:Emphasis} = Double{T,E}
 
-convert(::Type{Double{T,E}}, x::T) where {T<:IEEEFloat, E<:Emphasis} = Double{T,E}(x, zero(T))
-
 promote_rule(::Type{Double{T,E}}, ::Type{I}) where {I<:Integer, T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
