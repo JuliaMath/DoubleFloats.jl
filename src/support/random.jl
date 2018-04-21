@@ -37,6 +37,8 @@ function rand(::Type{Double{Float64,Performance}}, n::Int)
     return rs
 end
 
+rand(::Type{Double}, n::Int) = rand(Double{Float64, Accuracy}, n)
+
 rand(x::Function, n::Int) = (x == FastDouble) ?
                     rand(Double{Float64,Performance}, n) :
                     throw(DomainError(string(x)))
