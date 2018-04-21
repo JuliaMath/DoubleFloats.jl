@@ -393,7 +393,7 @@ Double(0.9951847266721969, -4.248691367830441e-17),
 
 function index_npio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     result = 1
-    while x < npio32[result]
+    while x >= npio32[result]
         result += 1
     end
     return result-1 
