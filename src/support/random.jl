@@ -21,7 +21,7 @@ rand(x::Function) = (x == FastDouble) ?
                     rand(Double{Float64,Performance}) :
                     throw(DomainError(string(x)))
 
-function rand(::Type{Double{Float64,Accuracy}, n::Int)
+function rand(::Type{Double{Float64,Accuracy}}, n::Int)
     rs = Array{Double{Float64,Accuracy}}(undef, n)
     for idx=1:n
         rs[idx] = rand(Double{Float64,Accuracy})
@@ -29,7 +29,7 @@ function rand(::Type{Double{Float64,Accuracy}, n::Int)
     return rs
 end
 
-function rand(::Type{Double{Float64,Performance}, n::Int)
+function rand(::Type{Double{Float64,Performance}}, n::Int)
     rs = Array{Double{Float64,Performance}}(undef, n)
     for idx=1:n
         rs[idx] = rand(Double{Float64,Performance})
