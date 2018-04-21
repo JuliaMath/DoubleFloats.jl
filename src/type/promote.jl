@@ -1,7 +1,7 @@
-promote_type(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} =
+#promote_type(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} =
     Double{T, Accuracy}
 
-promote_type(::Type{Double{T, Performance}}, ::Type{Double{T, Accuracy}}) where {T<:AbstractFloat} =
+#promote_type(::Type{Double{T, Performance}}, ::Type{Double{T, Accuracy}}) where {T<:AbstractFloat} =
     Double{T, Accuracy}
 
 promote_rule(::Type{Double{T, Accuracy}}, ::Type{Double{T, Performance}}) where {T<:AbstractFloat} =
