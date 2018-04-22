@@ -1,4 +1,4 @@
-"""
+""""
 __Predicates__ are functions that ask "yes or no" questions of their argument[s].
 You can ask of a number "Is this zero?" or "Is this one?" and these predicates
 (`iszero`, `isone`) will work as expected with almost all numerical types.
@@ -16,64 +16,64 @@ These are the predicates made available for use with DoubleFloats:
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
 
-isnonzero(x::T) where {T<:Real} = !iszero(x)
-ispos(x::T) where {T<:Real} = !isneg(x) && isnonzero(x)
-isnonneg(x::T) where {T<:Real} = !isneg(x)
-isnonpos(x::T) where {T<:Real} = isneg(x) || iszero(x)
-isfractional(x::T) where {T<:Real} = abs(x) < one(T)
+isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
+ispos(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
+isnonneg(x::T) where {T<:AbstractFloat} = !isneg(x)
+isnonpos(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
 
-iszero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+iszero(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     iszero(HI(x)) # && iszero(LO(x))
 
-isnonzero(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnonzero(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     !iszero(HI(x)) # || !iszero(LO(x))
 
-isone(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isone(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isone(HI(x)) && iszero(LO(x))
 
-ispos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+ispos(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     !signbit(HI(x)) && !iszero(HI(x))
 
-isneg(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isneg(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     signbit(HI(x))
 
-isnonneg(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnonneg(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     !signbit(HI(x))
 
-isnonpos(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnonpos(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     signbit(HI(x)) || iszero(HI(x))
 
-isfinite(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isfinite(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isfinite(HI(x)) ## && isfinite(LO(x))
 
-isinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isinf(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isinf(HI(x)) && iszero(LO(x))
 
-isposinf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isposinf(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isinf(HI(x)) && !signbit(HI(x))
 
-isneginf(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isneginf(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isinf(HI(x)) && signbit(HI(x))
 
-isnan(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isnan(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isnan(HI(x)) ## && iszero(LO(x))
 
-issubnormal(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+issubnormal(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
-isinteger(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isinteger(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     isinteger(HI(x)) && isinteger(LO(x))
 
-isfractional(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isfractional(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     !isinteger(LO(x)) || !isinteger(HI(x))
 
-isodd(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+isodd(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     iszero(LO(x)) ?
         isinteger(HI(x)) && isodd(HI(x)) :
         isinteger(LO(x)) && isodd(LO(x))
 
-iseven(x::Double{T,E}) where {T<:Real,E<:Emphasis} =
+iseven(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} =
     iszero(LO(x)) ?
         isinteger(HI(x)) && iseven(HI(x)) :
         isinteger(LO(x)) && iseven(LO(x))
