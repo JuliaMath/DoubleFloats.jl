@@ -8,6 +8,16 @@ Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16
 Double{T,Accuracy}(x::T) where {T<:Float64} = Double{Float64, Accuracy}(x, 0.0)
 Double{T,Performance}(x::T) where {T<:Float64} = Double{Float64, Performance}(x, 0.0)
 
+for F in (:Float64, :Float32, :Float16)
+    @eval begin
+        Double(x::Double{$F}) = x
+        Double(x::Double{$F,Accuracy}) = x
+        FastDouble(x::Double{$F,Performance}) = x
+        Double(x::Double{$F,Performance}) = Double(Accuracy, HILO(x))
+        FastDouble(x::Double{$F,Accuracy}) = Double(Performance, HILO(x))
+    end
+end
+
 
 # Float64 can accomodate any SmallInteger
 const SmallInteger = Union{Int8, Int16, Int32, UInt8, UInt16, UInt32}
@@ -102,7 +112,7 @@ function Double{Float16}(x::T, y::T) where {T<:AbstractFloat}
 end
 
 #=
-FastDouble{Float64}(x::T) where {T<:AbstractFloat} = 
+FastDouble{Float64}(x::T) where {T<:AbstractFloat} =
     Double(Performance, (Float64(x), Float64(x-Float64(x))))
 FastDouble{Float32}(x::T) where {T<:AbstractFloat} =
     Double(Performance, (Float32(x), Float32(x-Float32(x))))
