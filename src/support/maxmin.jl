@@ -5,7 +5,7 @@
 
 
 # from Base
-maxmin(x::T, y::T) where {T<:Real} = x < y ? (y, x) : (x, y)
+# maxmin(x::T, y::T) where {T<:AbstractFloat} = x < y ? (y, x) : (x, y)
 maxmin(x::T, y::T) where {T<:AbstractFloat} =
     ifelse(isnan(x) | isnan(y), ifelse(isnan(x), (y,y), (x,x)),
            ifelse((y > x) | (signbit(x) > signbit(y)), (y,x), (x,y)))
