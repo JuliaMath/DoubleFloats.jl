@@ -24,8 +24,7 @@ end
 
 @inline function dvi_dbdb_db(x::Double{T, Performance}, y::Double{T, Performance}) where {T<:AbstractFloat}
     !(isfinite(x) & isfinite(y)) && return dvi_dbdb_db_nonfinite(x,y)
-    hi, lo = dvi_dddd_dd_fast(HILO(x), HILO(y))
-    return Double(Performance, hi, lo)
+    return x * inv(y)
 end
 
 
