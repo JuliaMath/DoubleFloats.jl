@@ -10,7 +10,7 @@ const k_pio2 = Double(1.5707963267948966, 6.123233995736766e-17)
 
 
 function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-   y = Double{T,Accuracy}(atan(x.hi))
+   y = Double(Accuracy, atan(x.hi))
    s, c = sin(y), cos(y)
    c2 = square(c)
    t = s/c
@@ -22,7 +22,7 @@ function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
 end
 
 function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
-   y = Double{T,Accuracy}(atan(x.hi))
+   y = Double(Performance, atan(x.hi))
    s, c = sin(y), cos(y)
    t = s/c
    z = y - (t - x)*square(c) # z - (tan(x)-x)*(cos(x)^2)
@@ -35,12 +35,12 @@ function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = x
    y = y / (1.0 + sqrt(1.0 - square(y)))
    z = atan(y)
-   return Double{T,Accuracy}(z.hi+z.hi, z.lo+z.lo)
+   return Double(Accuracy, z.hi+z.hi, z.lo+z.lo)
 end
 
 function asin(x::Double{T,Performance}) where {T<:AbstractFloat}
    abs(x) > 1.0 && throw(DomainError("$x"))
-   y = Double{T,E}(asin(x.hi))
+   y = Double(Performance, asin(x.hi))
    s,c = sin(y), cos(y)
    z = y - (s - x)/c
    return z
@@ -51,12 +51,12 @@ function acos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
    y = x
    y = sqrt(1.0 - square(y)) / (1.0 + y)
    z = atan(y)
-   return Double{T,Accuracy}(z.hi+z.hi, z.lo+z.lo)
+   return Double(Accuracy, z.hi+z.hi, z.lo+z.lo)
 end
 
 function acos(x::Double{T,Performance}) where {T<:AbstractFloat}
      abs(x) > 1.0 && throw(DomainError("$x"))
-     y = Double{T,E}(acos(x.hi))
+     y = Double(Performance, acos(x.hi))
      s,c = sin(y), cos(y)
      z = y + (c - x)/s
      return z
