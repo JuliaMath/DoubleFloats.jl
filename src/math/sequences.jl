@@ -1,6 +1,6 @@
 # 1 / factorial(i)
-const ninv_fact_accuracy = 32
-const inv_fact_accuracy = Double{Float64,Accuracy}[
+const ninv_fact_accu = 32
+const inv_fact_accu = Double{Float64,Accuracy}[
   Double(1.0,0.0),
   Double(0.5,0.0),
   Double(0.16666666666666666,9.25185853854297e-18),
@@ -35,8 +35,8 @@ const inv_fact_accuracy = Double{Float64,Accuracy}[
   Double(3.8003907548547434e-36,1.7457158024652518e-52)
 ];
 
-const ninv_fact_performance = ninv_fact_accuracy - 4
-const inv_fact_performance = map(FastDouble, inv_fact_accuracy);
+const ninv_fact_perf = ninv_fact_accuracy - 4
+const inv_fact_perf = map(FastDouble, inv_fact_accu);
 
 # [exp(i) for i in 1:64]
 const exp_int = [
