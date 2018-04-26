@@ -1,6 +1,6 @@
 # 1 / factorial(i)
 const ninv_fact_accu = 32
-const inv_fact_accu = Double{Float64,Accuracy}[
+const inv_fact_accu = Double{Float64,Accuracy}(
   Double(1.0,0.0),
   Double(0.5,0.0),
   Double(0.16666666666666666,9.25185853854297e-18),
@@ -33,7 +33,7 @@ const inv_fact_accu = Double{Float64,Accuracy}[
   Double(3.7699876288159054e-33,2.5870347832750324e-49),
   Double(1.216125041553518e-34,5.586290567888806e-51),
   Double(3.8003907548547434e-36,1.7457158024652518e-52)
-];
+);
 
 const ninv_fact_perf = ninv_fact_accu - 4
 const inv_fact_perf = map(FastDouble, inv_fact_accu);
