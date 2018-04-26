@@ -75,6 +75,7 @@ include("ops/floorceil.jl")
 include("ops/intfrac.jl")
 
 include("math/sequences.jl")
+
 include("math/explog.jl")
 include("math/trig.jl")
 include("math/arctrig.jl")
