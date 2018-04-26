@@ -1,11 +1,11 @@
 
-const double_eps = eps(eps(1.0))
-const twopi_accuracy     = Double(Accuracy, 6.283185307179586, 2.4492935982947064e-16)
-const twopi_performance  = Double(Performance, 6.283185307179586, 2.4492935982947064e-16)
-const halfpi_accuracy    = Double(Accuracy, 1.5707963267948966, 6.123233995736766e-17)
-const halfpi_performance = Double(Performance, 1.5707963267948966, 6.123233995736766e-17)
-const pio16_accuracy     = Double(Accuracy, 0.19634954084936207, 7.654042494670958e-18)
-const pio16_performance  = Double(Performance, 0.19634954084936207, 7.654042494670958e-18)
+const double_eps  = eps(eps(1.0))
+const twopi_accu  = Double(Accuracy, 6.283185307179586, 2.4492935982947064e-16)
+const twopi_perf  = Double(Performance, 6.283185307179586, 2.4492935982947064e-16)
+const halfpi_accu = Double(Accuracy, 1.5707963267948966, 6.123233995736766e-17)
+const halfpi_perf = Double(Performance, 1.5707963267948966, 6.123233995736766e-17)
+const pio16_accu  = Double(Accuracy, 0.19634954084936207, 7.654042494670958e-18)
+const pio16_perf  = Double(Performance, 0.19634954084936207, 7.654042494670958e-18)
 
 const inv_factorial = [
     Double(1.66666666666666657e-01,  9.25185853854297066e-18),
@@ -282,8 +282,58 @@ function sincos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 
+function sin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    iszero(x) && return zero(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_accu
+       y = y / twopi_accu
+       y = modf(y)[1]
+    end
+    z = sin_circle(y)
+    z = copysign(z, x)
+    return z
+end
+
+function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return zero(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_perf
+       y = y / twopi_perf
+       y = modf(y)[1]
+    end
+    z = sin_circle(y)
+    z = copysign(z, x)
+    return z
+end
 
 
+function cos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    iszero(x) && return one(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_accu
+       y = y / twopi_accu
+       y = modf(y)[1]
+    end
+    z = cos_circle(y)
+    return z
+end
+
+function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return one(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_perf
+       y = y / twopi_perf
+       y = modf(y)[1]
+    end
+    z = cos_circle(y)
+    return z
+end
+
+#=
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -297,7 +347,6 @@ function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = copysign(z, x)
     return z
 end
-
 function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -310,7 +359,7 @@ function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = cos_circle(y)
     return z
 end
-
+=#
 function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(typeof(x)), one(typeof(x))
     !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
