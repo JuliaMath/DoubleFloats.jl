@@ -1,6 +1,6 @@
 # 1 / factorial(i)
 const ninv_fact_accu = 32
-const inv_fact_accu = Double{Float64,Accuracy}(
+const inv_fact_accu = (
   Double(1.0,0.0),
   Double(0.5,0.0),
   Double(0.16666666666666666,9.25185853854297e-18),
