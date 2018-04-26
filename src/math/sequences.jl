@@ -404,7 +404,7 @@ const tan_npio32_accu  = (
 
 const n_cos_npio32_accu = length(cos_npio32_accu)
 
-const n_cos_npio32_perf = n_coa_npio32_accu
+const n_cos_npio32_perf = n_cos_npio32_accu
 const cos_npio32_perf = map(FastDouble, cos_npio32_accu);
 
 const tan_npio32_accu  = (
