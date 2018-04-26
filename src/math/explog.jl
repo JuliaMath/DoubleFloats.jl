@@ -1,4 +1,4 @@
-function exp_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function exp_taylor(a::Double{T,Accuracy}) where {T<:AbstractFloat}
   x = a
   x2 = x*x
   x3 = x*x2
@@ -9,19 +9,49 @@ function exp_taylor(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   x20 = x10*x10
   x25 = x10*x15
 
-  z = x + inv_fact[2]*x2 + inv_fact[3]*x3 + inv_fact[4]*x4
-  z2 = x5 * (inv_fact[5] + x*inv_fact[6] + x2*inv_fact[7] + x3*inv_fact[8] + x4*inv_fact[9])
-  z3 = x10 * (inv_fact[10] + x*inv_fact[11] + x2*inv_fact[12] + x3*inv_fact[13] + x4*inv_fact[14])
-  z4 = x15 * (inv_fact[15] + x*inv_fact[16] + x2*inv_fact[17] + x3*inv_fact[18] + x4*inv_fact[19])
-  z5 = x20 * (inv_fact[20] + x*inv_fact[21] + x2*inv_fact[22] + x3*inv_fact[23] + x4*inv_fact[24])
-  z6 = x25 * (inv_fact[25] + x*inv_fact[26] + x2*inv_fact[27])
+  z = x + inv_fact_accu[2]*x2 + inv_fact_accu[3]*x3 + inv_fact_accu[4]*x4
+  z2 = x5 * (inv_fact_accu[5] + x*inv_fact_accu[6] + x2*inv_fact_accu[7] +
+       x3*inv_fact_accu[8] + x4*inv_fact_accu[9])
+  z3 = x10 * (inv_fact_accu[10] + x*inv_fact_accu[11] + x2*inv_fact_accu[12] +
+       x3*inv_fact_accu[13] + x4*inv_fact_accu[14])
+  z4 = x15 * (inv_fact_accu[15] + x*inv_fact_accu[16] + x2*inv_fact_accu[17] +
+       x3*inv_fact_accu[18] + x4*inv_fact_accu[19])
+  z5 = x20 * (inv_fact_accu[20] + x*inv_fact_accu[21] + x2*inv_fact_accu[22] +
+       x3*inv_fact_accu[23] + x4*inv_fact_accu[24])
+  z6 = x25 * (inv_fact_accu[25] + x*inv_fact_accu[26] + x2*inv_fact_accu[27])
 
-  ((((z6+z5)+z4)+z3)+z2)+z + one(Double{T,E})
+  ((((z6+z5)+z4)+z3)+z2)+z + one(Double{T,Accuracy})
 end
 
-@inline exp_zero_half(a::Double) = exp_taylor(a)
+function exp_taylor(a::Double{T,Performance}) where {T<:AbstractFloat}
+  x = a
+  x2 = x*x
+  x3 = x*x2
+  x4 = x2*x2
+  x5 = x2*x3
+  x10 = x5*x5
+  x15 = x5*x10
+  x20 = x10*x10
+  x25 = x10*x15
+  
+  z = x + inv_fact_perf[2]*x2 + inv_fact_perf[3]*x3 + inv_fact_perf[4]*x4
+  z2 = x5 * (inv_fact_perf[5] + x*inv_fact_perf[6] + x2*inv_fact_perf[7] +
+       x3*inv_fact_perf[8] + x4*inv_fact_perf[9])
+  z3 = x10 * (inv_fact_perf[10] + x*inv_fact_perf[11] + x2*inv_fact_perf[12] +
+       x3*inv_fact_perf[13] + x4*inv_fact_perf[14])
+  z4 = x15 * (inv_fact_perf[15] + x*inv_fact_perf[16] + x2*inv_fact_perf[17] +
+       x3*inv_fact_perf[18] + x4*inv_fact_perf[19])
+  z5 = x20 * (inv_fact_perf[20] + x*inv_fact_perf[21] + x2*inv_fact_perf[22] +
+       x3*inv_fact_perf[23] + x4*inv_fact_perf[24])
+  z6 = x25 * (inv_fact_perf[25] + x*inv_fact_perf[26] + x2*inv_fact_perf[27])
 
-@inline function exp_half_one(a::Double)
+  ((((z6+z5)+z4)+z3)+z2)+z + one(Double{T,Performance})
+end
+
+@inline exp_zero_half(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
+    exp_taylor(a)
+
+@inline function exp_half_one(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = mul_by_half(a)
     z = exp_zero_half(z)
     z = square(z)
