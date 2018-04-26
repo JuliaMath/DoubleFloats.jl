@@ -476,7 +476,7 @@ const tan_npio32_accu  = (
 #    Double(0.09849140335716425, 5.3100671162822435e-18)
 );
 
-const n_tan_npio32 = length(tan_npio32_accu)
+const n_tan_npio32_accu = length(tan_npio32_accu)
 
 const n_tan_npio32_perf = n_tan_npio32_accu
 const tan_npio32_perf = map(FastDouble, tan_npio32_accu);
