@@ -1,11 +1,11 @@
+using DoubleFloats, AccurateArithmetic
 using Test
-using Base.MathConstants
-using DoubleFloats
-
-using AccurateArithmetic
 
 if VERSION >= v"0.7.0-"
   using Random
+  phi = Base.MathConstants.golden
+else
+  phi = golden 
 end
 
 srand(1602)
@@ -19,8 +19,8 @@ one_performant = Double{Float64, Performance}(1.0)
 
 pi_accurate   = Double{Float64, Accuracy}(pi)
 pi_performant = Double{Float64, Performance}(pi)
-phi_accurate   = Double{Float64, Accuracy}(golden)
-phi_performant = Double{Float64, Performance}(golden)
+phi_accurate   = Double{Float64, Accuracy}(phi)
+phi_performant = Double{Float64, Performance}(phi)
 
 @test pi_accurate   == Double(pi)
 @test pi_performant == FastDouble(pi)
