@@ -23,10 +23,18 @@ end
 @inline LO(x::Tuple{T}) where {T<:AbstractFloat} = zero(T)
 @inline HILO(x::Tuple{T}) where {T<:AbstractFloat} = x[1], zero(T)
 
+function Double{T, Accuracy}(hi::T, lo::T) where {T<:AbstractFloat}
+    hi, lo = two_sum(hi, lo)
+    Double(Accuracy, hi, lo)
+end
+function Double{T, Performance}(hi::T, lo::T) where {T<:AbstractFloat}
+    hi, lo = two_sum(hi, lo)
+    Double(Performance, hi, lo)
+end
+
 function Double(::Type{E}, hi::T) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, hi, zero(T))
 end
-
 
 function Double(::Type{E}, hi::Tuple{T}) where {T<:AbstractFloat, E<:Emphasis}
     return Double(E, hi[1], zero(T))
