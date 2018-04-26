@@ -213,7 +213,7 @@ end
 
 
 @inline function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-    idx = index_npio32_accu(x)
+    idx = index_npio32(x)
     pipart = npio32_accu[idx]
     rest = x - pipart
     sin_part = sin_npio32_accu[idx]
@@ -226,7 +226,7 @@ end
 end
 
 @inline function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-    idx = index_npio32_accu(x)
+    idx = index_npio32(x)
     pipart = npio32_accu[idx]
     rest = x - pipart
     sin_part = sin_npio32_accu[idx]
@@ -239,7 +239,7 @@ end
 end
 
 function sincos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
-    idx = index_npio32_accu(x)
+    idx = index_npio32(x)
     pipart = npio32_accu[idx]
     rest = x - pipart
     sin_part = sin_npio32_accu[idx]
@@ -257,7 +257,7 @@ end
 
 
 @inline function sin_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
-    idx = index_npio32_perf(x)
+    idx = index_npio32(x)
     pipart = npio32_perf[idx]
     rest = x - pipart
     sin_part = sin_npio32_perf[idx]
@@ -270,7 +270,7 @@ end
 end
 
 @inline function cos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
-    idx = index_npio32_perf(x)
+    idx = index_npio32(x)
     pipart = npio32_perf[idx]
     rest = x - pipart
     sin_part = sin_npio32_perf[idx]
@@ -284,7 +284,7 @@ end
 
 
 function sincos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
-    idx = index_npio32_perf(x)
+    idx = index_npio32(x)
     pipart = npio32_perf[idx]
     rest = x - pipart
     sin_part = sin_npio32_perf[idx]
