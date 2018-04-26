@@ -141,7 +141,7 @@ function calc_exp(a::Double{T,Accuracy}) where {T<:AbstractFloat}
   if 0 < xint <= 64
      zint = exp_int_accu[xint]
   elseif xint === zero(Int64)
-     zint = zero(Double{T,E})
+     zint = zero(Double{T,Accuracy})
   else
      dv, rm = divrem(xint, 64)
      zint = exp_int_accu[64]^dv
@@ -185,7 +185,7 @@ function calc_exp(a::Double{T,Performance}) where {T<:AbstractFloat}
   if 0 < xint <= 64
      zint = exp_int_perf[xint]
   elseif xint === zero(Int64)
-     zint = zero(Double{T,E})
+     zint = zero(Double{T,Performance})
   else
      dv, rm = divrem(xint, 64)
      zint = exp_int_perf[64]^dv
