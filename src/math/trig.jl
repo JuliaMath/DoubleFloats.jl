@@ -44,9 +44,9 @@ function sin_taylor(a::Double{Float64, Accuracy})
 
     x = -square(a)
     r = a
-    for i = 3:2:ninv_factorial
+    for i = 3:2:ninv_fact_accu
         r = r * x
-        t = r * inv_fact[i]
+        t = r * inv_fact_accu[i]
         a = a + t
     end
 
@@ -63,12 +63,12 @@ function cos_taylor(a::Double{Float64, Accuracy})
     x2 = square(a)
     r = one(a)
     a = one(a)
-    for i = 2:4:(ninv_factorial-2)
+    for i = 2:4:(ninv_fact_accu-2)
         r = r * x2
-        t = r * inv_fact[i]
+        t = r * inv_fact_accu[i]
         a = a - t
         r = r * x2
-        t = r * inv_fact[i+2]
+        t = r * inv_fact_accu[i+2]
         a = a + t
     end
 
@@ -110,9 +110,9 @@ function sin_taylor(a::Double{Float64, Performance})
 
     x = -square(a)
     r = a
-    for i = 3:2:ninv_factorial_performance
+    for i = 3:2:ninv_fact_perf
         r = r * x
-        t = r * inv_fact[i]
+        t = r * inv_fact_perf[i]
         a = a + t
     end
 
@@ -128,12 +128,12 @@ function cos_taylor(a::Double{Float64, Performance})
     x2 = square(a)
     r = one(a)
     a = one(a)
-    for i = 2:4:(ninv_factorial_performance-2)
+    for i = 2:4:(ninv_fact_perf-2)
         r = r * x2
-        t = r * inv_fact[i]
+        t = r * inv_fact_perf[i]
         a = a - t
         r = r * x2
-        t = r * inv_fact[i+2]
+        t = r * inv_fact_perf[i+2]
         a = a + t
     end
 
@@ -168,24 +168,6 @@ function cot_taylor(a::Double{Float64, Performance})
     s, c = sincos_taylor(a)
     return c/s
 end
-
-#=
-function spi32()
-    pis=[];sines=[];cosines=[]
-    for i = 0:64
-        n=Float64(i) * Double(pi)/Float64(32)
-        push!(pis,n)
-        bf = BigFloat(n.hi)+BigFloat(n.lo)
-        s = sin(bf)
-        c = cos(bf)
-        shi = Float64(s); slo = Float64(s-shi)
-        chi = Float64(c); clo = Float64(c-chi)
-        push!(sines,Double(shi,slo))
-        push!(cosines,Double(chi,clo))
-    end
-    return (pis),(sines), (cosines)
-end
-=#
 
 
 function index_npio32(x::Double{T,Accuracy}) where {T<:AbstractFloat}
