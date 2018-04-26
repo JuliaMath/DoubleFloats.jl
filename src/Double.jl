@@ -2,81 +2,39 @@ struct Double{T, E} <: MultipartFloat{T}
     hi::T
     lo::T
 
-   function Double(::Type{Accuracy}, hi::Float64, lo::Float64)
-       new{Float64, Accuracy}(hi, lo)
-   end
-   function Double(::Type{Accuracy}, hi::Float32, lo::Float32)
-       new{Float32, Performance}(hi, lo)
-   end
-   function Double(::Type{Accuracy}, hi::Float16, lo::Float16)
-       new{Float16, Accuracy}(hi, lo)
-   end
-   function Double(::Type{Performance}, hi::Float64, lo::Float64)
-       new{Float64, Performance}(hi, lo)
-   end
-   function Double(::Type{Performance}, hi::Float32, lo::Float32)
-       new{Float32, Performance}(hi, lo)
-   end
-   function Double(::Type{Performance}, hi::Float16, lo::Float16)
-       new{Float16, Performance}(hi, lo)
-   end
+    function Double(::Type{E}, hi::T, lo::T) where {T<:AbstractFloat, E<:Emphasis}
+        new{T,E}(hi, lo)
+    end
 end
 
 @inline HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
 @inline LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
 @inline HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
 
-@inline HI(x::T) where {T<:IEEEFloat} = x
-@inline LO(x::T) where {T<:IEEEFloat} = zero(T)
-@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(T)
+@inline HI(x::T) where {T<:AbstractFloat} = x
+@inline LO(x::T) where {T<:AbstractFloat} = zero(T)
+@inline HILO(x::T) where {T<:AbstractFloat} = x, zero(T)
 
-@inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
-@inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
-@inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
+@inline HI(x::Tuple{T,T}) where {T<:AbstractFloat} = x[1]
+@inline LO(x::Tuple{T,T}) where {T<:AbstractFloat} = x[2]
+@inline HILO(x::Tuple{T,T}) where {T<:AbstractFloat} = x[1], x[2]
 
+@inline HI(x::Tuple{T}) where {T<:AbstractFloat} = x[1]
+@inline LO(x::Tuple{T}) where {T<:AbstractFloat} = zero(T)
+@inline HILO(x::Tuple{T}) where {T<:AbstractFloat} = x[1], zero(T)
 
-function Double(::Type{Accuracy}, hi::T) where {T<:AbstractFloat}
-    return Double(Accuracy, hi, zero(T))
+function Double(::Type{E}, hi::T) where {T<:AbstractFloat, E<:Emphasis}
+    return Double(E, hi, zero(T))
 end
 
-function Double(::Type{Performance}, hi::T) where {T<:AbstractFloat}
-    return Double(Performance, hi, zero(T))
+
+function Double(::Type{E}, hi::Tuple{T}) where {T<:AbstractFloat, E<:Emphasis}
+    return Double(E, hi[1], zero(T))
 end
 
-function Double(::Type{Accuracy}, hi::Tuple{T}) where {T<:AbstractFloat}
-    return Double(Accuracy, hi[1], zero(T))
-end
-
-function Double(::Type{Performance}, hi::Tuple{T}) where {T<:AbstractFloat}
-    return Double(Performance, hi[1], zero(T))
-end
-
-function Double(::Type{Accuracy}, hilo::Tuple{T,T}) where {T<:AbstractFloat}
+function Double(::Type{E}, hilo::Tuple{T,T}) where {T<:AbstractFloat, E<:Emphasis}
     hi, lo = two_sum(hilo[1], hilo[2])
-    return Double(Accuracy, hi, lo)
-end
-
-function Double(::Type{Performance}, hilo::Tuple{T,T}) where {T<:AbstractFloat}
-    hi, lo = two_sum(hilo[1], hilo[2])
-    return Double(Performance, hi, lo)
-end
-
-function Double{T, Accuracy}(hi::T, lo::T) where {T<:AbstractFloat}
-    hi, lo = two_sum(hi, lo)
-    return Double(Accuracy, hi, lo)
-end
-
-function Double{T, Performance}(hi::T, lo::T) where {T<:AbstractFloat}
-    hi, lo = two_sum(hi, lo)
-    return Double(Performance, hi, lo)
-end
-
-function Double{T, Accuracy}(hi::T) where {T<:AbstractFloat}
-    return Double(Accuracy, hi, zero(T))
-end
-
-function Double{T, Performance}(hi::T) where {T<:AbstractFloat}
-    return Double(Performance, hi, zero(T))
+    return Double(E, hi, lo)
 end
 
 function Double(hi::T, lo::T) where {T<:AbstractFloat}
@@ -96,23 +54,38 @@ function FastDouble(hi::T) where {T<:AbstractFloat}
 end
 
 
-function Double(x::Double{T, Performance}) where {T<:AbstractFloat}
-    return Double(Accuracy, HILO(x))
+Double(x::Double{T, Accuracy}) where {T<:AbstractFloat} = x
+
+FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat} = x
+
+Double(::Type{T}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
+FastDouble(::Type{T}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
+
+function Double(::Type{T1}, x::Double{T2,E}) where {T1<:IEEEFloat, T2<:IEEEFloat, E<:Emphasis}
+    if sizeof(T1) > sizeof(T2)
+        hi,lo = TwoSum(T1(HI(x)), T1(LO(x)))
+    else
+        hi = T1(HI(x))
+        lo = T1(HI(x) - hi)
+    end
+    return Double(Accuracy, hi, lo)
 end
 
-function FastDouble(x::Double{T, Accuracy}) where {T<:AbstractFloat}
-    return Double(Performance, HILO(x))
+function FastDouble(::Type{T1}, x::Double{T2,E}) where {T1<:IEEEFloat, T2<:IEEEFloat, E<:Emphasis}
+    if sizeof(T1) > sizeof(T2)
+        hi,lo = TwoSum(T1(HI(x)), T1(LO(x)))
+    else
+        hi = T1(HI(x))
+        lo = T1(HI(x) - hi)
+    end
+    return Double(Performance, hi, lo)
 end
 
-function Double(x::Double{T, Accuracy}) where {T<:AbstractFloat}
-    return x
-end
+Double(::Type{E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
+FastDouble(::Type{E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
 
-function FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat}
-    return x
-end
-
-
+Double(x::Double{T,Performance}) where {T<:AbstractFloat} = Double(Accuracy, HI(x), LO(x))
+FastDouble(x::Double{T,Accuracy}) where {T<:AbstractFloat} = Double(Performance, HI(x), LO(x))
 
 function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
     return string("Double(",HI(x),", ",LO(x),")")
