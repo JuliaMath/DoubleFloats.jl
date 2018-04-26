@@ -8,59 +8,64 @@ else
   phi = golden 
 end
 
+
+
+for (U,F) in ((:UInt64, :Float64), (:UInt32, :Float32), (:UInt16, :Float16))
+  @eval begin
+   @inline function ufp(x::$F)
+       u = reinterpret($U, x)
+       u = (u >> (precision($F)-1)) << (precision($F)-1)
+       return reinterpret($F, u)
+   end
+  end
+end
+
+const Float64ulp = inv(ldexp(1.0, precision(Float64)))
+const Float32ulp = inv(ldexp(1.0, precision(Float32)))
+const Float16ulp = inv(ldexp(1.0, precision(Float16)))
+
+@inline ulp(x::Float64) = ufp(x) * Float64ulp
+@inline ulp(x::Float32) = ufp(x) * Float32ulp
+@inline ulp(x::Float16) = ufp(x) * Float16ulp
+
+ulp(x::Double{T,E}) where {T,E} = ulp(LO(x))
+ulp(x::Tuple{T,T}) where {T} = ulp(x[2])
+
+
+function relative_ulp(given, found)
+  given_ulp = ulp(given)
+  relulp = HI(abs(given - found)) / given_ulp
+  iszero(relulp) && return 0.0
+  return relulp
+end
+
+setprecision(BigFloat, 768)
 srand(1602)
+const nrands = 1_000
+rand_accu = rand(Double, nrands)
+rand_perf = FastDouble.(rand_accu)
+
+function testfunc(fun::Function, val::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis}
+     bf = BigFloat(HI(val)) + BigFloat(LO(val))
+     fnbf = fun(bf)
+     fnbfhi = T(fnbf)
+     fnbflo = T(fnbf - fnbfhi)
+     fbf = Double(E, fnbfhi, fnbflo)
+     tst = fun(val)
+     abs_err = abs(fbf - tst)
+     rel_err = abs_err / fbf
+     rel_ulp = relative_ulp(fbf, tst)
+     return abs_err, relulp
+end
+
+sin_accu = sin.(rand_accu)
+sin_perf = sin.(rand_perf)
+relative_ulp.(sin_accu, sin_perf)
+
+
 include("bigfloats.jl")
 include("randfloats.jl")
 
-zero_accurate = Double{Float64, Accuracy}(0.0)
-zero_performant = Double{Float64, Performance}(0.0)
-one_accurate = Double{Float64, Accuracy}(1.0)
-one_performant = Double{Float64, Performance}(1.0)
+include("concrete_accuracy.jl")
 
-pi_accurate   = Double{Float64, Accuracy}(pi)
-pi_performant = Double{Float64, Performance}(pi)
-phi_accurate   = Double{Float64, Accuracy}(phi)
-phi_performant = Double{Float64, Performance}(phi)
-
-@test pi_accurate   == Double(pi)
-@test pi_performant == FastDouble(pi)
-
-@test abs(inv(inv(pi_accurate)) - pi_accurate) <= eps(LO(pi_accurate))
-@test abs(inv(inv(pi_performant)) - pi_performant) <= eps(LO(pi_performant))
-@test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= eps(LO(phi_accurate))
-
-a = Base.TwicePrecision(3.0) / Base.TwicePrecision(7.0)
-b = Double{Float64, Accuracy}(3.0) / Double{Float64, Accuracy}(7.0)
-c = Base.TwicePrecision(17.0) / Base.TwicePrecision(5.0)
-d = Double{Float64, Accuracy}(17.0) / Double{Float64, Accuracy}(5.0)
-
-@test a.hi == b.hi
-@test a.lo == b.lo
-@test (a+c).hi == (b+d).hi
-@test (a+c).lo == (b+d).lo
-@test (a-c).hi == (b-d).hi
-@test abs((a-c).lo - (b-d).lo) <= eps((a-c).lo)
-@test (a*c).hi == (b*d).hi
-@test (a*c).lo == (b*d).lo
-@test (a/c).hi == (b/d).hi
-@test (a/c).lo == (b/d).lo
-
-
-@test zero(Double{Float64}) == Double(0.0, 0.0)
-@test one(Double{Float64}) == Double(1.0, 0.0)
-@test zero(Double(0.0, 0.0)) == Double(0.0, 0.0)
-@test one(Double(0.0, 0.0)) == Double(1.0, 0.0)
-
-@test round(Double(123456.0, 1.0e-17), RoundUp) == Double(123457.0, 0.0)
-@test round(Double(123456.0, -1.0e-17), RoundUp) == Double(123456.0, 0.0)
-@test round(Double(123456.0, -1.0e-17), RoundDown) == Double(123455.0, 0.0)
-
-@test typemax(Double) == Double(typemax(Float64))
-@test realmin(Double) == Double(realmin(Float64))
-
-@test isnan(FastDouble(Inf) + FastDouble(-Inf))
-@test isinf(FastDouble(Inf) + FastDouble(Inf))
-@test isnan(Double(NaN) - 1)
-
-@test typeof(rand(Double)) == Double{Float64, Accuracy}
-@test typeof(rand(FastDouble)) == Double{Float64, Performance}
+# test sin, cos, tan
