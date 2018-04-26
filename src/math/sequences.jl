@@ -40,7 +40,7 @@ const inv_fact_perf = map(FastDouble, inv_fact_accu);
 
 # [exp(i) for i in 1:64]
 
-const exp_int_accu = [
+const exp_int_accu = (
  Double(2.718281828459045, 1.4456468917292502e-16),
  Double(7.38905609893065, -1.7971139497839148e-16),
  Double(20.085536923187668, -1.8275625525512858e-16),
@@ -105,7 +105,9 @@ const exp_int_accu = [
  Double(8.438356668741454e26, 6.5719328084037315e10),
  Double(2.29378315946961e27, -7.566162968773138e10),
  Double(6.235149080811617e27, 1.3899738872492847e11),
-];
+);
+
+const n_exp_int_accu = length(exp_int_accu)
 
 const n_exp_int_perf = n_exp_int_accu
 const exp_int_perf = map(FastDouble, exp_int_accu);
