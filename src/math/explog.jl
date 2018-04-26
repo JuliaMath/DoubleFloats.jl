@@ -129,7 +129,7 @@ function Base.Math.exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   return calc_exp(a)
 end
 
-function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function calc_exp(a::Double{T,Accuracy}) where {T<:AbstractFloat}
 
   is_neg = signbit(HI(a))
   xabs = is_neg ? -a : a
@@ -139,14 +139,14 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   xfrac = xabs - T(xint)
 
   if 0 < xint <= 64
-     zint = exp_int[xint]
+     zint = exp_int_accu[xint]
   elseif xint === zero(Int64)
      zint = zero(Double{T,E})
   else
      dv, rm = divrem(xint, 64)
-     zint = exp_int[64]^dv
+     zint = exp_int_accu[64]^dv
      if rm > 0
-        	zint = zint * exp_int[rm]
+        	zint = zint * exp_int_accu[rm]
      end
   end
 
@@ -158,6 +158,50 @@ function calc_exp(a::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
   else
       if LO(xfrac) == 0.0
           zfrac = Double(1.6487212707001282, -4.731568479435833e-17)
+      elseif signbit(LO(xfrac))
+          zfrac = exp_zero_half(xfrac)
+      else
+          zfrac = exp_half_one(xfrac)
+      end
+  end
+
+  z = HI(zint) == zero(T) ? zfrac : zint * zfrac
+  if is_neg
+      z = inv(z)
+  end
+
+  return z
+end
+
+function calc_exp(a::Double{T,Performance}) where {T<:AbstractFloat}
+
+  is_neg = signbit(HI(a))
+  xabs = is_neg ? -a : a
+  xintpart = modf(xabs)[2]
+  xintpart = xintpart.hi + xintpart.lo
+  xint = Int64(xintpart)
+  xfrac = xabs - T(xint)
+
+  if 0 < xint <= 64
+     zint = exp_int_perf[xint]
+  elseif xint === zero(Int64)
+     zint = zero(Double{T,E})
+  else
+     dv, rm = divrem(xint, 64)
+     zint = exp_int_perf[64]^dv
+     if rm > 0
+        	zint = zint * exp_int_perf[rm]
+     end
+  end
+
+  # exp(xfrac)
+  if HI(xfrac) < 0.5
+      zfrac = exp_zero_half(xfrac)
+  elseif HI(xfrac) > 0.5
+      zfrac = exp_half_one(xfrac)
+  else
+      if LO(xfrac) == 0.0
+          zfrac = FastDouble(1.6487212707001282, -4.731568479435833e-17)
       elseif signbit(LO(xfrac))
           zfrac = exp_zero_half(xfrac)
       else
