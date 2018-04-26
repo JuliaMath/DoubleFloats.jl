@@ -35,7 +35,7 @@ const inv_fact_accu = Double{Float64,Accuracy}[
   Double(3.8003907548547434e-36,1.7457158024652518e-52)
 ];
 
-const ninv_fact_perf = ninv_fact_accuracy - 4
+const ninv_fact_perf = ninv_fact_accu - 4
 const inv_fact_perf = map(FastDouble, inv_fact_accu);
 
 # [exp(i) for i in 1:64]
