@@ -333,6 +333,34 @@ function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
     return z
 end
 
+function sincos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    iszero(x) && return zero(typeof(x)), one(typeof(x))
+    !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_accu
+       y = y / twopi_accu
+       y = modf(y)[1]
+    end
+    s = sin_circle(y)
+    s = copysign(s, x)
+    c = cos_circle(y)
+    return s, c
+end
+
+function sincos(x::Double{T,Performance}) where {T<:AbstractFloat}
+    iszero(x) && return zero(typeof(x)), one(typeof(x))
+    !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
+    y = abs(x)
+    if y >= twopi_perf
+       y = y / twopi_perf
+       y = modf(y)[1]
+    end
+    s = sin_circle(y)
+    s = copysign(s, x)
+    c = cos_circle(y)
+    return s, c
+end
+
 #=
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(typeof(x))
@@ -359,7 +387,6 @@ function cos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     z = cos_circle(y)
     return z
 end
-=#
 function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(typeof(x)), one(typeof(x))
     !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
@@ -374,6 +401,7 @@ function sincos(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     c = cos_circle(y)
     return s, c
 end
+=#
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     s, c = sincos(x)
