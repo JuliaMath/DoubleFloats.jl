@@ -482,7 +482,7 @@ const n_tan_npio32_perf = n_tan_npio32_accu
 const tan_npio32_perf = map(FastDouble, tan_npio32_accu);
 
 
-const tan_coeff = Double{Float64,Accuracy}[
+const tan_coeff_accu = (
    Double(1.0, 0.0),
    Double(0.3333333333333333, 1.850371707708594e-17),
    Double(0.13333333333333333, 1.8503717077085942e-18),
@@ -499,7 +499,9 @@ const tan_coeff = Double{Float64,Accuracy}[
    Double(6.451689215655431e-6, 1.1519922496640058e-22),
    Double(2.6147711512907546e-6, -9.313685621299801e-23),
    Double(1.0597268320104654e-6, 2.3670525505213632e-24),
-];
+);
 
 
-const n_tan_coeff = length(tan_coeff)
+const n_tan_coeff_accu = length(tan_coeff_accu)
+const n_tan_coeff_perf = n_tan_coeff_accu
+const tan_coeff_perf = map(FastDouble, tan_coeff_accu);
