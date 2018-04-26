@@ -188,9 +188,17 @@ end
 =#
 
 
-function index_npio32(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+function index_npio32(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     result = 1
-    while x >= npio32[result]
+    while x >= npio32_accu[result]
+        result += 1
+    end
+    return result-1
+end
+
+function index_npio32(x::Double{T,Performance}) where {T<:AbstractFloat}
+    result = 1
+    while x >= npio32_perf[result]
         result += 1
     end
     return result-1
@@ -203,12 +211,13 @@ end
 =#
 
 
-@inline function sin_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    pipart = npio32[idx]
+
+@inline function sin_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    idx = index_npio32_accu(x)
+    pipart = npio32_accu[idx]
     rest = x - pipart
-    sin_part = sin_npio32[idx]
-    cos_part = cos_npio32[idx]
+    sin_part = sin_npio32_accu[idx]
+    cos_part = cos_npio32_accu[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     result1 = sin_part * cos_rest
     result2 = cos_part * sin_rest
@@ -216,12 +225,12 @@ end
     return result
 end
 
-@inline function cos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    pipart = npio32[idx]
+@inline function cos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    idx = index_npio32_accu(x)
+    pipart = npio32_accu[idx]
     rest = x - pipart
-    sin_part = sin_npio32[idx]
-    cos_part = cos_npio32[idx]
+    sin_part = sin_npio32_accu[idx]
+    cos_part = cos_npio32_accu[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     result1 = cos_part * cos_rest
     result2 = sin_part * sin_rest
@@ -229,12 +238,12 @@ end
     return result
 end
 
-function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    idx = index_npio32(x)
-    pipart = npio32[idx]
+function sincos_circle(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    idx = index_npio32_accu(x)
+    pipart = npio32_accu[idx]
     rest = x - pipart
-    sin_part = sin_npio32[idx]
-    cos_part = cos_npio32[idx]
+    sin_part = sin_npio32_accu[idx]
+    cos_part = cos_npio32_accu[idx]
     sin_rest, cos_rest = sincos_taylor(rest)
     s1 = sin_part * cos_rest
     s2 = cos_part * sin_rest
@@ -244,6 +253,54 @@ function sincos_circle(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     c  = c1 - c2
     return s, c
 end
+
+
+
+@inline function sin_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
+    idx = index_npio32_perf(x)
+    pipart = npio32_perf[idx]
+    rest = x - pipart
+    sin_part = sin_npio32_perf[idx]
+    cos_part = cos_npio32_perf[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    result1 = sin_part * cos_rest
+    result2 = cos_part * sin_rest
+    result  = result1 + result2
+    return result
+end
+
+@inline function cos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
+    idx = index_npio32_perf(x)
+    pipart = npio32_perf[idx]
+    rest = x - pipart
+    sin_part = sin_npio32_perf[idx]
+    cos_part = cos_npio32_perf[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    result1 = cos_part * cos_rest
+    result2 = sin_part * sin_rest
+    result  = result1 - result2
+    return result
+end
+
+
+function sincos_circle(x::Double{T,Performance}) where {T<:AbstractFloat}
+    idx = index_npio32_perf(x)
+    pipart = npio32_perf[idx]
+    rest = x - pipart
+    sin_part = sin_npio32_perf[idx]
+    cos_part = cos_npio32_perf[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    s1 = sin_part * cos_rest
+    s2 = cos_part * sin_rest
+    s  = s1 + s2
+    c1 = cos_part * cos_rest
+    c2 = sin_part * sin_rest
+    c  = c1 - c2
+    return s, c
+end
+
+
+
 
 function sin(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     iszero(x) && return zero(typeof(x))
