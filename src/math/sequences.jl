@@ -2,7 +2,7 @@
 
 # how many terms are to be used 
 const nused_inv_fact_accu = 16
-const nused_inv_fact_perf = nused_inv_fact_accu - 2
+const nused_inv_fact_perf = nused_inv_fact_accu - 4
 
 const inv_fact_accu = (
   Double(1.0,0.0),
