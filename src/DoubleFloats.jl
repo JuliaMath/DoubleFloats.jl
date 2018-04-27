@@ -9,7 +9,7 @@ export Double, FastDouble,
        isposinf, isneginf, isfractional,
        nan, inf,
        intpart, fracpart, fmod,
-       square, cube,
+       square, cube
        #spread, sld, tld,
        #signs
 
