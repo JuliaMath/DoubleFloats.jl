@@ -55,16 +55,6 @@ Double(::Type{E}, hi::T, lo::T) where {T<:LargeInteger, E<:Emphasis} =
 Double(::Type{E}, hi::T) where {T<:LargeInteger, E<:Emphasis} =
     Double(E, (Float64(hi), zero(Float64)))
 
-function Double(::Type{E}, hi::T, lo::T) where {T<:BigNumber, E<:Emphasis}
-    fhi, flo = big2hilo(Float64, hi+lo)
-    return Double(E, fhi, flo)
-end
-
-function Double(::Type{E}, hi::T) where {T<:BigNumber, E<:Emphasis}
-    fhi, flo = big2hilo(Float64, hi)
-    return Double(E, fhi, flo)
-end
-
 
 Double{T, Accuracy}(x::BigFloat) where {T<:IEEEFloat} = Double(Accuracy, big2hilo(Float64, x)...,)
 Double{T, Performance}(x::BigFloat) where {T<:IEEEFloat} = Double(Performance, big2hilo(Float64, x)...,)
