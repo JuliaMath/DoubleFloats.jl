@@ -68,8 +68,8 @@ include("buildingblocks/double.jl")
 include("buildingblocks/triple.jl")
 
 include("support/maxmin.jl")
-include("math/fma.jl")
 
+include("ops/fma.jl")
 include("ops/prelims.jl")
 include("ops/op.jl")
 include("ops/floorceil.jl")
