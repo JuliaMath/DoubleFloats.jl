@@ -50,7 +50,8 @@ function Double(hi::T, lo::T) where {T<:AbstractFloat}
 end
 
 function Double(hi::T) where {T<:AbstractFloat}
-    return Double{T, Accuracy}(hi)
+    lo = zero(T)
+    return Double(Accuracy, hi, lo)
 end
 
 function FastDouble(hi::T, lo::T) where {T<:AbstractFloat}
@@ -58,7 +59,8 @@ function FastDouble(hi::T, lo::T) where {T<:AbstractFloat}
 end
 
 function FastDouble(hi::T) where {T<:AbstractFloat}
-    return Double{T, Performance}(hi)
+    lo = zero(T)
+    return Double(Performance, hi, lo)
 end
 
 
