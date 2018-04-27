@@ -9,7 +9,7 @@ export Double, FastDouble,
        isposinf, isneginf, isfractional,
        nan, inf,
        intpart, fracpart, fmod,
-       square, cube
+       square, cube,
        #spread, sld, tld,
        #signs
 
@@ -40,7 +40,7 @@ import Base: hash, promote_type, promote_rule, convert,
              typemax, typemin, realmax, realmin,
              min, max, minmax, minimum, maximum,
              floor, ceil, trunc, round, div, fld, cld, rem, mod,
-             prevfloat, nextfloat, eps,
+             prevfloat, nextfloat, eps, fma,
              modf, frexp, ldexp, sqrt, cbrt, hypot,
              log, exp, log1p, expm1, log2, log10,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
@@ -68,6 +68,7 @@ include("buildingblocks/double.jl")
 include("buildingblocks/triple.jl")
 
 include("support/maxmin.jl")
+include("math/fma.jl")
 
 include("ops/prelims.jl")
 include("ops/op.jl")
