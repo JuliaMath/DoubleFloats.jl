@@ -5,6 +5,9 @@ Double{T,E}(x::T) where {T<:Float64, E<:Performance} = Double(E, x, 0.0)
 Double{T,E}(x::T) where {T<:Float32, E<:Performance} = Double(E, x, 0.0f0)
 Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16))
 
+Double{T,Accuracy}(x::T) where {T<:IEEEFloat} = Double(Accuracy, x, zero(T))
+Double{T,Performance}(x::T) where {T<:IEEEFloat} = Double(Performance, x, zero(T))
+
 Double{T,Accuracy}(x::T) where {T<:AbstractFloat} = Double(Accuracy, x, zero(T))
 Double{T,Performance}(x::T) where {T<:AbstractFloat} = Double(Performance, x, zero(T))
 
