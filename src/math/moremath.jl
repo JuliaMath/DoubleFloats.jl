@@ -47,3 +47,10 @@ function muladd(x::Double{T,E}, y::Double{T,E}, z::Double{T,E}) where
     xyz = add322(xy, HILO(z))
     return Double(E, xyz)
 end
+
+function fma(x::Double{T,E}, y::Double{T,E}, z::Double{T,E}) where
+                  {T<:AbstractFloat, E<:Accuracy}
+    xy = mul223(HILO(x), HILO(y))
+    xyz = add322(xy, HILO(z))
+    return Double(E, xyz)
+end
