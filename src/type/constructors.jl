@@ -61,13 +61,6 @@ Double{T, Performance}(x::BigFloat) where {T<:IEEEFloat} = Double(Performance, b
 
 Double(::Type{Accuracy}, x::B) where {B<:BigNumber} = Double{Float64, Accuracy}(x)
 Double(::Type{Performance}, x::B) where {B<:BigNumber} = Double{Float64, Performance}(x)
-#=
-Double(hi::T) where {T<:BigNumber} = Double(big2hilo(Float64,hi)...,)
-Double(hi::T, lo::T) where {T<:BigNumber} = Double(big2hilo(hi+lo)...,)
-
-FastDouble(hi::T) where {T<:BigNumber} = FastDouble(big2hilo(Float64,hi)...,)
-FastDouble(hi::T, lo::T) where {T<:BigNumber} = FastDouble(big2hilo(hi+lo)...,)
-=#
 
 Double(hi::T) where {T<:IEEEFloat} = Double(Accuracy, hi, zero(T))
 Double(hi::T, lo::T) where {T<:IEEEFloat} = Double(Accuracy, (hi, lo))
@@ -110,34 +103,6 @@ function Double{Float16}(x::T, y::T) where {T<:AbstractFloat}
     yy = Float16(xy - xx)
     return Double(Accuracy, (xx, yy))
 end
-
-#=
-FastDouble{Float64}(x::T) where {T<:AbstractFloat} =
-    Double(Performance, (Float64(x), Float64(x-Float64(x))))
-FastDouble{Float32}(x::T) where {T<:AbstractFloat} =
-    Double(Performance, (Float32(x), Float32(x-Float32(x))))
-FastDouble{Float16}(x::T) where {T<:AbstractFloat} =
-    Double(Performance, (Float16(x), Float16(x-Float16(x))))
-
-function FastDouble{Float64}(x::T, y::T) where {T<:AbstractFloat}
-    xy = x + y
-    xx = Float64(xy)
-    yy = Float64(xy - xx)
-    return Double(Performance, (xx, yy))
-end
-function FastDouble{Float32}(x::T, y::T) where {T<:AbstractFloat}
-    xy = x + y
-    xx = Float32(xy)
-    yy = Float32(xy - xx)
-    return Double(Performance, (xx, yy))
-end
-function FastDouble{Float16}(x::T, y::T) where {T<:AbstractFloat}
-    xy = x + y
-    xx = Float16(xy)
-    yy = Float16(xy - xx)
-    return Double(Performance, (xx, yy))
-end
-=#
 
 Float64(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
     Float64(HI(x)) + Float64(LO(x))
