@@ -80,6 +80,21 @@ end
     return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
+function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, bhi)
+    t2, t3 = add_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t6 = alo + blo
+    t5 = t3 + t4
+    zmd = t5 + t6
+    zmd += t7
+    return zhi, zmd
+end
+
+@inline function add332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return add332(a[1], a[2], a[3], b[1], b[2], b[3])
+end
+
 function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = add_2(ahi, bhi)
     t2, t3 = add_2(amd, blo)
@@ -90,14 +105,35 @@ function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     return zhi, zmd, zlo
 end
 
+@inline function add323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return add323(a[1], a[2], a[3], b[1], b[2])
+end
+
 function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = add_2(ahi, bhi)
     t2, t3 = add_2(amd, blo)
     t7, t4 = add_2(t1, t2)
     t5 = t3 + t4
-    t8 = t5 + alo
-    zlo = t7 + t8
-    return zhi, zlo
+    zmd = t5 + alo
+    zmd += t7
+    return zhi, zmd
+end
+
+@inline function add322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return add322(a[1], a[2], a[3], b[1], b[2])
+end
+
+function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, bhi)
+    t2, t3 = add_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zmd, zlo = add_2(t7, t5)
+    return zhi, zmd, zlo
+end
+
+@inline function add223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return add223(a[1], a[2]f, b[1], b[2])
 end
 
 
@@ -116,21 +152,6 @@ end
     return sub333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
-function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
-    zhi, t1 = add_2(ahi, bhi)
-    t2, t3 = add_2(amd, bmd)
-    t7, t4 = add_2(t1, t2)
-    t6 = alo + blo
-    t5 = t3 + t4
-    t8 = t5 + t6
-    zmd = t7 + t8
-    return zhi, zmd
-end
-
-@inline function add332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
-    return add332(a[1], a[2], a[3], b[1], b[2], b[3])
-end
-
 function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = sub_2(ahi, bhi)
     t2, t3 = sub_2(amd, bmd)
@@ -144,6 +165,62 @@ end
 
 @inline function sub332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return sub332(a[1], a[2], a[3], b[1], b[2], b[3])
+end
+
+function sub323(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    t8 = t5 + alo
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+@inline function sub323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return sub323(a[1], a[2], a[3], b[1], b[2])
+end
+
+function sub322(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zmd = t5 + alo
+    zmd += t7
+    return zhi, zmd
+end
+
+@inline function sub322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return sub322(a[1], a[2], a[3], b[1], b[2])
+end
+
+function sub233(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    t8 = t5 - blo
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+@inline function sub233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return sub233(a[1], a[2], b[1], b[2], b[3])
+end
+
+function sub232(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zmd = t5 - blo
+    zmd += t7
+    return zhi, zmd
+end
+
+@inline function sub232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    return sub232(a[1], a[2], b[1], b[2], b[3])
 end
 
 
