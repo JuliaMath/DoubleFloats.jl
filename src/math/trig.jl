@@ -44,7 +44,7 @@ function sin_taylor(a::Double{Float64, Accuracy})
 
     x = -square(a)
     r = a
-    for i = 3:2:ninv_fact_accu
+    for i = 3:2:nused_inv_fact_accu
         r = r * x
         t = r * inv_fact_accu[i]
         a = a + t
@@ -63,7 +63,7 @@ function cos_taylor(a::Double{Float64, Accuracy})
     x2 = square(a)
     r = one(a)
     a = one(a)
-    for i = 2:4:(ninv_fact_accu-2)
+    for i = 2:4:(nused_inv_fact_accu-2)
         r = r * x2
         t = r * inv_fact_accu[i]
         a = a - t
@@ -110,7 +110,7 @@ function sin_taylor(a::Double{Float64, Performance})
 
     x = -square(a)
     r = a
-    for i = 3:2:ninv_fact_perf
+    for i = 3:2:nused_inv_fact_perf
         r = r * x
         t = r * inv_fact_perf[i]
         a = a + t
@@ -128,7 +128,7 @@ function cos_taylor(a::Double{Float64, Performance})
     x2 = square(a)
     r = one(a)
     a = one(a)
-    for i = 2:4:(ninv_fact_perf-2)
+    for i = 2:4:(nused_inv_fact_perf-2)
         r = r * x2
         t = r * inv_fact_perf[i]
         a = a - t
