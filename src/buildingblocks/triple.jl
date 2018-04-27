@@ -60,7 +60,7 @@ function mul222(ahilo, bhilo)
     return zhi, zlo
 end
 
-
+# addition
 
 # Algorithm 5.1 (Add33)
 # (ahi,amd,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
@@ -136,6 +136,7 @@ end
     return add223(a[1], a[2]f, b[1], b[2])
 end
 
+# subtraction
 
 function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = sub_2(ahi, bhi)
@@ -223,44 +224,17 @@ end
     return sub232(a[1], a[2], b[1], b[2], b[3])
 end
 
-
-# Algorithm 5.2 (Add233)
-# (ahi,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
-
-function add233(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
-    zhi, t1 = add_2(ahi, bhi)
-    t2, t3  = add_2(alo, bmd)
-    t4, t5  = add_2(t1, t2)
-    t6 = t3 + blo
-    t7 = t6 + t5
-    zmd, zlo = add_2(t4, t7)
+function sub223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, bhi)
+    t2, t3 = sub_2(amd, bmd)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zmd, zlo = add_2(t7, t5)
     return zhi, zmd, zlo
 end
 
-@inline function add233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
-    return add223(a[1], a[2], b[1], b[2], b[3])
-end
-
-function add232(ahi::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
-    zhi, t1 = add_2(ahi, bhi)
-    t2, t3  = add_2(alo, bmd)
-    t4, t5  = add_2(t1, t2)
-    t6 = t3 + blo
-    zlo = t6 + t5
-    zlo += t4
-    return zhi, zlo
-end
-
-@inline function add232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
-    return add232(a[1], a[2], b[1], b[2], b[3])
-end
-
-@inline function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
-    return add232(bhi, blo, ahi, amd, alo)
-end
-
-@inline function add322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
-    return add232(b[1], b[2], a[1], a[2], a[3])
+@inline function sub223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
+    return sub223(a[1], a[2], b[1], b[2])
 end
 
 # Algorithm 6.1
@@ -348,6 +322,11 @@ function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   return p0,p1
 end
 
+mul233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
+    mul323(b,a)
+
+mul232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
+    mul322(b,a)
 
 # directed rounding of (ahi,amd,alo) to (zhi,zlo)
 
