@@ -5,9 +5,10 @@ Double{T,E}(x::T) where {T<:Float64, E<:Performance} = Double(E, x, 0.0)
 Double{T,E}(x::T) where {T<:Float32, E<:Performance} = Double(E, x, 0.0f0)
 Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16))
 
-Double{T,Accuracy}(x::T) where {T<:Float64} = Double{Float64, Accuracy}(x, 0.0)
-Double{T,Performance}(x::T) where {T<:Float64} = Double{Float64, Performance}(x, 0.0)
+Double{T,Accuracy}(x::T) where {T<:AbstractFloat} = Double(Accuracy, x, zero(T))
+Double{T,Performance}(x::T) where {T<:AbstractFloat} = Double(Performance, x, zero(T))
 
+#=
 for F in (:Float64, :Float32, :Float16)
     @eval begin
         Double(x::Double{$F}) = x
@@ -17,7 +18,7 @@ for F in (:Float64, :Float32, :Float16)
         FastDouble(x::Double{$F,Accuracy}) = Double(Performance, HI(x), LO(x))
     end
 end
-
+=#
 
 # Float64 can accomodate any SmallInteger
 const SmallInteger = Union{Int8, Int16, Int32, UInt8, UInt16, UInt32}
@@ -26,13 +27,22 @@ const BigNumber    = Union{BigInt,BigFloat,Rational{BigInt}}
 
 @inline function big2hilo(::Type{T}, x::B) where {T<:AbstractFloat, B<:BigNumber}
      hi = T(x)
-     lo = T(x - B(hi))
+     lo = T(x - hi)
      return hi, lo
 end
 
 @inline function big2hilo(x::B) where {B<:BigNumber}
      return big2hilo(Float64, x)
 end
+
+function Double{T,E}(x::B) where {T<:AbstractFloat, E<:Emphasis, B<:BigNumber}
+    hi, lo = big2hilo(T, x)
+    return Double(E, hi, lo)
+end
+
+Double(::Type{E}, x::B) where {E<:Emphasis, B<:BigNumber} = Double{Float64,E}(x)
+Double(::Type{E}, x::B, y::B) where {E<:Emphasis, B<:BigNumber} = Double{Float64,E}(x+y)
+
 
 Double(::Type{E}, hi::T, lo::T) where {T<:SmallInteger, E<:Emphasis} =
     Double(E, (Float64(hi), Float64(lo)))
