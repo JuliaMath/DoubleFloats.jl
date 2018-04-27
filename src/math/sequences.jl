@@ -1,5 +1,9 @@
 # 1 / factorial(i)
-const ninv_fact_accu = 32
+
+# how many terms are to be used 
+const nused_inv_fact_accu = 16
+const nused_inv_fact_perf = nused_inv_fact_accu - 4
+
 const inv_fact_accu = (
   Double(1.0,0.0),
   Double(0.5,0.0),
@@ -35,7 +39,9 @@ const inv_fact_accu = (
   Double(3.8003907548547434e-36,1.7457158024652518e-52)
 );
 
-const ninv_fact_perf = ninv_fact_accu - 4
+const ninv_fact_accu = length(inv_fact_accu)
+
+const ninv_fact_perf = ninv_fact_accu
 const inv_fact_perf = map(FastDouble, inv_fact_accu);
 
 # [exp(i) for i in 1:64]
