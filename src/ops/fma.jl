@@ -31,8 +31,8 @@ fma_3(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}} =
     fma_(a, b, c)
 
 function fma_2(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}}
-    c_hi = onehalfx(HI(c))
-    c_lo = onehalfx(LO(c))
+    c_hi = halfx(HI(c))
+    c_lo = halfx(LO(c))
 
     fma1 = fma(HI(a), HI(b), c_hi)
     fma2 = fma(HI(a), LO(b), c_hi)
