@@ -1,4 +1,4 @@
-function Base.fma(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}} =
+function fma(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}}
     hi, lo = fma_2(a, b, c)
     return Double(E, hi, lo)
 end
