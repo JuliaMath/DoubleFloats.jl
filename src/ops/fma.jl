@@ -27,7 +27,7 @@ function fma_(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}
     return add_3(fma1, fma2, fma3, fma4)
 end
 
-fma_3((a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}} =
+fma_3(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}} =
     fma_(a, b, c)
 
 function fma_2(a::T, b::T, c::T) where {F<:IEEEFloat, E<:Emphasis, T<:Double{F,E}}
