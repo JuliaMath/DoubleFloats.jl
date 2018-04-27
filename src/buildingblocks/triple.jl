@@ -80,6 +80,27 @@ end
     return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
+function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, bhi)
+    t2, t3 = add_2(amd, blo)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    t8 = t5 + alo
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, bhi)
+    t2, t3 = add_2(amd, blo)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    t8 = t5 + alo
+    zlo = t7 + t8
+    return zhi, zlo
+end
+
+
 function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = sub_2(ahi, bhi)
     t2, t3 = sub_2(amd, bmd)
