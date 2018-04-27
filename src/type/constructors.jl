@@ -13,8 +13,8 @@ for F in (:Float64, :Float32, :Float16)
         Double(x::Double{$F}) = x
         Double(x::Double{$F,Accuracy}) = x
         FastDouble(x::Double{$F,Performance}) = x
-        Double(x::Double{$F,Performance}) = Double(Accuracy, HILO(x))
-        FastDouble(x::Double{$F,Accuracy}) = Double(Performance, HILO(x))
+        Double(x::Double{$F,Performance}) = Double(Accuracy, HI(x), LO(x))
+        FastDouble(x::Double{$F,Accuracy}) = Double(Performance, HI(x), LO(x))
     end
 end
 
