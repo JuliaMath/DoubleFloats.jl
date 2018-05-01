@@ -46,7 +46,7 @@ function ldexp(x::Double{T,E}, exponent::I) where {T,E,I<:Integer}
     return Double(E, ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function ldexp(dhi::Tuple{T,T}, dlo::Tuple{T,T}, ::Type{E}) where {T<:AbstractFloat, E<:Emphasis}
+function ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}, ::Type{E}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis}
     return Double(E, ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
