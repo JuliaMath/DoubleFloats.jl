@@ -3,17 +3,17 @@ setprecision(BigFloat, 384)
 srand(1602)
 const nrands = 1_000 # tested with nrands = 100_000
 
-rand_accu = rand(Double, nrands)
-rand_fast = FastDouble.(rand_accu)
-rand_bigf = BigFloat.(rand_accu)
+rand_accu = rand(Double, nrands);
+rand_fast = FastDouble.(rand_accu);
+rand_bigf = BigFloat.(rand_accu);
 
-rand1_accu = rand_accu .+ 1.0
-rand1_fast = FastDouble.(rand1_accu)
-rand1_bigf = BigFloat.(rand1_accu)
+rand1_accu = rand_accu .+ 1.0;
+rand1_fast = FastDouble.(rand1_accu);
+rand1_bigf = BigFloat.(rand1_accu);
 
-rand20_accu = rand_accu .* 20.0
-rand20_fast = FastDouble.(rand20_accu)
-rand20_bigf = BigFloat.(rand20_accu)
+rand20_accu = rand_accu .* 20.0;
+rand20_fast = FastDouble.(rand20_accu);
+rand20_bigf = BigFloat.(rand20_accu);
 
 function test_atol(bigf, rnds, fn, tol)
     T = eltype(rnds)
