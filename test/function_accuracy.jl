@@ -11,9 +11,9 @@ rand1_accu = rand_accu .+ 1.0
 rand1_fast = FastDouble.(rand1_accu)
 rand1_bigf = BigFloat.(rand1_accu)
 
-rand2_accu = rand_accu .* 20.0
-rand2_fast = FastDouble.(rand2_accu)
-rand2_bigf = BigFloat.(rand2_accu)
+rand20_accu = rand_accu .* 20.0
+rand20_fast = FastDouble.(rand2_accu)
+rand20_bigf = BigFloat.(rand2_accu)
 
 function test_atol(bigf, rnds, fn, tol)
     fn_bigf = map(x->Double(fn(x)), bigf)
