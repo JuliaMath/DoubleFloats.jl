@@ -21,9 +21,21 @@ end
 
 typemax(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, typemax(T))
 typemin(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, typemin(T))
+typemax(::Type{Double}) = typemax(Double{Float64, Accuracy})
+typemin(::Type{Double}) = typemin(Double{Float64, Accuracy})
+typemax(x::Function) = x==FastDouble ? typemax(Double{Float64,Performance}) :
+                   throw(MethodError("no method matching typemax(::typeof($x))"))
+typemin(x::Function) = x==FastDouble ? typemin(Double{Float64,Performance}) :
+                   throw(MethodError("no method matching typemin(::typeof($x))"))
 
 realmax(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, realmax(T))
 realmin(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, realmin(T))
+realmax(::Type{Double}) = realmax(Double{Float64, Accuracy})
+realmin(::Type{Double}) = realmin(Double{Float64, Accuracy})
+realmax(x::Function) = x==FastDouble ? realmax(Double{Float64,Performance}) :
+                   throw(MethodError("no method matching realmax(::typeof($x))"))
+realmin(x::Function) = x==FastDouble ? realmin(Double{Float64,Performance}) :
+                   throw(MethodError("no method matching realmin(::typeof($x))"))
 
 eps(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, eps(eps(T)))
 eps(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} = eps(eps(T)) * x
