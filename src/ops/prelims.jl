@@ -52,6 +52,7 @@ end
 
 ldexp(x::Tuple{Tuple{T,I}, Tuple{T,I}, ::Type{E}}) where {I<:Signed, T<:AbstractFloat, E<:Emphasis} =
     ldexp(x[1], x[2], x[3])
+
 function exponent(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
     ehi = exponent(HI(x))
     elo = exponent(LO(x))
