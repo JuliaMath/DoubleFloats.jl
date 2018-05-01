@@ -28,5 +28,6 @@ realmin(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, re
 eps(::Type{Double{T,E}}) where {T<:AbstractFloat,E<:Emphasis} = Double(E, eps(eps(T)))
 eps(x::Double{T,E}) where {T<:AbstractFloat,E<:Emphasis} = eps(eps(T)) * x
 eps(::Type{Double}) = eps(Double{Float64,Accuracy})
-eps(x::Function) = x==FastDouble ? eps(Double{Float64,Performance}) : eps(x)
+eps(x::Function) = x==FastDouble ? eps(Double{Float64,Performance}) :
+                   throw(MethodError("no method matching eps(::typeof($x))"))
 
