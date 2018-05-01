@@ -71,17 +71,17 @@ end
 
 
 @test test_atol(rand_bigf, rand_accu, sinh, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, sinh, 1.0e-29)
+@test test_rtol(rand_bigf, rand_accu, sinh, 1.0e-28)
 @test test_atol(rand_bigf, rand_fast, sinh, 1.0e-21)
 @test test_rtol(rand_bigf, rand_fast, sinh, 1.0e-21)
 
 @test test_atol(rand_bigf, rand_accu, cosh, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, cosh, 1.0e-29)
+@test test_rtol(rand_bigf, rand_accu, cosh, 1.0e-28)
 @test test_atol(rand_bigf, rand_fast, cosh, 1.0e-21)
 @test test_rtol(rand_bigf, rand_fast, cosh, 1.0e-21)
 
 @test test_atol(rand_bigf, rand_accu, tanh, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, tanh, 1.0e-29)
+@test test_rtol(rand_bigf, rand_accu, tanh, 1.0e-28)
 @test test_atol(rand_bigf, rand_fast, tanh, 1.5e-21)
 @test test_rtol(rand_bigf, rand_fast, tanh, 1.0e-21)
 
