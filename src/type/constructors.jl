@@ -1,9 +1,5 @@
-Double{T,E}(x::T) where {T<:Float64, E<:Accuracy} = Double(E, x, 0.0)
-Double{T,E}(x::T) where {T<:Float32, E<:Accuracy} = Double(E, x, 0.0f0)
-Double{T,E}(x::T) where {T<:Float16, E<:Accuracy} = Double(E, x, zero(Float16))
-Double{T,E}(x::T) where {T<:Float64, E<:Performance} = Double(E, x, 0.0)
-Double{T,E}(x::T) where {T<:Float32, E<:Performance} = Double(E, x, 0.0f0)
-Double{T,E}(x::T) where {T<:Float16, E<:Performance} = Double(E, x, zero(Float16))
+Double{T,Accuracy}(x::T) where {T<:Signed} = Double(Accuracy, Float64(x), zero(Float64))
+Double{T,Performance}(x::T) where {T<:Signed} = Double(Performance, Float64(x), zero(Float64))
 
 Double{T,Accuracy}(x::T) where {T<:IEEEFloat} = Double(Accuracy, x, zero(T))
 Double{T,Performance}(x::T) where {T<:IEEEFloat} = Double(Performance, x, zero(T))
@@ -11,17 +7,6 @@ Double{T,Performance}(x::T) where {T<:IEEEFloat} = Double(Performance, x, zero(T
 Double{T,Accuracy}(x::T) where {T<:AbstractFloat} = Double(Accuracy, x, zero(T))
 Double{T,Performance}(x::T) where {T<:AbstractFloat} = Double(Performance, x, zero(T))
 
-#=
-for F in (:Float64, :Float32, :Float16)
-    @eval begin
-        Double(x::Double{$F}) = x
-        Double(x::Double{$F,Accuracy}) = x
-        FastDouble(x::Double{$F,Performance}) = x
-        Double(x::Double{$F,Performance}) = Double(Accuracy, HI(x), LO(x))
-        FastDouble(x::Double{$F,Accuracy}) = Double(Performance, HI(x), LO(x))
-    end
-end
-=#
 
 # Float64 can accomodate any SmallInteger
 const SmallInteger = Union{Int8, Int16, Int32, UInt8, UInt16, UInt32}
