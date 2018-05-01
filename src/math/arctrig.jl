@@ -10,6 +10,7 @@ const k_pio2 = Double(1.5707963267948966, 6.123233995736766e-17)
 
 
 function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+   signbit(x) && return -atan(abs(x))
    y = Double(Accuracy, atan(x.hi))
    s, c = sin(y), cos(y)
    c2 = square(c)
@@ -22,6 +23,7 @@ function atan(x::Double{T,Accuracy}) where {T<:AbstractFloat}
 end
 
 function atan(x::Double{T,Performance}) where {T<:AbstractFloat}
+   signbit(x) && return -atan(abs(x))
    y = Double(Performance, atan(x.hi))
    s, c = sin(y), cos(y)
    t = s/c
