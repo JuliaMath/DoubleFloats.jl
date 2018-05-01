@@ -251,6 +251,7 @@ function Base.Math.expm1(a::Double)
 end
 
 function Base.Math.log(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    iszero(x) && return Double(E, T(-Inf), zero(T))
     y = Double(E, log(HI(x)), zero(T))
     z = exp(y)
     adj = (z - x) / (z + x)
