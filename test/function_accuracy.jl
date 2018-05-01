@@ -16,16 +16,17 @@ rand20_fast = FastDouble.(rand2_accu)
 rand20_bigf = BigFloat.(rand2_accu)
 
 function test_atol(bigf, rnds, fn, tol)
-    fn_bigf = map(x->Double(fn(x)), bigf)
+    T = eltype(rnds)
+    fn_bigf = map(x->T(fn(x)), bigf)
     fn_rnds = map(fn, rnds)
-    return all(isapprox(fn_bigf, fn_rnds, atol=tol))
+    return all(isapprox.(fn_bigf, fn_rnds, atol=tol))
 end
 function test_rtol(bigf, rnds, fn, tol)
-    fn_bigf = map(x->Double(fn(x)), bigf)
+    T = eltype(rnds)
+    fn_bigf = map(x->T(fn(x)), bigf)
     fn_rnds = map(fn, rnds)
-    return all(isapprox(fn_bigf, fn_rnds, rtol=tol))
+    return all(isapprox.(fn_bigf, fn_rnds, rtol=tol))
 end
-
   
 @test test_atol(rand_bigf, rand_accu, exp, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, exp, 1.0e-31)
