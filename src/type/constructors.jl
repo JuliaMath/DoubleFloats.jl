@@ -18,6 +18,12 @@ const BigNumber    = Union{BigInt,BigFloat,Rational{BigInt}}
      lo = T(x - hi)
      return hi, lo
 end
+@inline function big2hilo(::Type{T}, x::B) where {T<:AbstractFloat, B<:BigFloat}
+     !isfinite(x) && return T(x), zero(T)
+     hi = T(x)
+     lo = T(x - hi)
+     return hi, lo
+end
 
 @inline function big2hilo(x::B) where {B<:BigNumber}
      return big2hilo(Float64, x)
