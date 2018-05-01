@@ -25,13 +25,13 @@ end
   
 @test test_atol(rand_bigf, rand_accu, exp, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, exp, 1.0e-31)
-@test test_atol(rand_bigf, rand_fast, exp, 1.0e-24)
-@test test_rtol(rand_bigf, rand_fast, exp, 1.0e-25)
+@test test_atol(rand_bigf, rand_fast, exp, 1.0e-29)
+@test test_rtol(rand_bigf, rand_fast, exp, 1.0e-30)
 
 @test test_atol(rand_bigf, rand_accu, log, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, log, 1.0e-31)
-@test test_atol(rand_bigf, rand_fast, log, 1.0e-24)
-@test test_rtol(rand_bigf, rand_fast, log, 1.0e-25)
+@test test_atol(rand_bigf, rand_fast, log, 1.0e-29)
+@test test_rtol(rand_bigf, rand_fast, log, 1.0e-30)
 
 @test test_atol(rand_bigf, rand_accu, sin, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, sin, 1.5e-32)
