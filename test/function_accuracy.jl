@@ -1,7 +1,7 @@
 
 setprecision(BigFloat, 768)
 srand(1602)
-const nrands = 10_000
+const nrands = 1_000 # tested with nrands = 10_000
 
 rand_accu = rand(Double, nrands)
 rand_fast = FastDouble.(rand_accu)
