@@ -33,6 +33,7 @@ end
 
 
 function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+   signbit(x) && return -asin(abs(x))
    abs(x) > 1.0 && throw(DomainError("$x"))
    y = x
    y = y / (1.0 + sqrt(1.0 - square(y)))
@@ -41,6 +42,7 @@ function asin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
 end
 
 function asin(x::Double{T,Performance}) where {T<:AbstractFloat}
+   signbit(x) && return -asin(abs(x))
    abs(x) > 1.0 && throw(DomainError("$x"))
    y = Double(Performance, asin(x.hi))
    s,c = sin(y), cos(y)
@@ -49,6 +51,7 @@ function asin(x::Double{T,Performance}) where {T<:AbstractFloat}
 end
 
 function acos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+   signbit(x) && return Double{T,Accuracy}(onepi_accu - acos(abs(x)))
    abs(x) > 1.0 && throw(DomainError("$x"))
    y = x
    y = sqrt(1.0 - square(y)) / (1.0 + y)
@@ -68,6 +71,7 @@ acsc(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = asin(inv(x))
 asec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = acos(inv(x))
 
 function acot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+   signbit(x) && return Double{T,Accuracy}(onepi_accu - acot(abs(x)))
    iszero(x) && return k_pio2
    z = k_pio2 - atan(abs(x))
    if signbit(x.hi)
