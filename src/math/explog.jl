@@ -59,41 +59,6 @@ end
 end
 
 
-function mul_by_half(r::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi -= 1
-    xplo -= 1
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return Double(E, hi, lo)
-end
-
-function mul_by_two(r::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi += 1
-    xplo += 1
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return Double(E, hi, lo)
-end
-
-function mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi += n
-    xplo += n
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return Double(E, hi, lo)
-end
-
-function mul_pwr2(r::Double{T,E}, n::Real) where {T<:AbstractFloat, E<:Emphasis}
-    m = 2.0^n
-    return Double(E, HI(r)*m, LO(r)*m)
-end
-
 function Base.:(^)(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     if (n == 0)
         iszero(a) && throw(DomainError("0^0"))
