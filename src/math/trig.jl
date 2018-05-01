@@ -277,75 +277,110 @@ end
 
 
 function sin(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    signbit(x) && return -sin(abs(x))
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_accu
-       y = mod2pi(y)
+    if x >= twopi_accu
+       x = mod2pi(x)
     end
-    z = sin_circle(y)
+    z = sin_circle(x)
     return z
 end
 
 function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
+    signbit(x) && return -sin(abs(x))
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_perf
-       y = mod2pi(y)
+    if x >= twopi_perf
+       x = mod2pi(x)
     end
-    z = sin_circle(y)
+    z = sin_circle(x)
     return z
 end
 
 
 function cos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    signbit(x) && return cos(abs(x))
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_accu
-       y = mod2pi(y)
+    if x >= twopi_accu
+       x = mod2pi(x)
     end
-    z = cos_circle(y)
+    z = cos_circle(x)
     return z
 end
 
 function cos(x::Double{T,Performance}) where {T<:AbstractFloat}
+    signbit(x) && return cos(abs(x))
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_perf
-       y = mod2pi(y)
+    if x >= twopi_perf
+       x = mod2pi(x)
     end
-    z = cos_circle(y)
+    z = cos_circle(x)
     return z
 end
 
 function sincos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
     iszero(x) && return zero(typeof(x)), one(typeof(x))
     !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_accu
-       y = mod2pi(y)
+    if !signbit(x)
+       sincos_posx(x)
+    else
+       sincos_negx(x)
     end
-    s = sin_circle(y)
-    c = cos_circle(y)
-    return s, c
 end
 
 function sincos(x::Double{T,Performance}) where {T<:AbstractFloat}
     iszero(x) && return zero(typeof(x)), one(typeof(x))
     !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
-    y = abs(x)
-    if y >= twopi_perf
-       y = mod2pi(y)
+    if !signbit(x)
+       sincos_posx(x)
+    else
+       sincos_negx(x)
     end
-    s = sin_circle(y)
-    c = cos_circle(y)
+end
+
+@inline function sincos_posx(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    if x >= twopi_perf
+       x = mod2pi(x)
+    end
+    s = sin_circle(x)
+    c = cos_circle(x)
+    return s, c
+end
+
+@inline function sincos_posx(x::Double{T,Performance}) where {T<:AbstractFloat}
+    if x >= twopi_perf
+       x = mod2pi(x)
+    end
+    s = sin_circle(x)
+    c = cos_circle(x)
+    return s, c
+end
+
+@inline function sincos_negx(x::Double{T,Accuracy}) where {T<:AbstractFloat}
+    x = abs(x)
+    if x >= twopi_perf
+       x = mod2pi(x)
+    end
+    s = -sin_circle(x)
+    c = cos_circle(x)
+    return s, c
+end
+
+@inline function sincos_negx(x::Double{T,Performance}) where {T<:AbstractFloat}
+    x = abs(x)
+    if x >= twopi_perf
+       x = mod2pi(x)
+    end
+    s = -sin_circle(x)
+    c = cos_circle(x)
     return s, c
 end
 
 function tan(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
+    signbit(x) && return -tan(abs(x))
     s, c = sincos(x)
     return s/c
 end
@@ -359,6 +394,7 @@ function sec(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
 end
 
 function cot(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    s, c = sin(x), cos(x)
+    signbit(x) && return -cot(abs(x))
+    s, c = sincos(x)
     return c/s
 end
