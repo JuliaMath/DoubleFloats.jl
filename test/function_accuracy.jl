@@ -12,8 +12,8 @@ rand1_fast = FastDouble.(rand1_accu)
 rand1_bigf = BigFloat.(rand1_accu)
 
 rand20_accu = rand_accu .* 20.0
-rand20_fast = FastDouble.(rand2_accu)
-rand20_bigf = BigFloat.(rand2_accu)
+rand20_fast = FastDouble.(rand20_accu)
+rand20_bigf = BigFloat.(rand20_accu)
 
 function test_atol(bigf, rnds, fn, tol)
     T = eltype(rnds)
