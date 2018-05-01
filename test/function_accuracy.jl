@@ -197,11 +197,6 @@ rand20_bigf = BigFloat.(rand20_accu);
 @test test_atol(rand_bigf, rand_fast, asinh, 1.0e-23)
 @test test_rtol(rand_bigf, rand_fast, asinh, 1.0e-25)
 
-@test test_atol(rand1_bigf, rand1_accu, acosh, 1.0e-29)
-@test test_rtol(rand1_bigf, rand1_accu, acosh, 1.0e-27)
-@test test_atol(rand1_bigf, rand1_fast, acosh, 1.0e-23)
-@test test_rtol(rand1_bigf, rand1_fast, acosh, 1.0e-25)
-
 @test test_atol(rand_bigf, rand_accu, atanh, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, atanh, 1.0e-27)
 @test test_atol(rand_bigf, rand_fast, atanh, 1.0e-23)
@@ -214,11 +209,6 @@ rand20_bigf = BigFloat.(rand20_accu);
 @test test_rtol(rand20_bigf, rand20_accu, exp, 1.5e-31)
 @test test_atol(rand20_bigf, rand20_fast, exp, 1.0e-29)
 @test test_rtol(rand20_bigf, rand20_fast, exp, 1.0e-30)
-
-@test test_atol(rand20_bigf, rand20_accu, log, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, log, 1.5e-29)
-@test test_atol(rand20_bigf, rand20_fast, log, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_fast, log, 1.5e-28)
 
 @test test_atol(rand20_bigf, rand20_accu, sin, 1.0e-26)
 @test test_rtol(rand20_bigf, rand20_accu, sin, 1.0e-27)
