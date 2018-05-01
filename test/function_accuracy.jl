@@ -1,5 +1,5 @@
 
-setprecision(BigFloat, 384)
+setprecision(BigFloat, 512)
 srand(1602)
 const nrands = 1_000 # tested with nrands = 100_000
 
@@ -39,19 +39,19 @@ end
 @test test_rtol(rand_bigf, rand_fast, log, 1.5e-28)
 
 @test test_atol(rand_bigf, rand_accu, sin, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, sin, 1.0e-31)
+@test test_rtol(rand_bigf, rand_accu, sin, 1.0e-30)
 @test test_atol(rand_bigf, rand_fast, sin, 1.0e-21)
-@test test_rtol(rand_bigf, rand_fast, sin, 1.0e-23)
+@test test_rtol(rand_bigf, rand_fast, sin, 1.0e-21)
 
 @test test_atol(rand_bigf, rand_accu, cos, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, cos, 1.0e-31)
+@test test_rtol(rand_bigf, rand_accu, cos, 1.0e-30)
 @test test_atol(rand_bigf, rand_fast, cos, 1.0e-21)
-@test test_rtol(rand_bigf, rand_fast, cos, 1.0e-23)
+@test test_rtol(rand_bigf, rand_fast, cos, 1.0e-21)
 
 @test test_atol(rand_bigf, rand_accu, tan, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, tan, 1.0e-31)
+@test test_rtol(rand_bigf, rand_accu, tan, 1.0e-30)
 @test test_atol(rand_bigf, rand_fast, tan, 1.5e-21)
-@test test_rtol(rand_bigf, rand_fast, tan, 1.0e-23)
+@test test_rtol(rand_bigf, rand_fast, tan, 1.0e-21)
 
 @test test_atol(rand_bigf, rand_accu, asin, 1.0e-29)
 @test test_rtol(rand_bigf, rand_accu, asin, 1.0e-31)
@@ -113,17 +113,17 @@ end
 @test test_rtol(rand20_bigf, rand20_fast, log, 1.5e-28)
 
 @test test_atol(rand20_bigf, rand20_accu, sin, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, sin, 1.0e-31)
+@test test_rtol(rand20_bigf, rand20_accu, sin, 1.0e-30)
 @test test_atol(rand20_bigf, rand20_fast, sin, 1.0e-21)
-@test test_rtol(rand20_bigf, rand20_fast, sin, 1.0e-23)
+@test test_rtol(rand20_bigf, rand20_fast, sin, 1.0e-21)
 
 @test test_atol(rand20_bigf, rand20_accu, cos, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, cos, 1.0e-31)
+@test test_rtol(rand20_bigf, rand20_accu, cos, 1.0e-30)
 @test test_atol(rand20_bigf, rand20_fast, cos, 1.0e-21)
-@test test_rtol(rand20_bigf, rand20_fast, cos, 1.0e-23)
+@test test_rtol(rand20_bigf, rand20_fast, cos, 1.0e-21)
 
 @test test_atol(rand20_bigf, rand20_accu, tan, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, tan, 1.0e-31)
+@test test_rtol(rand20_bigf, rand20_accu, tan, 1.0e-30)
 @test test_atol(rand20_bigf, rand20_fast, tan, 1.5e-21)
-@test test_rtol(rand20_bigf, rand20_fast, tan, 1.0e-23)
+@test test_rtol(rand20_bigf, rand20_fast, tan, 1.0e-21)
 
