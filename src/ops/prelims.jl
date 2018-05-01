@@ -96,3 +96,37 @@ function nextfloat(x::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis}
     signbit(LO(x)) && return Double(HI(x), -nextfloat(-LO(x),n))
     return Double(HI(x), nextfloat(LO(x),n))
 end
+
+
+function mul_by_half(r::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi -= 1
+    xplo -= 1
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo)
+end
+mul_by_half(r::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = r * 0.5
+
+function mul_by_two(r::Double{T,E}) where {T<:IEEEFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi += 1
+    xplo += 1
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo)
+end
+mul_by_two(r::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = r * 2.0
+
+function mul_pow2(r::Double{T,E}, n::Int) where {T<:IEEEFloat, E<:Emphasis}
+    frhi, xphi = frexp(HI(r))
+    frlo, xplo = frexp(LO(r))
+    xphi += n
+    xplo += n
+    hi = ldexp(frhi, xphi)
+    lo = ldexp(frlo, xplo)
+    return Double(E, hi, lo)
+end
+mul_pow2(r::Double{T,E}, n::Int) where {T<:AbstractFloat, E<:Emphasis} = r * 2.0^n
