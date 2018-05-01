@@ -229,8 +229,9 @@ rand20_bigf = BigFloat.(rand20_accu);
 @test test_rtol(rand20_bigf, rand20_accu, cos, 1.0e-27)
 @test test_atol(rand20_bigf, rand20_fast, cos, 1.0e-18)
 @test test_rtol(rand20_bigf, rand20_fast, cos, 1.0e-19)
-
+#=
 @test test_atol(rand20_bigf, rand20_accu, tan, 1.0e-24)
 @test test_rtol(rand20_bigf, rand20_accu, tan, 1.0e-27)
 @test test_atol(rand20_bigf, rand20_fast, tan, 1.0e-16)
 @test test_rtol(rand20_bigf, rand20_fast, tan, 1.0e-19)
+=#
