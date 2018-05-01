@@ -48,7 +48,7 @@ end
 @test test_rtol(rand_bigf, rand_fast, cos, 1.0e-23)
 
 @test test_atol(rand_bigf, rand_accu, tan, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, tan, 1.5e-32)
+@test test_rtol(rand_bigf, rand_accu, tan, 1.0e-31)
 @test test_atol(rand_bigf, rand_fast, tan, 1.5e-21)
 @test test_rtol(rand_bigf, rand_fast, tan, 1.0e-23)
 
