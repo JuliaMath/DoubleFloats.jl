@@ -8,8 +8,12 @@ rand_fast = FastDouble.(rand_accu)
 rand_bigf = BigFloat.(rand_accu)
 
 rand1_accu = rand_accu .+ 1.0
-rand1_fast = rand_fast .+ 1.0
-rand1_bigf = rand_bigf .+ 1.0
+rand1_fast = FastDouble.(rand1_accu)
+rand1_bigf = BigFloat.(rand1_accu)
+
+rand2_accu = rand_accu .* 20.0
+rand2_fast = FastDouble.(rand2_accu)
+rand2_bigf = BigFloat.(rand2_accu)
 
 function test_atol(bigf, rnds, fn, tol)
     fn_bigf = map(x->Double(fn(x)), bigf)
@@ -93,3 +97,32 @@ end
 @test test_rtol(rand_bigf, rand_accu, atanh, 1.0e-31)
 @test test_atol(rand_bigf, rand_fast, atanh, 1.0e-23)
 @test test_rtol(rand_bigf, rand_fast, atanh, 1.0e-25)
+
+
+
+  
+@test test_atol(rand20_bigf, rand20_accu, exp, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_accu, exp, 1.0e-31)
+@test test_atol(rand20_bigf, rand20_fast, exp, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_fast, exp, 1.0e-30)
+
+@test test_atol(rand20_bigf, rand20_accu, log, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_accu, log, 1.0e-31)
+@test test_atol(rand20_bigf, rand20_fast, log, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_fast, log, 1.0e-30)
+
+@test test_atol(rand20_bigf, rand20_accu, sin, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_accu, sin, 1.5e-32)
+@test test_atol(rand20_bigf, rand20_fast, sin, 1.0e-21)
+@test test_rtol(rand20_bigf, rand20_fast, sin, 1.0e-23)
+
+@test test_atol(rand20_bigf, rand20_accu, cos, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_accu, cos, 1.5e-32)
+@test test_atol(rand20_bigf, rand20_fast, cos, 1.0e-21)
+@test test_rtol(rand20_bigf, rand20_fast, cos, 1.0e-23)
+
+@test test_atol(rand20_bigf, rand20_accu, tan, 1.0e-29)
+@test test_rtol(rand20_bigf, rand20_accu, tan, 1.5e-32)
+@test test_atol(rand20_bigf, rand20_fast, tan, 1.5e-21)
+@test test_rtol(rand20_bigf, rand20_fast, tan, 1.0e-23)
+
