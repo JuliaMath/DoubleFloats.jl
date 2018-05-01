@@ -15,7 +15,7 @@ const pio16_perf  = Double(Performance, 0.19634954084936207, 7.654042494670958e-
 function mod2pi_pos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
      x < twopi_accu  && return x
      x < fourpi_accu && return Double{T,Accuracy}( x - twopi_accu )
-     x < eightpi_accu && return Double{T,Accuracy}( x - eightpi_accu )
+     x < eightpi_accu && return Double{T,Accuracy}( x - fourpi_accu )
      mod2pi_pos(x - eightpi_accu)
 end
 
