@@ -29,7 +29,7 @@ function test_rtol(bigf, rnds, fn, tol)
 end
   
 @test test_atol(rand_bigf, rand_accu, exp, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, exp, 1.0e-31)
+@test test_rtol(rand_bigf, rand_accu, exp, 1.5e-31)
 @test test_atol(rand_bigf, rand_fast, exp, 1.0e-29)
 @test test_rtol(rand_bigf, rand_fast, exp, 1.0e-30)
 
@@ -104,7 +104,7 @@ end
 
   
 @test test_atol(rand20_bigf, rand20_accu, exp, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, exp, 1.0e-31)
+@test test_rtol(rand20_bigf, rand20_accu, exp, 1.5e-31)
 @test test_atol(rand20_bigf, rand20_fast, exp, 1.0e-29)
 @test test_rtol(rand20_bigf, rand20_fast, exp, 1.0e-30)
 
@@ -141,7 +141,7 @@ rand20_fast = FastDouble.(rand20_accu);
 rand20_bigf = BigFloat.(rand20_accu);
 
 @test test_atol(rand_bigf, rand_accu, exp, 1.0e-29)
-@test test_rtol(rand_bigf, rand_accu, exp, 1.0e-31)
+@test test_rtol(rand_bigf, rand_accu, exp, 1.5e-31)
 @test test_atol(rand_bigf, rand_fast, exp, 1.0e-29)
 @test test_rtol(rand_bigf, rand_fast, exp, 1.0e-30)
 
@@ -211,7 +211,7 @@ rand20_bigf = BigFloat.(rand20_accu);
 
   
 @test test_atol(rand20_bigf, rand20_accu, exp, 1.0e-29)
-@test test_rtol(rand20_bigf, rand20_accu, exp, 1.0e-31)
+@test test_rtol(rand20_bigf, rand20_accu, exp, 1.5e-31)
 @test test_atol(rand20_bigf, rand20_fast, exp, 1.0e-29)
 @test test_rtol(rand20_bigf, rand20_fast, exp, 1.0e-30)
 
