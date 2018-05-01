@@ -294,7 +294,6 @@ function sin(x::Double{T,Performance}) where {T<:AbstractFloat}
        y = mod2pi(y)
     end
     z = sin_circle(y)
-    z = copysign(z, x)
     return z
 end
 
@@ -329,7 +328,6 @@ function sincos(x::Double{T,Accuracy}) where {T<:AbstractFloat}
        y = mod2pi(y)
     end
     s = sin_circle(y)
-    s = copysign(s, x)
     c = cos_circle(y)
     return s, c
 end
