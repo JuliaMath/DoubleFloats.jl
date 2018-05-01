@@ -1,4 +1,11 @@
 
+setprecision(BigFloat, 768)
+srand(1602)
+const nrands = 1_000
+rand_accu = rand(Double, nrands)
+rand_fast = FastDouble.(rand_accu)
+rand_bigf = BigFloat.(rand_accu)
+
 function test_atol(bigf, rnds, fn, tol)
     fn_bigf = map(x->Double(fn(x)), bigf)
     fn_rnds = map(fn, rnds)
