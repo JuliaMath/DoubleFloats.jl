@@ -30,8 +30,16 @@ Double{Float32, E}(x::AbstractFloat) where {E<:Emphasis} = Double(E, Float32(x))
 promote_rule(::Type{Double{T,E}}, ::Type{F}) where {F<:AbstractFloat, T<:AbstractFloat, E<:Emphasis} =
     Double{T,E}
 
-promote_rule(::Type{Double{T,E}}, ::Type{BigFloat}) where {T<:AbstractFloat, E<:Emphasis} =
-    Double{T,E}
+promote_rule(::Type{Double{T,Accuracy}}, ::Type{BigFloat}) where {T<:AbstractFloat} =
+    Double{T,Accuracy}
+promote_rule(::Type{Double{T,Performance}}, ::Type{BigFloat}) where {T<:AbstractFloat} =
+    Double{T,Performance}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float64,Accuracy}}) = Double{Float64,Accuracy}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float64,Performance}}) = Double{Float64,Performance}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float32,Accuracy}}) = Double{Float32,Accuracy}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float32,Performance}}) = Double{Float32,Performance}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float16,Accuracy}}) = Double{Float16,Accuracy}
+promote_rule(::Type{BigFloat}, ::Type{Double{Float16,Performance}}) = Double{Float16,Performance}
 
 function convert(::Type{Double{T,E}}, x::BigFloat) where {T<:AbstractFloat, E<:Emphasis}
     hi = T(x)
