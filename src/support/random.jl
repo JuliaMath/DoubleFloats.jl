@@ -21,20 +21,26 @@ rand(x::Function) = (x == FastDouble) ?
                     rand(Double{Float64,Performance}) :
                     throw(DomainError(string(x)))
 
-function rand(::Type{Double{Float64,Accuracy}}, n::Int)
-    rs = Array{Double{Float64,Accuracy}}(undef, n)
-    for idx=1:n
-        rs[idx] = rand(Double{Float64,Accuracy})
+for T in (:Float64, :Float32, :Float16)
+  @eval begin
+        
+    function rand(::Type{Double{$T,Accuracy}}, n::Int)
+        rs = Array{Double{$T,Accuracy}}(undef, n)
+        for idx=1:n
+            rs[idx] = rand(Double{$T,Accuracy})
+        end
+        return rs
     end
-    return rs
-end
 
-function rand(::Type{Double{Float64,Performance}}, n::Int)
-    rs = Array{Double{Float64,Performance}}(undef, n)
-    for idx=1:n
-        rs[idx] = rand(Double{Float64,Performance})
+    function rand(::Type{Double{$T,Performance}}, n::Int)
+        rs = Array{Double{$T,Performance}}(undef, n)
+        for idx=1:n
+            rs[idx] = rand(Double{$T,Performance})
+        end
+        return rs
     end
-    return rs
+        
+  end
 end
 
 rand(::Type{Double}, n::Int) = rand(Double{Float64, Accuracy}, n)
