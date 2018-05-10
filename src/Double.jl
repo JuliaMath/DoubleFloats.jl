@@ -98,7 +98,7 @@ Double(x::Double{T,Performance}) where {T<:AbstractFloat} = Double(Accuracy, HI(
 FastDouble(x::Double{T,Accuracy}) where {T<:AbstractFloat} = Double(Performance, HI(x), LO(x))
 
 
-const BigFloatStrBits = 116
+const BigFloatStrBits = 120 # 116 may be enough
 
 
 function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
