@@ -26,7 +26,6 @@ reliant upon elementary functions, `FastDoubles` are helpful and resourceful.
 
 - ## [Capabilities](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/capabilites.md)
 
-----
 
-- #### [references](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
+- ### [references](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
 
