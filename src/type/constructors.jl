@@ -1,3 +1,5 @@
+const BigFloatBits = 128 # 116 may be enough
+
 Double{T,Accuracy}(x::T) where {T<:Signed} = Double(Accuracy, Float64(x), zero(Float64))
 Double{T,Performance}(x::T) where {T<:Signed} = Double(Performance, Float64(x), zero(Float64))
 
@@ -124,7 +126,7 @@ UInt8(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
     UInt8(UInt64(x))
 
 BigFloat(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
-    BigFloat(HI(x)) + BigFloat(LO(x))
+    BigFloat(HI(x), BigFloatBits) + BigFloat(LO(x), BigFloatBits)
 BigInt(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
     BigInt(HI(x)) + BigInt(LO(x))
 Rational{BigInt}(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} =
