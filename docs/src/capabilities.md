@@ -41,4 +41,8 @@ These are the predicates made available for use with DoubleFloats:
 #### also
  - random values in [0,1)
  
+----
 
+- ## [Overview](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/appropriate.md)
+
+- ### [reference material](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
