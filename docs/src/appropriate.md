@@ -80,4 +80,4 @@ hencefort_accurate    = Double(a_performant_variable)
 
 - ## [Capabilities](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/capabilites.md)
 
-- ## [References](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
+- ### [reference material](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
