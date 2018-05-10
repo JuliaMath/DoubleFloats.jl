@@ -1,4 +1,4 @@
-# Details
+# The Types
 
 
 ## Double
@@ -27,9 +27,6 @@ accrued relative error does eat into the number of reliable bits in this second 
 Nonetheless, if your use requires less than one million successive arithimetic operations, the
 result obtained is reliable as a Float64 or as a Float32.
 
-```
- 
-```
 
 
 ## FastDouble
