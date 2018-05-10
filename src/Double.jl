@@ -106,12 +106,12 @@ function string(x::Double{T, Performance}) where {T<:AbstractFloat}
 end
 
 function show(io::IO, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    str = string(x)
+    str = string(BigFloat(HI(x), BigFloatStrBits) + BigFloat(LO(x), BigFloatStrBits))
     print(io, str)
 end
 
 function show(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    str = string(x)
+    str = string(BigFloat(HI(x), BigFloatStrBits) + BigFloat(LO(x), BigFloatStrBits))
     print(StdOutStream, str)
 end
 
