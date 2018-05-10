@@ -98,3 +98,6 @@ hencefort_accurate    = Double(a_performant_variable)
 #### also
  - random values in [0,1)
  
+-----
+
+- ## [References](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
