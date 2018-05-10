@@ -97,6 +97,10 @@ FastDouble(::Type{E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
 Double(x::Double{T,Performance}) where {T<:AbstractFloat} = Double(Accuracy, HI(x), LO(x))
 FastDouble(x::Double{T,Accuracy}) where {T<:AbstractFloat} = Double(Performance, HI(x), LO(x))
 
+
+const BigFloatStrBits = 116
+
+
 function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
     return string("Double(",HI(x),", ",LO(x),")")
 end
