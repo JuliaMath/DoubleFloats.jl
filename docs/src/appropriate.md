@@ -76,28 +76,8 @@ hencefort_accurate    = Double(a_performant_variable)
 ```
 
 
-## Capabilities
-
-#### the basic arithmetic operations
-- addition, subtraction 
-- multiplication, square, cube
-- reciprocation, division, square root, cube root
-
-#### rounding
-- RoundNearest, RoundUp, RoundDown
-- RoundToZero, RoundFromZero
-- RoundNearestTiesAway, RoundNearestTiesUp
-
-#### elementary mathematical functions
- - log, exp
- - sin, cos, tan, csc, sec, cot
- - asin, acos, atan, acsc, asec, acot
- - sinh, cosh, tanh, csch, sech, coth
- - asinh, acosh, atanh, acsch, asech, acoth
-
-#### also
- - random values in [0,1)
- 
 -----
+
+- ## [Capabilities](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/capabilites.md)
 
 - ## [References](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/references.md)
