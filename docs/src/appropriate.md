@@ -1,12 +1,7 @@
 # Details
 
-## [Introduction](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/lookingahead.md)
 
-```
- 
-```
-
-### Double
+## Double
 
 
 `Double` is the accuracy stalwart.  The algorithms and refinements that apply when used with reasonably
