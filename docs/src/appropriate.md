@@ -52,6 +52,13 @@ parametrics will causally entail using `Doubles`.
 
 ### how it is used
 
+For purposes of computation, use the `FastDouble` type just as you use the `Double` type.
+
+The results should be mapped into the underlying floating point type you have used.
+
+
+## Use one or the other
+
 It is unwise to provide a mix of `Double` and `FastDouble` to the same flow.
 
 This design provides that `Accuracy` subsume `Performance`.  Once given reason
@@ -69,7 +76,7 @@ hencefort_accurate    = Double(a_performant_variable)
 ```
 
 
-
+## Capabilities
 
 #### the basic arithmetic operations
 - addition, subtraction 
