@@ -7,17 +7,12 @@
 
 -----
 
-| this package is under development |
-|-----------------------------------|
-| repository created on 2018-01-25  |
-
-
 # DoubleFloats
 
 *Floating point math with greater accuracy than Float32, Float64 types obtain."
 
 
-[![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url]] |
+[![][pkg-0.7-img]][pkg-0.7-url] | [![][travis-img]][travis-url]]
 
 
 ## Installation
