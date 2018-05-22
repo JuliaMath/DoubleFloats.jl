@@ -110,13 +110,11 @@ function string(x::Double{T, Performance}) where {T<:AbstractFloat}
 end
 
 function show(io::IO, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    str = string(BigFloat(HI(x), BigFloatStrBits) + BigFloat(LO(x), BigFloatStrBits))
+    prec = precision(BigFloat)
+    setprecision(BigFloat, BigFloatStrBits)
+    str = string(BigFloat(HI(x)) + BigFloat(LO(x)))
+    setprecision(BigFloat, prec)
     print(io, str)
-end
-
-function show(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    str = string(BigFloat(HI(x), BigFloatStrBits) + BigFloat(LO(x), BigFloatStrBits))
-    print(StdOutStream, str)
 end
 
 function parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:AbstractFloat}
