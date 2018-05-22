@@ -15,6 +15,11 @@
 [![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
 
 
+## Documentation
+
+- [Current](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/index.md) &mdash; **most recently tagged version of the documentation.**
+
+
 ## Installation
 
 The package is registered in `METADATA.jl` and can be installed with `Pkg.add`.
@@ -22,13 +27,6 @@ The package is registered in `METADATA.jl` and can be installed with `Pkg.add`.
 ```julia
 julia> Pkg.add("DoubleFloats")
 ```
-
-## Documentation
-
-- [Current](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/index.md) &mdash; **most recently tagged version of the documentation.**
-## Project Status
-
-The package is tested `0.7-dev` on Linux, OS X, and Windows.
 
 ## Questions and Contributions
 
