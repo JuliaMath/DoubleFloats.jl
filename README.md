@@ -2,10 +2,10 @@
 ### Math with 90+ accurate bits; faster math with 75+ good bits.
 #### _individual operations exceed above accuracies_
 
------
 
 [![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
 
+----
 
 ## Documentation
 
