@@ -8,7 +8,7 @@ function rand(rng::AbstractRNG, S::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     ur = uf > u ? uf - u : u - uf
     rf = Float64(ur)
 
-    Double(T(5.421010862427522e-20 * f), T(5.421010862427522e-20 * rf))
+    DoubleFloat(T(5.421010862427522e-20 * f), T(5.421010862427522e-20 * rf))
 end
 
 rand(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} =
