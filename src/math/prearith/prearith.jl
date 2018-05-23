@@ -86,7 +86,7 @@ end
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x, n)
-    iszero(LO(x)) && return DoubleFloat(HI(x), T(n)*eps(HI(x))
+    iszero(LO(x)) && return DoubleFloat(HI(x), T(n)*eps(HI(x)))
     signbit(LO(x)) && return DoubleFloat(HI(x), -nextfloat(-LO(x),n))
     return DoubleFloat(HI(x), nextfloat(LO(x),n))
 end
