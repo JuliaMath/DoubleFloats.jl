@@ -11,8 +11,8 @@ rand1_bigf = Base.BigFloat.(rand1_vals);
 rand20_vals = rand_vals .* 20.0;
 rand20_bigf = Base.BigFloat.(rand20_vals);
 
-function test_atol(big_rands, dbl_rnds, fn, tol)
-    T = eltype(dbl_rnds)
+function test_atol(big_rands, dbl_rands, fn, tol)
+    T = eltype(dbl_rands)
     fn_big_rands = map(fn, big_rands)
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_dbl_rands = map(fn, dbl_rands)
@@ -21,8 +21,8 @@ function test_atol(big_rands, dbl_rnds, fn, tol)
     return any(fn_res)
 end
 
-function test_rtol(big_rands, dbl_rnds, fn, tol)
-    T = eltype(dbl_rnds)
+function test_rtol(big_rands, dbl_rands, fn, tol)
+    T = eltype(dbl_rands)
     fn_big_rands = map(fn, big_rands)
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_dbl_rands = map(fn, dbl_rands)
