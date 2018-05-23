@@ -1,6 +1,13 @@
 # DoubleFloats.jl
+
 ### Math with 90+ accurate bits.
-#### _individual operations exceed this accuracy_
+
+Five nested operations on a DoubleF64 should exceed the accuracy of one on a Float64.
+
+#### 104:106 good bits: +, -, *
+#### 102:104 good bits: /, sqrt
+####  99:102 good bits: exp, log, sin,  cos,  tan,  asin,  acos,  atan
+####  96:99  good bits: sinh, cosh, tanh, asinh, acosh, atanh
 
 
 [![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
