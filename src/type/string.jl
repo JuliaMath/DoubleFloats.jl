@@ -23,18 +23,24 @@ function typedstring(x::QuadrupleF16)
     return str
 end
 
+@inline BigFloatBits(::Type{Float64}) = 512
+@inline BigFloatBits(::Type{Float32}) = 256
+@inline BigFloatBits(::Type{Float16}) = 128
+@inline BigFloatDigits(::Type{Float64}) = 35
+@inline BigFloatDigits(::Type{Float32}) = 18
+@inline BigFloatDigits(::Type{Float16}) =  9
 
 function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     prec = precision(Base.BigFloat)
-    setprecision(Base.BigFloat, 512)
+    setprecision(Base.BigFloat, BigFloatBits(T))
     bf = Base.BigFloat(x)
-    bf = round(bf, digits=35) + HI(eps(x))
+    bf = round(bf, digits=BigFloatDigits(T)) + HI(eps(x))
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
-       str = string(a[1:36],"e",b)
+       str = string(a[1:BigFloatDigits(T)+1],"e",b)
     else
-       str = str[1:36]
+       str = str[1:BigFloatDigits(T)+1]
     end
     setprecision(Base.BigFloat, prec)
     return str
@@ -42,15 +48,15 @@ end
 
 function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
     prec = precision(Base.BigFloat)
-    setprecision(Base.BigFloat, 512)
+    setprecision(Base.BigFloat, BigFloatBits(T)*2)
     bf = Base.BigFloat(x)
-    bf = round(bf, digits=70) + HI(eps(LO(x)))
+    bf = round(bf, digits=BigFloatDigits(T)*2) + HI(eps(LO(x)))
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
-       str = string(a[1:71],"e",b)
+       str = string(a[1:(BigFloatDigits(T)*2+1)],"e",b)
     else
-       str = str[1:71]
+       str = str[1:(BigFloatDigits(T)*2+1)]
     end
     setprecision(Base.BigFloat, prec)
     return str
