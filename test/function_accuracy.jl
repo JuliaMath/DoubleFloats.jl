@@ -11,12 +11,6 @@ rand1_bigf = Base.BigFloat.(rand1_vals);
 rand20_vals = rand_vals .* 20.0;
 rand20_bigf = Base.BigFloat.(rand20_vals);
 
-function excise_nans_infs(v::Vector{T}) where {T<:AbstractFloat}
-    n = length(v)
-    ns = collect(1:n)
-    keep = ns[map(x->(!isnan(x) && !isinf(x)), v)]
-    return v[ keep ]
-end
 
 function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFloat, T2<:AbstractFloat}
     n1 = length(v1)
@@ -29,7 +23,6 @@ function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFlo
     keep = unique(sort([keep1..., keep2...,]))
     return v1[ keep ], v2[ keep ]
 end
-
 
 function test_atol(big_rands, dbl_rands, fn, tol)
     T = eltype(dbl_rands)
@@ -49,7 +42,7 @@ function test_rtol(big_rands, dbl_rands, fn, tol)
     fn_big_rands, fn_dbl_rands = excise_nans_infs(fn_big_rands, fn_dbl_rands)
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
-    fn_reldiff = fn_diff ./ fn_dblbig_rands;
+    fn_reldiff = fn_diff ./ fn_dblbig_rands
     fn_res  = maximum(fn_reldiff) <= tol
     return fn_res
 end
