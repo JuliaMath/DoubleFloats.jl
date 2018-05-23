@@ -17,8 +17,8 @@ function test_atol(big_rands, dbl_rands, fn, tol)
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_dbl_rands = map(fn, dbl_rands)
     fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
-    fn_res  = fn_diff .> tol
-    return any(fn_res)
+    fn_res  = maximum(fn_diff) <= tol
+    return fn_res
 end
 
 function test_rtol(big_rands, dbl_rands, fn, tol)
@@ -28,8 +28,8 @@ function test_rtol(big_rands, dbl_rands, fn, tol)
     fn_dbl_rands = map(fn, dbl_rands)
     fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
     fn_reldiff = fn_diff ./ fn_dblbig_rands;
-    fn_res  = fn_reldiff .> tol
-    return any(fn_res)
+    fn_res  = maximum(fn_diff) <= tol
+    return fn_res
 end
 
   
