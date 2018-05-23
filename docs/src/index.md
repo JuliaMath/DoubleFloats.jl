@@ -23,12 +23,9 @@ Many arithmetic operations and elementary functions are available with each type
 - sinh, cosh, tanh, csch, sech, coth
 - asinh, acosh, atanh, acsch, asech, acoth
 
+----
 - todo: div, fld, cld, rem, mod, divrem, fldmod, round (fractionally), atan2
 
-
-These types are identical in coverage and compatibility. Any function that knows of one knows of both.
-Every function that is imported from Base.Math and overloaded in order to just work and work well with
-`Doubles` will do the same with `FastDoubles`.  And they utilize identical code for some of their work.
 
 
 ----
