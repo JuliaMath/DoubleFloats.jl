@@ -18,11 +18,12 @@ function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFlo
     n1 == n2 || throw(ErrorException("vectors must be of the same length"))
     ns1 = collect(1:n1)
     ns2 = copy(ns1)
-    keep1 = ns1[map(x->(!isnan(x) && !isinf(x)), v1)]
-    keep2 = ns2[map(x->(!isnan(x) && !isinf(x)), v2)]
-    keep = unique(sort([keep1..., keep2...,]))
+    keep1 = ns1[map(isfinite, v1)]
+    keep2 = ns2[map(isfinite, v2)]
+    keep = intersect(keep1, keep2)
     return v1[ keep ], v2[ keep ]
 end
+
 
 function test_atol(big_rands, dbl_rands, fn, tol)
     T = eltype(dbl_rands)
