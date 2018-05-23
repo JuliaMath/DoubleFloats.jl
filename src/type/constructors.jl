@@ -58,3 +58,7 @@ DoubleFloat{DoubleFloat{T}}(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 DoubleFloat{DoubleFloat{T}}(x::T) where {T<:IEEEFloat} =
     DoubleFloat{DoubleFloat{T}}(DoubleFloat{T}(x), DoubleFloat(zero(T)))
+
+DoubleF64(x::Irrational{S}) where {S} = DoubleF64(Base.BigFloat(x))
+DoubleF32(x::Irrational{S}) where {S} = DoubleF32(Base.BigFloat(x))
+DoubleF16(x::Irrational{S}) where {S} = DoubleF16(Base.BigFloat(x))
