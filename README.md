@@ -6,14 +6,16 @@
 
 ----
 
+[![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
+
+----
+
 - `104:106 good bits`: `+`, `-`, `*`
 - `102:104 good bits`: `/`, `sqrt`
 -  `96:102 good bits`: `exp`, `log`, `sin`, `asin`, `sinh`, `asinh` ...
 
 
-[![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
 
-----
 
 ## Documentation
 
