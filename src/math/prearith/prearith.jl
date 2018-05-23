@@ -68,14 +68,14 @@ end
 function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -prevfloat(-x)
-    iszero(LO(x)) && return DoubleFloat(HI(x), eps(HI(x))*0.5)
+    iszero(LO(x)) && return DoubleFloat(HI(x), eps(HI(x)))
     signbit(LO(x)) && return DoubleFloat(HI(x), -nextfloat(-LO(x)))
     return DoubleFloat(HI(x), nextfloat(LO(x)))
 end
 function prevfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x)
-    iszero(LO(x)) && return DoubleFloat(HI(x), -eps(HI(x))*0.5)
+    iszero(LO(x)) && return DoubleFloat(HI(x), -eps(HI(x)))
     signbit(LO(x)) && return DoubleFloat(HI(x), -prevfloat(-LO(x)))
     return DoubleFloat(HI(x), prevfloat(LO(x)))
 end
@@ -86,9 +86,16 @@ end
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x, n)
-    iszero(LO(x)) && return DoubleFloat(HI(x), n*eps(HI(x))*0.5)
+    iszero(LO(x)) && return DoubleFloat(HI(x), T(n)*eps(HI(x))
     signbit(LO(x)) && return DoubleFloat(HI(x), -nextfloat(-LO(x),n))
     return DoubleFloat(HI(x), nextfloat(LO(x),n))
+end
+
+function eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat}
+    dfloat1 = one(DoubleFloat{T})
+    prev_dfloat = prevfloat(HI(dfloat1))
+    next_dfloat = nextfloat(HI(dfloat1))
+    max(dfloat1-prev_dfloat, next_dfloat-dfloat1)
 end
 
 function eps(x::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -136,4 +143,3 @@ end
 function fmod(parts::Tuple{DoubleFloat{T}, DoubleFloat{T}}) where {T<:AbstractFloat}
    return parts[1] + parts[2]
 end
-
