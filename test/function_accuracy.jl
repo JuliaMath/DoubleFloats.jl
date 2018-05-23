@@ -1,15 +1,15 @@
-setprecision(BigFloat, 512)
+setprecision(Base.BigFloat, 512)
 srand(1602);
 const nrands = 1_000 # tested with nrands = 1_000
 
-rand_vals = rand(Double, nrands);
-rand_bigf = BigFloat.(rand_vals);
+rand_vals = rand(DoubleF64, nrands);
+rand_bigf = Base.BigFloat.(rand_vals);
 
 rand1_vals = rand_vals .+ 1.0;
-rand1_bigf = BigFloat.(rand1_vals);
+rand1_bigf = Base.BigFloat.(rand1_vals);
 
 rand20_vals = rand_vals .* 20.0;
-rand20_bigf = BigFloat.(rand20_vals);
+rand20_bigf = Base.BigFloat.(rand20_vals);
 
 function test_atol(bigf, rnds, fn, tol)
     T = eltype(rnds)
