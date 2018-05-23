@@ -1,185 +1,107 @@
-struct Double{T, E} <: MultipartFloat{T}
-    hi::T
-    lo::T
+struct DoubleFloat{T} <: MultipartFloat
+   hi::T
+   lo::T
 
-    function Double(::Type{E}, hi::T, lo::T) where {T<:AbstractFloat, E<:Emphasis}
-        new{T,E}(hi, lo)
-    end
-end
+   # these forms ensure hi, lo are canonically valued
+   function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
+       hi, lo = add_2(hi, lo)
+       return new{T}(hi, lo)
+   end
 
-@inline HI(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi
-@inline LO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.lo
-@inline HILO(x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x.hi, x.lo
-
-@inline HI(x::T) where {T<:AbstractFloat} = x
-@inline LO(x::T) where {T<:AbstractFloat} = zero(T)
-@inline HILO(x::T) where {T<:AbstractFloat} = x, zero(T)
-
-@inline HI(x::Tuple{T,T}) where {T<:AbstractFloat} = x[1]
-@inline LO(x::Tuple{T,T}) where {T<:AbstractFloat} = x[2]
-@inline HILO(x::Tuple{T,T}) where {T<:AbstractFloat} = x[1], x[2]
-
-@inline HI(x::Tuple{T}) where {T<:AbstractFloat} = x[1]
-@inline LO(x::Tuple{T}) where {T<:AbstractFloat} = zero(T)
-@inline HILO(x::Tuple{T}) where {T<:AbstractFloat} = x[1], zero(T)
-
-function Double{T, Accuracy}(hi::T, lo::T) where {T<:AbstractFloat}
-    hi, lo = two_sum(hi, lo)
-    Double(Accuracy, hi, lo)
-end
-function Double{T, Performance}(hi::T, lo::T) where {T<:AbstractFloat}
-    hi, lo = two_sum(hi, lo)
-    Double(Performance, hi, lo)
-end
-
-function Double(::Type{E}, hi::T) where {T<:AbstractFloat, E<:Emphasis}
-    return Double(E, hi, zero(T))
-end
-
-function Double(::Type{E}, hi::Tuple{T}) where {T<:AbstractFloat, E<:Emphasis}
-    return Double(E, hi[1], zero(T))
-end
-
-function Double(::Type{E}, hilo::Tuple{T,T}) where {T<:AbstractFloat, E<:Emphasis}
-    hi, lo = two_sum(hilo[1], hilo[2])
-    return Double(E, hi, lo)
-end
-
-function Double(hi::T, lo::T) where {T<:AbstractFloat}
-    return Double{T, Accuracy}(hi, lo)
-end
-
-function Double(hi::T) where {T<:AbstractFloat}
-    lo = zero(T)
-    return Double(Accuracy, hi, lo)
-end
-
-function FastDouble(hi::T, lo::T) where {T<:AbstractFloat}
-    return Double{T, Performance}(hi, lo)
-end
-
-function FastDouble(hi::T) where {T<:AbstractFloat}
-    lo = zero(T)
-    return Double(Performance, hi, lo)
+   function DoubleFloat{DoubleFloat{T}}(hi::DoubleFloat{T}, lo::DoubleFloat{T}) where {T<:IEEEFloat}
+     hi1, lo1 = HILO(hi)
+     hi2, lo2 = HILO(lo)
+     hihi, hilo, lohi, lolo = add_4(hi1, hi2, lo1, lo2)
+     zhi = DoubleFloat{T}(hihi, hilo)
+     zlo = DoubleFloat{T}(lohi, lolo)
+     return new{DoubleFloat{T}}(zhi, zlo)
+   end
+   # this form does not alter hi, lo
+   function DoubleFloat(hi::T, lo::T) where {T<:AbstractFloat}
+       return new{T}(hi, lo)
+   end
 end
 
 
-Double(x::Double{T, Accuracy}) where {T<:AbstractFloat} = x
 
-FastDouble(x::Double{T, Performance}) where {T<:AbstractFloat} = x
+const DoubleF64 = DoubleFloat{Float64}
+const DoubleF32 = DoubleFloat{Float32}
+const DoubleF16 = DoubleFloat{Float16}
 
-Double(::Type{T}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
-FastDouble(::Type{T}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
+const QuadrupleF64 = DoubleFloat{DoubleFloat{Float64}}
+const QuadrupleF32 = DoubleFloat{DoubleFloat{Float32}}
+const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 
-function Double(::Type{T1}, x::Double{T2,E}) where {T1<:IEEEFloat, T2<:IEEEFloat, E<:Emphasis}
-    if sizeof(T1) > sizeof(T2)
-        hi,lo = TwoSum(T1(HI(x)), T1(LO(x)))
-    else
-        hi = T1(HI(x))
-        lo = T1(HI(x) - hi)
-    end
-    return Double(Accuracy, hi, lo)
+
+@inline HI(x::T) where {T<:IEEEFloat} = x
+@inline LO(x::T) where {T<:IEEEFloat} = zero(F)
+@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(F)
+
+@inline HI(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi
+@inline LO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.lo
+@inline HILO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi, x.lo
+
+@inline HI(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.hi
+@inline LO(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.lo
+@inline HILO(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.hi, x.lo
+
+@inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
+@inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
+@inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
+
+@inline HI(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x[1]
+@inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x[2]
+@inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x
+
+@inline HI(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[1]
+@inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[2]
+@inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x
+
+@inline DoubleF64(x::Tuple{Float64,Float64}) = DoubleFloat(x[1], x[2])
+@inline DoubleF32(x::Tuple{Float32,Float32}) = DoubleFloat(x[1], x[2])
+@inline DoubleF16(x::Tuple{Float16,Float16}) = DoubleFloat(x[1], x[2])
+@inline DoubleF64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
+@inline DoubleF32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
+@inline DoubleF16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
+@inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
+
+@inline DoubleF64(hi::T) where {T<:IEEEFloat} = DoubleF64(Float64(hi), zero(Float64))
+@inline DoubleF32(hi::T) where {T<:IEEEFloat} = DoubleF32(Float32(hi), zero(Float32))
+@inline DoubleF16(hi::T) where {T<:IEEEFloat} = DoubleF16(Float16(hi), zero(Float16))
+@inline DoubleF64(hi::T) where {T<:Integer} = DoubleF64(Float64(hi))
+@inline DoubleF32(hi::T) where {T<:Integer} = DoubleF32(Float32(hi))
+@inline DoubleF16(hi::T) where {T<:Integer} = DoubleF16(Float16(hi))
+
+for (F,D,U) in ((:Float64, :DoubleF64, :(Union{Float32, Float16})), (:Float32, :DoubleF32, :(Union{Float64, Float16})),
+                (:Float16, :DoubleF16, :(Union{Float64, Float32})))
+  @eval begin
+    @inline $D(hi::T, lo::T) where {T<:$U} = $D($F(hi), $F(lo))
+    @inline $D(hi::T, lo::I) where {T<:$U, I<:Integer} = $D($F(hi), $F(lo))
+    @inline $D(hi::I, lo::T) where {T<:$U, I<:Integer} = $D($F(hi), $F(lo))
+    @inline $D(hi::I, lo::I) where {I<:Integer} = $D($F(hi), $F(lo))
+  end
 end
 
-function FastDouble(::Type{T1}, x::Double{T2,E}) where {T1<:IEEEFloat, T2<:IEEEFloat, E<:Emphasis}
-    if sizeof(T1) > sizeof(T2)
-        hi,lo = TwoSum(T1(HI(x)), T1(LO(x)))
-    else
-        hi = T1(HI(x))
-        lo = T1(HI(x) - hi)
-    end
-    return Double(Performance, hi, lo)
-end
 
-Double(::Type{E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
-FastDouble(::Type{E}, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis} = x
+DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y))
+DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
+DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
-Double(x::Double{T,Performance}) where {T<:AbstractFloat} = Double(Accuracy, HI(x), LO(x))
-FastDouble(x::Double{T,Accuracy}) where {T<:AbstractFloat} = Double(Performance, HI(x), LO(x))
+DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(DoubleFloat(y),DoubleFloat(zero(T))))
+DoubleFloat{T}(x::T, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(DoubleFloat(x), DoubleFloat(zero(T))), y)
+DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y, DoubleFloat(zero(T))))
+DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x, DoubleFloat(zero(T))), y)
+DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
+# a type specific hash function helps the type to 'just work'
+const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
+const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
-const BigFloatStrBits = 120 # 116 may be enough
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} =
+    hash(z.hi, h) ⊻ hash(z.lo)
 
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, T<:DoubleFloat{F}} =
+    hash(z.hi) ⊻ hash(z.lo)
 
-function string(x::Double{T, Accuracy}) where {T<:AbstractFloat}
-    return string("Double(",HI(x),", ",LO(x),")")
-end
-
-function string(x::Double{T, Performance}) where {T<:AbstractFloat}
-    return string("FastDouble(",HI(x),", ",LO(x),")")
-end
-
-function show(io::IO, x::Double{T,E}) where {T<:AbstractFloat, E<:Emphasis}
-    prec = precision(BigFloat)
-    setprecision(BigFloat, BigFloatStrBits)
-    str = string(BigFloat(HI(x)) + BigFloat(LO(x)))
-    setprecision(BigFloat, prec)
-    print(io, str)
-end
-
-function parse(::Type{Double{T,Accuracy}}, str::AbstractString) where {T<:AbstractFloat}
-    if startswith(str, "FastDouble")
-        str = str[5:end]
-    end
-    if !startswith(str,"Double")
-        throw(ErrorException("$str is not recognized as a Double"))
-    end
-    str = str[8:end-1]
-    if contains(str, ", ")
-        histr, lostr = split(str, ", ")
-    else
-        histr, lostr = split(str, ",")
-    end
-    hi = parse(T, histr)
-    lo = parse(T, lostr)
-    hi, lo = two_sum(hi, lo)
-    return Double{T, Accuracy}(hi, lo)
-end
-
-function parse(::Type{Double{T, Performance}}, str::AbstractString) where {T<:AbstractFloat}
-    if startswith(str, "Double")
-        str = string("Fast", str)
-    end
-    if !startswith(str,"FastDouble")
-        throw(ErrorException("$str is not recognized as a FastDouble"))
-    end
-    str = str[12:end-1]
-    if contains(str, ", ")
-        histr, lostr = split(str, ", ")
-    else
-        histr, lostr = split(str, ",")
-    end
-    hi = parse(T, histr)
-    lo = parse(T, lostr)
-    hi, lo = two_sum(hi, lo)
-    return Double{T, Performance}(hi, lo)
-end
-
-parse(Double, str::AbstractString) = parse(Double{Float64, Accuracy}, str)
-
-parse(::Type{Val{FastDouble}}, str::AbstractString) = parse(Double{Float64, Performance}, str)
-
-
-# a fast type specific hash function helps
-import Base: hash, hx, fptoui
-
-const hash_doublefloat_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
-const hash_0_dfloat_lo = hash(zero(UInt), hash_doublefloat_lo)
-const hash_accuracy_lo = hash(hash(Accuracy), hash_doublefloat_lo)
-const hash_performance_lo = hash(hash(Performance), hash_doublefloat_lo)
-
-function hash(x::Double{T,Accuracy}, h::UInt) where {T}
-    !isnan(HI(x)) ?
-       ( iszero(LO(x)) ?
-            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_accuracy_lo) :
-            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_accuracy_lo)
-       ) : (hx_NaN ⊻ h)
-end
-
-function hash(x::Double{T,Performance}, h::UInt) where {T}
-    !isnan(HI(x)) ?
-       ( iszero(LO(x)) ?
-            hx(fptoui(UInt64, abs(HI(x))), HI(x), h ⊻ hash_performance_lo) :
-            hx(fptoui(UInt64, abs(HI(x))), LO(x), h ⊻ hash_performance_lo)
-       ) : (hx_NaN ⊻ h)
-end
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} =
+    hash(z.hi) ⊻ hash(z.lo)
