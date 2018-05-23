@@ -26,7 +26,7 @@ function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFlo
     ns2 = copy(ns1)
     keep1 = ns1[map(x->(!isnan(x) && !isinf(x)), v1)]
     keep2 = ns2[map(x->(!isnan(x) && !isinf(x)), v2)]
-    keep = unique(sort(keep1..., keep2...,))
+    keep = unique(sort([keep1..., keep2...,]))
     return v1[ keep ], v2[ keep ]
 end
 
