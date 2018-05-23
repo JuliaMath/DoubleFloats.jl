@@ -11,18 +11,27 @@ rand1_bigf = Base.BigFloat.(rand1_vals);
 rand20_vals = rand_vals .* 20.0;
 rand20_bigf = Base.BigFloat.(rand20_vals);
 
-function test_atol(bigf, rnds, fn, tol)
-    T = eltype(rnds)
-    fn_bigf = map(x->T(fn(x)), bigf)
-    fn_rnds = map(fn, rnds)
-    return all(isapprox.(fn_bigf, fn_rnds, atol=tol))
+function test_atol(big_rands, dbl_rnds, fn, tol)
+    T = eltype(dbl_rnds)
+    fn_big_rands = map(fn, big_rands)
+    fn_dblbig_rands = map(T, fn_big_rands)
+    fn_dbl_rands = map(fn, dbl_rands)
+    fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
+    fn_res  = fn_diff .> tol
+    return any(fn_res)
 end
-function test_rtol(bigf, rnds, fn, tol)
-    T = eltype(rnds)
-    fn_bigf = map(x->T(fn(x)), bigf)
-    fn_rnds = map(fn, rnds)
-    return all(isapprox.(fn_bigf, fn_rnds, rtol=tol))
+
+function test_atol(big_rands, dbl_rnds, fn, tol)
+    T = eltype(dbl_rnds)
+    fn_big_rands = map(fn, big_rands)
+    fn_dblbig_rands = map(T, fn_big_rands)
+    fn_dbl_rands = map(fn, dbl_rands)
+    fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
+    fn_reldiff = fn_diff ./ fn_dblbig_rands;
+    fn_res  = fn_reldiff .> tol
+    return any(fn_res)
 end
+
   
 @test test_atol(rand_bigf, rand_vals, exp, 1.0e-29)
 @test test_rtol(rand_bigf, rand_vals, exp, 1.5e-31)
