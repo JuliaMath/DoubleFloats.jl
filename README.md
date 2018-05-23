@@ -4,10 +4,12 @@
 
 - __Five nested mathops on a DoubleF64 should exceed the accuracy of mathop(x::Float64)__
 
-#### 104:106 good bits: +, -, *
-#### 102:104 good bits: /, sqrt
-####  99:102 good bits: exp, log, sin,  cos,  tan,  asin,  acos,  atan
-####  96:99  good bits: sinh, cosh, tanh, asinh, acosh, atanh
+----
+
+- 104:106 good bits: +, -, *
+- 102:104 good bits: /, sqrt
+-  99:102 good bits: exp, log, sin,  cos,  tan,  asin,  acos,  atan
+-  96:99  good bits: sinh, cosh, tanh, asinh, acosh, atanh
 
 
 [![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
