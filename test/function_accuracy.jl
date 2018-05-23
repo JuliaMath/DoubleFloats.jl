@@ -22,7 +22,7 @@ function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFlo
     n1 = length(v1)
     n2 = length(v2)
     n1 == n2 || throw(ErrorException("vectors must be of the same length"))
-    ns1 = collect(1:n)
+    ns1 = collect(1:n1)
     ns2 = copy(ns1)
     keep1 = ns1[map(x->(!isnan(x) && !isinf(x)), v1)]
     keep2 = ns2[map(x->(!isnan(x) && !isinf(x)), v2)]
