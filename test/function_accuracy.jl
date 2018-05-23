@@ -21,7 +21,7 @@ function test_atol(big_rands, dbl_rnds, fn, tol)
     return any(fn_res)
 end
 
-function test_atol(big_rands, dbl_rnds, fn, tol)
+function test_rtol(big_rands, dbl_rnds, fn, tol)
     T = eltype(dbl_rnds)
     fn_big_rands = map(fn, big_rands)
     fn_dblbig_rands = map(T, fn_big_rands)
