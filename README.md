@@ -2,7 +2,7 @@
 
 ### Math with 90+ accurate bits.
 
-- __Five nested operations on a DoubleF64 should exceed the accuracy of one on a Float64.__
+- __Five nested mathops on a DoubleF64 should exceed the accuracy of one on a Float64.__
 
 #### 104:106 good bits: +, -, *
 #### 102:104 good bits: /, sqrt
