@@ -1,0 +1,52 @@
+function asinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    result = abs(x)
+    result = result + sqrt(square(result) + 1.0)
+    result = log(result)
+    return copysign(result, x)
+end
+
+function acosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    x < 1.0 && throw(DomainError("$x"))
+    !isfinite(x) && return nan(typeof(x))
+    result = x + sqrt(square(x) - 1.0)
+    result = log(result)
+    return result
+end
+
+function atanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    abs(x) > 1.0 && throw(DomainError("$x"))
+    !isfinite(x) && return nan(typeof(x))
+    twox = DoubleFloat{T}(x.hi+x.hi, x.lo+x.lo)
+    result = 1.0 + twox / (1.0 - x)
+    result = log(result)
+    result = DoubleFloat{T}(result.hi*0.5, result.lo*0.5)
+    return result
+end
+
+function acsch(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    iszero(x) && throw(DomainError("$x"))
+    !isfinite(x) && return nan(typeof(x))
+    result = inv(x)
+    result = sinh(result)
+    return result
+end
+
+function asech(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    iszero(x) && return inf(DoubleFloat{T})
+    isone(x) && return zero(DoubleFloat{T})
+    !isfinite(x) && return nan(typeof(x))
+    (x < 0.0 || x > 1.0) && throw(DomainError("$x"))
+    result = inv(x)
+    result = cosh(result)
+    return result
+end
+
+function acoth(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    isone(x) && return inf(DoubleFloat{T})
+    isone(-x) && return -inf(DoubleFloat{T})
+    (-1.0 < x < 1.0) && throw(DomainError("$x"))
+    !isfinite(x) && return nan(typeof(x))
+    result = inv(x)
+    result = tanh(result)
+    return result
+end
