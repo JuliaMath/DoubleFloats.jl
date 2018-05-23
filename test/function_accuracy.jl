@@ -14,21 +14,36 @@ rand20_bigf = Base.BigFloat.(rand20_vals);
 function test_atol(big_rands, dbl_rands, fn, tol)
     T = eltype(dbl_rands)
     fn_big_rands = map(fn, big_rands)
+    nansat1 = collect(1:length(fn_big_rands))[map(isnan, fn_big_rands)]
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_dbl_rands = map(fn, dbl_rands)
+    nansat2 = collect(1:length(fn_big_rands))[map(isnan, fn_dbl_rands)]
+    nansat = unique(sort([nansat1..., nansat2...,]))
+    nonnans = setdiff(Set(collect(1:length(fn_big_rands))), Set(nansat))
+    nonnansat = collect(nonnans)
+    fn_dblbig_rands = fn_dblbig_rands[nonnansat]
+    fn_dbl_rands = fn_dbl_rands[nonnansat]
     fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
     fn_res  = maximum(fn_diff) <= tol
     return fn_res
 end
 
+
 function test_rtol(big_rands, dbl_rands, fn, tol)
     T = eltype(dbl_rands)
     fn_big_rands = map(fn, big_rands)
+    nansat1 = collect(1:length(fn_big_rands))[map(isnan, fn_big_rands)]
     fn_dblbig_rands = map(T, fn_big_rands)
     fn_dbl_rands = map(fn, dbl_rands)
+    nansat2 = collect(1:length(fn_big_rands))[map(isnan, fn_dbl_rands)]
+    nansat = unique(sort([nansat1..., nansat2...,]))
+    nonnans = setdiff(Set(collect(1:length(fn_big_rands))), Set(nansat))
+    nonnansat = collect(nonnans)
+    fn_dblbig_rands = fn_dblbig_rands[nonnansat]
+    fn_dbl_rands = fn_dbl_rands[nonnansat]
     fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
     fn_reldiff = fn_diff ./ fn_dblbig_rands;
-    fn_res  = maximum(fn_diff) <= tol
+    fn_res  = maximum(fn_reldiff) <= tol
     return fn_res
 end
 
