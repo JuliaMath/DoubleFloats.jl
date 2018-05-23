@@ -27,10 +27,10 @@ d = DoubleF64(17.0) / DoubleF64(5.0)
 @test (a/c).lo == (b/d).lo
 
 
-@test zero(Double{Float64}) == DoubleF64(0.0, 0.0)
-@test one(Double{Float64}) == DoubleF64(1.0, 0.0)
-@test zero(DoubleF32(0.0, 0.0)) == DoubleF32(0.0, 0.0)
-@test one(DoubleF32(0.0, 0.0)) == DoubleF32(1.0, 0.0)
+@test zero(DoubleF64) == DoubleF64(0.0, 0.0)
+@test one(DoubleF64}) == DoubleF64(1.0, 0.0)
+@test zero(DoubleF32(0.0, 0.0)) == DoubleF32(0.0f0, 0.0f0)
+@test one(DoubleF32(0.0, 0.0)) == DoubleF32(1.0f0, 0.0f0)
 
 @test round(DoubleF64(123456.0, 1.0e-17), RoundUp) == DoubleF64(123457.0, 0.0)
 @test round(DoubleF64(123456.0, -1.0e-17), RoundUp) == DoubleF64(123456.0, 0.0)
