@@ -186,7 +186,7 @@ end
 
 
 @inline function sincos_posx(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    if x >= twopi_perf
+    if x >= twopi
        x = mod2pi(x)
     end
     s = sin_circle(x)
@@ -197,7 +197,7 @@ end
 
 @inline function sincos_negx(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x = abs(x)
-    if x >= twopi_perf
+    if x >= twopi
        x = mod2pi(x)
     end
     s = -sin_circle(x)
