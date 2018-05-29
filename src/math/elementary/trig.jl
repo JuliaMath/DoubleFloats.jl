@@ -70,8 +70,16 @@ end
 
 
 function tan_taylor(a::DoubleF64)
-    s, c = sincos_taylor(a)
-    return s/c
+    iszero(a) && return(zero(DoubleF64))
+    a2 = square(a)
+    b = a
+    r = a
+    for i in 2:n_tan_coeff
+        b = b * a2
+        c = tan_coeff[i] * b
+        r += c
+    end
+    return r
 end
 
 function csc_taylor(a::DoubleF64)
