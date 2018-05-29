@@ -9,8 +9,9 @@
 ----
 
 - `104:106 good bits`: `+`, `-`, `*`
-- `102:104 good bits`: `/`, `sqrt`
--  `96:102 good bits`: `exp`, `log`, `sin`, `asin`, `sinh`, `asinh` ...
+- `100:106 good bits`: `/`, `sqrt`
+-  `96:106 good bits`: `exp`, `log`, `sin`, `asin` ... 
+-  `88:106 good bits`: `sinh`, `asinh` ...
 
 
 
