@@ -8,7 +8,7 @@
 
 ----
 
-see [this](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/function_accuracy.jl) for function specific absolute error and relative error.
+see [this](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/function_accuracy.jl) for function specific absolute and relative errors over 0:1 and 1:2.
 
 ## Documentation
 
