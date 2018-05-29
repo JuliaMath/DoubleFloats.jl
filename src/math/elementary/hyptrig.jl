@@ -4,7 +4,7 @@ function sinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return nan(typeof(x))
 
     y = exp(x) - exp(-x)
-    z = DoubleF64(y.hi*0.5, y.lo*0.5)
+    z = DoubleFloat{T}(y.hi*0.5, y.lo*0.5)
     return z
 end
 
