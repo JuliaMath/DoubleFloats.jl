@@ -8,13 +8,7 @@
 
 ----
 
-- `104:106 good bits`: `+`, `-`, `*`
-- `100:106 good bits`: `/`, `sqrt`
--  `96:106 good bits`: `exp`, `log`, `sin`, `asin` ... 
--  `88:106 good bits`: `sinh`, `asinh` ...
-
-
-
+see [this](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/function_accuracy.jl) for function specific absolute error and relative error.
 
 ## Documentation
 
