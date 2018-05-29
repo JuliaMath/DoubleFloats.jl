@@ -1,8 +1,6 @@
 # DoubleFloats.jl
 
-### Math with 90+ accurate bits.
-
-- __Five nested mathops on a DoubleF64 should exceed the accuracy of mathop(x::Float64)__
+### Math with 85+ accurate bits.
 
 ----
 
