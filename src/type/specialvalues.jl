@@ -13,7 +13,7 @@ realmax(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(realma
 realmin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(realmin(T))
 
 
-isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(NaN))
+isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
 isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
 isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
 isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(-Inf))
