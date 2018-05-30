@@ -92,8 +92,10 @@ function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
 end
 
 eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = eps(eps( one(T) ))
+eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * eps(typeof(x))/2
 
-eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = eps(typeof(x)) * x
+ulp(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = eps(eps( one(T) ))/4
+ulp(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * ulp(typeof(x))
 
 
 @inline function intpart(x::Tuple{T,T}) where {T<:AbstractFloat}
