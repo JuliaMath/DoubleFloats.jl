@@ -89,9 +89,9 @@ end
 
 
 rand_vals = rand1_vals;
-rand_bigf = BigFloat.(rand_vals);
+rand_bigf = rand1_bigf;
 
-@test test_atol(rand_bigf, rand_vals, exp, 1.0e-31)
+@test test_atol(rand_bigf, rand_vals, exp, 1.0e-30)
 @test test_rtol(rand_bigf, rand_vals, exp, 1.0e-30)
 
 @test test_atol(rand_bigf, rand_vals, sin, 1.0e-31)
@@ -115,72 +115,3 @@ rand_bigf = BigFloat.(rand_vals);
 @test test_atol(rand_bigf, rand_vals, asinh, 1.0e-31)
 @test test_rtol(rand_bigf, rand_vals, asinh, 1.0e-27)
 
-@test test_atol(rand_bigf, rand_vals, exp, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, exp, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, log, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, log, 1.0e-31)
-
-@test test_atol(rand_bigf, rand_vals, sin, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, sin, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, cos, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, cos, 1.0e-31)
-
-@test test_atol(rand_bigf, rand_vals, tan, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, asin, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, asin, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, acos, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, acos, 1.0e-29)
-
-@test test_atol(rand_bigf, rand_vals, atan, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, atan, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, sinh, 1.0e-31) # 1.0e-30
-@test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, cosh, 1.0e-31) # 1.0e-30
-@test test_rtol(rand_bigf, rand_vals, cosh, 1.0e-31)
-
-@test test_atol(rand_bigf, rand_vals, tanh, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, tanh, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, asinh, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, asinh, 1.0e-27)
-
-@test test_atol(rand1_bigf, rand1_vals, acosh, 1.0e-30)
-@test test_rtol(rand1_bigf, rand1_vals, acosh, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, atanh, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, atanh, 1.0e-28)
-
-
-rand_vals = rand1_vals;
-rand_bigf = BigFloat.(rand_vals);
-
-@test test_atol(rand_bigf, rand_vals, exp, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, exp, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, sin, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, sin, 1.0e-30)
-
-@test test_atol(rand_bigf, rand_vals, cos, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, cos, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, tan, 1.0e-24)
-@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, sinh, 1.0e-30)
-@test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, cosh, 1.0e-30)
-@test test_rtol(rand_bigf, rand_vals, cosh, 1.0e-31)
-
-@test test_atol(rand_bigf, rand_vals, tanh, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, tanh, 1.0e-28)
-
-@test test_atol(rand_bigf, rand_vals, asinh, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, asinh, 1.0e-27)
