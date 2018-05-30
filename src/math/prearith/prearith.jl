@@ -91,10 +91,10 @@ function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     return DoubleFloat(HI(x), nextfloat(LO(x),n))
 end
 
-eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = eps(eps( one(T) ))
-eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * eps(typeof(x))/2
+eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/2)
+eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * eps(typeof(x))
 
-ulp(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = eps(eps( one(T) ))/4
+ulp(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/4)
 ulp(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * ulp(typeof(x))
 
 
