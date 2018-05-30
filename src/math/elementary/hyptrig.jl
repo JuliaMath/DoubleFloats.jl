@@ -4,9 +4,9 @@ function sinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return nan(typeof(x))
 
     if abs(x.hi) > 0.05
-        ea = exp(a)
-        invea = inv(ea)
-        y = ea - invea
+        ex = exp(x)
+        invex = inv(ex)
+        y = ex - invex
         z = DoubleFloat{T}(y.hi/2, y.lo/2)
     else
         s = x
