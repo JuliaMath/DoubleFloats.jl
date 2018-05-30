@@ -44,16 +44,6 @@ function test_rtol(big_rands, dbl_rands, fn, tol)
     fn_res  = maximum(fn_reldiff) <= tol
     return fn_res
 end
-    T = eltype(dbl_rands)
-    fn_big_rands = map(fn, big_rands)
-    fn_dbl_rands = map(fn, dbl_rands)
-    fn_big_rands, fn_dbl_rands = excise_nans_infs(fn_big_rands, fn_dbl_rands)
-    fn_dblbig_rands = map(T, fn_big_rands)
-    fn_diff = map(abs, fn_dblbig_rands .- fn_dbl_rands)
-    fn_reldiff = fn_diff ./ fn_dblbig_rands
-    fn_res  = maximum(fn_reldiff) <= tol
-    return fn_res
-end
 
 @test test_atol(rand_bigf, rand_vals, exp, 1.0e-31)
 @test test_rtol(rand_bigf, rand_vals, exp, 1.0e-30)
