@@ -1,13 +1,15 @@
 function asinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    result = abs(x)
-    result = result + sqrt(square(result) + 1.0)
+    signbit(x) && return -asinh(abs(x))
+    
+    result = x + sqrt(square(x) + 1.0)
     result = log(result)
-    return copysign(result, x)
+    return result
 end
 
 function acosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 1.0 && throw(DomainError("$x"))
     !isfinite(x) && return nan(typeof(x))
+    
     result = x + sqrt(square(x) - 1.0)
     result = log(result)
     return result
@@ -16,11 +18,22 @@ end
 function atanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     abs(x) > 1.0 && throw(DomainError("$x"))
     !isfinite(x) && return nan(typeof(x))
-    twox = DoubleFloat{T}(x.hi+x.hi, x.lo+x.lo)
-    result = 1.0 + twox / (1.0 - x)
-    result = log(result)
-    result = DoubleFloat{T}(result.hi*0.5, result.lo*0.5)
-    return result
+    
+    if abs(x.hi) == one(T)
+        if x.hi > 0
+            z = posinf(typeof(x))
+        else
+            z = neginf(typeof(x))
+        end
+    else
+        oneplus  = 1.0 + x
+        oneminus = 1.0 - x
+        z = oneplus / oneminus
+        z = log(z)
+        z = DoubleFloat{T}(z.hi/2, z.lo/2)
+    end
+    
+    return z
 end
 
 function acsch(x::DoubleFloat{T}) where {T<:AbstractFloat}
