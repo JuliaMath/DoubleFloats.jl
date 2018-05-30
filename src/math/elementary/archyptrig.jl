@@ -1,3 +1,4 @@
+#=
 function asinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -asinh(abs(x))
     
@@ -63,3 +64,4 @@ function acoth(x::DoubleFloat{T}) where {T<:AbstractFloat}
     result = tanh(result)
     return result
 end
+=#
