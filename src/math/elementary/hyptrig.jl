@@ -32,7 +32,7 @@ function cosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
 
     ex = exp(x)
     invex = inv(ex)
-    y = ea - invea
+    y = ex - invex
     z = DoubleFloat{T}(y.hi/2, y.lo/2)
     
     return z
@@ -44,9 +44,9 @@ function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return nan(typeof(x))
     
     if (abs(x.hi) > 0.05)
-        ea = exp(a)
-        invea = inv(ea)
-        y1 = ea - invea
+        ex = exp(x)
+        invex = inv(ex)
+        y1 = ex - invex
         y2 = ea + invea
         z = y1 / y2
     else
