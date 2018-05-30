@@ -91,16 +91,10 @@ function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     return DoubleFloat(HI(x), nextfloat(LO(x),n))
 end
 
-function eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat}
-    dfloat1 = one(DoubleFloat{T})
-    prev_dfloat = prevfloat(HI(dfloat1))
-    next_dfloat = nextfloat(HI(dfloat1))
-    max(dfloat1-prev_dfloat, next_dfloat-dfloat1)
-end
+eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = eps(eps( one(T) ))
 
-function eps(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    max(x-prevfloat(x), nextfloat(x)-x)
-end
+eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = eps(typeof(x)) * x
+
 
 @inline function intpart(x::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = x
