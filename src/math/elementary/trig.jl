@@ -140,6 +140,25 @@ end
     return result
 end
 
+
+@inline function tan_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    idx = index_npio32(x)
+    pipart = npio32[idx]
+    rest = x - pipart
+    sin_part = sin_npio32[idx]
+    cos_part = cos_npio32[idx]
+    sin_rest, cos_rest = sincos_taylor(rest)
+    sin_result1 = sin_part * cos_rest
+    sin_result2 = cos_part * sin_rest
+    sin_result  = sin_result1 + sin_result2
+    cos_result1 = cos_part * cos_rest
+    cos_result2 = sin_part * sin_rest
+    cos_result  = cos_result1 - cos_result2
+    return sin_result / cos_result
+end
+
+
+
 function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
@@ -216,8 +235,13 @@ end
 
 function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -tan(abs(x))
-    s, c = sincos(x)
-    return s/c
+    iszero(x) && return zero(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    if x >= twopi
+       x = mod2pi(x)
+    end
+    z = tan_circle(x)
+    return z
 end
 
 function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
