@@ -43,7 +43,7 @@ import Base: hash, promote_type, promote_rule, convert,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-import LinearAlgebra: normalize
+# import LinearAlgebra: normalize
 using Random
 
 using AccurateArithmetic
