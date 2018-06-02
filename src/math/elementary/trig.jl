@@ -201,6 +201,30 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
+function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    signbit(x) && return -tan(abs(x))
+    iszero(x) && return zero(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    if x >= twopi
+       x = mod2pi(x)
+    end
+    z = tan_circle(x)
+    return z
+end
+
+function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return inv(sin(x))
+end
+
+function sec(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return inv(cos(x))
+end
+
+function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return inv(tan(x))
+end
+
+#=
 function sincos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     iszero(x) && return zero(typeof(x)), one(typeof(x))
     !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
@@ -232,28 +256,4 @@ end
     return s, c
 end
 
-
-function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    signbit(x) && return -tan(abs(x))
-    iszero(x) && return zero(typeof(x))
-    !isfinite(x) && return nan(typeof(x))
-    if x >= twopi
-       x = mod2pi(x)
-    end
-    z = tan_circle(x)
-    return z
-end
-
-function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    return inv(sin(x))
-end
-
-function sec(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    return inv(cos(x))
-end
-
-function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    signbit(x) && return -cot(abs(x))
-    s, c = sincos(x)
-    return c/s
-end
+=#
