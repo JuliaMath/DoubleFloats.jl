@@ -10,13 +10,13 @@ promote_rule(::Type{DoubleFloat{Float64}}, ::Type{T}) where {T<:Integer} = Doubl
 promote_rule(::Type{DoubleFloat{Float32}}, ::Type{T}) where {T<:Integer} = DoubleFloat{Float32}
 promote_rule(::Type{DoubleFloat{Float16}}, ::Type{T}) where {T<:Integer} = DoubleFloat{Float16}
 
-promote_rule(::Type{DoubleFloat{Float64}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{Float64}
-promote_rule(::Type{DoubleFloat{Float32}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{Float32}
-promote_rule(::Type{DoubleFloat{Float16}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{Float16}
+promote_rule(::Type{DoubleFloat{Float64}}, ::Type{BigInt}) = DoubleFloat{Float64}
+promote_rule(::Type{DoubleFloat{Float32}}, ::Type{BigInt}) = DoubleFloat{Float32}
+promote_rule(::Type{DoubleFloat{Float16}}, ::Type{BigInt}) = DoubleFloat{Float16}
 
-promote_rule(::Type{DoubleFloat{Float64}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{Float64}
-promote_rule(::Type{DoubleFloat{Float32}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{Float32}
-promote_rule(::Type{DoubleFloat{Float16}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{Float16}
+promote_rule(::Type{DoubleFloat{Float64}}, ::Type{BigFloat}) = DoubleFloat{Float64}
+promote_rule(::Type{DoubleFloat{Float32}}, ::Type{BigFloat}) = DoubleFloat{Float32}
+promote_rule(::Type{DoubleFloat{Float16}}, ::Type{BigFloat}) = DoubleFloat{Float16}
 
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{DoubleFloat{DoubleFloat{Float32}}}) = DoubleFloat{DoubleFloat{Float64}}
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{DoubleFloat{DoubleFloat{Float16}}}) = DoubleFloat{DoubleFloat{Float64}}
@@ -40,10 +40,10 @@ promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{T}) where {T<:Int
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{T}) where {T<:Integer} = DoubleFloat{DoubleFloat{Float32}}
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{T}) where {T<:Integer} = DoubleFloat{DoubleFloat{Float16}}
 
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{DoubleFloat{Float64}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{DoubleFloat{Float32}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{T}) where {T<:Base.BigInt} = DoubleFloat{DoubleFloat{Float16}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float64}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float32}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float16}}
 
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{DoubleFloat{Float64}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{DoubleFloat{Float32}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{T}) where {T<:Base.BigFloat} = DoubleFloat{DoubleFloat{Float16}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{BigFloat}) = DoubleFloat{DoubleFloat{Float64}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{BigFloat}) = DoubleFloat{DoubleFloat{Float32}}
+promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{BigFloat}) = DoubleFloat{DoubleFloat{Float16}}
