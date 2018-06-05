@@ -1,19 +1,33 @@
 function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
-    setprecision(BigFloat, max(prec, 256))
+    setprecision(BigFloat, max(prec, 768))
     hi = T(x)
     md = T(x - hi)
     setprecision(BigFloat, prec)
     return hi, lo
 end
 
-double64(x) = double(Float64, x)
-double32(x) = double(Float32, x)
-double16(x) = double(Float16, x)
+function double(::Type{T}, x::String) where {T<:Base.IEEEFloat}
+    prec = precision(BigFloat)
+    setprecision(BigFloat, 768)
+    z = parse(BigFloat, x)
+    hi = T(z)
+    lo = T(z - hi)
+    setprecision(BigFloat, prec)
+    return hi, lo
+end
+
+double64(x::BigFloat) = triple(Float64, x)
+double32(x::BigFloat) = triple(Float32, x)
+double16(x::BigFloat) = triple(Float16, x)
+
+double64(x::String) = triple(Float64, x)
+double32(x::String) = triple(Float32, x)
+double16(x::String) = triple(Float16, x)
 
 function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
-    setprecision(BigFloat, max(prec, 256))
+    setprecision(BigFloat, max(prec, 768))
     x = inv(x)
     hi = T(x)
     md = T(x - hi)
@@ -21,9 +35,9 @@ function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     return hi, lo
 end
 
-double64inv(x) = double_inv(Float64, x)
-double32inv(x) = double_inv(Float32, x)
-double16inv(x) = double_inv(Float16, x)
+double64inv(x::BigFloat) = double_inv(Float64, x)
+double32inv(x::BigFloat) = double_inv(Float32, x)
+double16inv(x::BigFloat) = double_inv(Float16, x)
 
 #=
    algorithms from
