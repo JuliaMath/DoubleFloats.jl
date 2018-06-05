@@ -1,3 +1,10 @@
+function triple(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    hi = T(x)
+    md = T(x - hi)
+    lo = T(x - hi - md)
+    return hi,md,lo
+end
+
 #=
 
 Basic building blocks for a triple-double intermediate format
