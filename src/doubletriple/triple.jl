@@ -1,9 +1,31 @@
 function triple(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    prec = precision(BigFloat)
+    setprecision(BigFloat, max(512, prec))
     hi = T(x)
     md = T(x - hi)
     lo = T(x - hi - md)
+    setprecision(BigFloat, prec)
     return hi,md,lo
 end
+
+triple64(x::BigFloat) = triple(Float64, x)
+triple32(x::BigFloat) = triple(Float32, x)
+triple16(x::BigFloat) = triple(Float16, x)
+
+function triple_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    prec = precision(BigFloat)
+    setprecision(BigFloat, max(512, prec))
+    x = inv(x)
+    hi = T(x)
+    md = T(x - hi)
+    lo = T(x - hi - md)
+    setprecision(BigFloat, prec)
+    return hi,md,lo
+end
+
+triple64inv(x::BigFloat) = triple_inv(Float64, x)
+triple32inv(x::BigFloat) = triple_inv(Float32, x)
+triple16inv(x::BigFloat) = triple_inv(Float16, x)
 
 #=
 
