@@ -50,10 +50,6 @@ promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{BigInt}) = Double
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float32}}
 promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float16}}
 
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float64}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float64}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float32}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float32}}
-promote_rule(::Type{DoubleFloat{DoubleFloat{Float16}}}, ::Type{BigInt}) = DoubleFloat{DoubleFloat{Float16}}
-
 promote_rule(::Type{BigInt}, ::Type{DoubleFloat{DoubleFloat{Float64}}}) = DoubleFloat{DoubleFloat{Float64}}
 promote_rule(::Type{BigInt}, ::Type{DoubleFloat{DoubleFloat{Float32}}}) = DoubleFloat{DoubleFloat{Float32}}
 promote_rule(::Type{BigInt}, ::Type{DoubleFloat{DoubleFloat{Float16}}}) = DoubleFloat{DoubleFloat{Float16}}
