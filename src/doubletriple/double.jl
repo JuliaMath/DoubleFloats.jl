@@ -1,3 +1,8 @@
+function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    hi = T(x)
+    md = T(x - hi)
+    return hi, lo
+end
 #=
    algorithms from
    Mioara Joldes, Jean-Michel Muller, Valentina Popescu.
