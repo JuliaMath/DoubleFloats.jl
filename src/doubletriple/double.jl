@@ -17,13 +17,13 @@ function double(::Type{T}, x::String) where {T<:Base.IEEEFloat}
     return hi, lo
 end
 
-double64(x::BigFloat) = triple(Float64, x)
-double32(x::BigFloat) = triple(Float32, x)
-double16(x::BigFloat) = triple(Float16, x)
+double64(x::BigFloat) = double(Float64, x)
+double32(x::BigFloat) = double(Float32, x)
+double16(x::BigFloat) = double(Float16, x)
 
-double64(x::String) = triple(Float64, x)
-double32(x::String) = triple(Float32, x)
-double16(x::String) = triple(Float16, x)
+double64(x::String) = double(Float64, x)
+double32(x::String) = double(Float32, x)
+double16(x::String) = double(Float16, x)
 
 function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
