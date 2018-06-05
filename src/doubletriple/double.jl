@@ -1,8 +1,30 @@
 function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    prec = precision(BigFloat)
+    setprecision(BigFloat, max(prec, 256))
     hi = T(x)
     md = T(x - hi)
+    setprecision(BigFloat, prec)
     return hi, lo
 end
+
+double64(x) = double(Float64, x)
+double32(x) = double(Float32, x)
+double16(x) = double(Float16, x)
+
+function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+    prec = precision(BigFloat)
+    setprecision(BigFloat, max(prec, 256))
+    x = inv(x)
+    hi = T(x)
+    md = T(x - hi)
+    setprecision(BigFloat, prec)
+    return hi, lo
+end
+
+double64inv(x) = double_inv(Float64, x)
+double32inv(x) = double_inv(Float32, x)
+double16inv(x) = double_inv(Float16, x)
+
 #=
    algorithms from
    Mioara Joldes, Jean-Michel Muller, Valentina Popescu.
