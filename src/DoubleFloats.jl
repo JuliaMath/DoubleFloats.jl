@@ -67,6 +67,7 @@ include("type/parse.jl")
 
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
+include("math/arithmetic/promote.jl")
 include("math/arithmetic/fma.jl")
 include("math/arithmetic/normalize_hypot.jl")
 include("math/ops.jl")
