@@ -2,7 +2,7 @@ function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, max(prec, 768))
     hi = T(x)
-    md = T(x - hi)
+    lo = T(x - hi)
     setprecision(BigFloat, prec)
     return hi, lo
 end
@@ -30,7 +30,7 @@ function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     setprecision(BigFloat, max(prec, 768))
     x = inv(x)
     hi = T(x)
-    md = T(x - hi)
+    lo = T(x - hi)
     setprecision(BigFloat, prec)
     return hi, lo
 end
