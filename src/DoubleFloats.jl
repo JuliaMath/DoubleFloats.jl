@@ -81,7 +81,8 @@ include("math/elementary/trig.jl")
 include("math/elementary/arctrig.jl")
 include("math/elementary/hyptrig.jl")
 include("math/elementary/archyptrig.jl")
-
+include("math/elementary/templated.jl")
+       
 include("extras/random.jl")
 
 
