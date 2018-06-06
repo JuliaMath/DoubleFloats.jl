@@ -38,9 +38,11 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
-       str = string(a[1:BigFloatDigits(T)+1],"e",b)
+       n = min(length(a), BigFloatDigits(T)+1)
+       str = string(a[1:n],"e",b)
     else
-       str = str[1:BigFloatDigits(T)+1]
+       n = min(length(str), BigFloatDigits(T)+1) 
+       str = str[1:n]
     end
     setprecision(Base.BigFloat, prec)
     return str
@@ -54,9 +56,11 @@ function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
-       str = string(a[1:(BigFloatDigits(T)*2+1)],"e",b)
+       n = min(length(a), BigFloatDigits(T)+1)
+       str = string(a[1:n],"e",b)
     else
-       str = str[1:(BigFloatDigits(T)*2+1)]
+       n = min(length(str), BigFloatDigits(T)+1) 
+       str = str[1:n]
     end
     setprecision(Base.BigFloat, prec)
     return str
