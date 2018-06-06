@@ -18,7 +18,7 @@ function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return twopi_df64 - mod2pi(-x)
     x < twopi_df64 && return x
     w1 = mul323(invtwopi_tf64, HILO(x))
-    w2 = ((w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = (w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul332(twopi_tf64, w2)
     z = DoubleF64(y)
     return z
@@ -28,7 +28,7 @@ function modpi(x::DoubleFloat{Float64})
     signbit(x) && return onepi_df64 - modpi(-x)
     x < onepi_df64 && return x
     w1 = mul323(invonepi_tf64, HILO(x))
-    w2 = ((w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = (w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul332(onepi_tf64, w2)
     z = DoubleF64(y)
     return z
@@ -38,7 +38,7 @@ function modhalfpi(x::DoubleFloat{Float64})
     signbit(x) && return halfpi_df64 - modhalfpi(-x)
     x < halfpi_df64 && return x
     w1 = mul323(invhalfpi_tf64, HILO(x))
-    w2 = ((w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = (w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul332(halfpi_tf64, w2)
     z = DoubleF64(y)
     return z
@@ -48,7 +48,7 @@ function modqrtrpi(x::DoubleFloat{Float64})
     signbit(x) && return qrtrpi_df64 - modqrtrpi(-x)
     x < qrtrpi_df64 && return x
     w1 = mul323(invqrtrpi_tf64, HILO(x))
-    w2 = ((w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = (w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul332(qrtrpi_tf64, w2)
     z = DoubleF64(y)
     return z
