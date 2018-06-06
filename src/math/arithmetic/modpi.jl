@@ -98,6 +98,6 @@ function modqrtrpipm(x::DoubleFloat{Float64})
     z = DoubleF64(y)
     return z
 end
-                                
+                                                
 modqrtrpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpipm(DoubleFloat{Float64}(x))
 modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFloat{Float64}(x))
