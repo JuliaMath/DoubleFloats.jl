@@ -24,6 +24,9 @@ function mod2pi(x::DoubleFloat{Float64})
     return z
 end
 
+mod2pi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod2pi(DoubleFloat{Float64}(x))
+mod2pi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod2pi(DoubleFloat{Float64}(x))
+    
 function modpi(x::DoubleFloat{Float64})
     signbit(x) && return onepi_df64 - modpi(-x)
     x < onepi_df64 && return x
@@ -33,6 +36,21 @@ function modpi(x::DoubleFloat{Float64})
     z = DoubleF64(y)
     return z
 end
+
+modpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpi(DoubleFloat{Float64}(x))
+modpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpi(DoubleFloat{Float64}(x))
+
+function modpipm(x::DoubleFloat{Float64})
+    abs(x) < onepi_df64 && return x
+    w1 = mul323(invonepi_tf64, HILO(x))
+    w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    y = mul322(onepi_tf64, w2)
+    z = DoubleF64(y)
+    return z
+end
+
+modpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpipm(DoubleFloat{Float64}(x))
+modpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpipm(DoubleFloat{Float64}(x))
 
 function modhalfpi(x::DoubleFloat{Float64})
     signbit(x) && return halfpi_df64 - modhalfpi(-x)
@@ -44,6 +62,21 @@ function modhalfpi(x::DoubleFloat{Float64})
     return z
 end
 
+modhalfpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpi(DoubleFloat{Float64}(x))
+modhalfpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpi(DoubleFloat{Float64}(x))
+
+function modhalfpipm(x::DoubleFloat{Float64})
+    abs(x) < halfpi_df64 && return x
+    w1 = mul323(invhalfpi_tf64, HILO(x))
+    w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    y = mul322(halfpi_tf64, w2)
+    z = DoubleF64(y)
+    return z
+end
+
+modhalfpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpipm(DoubleFloat{Float64}(x))
+modhalfpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpipm(DoubleFloat{Float64}(x))
+
 function modqrtrpi(x::DoubleFloat{Float64})
     signbit(x) && return qrtrpi_df64 - modqrtrpi(-x)
     x < qrtrpi_df64 && return x
@@ -53,3 +86,18 @@ function modqrtrpi(x::DoubleFloat{Float64})
     z = DoubleF64(y)
     return z
 end
+
+modqrtrpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpi(DoubleFloat{Float64}(x))
+modqrtrpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpi(DoubleFloat{Float64}(x))
+                                        
+function modqrtrpipm(x::DoubleFloat{Float64})
+    abs(x) < qrtrpi_df64 && return x
+    w1 = mul323(invqrtrpi_tf64, HILO(x))
+    w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    y = mul322(qrtrpi_tf64, w2)
+    z = DoubleF64(y)
+    return z
+end
+                                
+modqrtrpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpipm(DoubleFloat{Float64}(x))
+modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFloat{Float64}(x))
