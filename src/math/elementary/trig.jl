@@ -1,5 +1,6 @@
 const twopi  = DoubleF64(6.283185307179586, 2.4492935982947064e-16)
 const onepi  = DoubleF64(3.141592653589793, 1.2246467991473532e-16)
+const halfpi = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
 
 
 #=
@@ -196,8 +197,8 @@ function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -tan(abs(x))
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    if x >= twopi
-       x = mod2pi(x)
+    if x >= halfpi
+       x = modhalfpi(x)
     end
     z = tan_circle(x)
     return z
