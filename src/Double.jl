@@ -72,7 +72,8 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline DoubleF32(hi::T) where {T<:Integer} = DoubleF32(Float32(hi))
 @inline DoubleF16(hi::T) where {T<:Integer} = DoubleF16(Float16(hi))
 
-for (F,D,U) in ((:Float64, :DoubleF64, :(Union{Float32, Float16})), (:Float32, :DoubleF32, :(Union{Float64, Float16})),
+for (F,D,U) in ((:Float64, :DoubleF64, :(Union{Float32, Float16})),
+                (:Float32, :DoubleF32, :(Union{Float64, Float16})),
                 (:Float16, :DoubleF16, :(Union{Float64, Float32})))
   @eval begin
     @inline $D(hi::T, lo::T) where {T<:$U} = $D($F(hi), $F(lo))
@@ -92,6 +93,14 @@ DoubleFloat{T}(x::T, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = Doub
 DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y, DoubleFloat(zero(T))))
 DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x, DoubleFloat(zero(T))), y)
 DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(x,y)
+
+DoubleF64(x::DoubleF32) = DoubleF64(add_2(Float64(HI(x)), Float64(LO(x)))
+DoubleF64(x::DoubleF16) = DoubleF64(add_2(Float64(HI(x)), Float64(LO(x)))
+DoubleF32(x::DoubleF16) = DoubleF32(add_2(Float32(HI(x)), Float32(LO(x)))
+DoubleF32(x::DoubleF64) = DoubleF32(BigFloat(x))
+DoubleF16(x::DoubleF64) = DoubleF16(BigFloat(x))
+DoubleF16(x::DoubleF32) = DoubleF16(BigFloat(x))
+         
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
