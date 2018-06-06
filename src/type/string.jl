@@ -54,7 +54,7 @@ function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
     prec = precision(Base.BigFloat)
     setprecision(Base.BigFloat, BigFloatBits(T)*2)
     bf = Base.BigFloat(x)
-    bf = round(bf, digits=BigFloatDigits(T)*2))
+    bf = round(bf, digits=BigFloatDigits(T)*2)
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
