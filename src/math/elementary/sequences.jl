@@ -422,12 +422,12 @@ const tan_coeff = (
 
 const n_tan_coeff = length(tan_coeff)
 
-
-const odd_bernoulli =
-[ DoubleF64(1.0, 0.0),
-  DoubleF64(0.16666666666666666, 9.25185853854297e-18),
-  DoubleF64(-0.03333333333333333, -4.625929269271486e-19),
-  DoubleF64(0.023809523809523808, 1.32169407693471e-18),
+# bernoulli_even[i] = bernoulli(2*i-2),bernoulli(e) =bernoulli_even[(e+2)>>1]
+const bernoulli_even =
+[ DoubleF64(1.0, 0.0),                                       # 1:0th
+  DoubleF64(0.16666666666666666, 9.25185853854297e-18),      # 2:2nd
+  DoubleF64(-0.03333333333333333, -4.625929269271486e-19),   # 3:4th 
+  DoubleF64(0.023809523809523808, 1.32169407693471e-18),     # 4:6th 
   DoubleF64(-0.03333333333333333, -4.625929269271486e-19),
   DoubleF64(0.07575757575757576, -2.10269512239613e-18),
   DoubleF64(-0.2531135531135531, -1.1061562736192037e-17),
@@ -452,4 +452,4 @@ const odd_bernoulli =
   DoubleF64(7.500866746076964e24, 2.0081412007575756e8)
 ];
 
-const n_odd_bernoulli = length(odd_bernoulli)
+const n_bernoulli_even = length(bernoulli_even)
