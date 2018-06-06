@@ -1,6 +1,6 @@
-DoubleF64(x::DoubleF32) = DoubleF64(FastTwoSum(Float64(HI(x)), Flost64(LO(x)))...,)
-DoubleF64(x::DoubleF16) = DoubleF64(FastTwoSum(Float64(HI(x)), Flost64(LO(x)))...,)
-DoubleF32(x::DoubleF16) = DoubleF32(FastTwoSum(Float32(HI(x)), Flost32(LO(x)))...,)
+DoubleF64(x::DoubleF32) = DoubleF64(FastTwoSum(Float64(HI(x)), Float64(LO(x)))...,)
+DoubleF64(x::DoubleF16) = DoubleF64(FastTwoSum(Float64(HI(x)), Float64(LO(x)))...,)
+DoubleF32(x::DoubleF16) = DoubleF32(FastTwoSum(Float32(HI(x)), Float32(LO(x)))...,)
 
 function DoubleF32(x::DoubleF64)
     hi64, lo64 = HILO(x)
