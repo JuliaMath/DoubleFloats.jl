@@ -26,7 +26,7 @@ end
 
 mod2pi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod2pi(DoubleFloat{Float64}(x)))
 mod2pi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod2pi(DoubleFloat{Float64}(x)))
-    
+
 function modpi(x::DoubleFloat{Float64})
     signbit(x) && return onepi_df64 - modpi(-x)
     x < onepi_df64 && return x
@@ -101,3 +101,32 @@ end
                                                 
 modqrtrpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpipm(DoubleFloat{Float64}(x)))
 modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFloat{Float64}(x)))
+
+
+
+#=
+    rem2pi(x) =  x - 2π*round(x/(2π),r)
+    rem2pi(x, RoundDown) == mod2pi(x)
+
+    •    if r == RoundNearest, then the result is in the interval [-π, π]. This will
+        generally be the most accurate result.
+
+    •    if r == RoundToZero, then the result is in the interval [0, 2π] if x is positive,.
+        or [-2π, 0] otherwise.
+
+    •    if r == RoundDown, then the result is in the interval [0, 2π].
+
+    •    if r == RoundUp, then the result is in the interval [-2π, 0].
+=#
+
+rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod2pi(x)
+rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem2pi(-x, RoundDown)
+rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modpipm(x)
+rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
+    signbit(x) ? rem2pi(x, RoundUp) : rem2pi(x, RoundDown) 
+
+rem2pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+    DoubleFloat{Float32}(rem2pi(DoubleFloat{Float64}(x), rounding))
+rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
+    DoubleFloat{Float16}(rem2pi(DoubleFloat{Float64}(x), rounding))
+
