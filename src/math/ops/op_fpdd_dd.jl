@@ -12,7 +12,9 @@ end
 
 @inline function mul_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = y
-    hi, lo = mul_2(hi, x, lo)
+    hihi, hilo = mul_2(x, hi)
+    lohi, lolo = mul_2(x, lo)
+    hi, lo = add_2(hihi, hilo, lohi, lolo)
     return hi, lo
 end
 
