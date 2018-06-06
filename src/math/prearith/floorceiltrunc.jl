@@ -21,6 +21,7 @@ floor(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(floor
 floor(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(floor(x))
 floor(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(floor(x))
 floor(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(floor(x))
+floor(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(floor(x))
 
 function ceil(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
@@ -44,6 +45,7 @@ ceil(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(ceil(x
 ceil(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(ceil(x))
 ceil(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(ceil(x))
 ceil(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(ceil(x))
+ceil(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(ceil(x))
 
 function trunc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
@@ -58,6 +60,7 @@ trunc(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(trunc
 trunc(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(trunc(x))
 trunc(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(trunc(x))
 trunc(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(trunc(x))
+trunc(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(trunc(x))
 
 
 function round(x::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -73,6 +76,7 @@ round(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(round
 round(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(round(x))
 round(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(round(x))
 round(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(round(x))
+round(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(round(x))
 
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Up}) where {T<:AbstractFloat}
