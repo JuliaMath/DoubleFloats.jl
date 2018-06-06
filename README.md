@@ -23,6 +23,10 @@ The package is registered in `METADATA.jl` and can be installed with `Pkg.add`.
 julia> Pkg.add("DoubleFloats")
 ```
 
+## Proper Use
+
+If your input values are Float64[Float32], map them to Double64[Double32] and proceed with your computation.  Then map the output values to Float64[Float32], and work with those values. Where throughput is important, this manner of us can be applied to particularly sensitive parts of your computation.
+
 ## Questions and Contributions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic"). 
