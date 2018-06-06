@@ -423,6 +423,7 @@ const tan_coeff = (
 
 const n_tan_coeff = length(tan_coeff)
 
+# x^-1, x^1, x^3 ...
 const cot_coeff = (
  DoubleF64(1.0, 0.0),                              
  DoubleF64(-0.3333333333333333, -1.850371707708594e-17),     
