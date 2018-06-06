@@ -31,6 +31,7 @@ end
 @inline BigFloatDigits(::Type{Float16}) =  9
 
 function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    !isfinite(HI(x)) && return string(HI(x))
     prec = precision(Base.BigFloat)
     setprecision(Base.BigFloat, BigFloatBits(T))
     bf = Base.BigFloat(x)
@@ -49,6 +50,7 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
+    !isfinite(HI(HI(x))) && return string(HI(HI(x)))
     prec = precision(Base.BigFloat)
     setprecision(Base.BigFloat, BigFloatBits(T)*2)
     bf = Base.BigFloat(x)
