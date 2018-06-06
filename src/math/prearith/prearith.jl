@@ -102,14 +102,14 @@ ulp(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * ulp(typeof(x))
     hi, lo = x
     ihi = modf(hi)[2]
     ilo = modf(lo)[2]
-    return ihi, ilo
+    return add_2(ihi, ilo)
 end
 
 @inline function fracpart(x::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = x
     fhi = modf(hi)[1]
     flo = modf(lo)[1]
-    return fhi, flo
+    return add_2(fhi, flo)
 end
 
 function intpart(x::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -127,6 +127,8 @@ function modf(x::DoubleFloat{T}) where {T<:AbstractFloat}
     hi, lo = HILO(x)
     fhi, ihi = modf(hi)
     flo, ilo = modf(lo)
+    ihi, ilo = add_2(ihi, ilo)
+    fhi, flo = add_2(fhi, flo)
     i = DoubleFloat(ihi, ilo)
     f = DoubleFloat(fhi, flo)
     return f, i
