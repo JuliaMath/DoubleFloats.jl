@@ -7,18 +7,6 @@ const halfpi = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
 const pio16  = DoubleF64(0.19634954084936207, 7.654042494670958e-18)
 
 
-function mod2pi_pos(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    x < twopi  && return x
-    x < fourpi && return DoubleFloat{T}( x - twopi )
-    x < eightpi && return DoubleFloat{T}( x - fourpi )
-    mod2pi_pos(x - eightpi)
-end
-
-
-function mod2pi(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    !signbit(x) ? mod2pi_pos(x) : DoubleFloat{T}(twopi - mod2pi_pos(-x))
-end
-
 #=
      sin(a) from the Taylor series.
      Assumes |a| <= pi/32.
