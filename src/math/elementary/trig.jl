@@ -74,9 +74,17 @@ function sec_taylor(a::DoubleF64)
 end
 
 function cot_taylor(a::DoubleF64)
-    s, c = sincos_taylor(a)
-    return c/s
-end
+    iszero(a) && return(zero(DoubleF64))
+    a2 = square(a)
+    b = inv(a)
+    r = b
+    for i in 2:n_cot_coeff
+        b = b * a2
+        c = cot_coeff[i] * b
+        r += c
+    end
+    return r
+ end
 
 
 
