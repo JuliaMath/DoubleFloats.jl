@@ -206,25 +206,40 @@ function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 =#
 
-     
+
 function tan(x::DoubleF64)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    x = modhalfpipm(x) 
-    isneg = signbit(HI(x))
-    absx = abs(x)
-    HI(absx) <= 1.8189894035458565e-12 && return x
-    if absx > qrtrpi
-        absx -= qrtrpi
-        tanx  = tan0qrtrpi(absx)
-        tanx  = (1 + tanx)/(1 - tanx)
+    signbit(x) && return -tan(abs(x))
+     x = modpi(x)
+     if x > halfpi
+         x = onepi - x
+         return -tan(x)
+     end
+     HI(x) <= 1.8189894035458565e-12 && return x
+     if x > qrtrpi
+         w = halfpi - x
+          if w >= 0.25
+             tanx = tanqrtrpihalfpi(x)
+           else
+                tanx = inv(tan(w))
+             end
     else
-        tanx  = tan0qrtrpi(absx)
+        tanx  = tan0qrtrpi(x)
     end
-    if isneg
-        tanx = -tanx
-    end
+   
     return tanx
+end
+
+
+function tanqrtrpihalfpi(x::DoubleF64)
+         halfx = DoubleF64(HI(x)*0.5, LO(x)*0.5)
+         tanhalfx = tan0qrtrpi(halfx)
+          numer = DoubleF64(HI(tanhalfx)*2.0, LO(tanhalfx)*2.0)
+          denom = tanhalfx * tanhalfx
+            denom = 1.0 - denom
+              tanx = numer/denom
+            return tanx
 end
 
 const tan0qrtrpi_numercoeffs = [
@@ -263,7 +278,6 @@ function tan0qrtrpi(x::DoubleF64)
      denom = polyval(tan0qrtrpi_denompoly, x)
      return numer/denom
 end
-
 
 tan(x::DoubleF32) = Double32(tan(DoubleF64(x))
 tan(x::DoubleF16) = Double32(tan(DoubleF16(x))
