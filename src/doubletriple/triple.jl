@@ -401,3 +401,31 @@ function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
 
     return hi, md, lo
 end
+
+
+function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    ahi, amd, alo = a
+    bhi, bmd, blo = b
+    
+    hi,t1 = mul_2(ahi, bhi)
+    t2,t3 = mul_2(ahi, bmd)
+    t4,t5 = mul_2(amd, bhi)
+    t6,t7 = mul_2(amd, bmd)
+
+    t8  = ahi * blo
+    t9  = alo * bhi
+    t10 = amd * blo
+    t11 = alo * bmd
+
+    t14, lo = add_hilo_2(t1, t6)
+
+    lo += t7
+    lo += t8  + t9
+    lo += t10 + t11
+    lo += t16 + t17
+    lo += t14
+    lo += t5  + t4
+    lo += t3  + t2
+
+    return hi, lo
+end
