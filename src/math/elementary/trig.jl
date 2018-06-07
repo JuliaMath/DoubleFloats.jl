@@ -192,7 +192,7 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return z
 end
 
-
+#=
 function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -tan(abs(x))
     iszero(x) && return zero(typeof(x))
@@ -203,6 +203,69 @@ function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
     z = tan_circle(x)
     return z
 end
+=#
+
+     
+function tan(x::DoubleF64)
+    iszero(x) && return zero(typeof(x))
+    !isfinite(x) && return nan(typeof(x))
+    x = modhalfpipm(x) 
+    isneg = signbit(HI(x))
+    absx = abs(x)
+    HI(absx) <= 1.8189894035458565e-12 && return x
+    if absx > qrtrpi
+        absx -= qrtrpi
+        tanx  = tan0qrtrpi(absx)
+        tanx  = (1 + tanx)/(1 - tanx)
+    else
+        tanx  = tan0qrtrpi(absx)
+    end
+    if isneg
+        tanx = -tanx
+    end
+    return tanx
+end
+
+const tan0qrtrpi_numercoeffs = [
+ DoubleF64(-4.589387262410812e-34, 3.615269061456329e-50),
+ DoubleF64(-1.1277602868617984, -3.7260835757356473e-17),
+ DoubleF64(0.023504022820282806, -8.687970367035411e-19),
+ DoubleF64(0.15800109650013386, 1.0039888332689995e-17),
+ DoubleF64(-0.0032234179678582767, 7.13543487768582e-20),
+ DoubleF64(-0.00485067399529607, 2.5007870884389995e-19),
+ DoubleF64(9.183636558700604e-5, 6.505326980348073e-21),
+ DoubleF64(4.3378563109937034e-5, -1.5862612770718012e-21),
+ DoubleF64(-6.679371552585612e-7, 2.526644583588966e-24),
+ DoubleF64(-8.978969477885054e-8, 4.807483176770941e-24),
+ DoubleF64(6.62853386447739e-10, 1.0925131977072127e-26)
+];
+
+const tan0qrtrpi_denomcoeffs = [
+ DoubleF64(-1.1277602868617984, -3.726083575735698e-17),
+ DoubleF64(0.023504022820282806, -8.68797036610413e-19),
+ DoubleF64(0.5339211921207333, 5.0215742527305713e-17),
+ DoubleF64(-0.011058092241285879, 2.163933343013038e-19),
+ DoubleF64(-0.03245636645396739, -2.0950660440965625e-18),
+ DoubleF64(0.0006439974033112582, -4.907277021564753e-20),
+ DoubleF64(0.0005359286750031091, 3.4429445937395886e-20),
+ DoubleF64(-9.392512261553479e-6, -6.384836458590209e-22),
+ DoubleF64(-2.4709845162823393e-6, -1.6760465043339782e-22),
+ DoubleF64(3.015269279339435e-8, -8.41236508210075e-25),
+ DoubleF64(1.5859442637424446e-9, 6.30689666197131e-26)
+];
+
+const tan0qrtrpi_numerpoly = Poly(tan0qrtrpi_numercoeffs);
+const tan0qrtrpi_denompoly = Poly(tan0qrtrpi_denomcoeffs);
+
+function tan0qrtrpi(x::DoubleF64)
+     numer = polyval(tan0qrtrpi_numerpoly, x)
+     denom = polyval(tan0qrtrpi_denompoly, x)
+     return numer/denom
+end
+
+
+tan(x::DoubleF32) = Double32(tan(DoubleF64(x))
+tan(x::DoubleF16) = Double32(tan(DoubleF16(x))
 
 function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(sin(x))
