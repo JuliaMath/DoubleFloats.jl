@@ -168,7 +168,9 @@ function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return s, c
 end
 
-
+# for details on the use of asin(0.9) below
+# q.v. Nelson H.F. Beebe, The Mathematical-Function Computation Handbook (p 306)
+ 
 
 function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -sin(abs(x))
@@ -177,7 +179,18 @@ function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= twopi
        x = mod2pi(x)
     end
-    z = sin_circle(x)
+    if HI(x) < 1.1197695149986342 # asin(0.9) 
+       z = sin_circle(x)
+    else
+       y = DoubleF64(x)
+       y = DoubleF64(HI(y)*0.5, LO(y)*0.5)
+       a = sub232(HILO(y), pi_1o4_t64)
+       y = DoubleF64(a)
+       y = sin_circle(y)
+       y = square(y)
+       y = DoubleF64(HI(y)*2.0, LO(y)*2.0)
+       z = 1.0 - y
+    end
     return z
 end
 
@@ -279,8 +292,8 @@ function tan0qrtrpi(x::DoubleF64)
      return numer/denom
 end
 
-tan(x::DoubleF32) = Double32(tan(DoubleF64(x))
-tan(x::DoubleF16) = Double32(tan(DoubleF16(x))
+tan(x::DoubleF32) = Double32(tan(DoubleF64(x)))
+tan(x::DoubleF16) = Double32(tan(DoubleF16(x)))
 
 function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(sin(x))
