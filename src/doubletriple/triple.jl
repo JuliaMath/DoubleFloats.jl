@@ -372,3 +372,32 @@ mul233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
 mul232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
     mul322(b,a)
 
+
+function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
+    ahi, amd, alo = a
+    bhi, bmd, blo = b
+    
+    hi,t1 = mul_2(ahi, bhi)
+    t2,t3 = mul_2(ahi, bmd)
+    t4,t5 = mul_2(amd, bhi)
+    t6,t7 = mul_2(amd, bmd)
+
+    t8  = ahi * blo
+    t9  = alo * bhi
+    t10 = amd * blo
+    t11 = alo * bmd
+    t12 = t8  + t9
+    t13 = t10 + t11
+
+    t14, t15 = add_hilo_2(t1, t6)
+
+    t16 = t7  + t15
+    t17 = t12 + t13
+    t18 = t16 + t17
+
+    t19, t20 = add_hilo_2(t14, t18)
+    t21, t22 = add_hilo_2(t2, t3, t4, t5)
+    md,  lo  = add_hilo_2(t21, t22, t19, t20)
+
+    return hi, md, lo
+end
