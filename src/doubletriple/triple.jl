@@ -43,13 +43,10 @@ triple32inv(x::BigFloat) = triple_inv(Float32, x)
 triple16inv(x::BigFloat) = triple_inv(Float16, x)
 
 #=
-
 Basic building blocks for a triple-double intermediate format
 Christoph Quirin Lauter
 Thème NUM — Systèmes numériques, Projet Arénaire
 Rapport de recherche n 5702 — Septembre 2005 — 67 pages
-
-
 =#
 
 # Algorithm 3.3
@@ -376,7 +373,7 @@ mul232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
 function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     ahi, amd, alo = a
     bhi, bmd, blo = b
-    
+
     hi,t1 = mul_2(ahi, bhi)
     t2,t3 = mul_2(ahi, bmd)
     t4,t5 = mul_2(amd, bhi)
@@ -406,7 +403,7 @@ end
 function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     ahi, amd, alo = a
     bhi, bmd, blo = b
-    
+
     hi,t1 = mul_2(ahi, bhi)
     t2,t3 = mul_2(ahi, bmd)
     t4,t5 = mul_2(amd, bhi)
