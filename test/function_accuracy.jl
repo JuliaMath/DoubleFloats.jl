@@ -58,7 +58,7 @@ end
 @test test_rtol(rand_bigf, rand_vals, cos, 1.0e-31)
 
 @test test_atol(rand_bigf, rand_vals, tan, 1.0e-31)
-@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-30)
+@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-29)
 
 @test test_atol(rand_bigf, rand_vals, asin, 1.0e-31)
 @test test_rtol(rand_bigf, rand_vals, asin, 1.0e-30)
@@ -100,8 +100,8 @@ rand_bigf = rand1_bigf;
 @test test_atol(rand_bigf, rand_vals, cos, 1.0e-31)
 @test test_rtol(rand_bigf, rand_vals, cos, 1.0e-28)
 
-@test test_atol(rand_bigf, rand_vals, tan, 1.0e-24)
-@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-28)
+@test test_atol(rand_bigf, rand_vals, tan, 1.0e-25)
+@test test_rtol(rand_bigf, rand_vals, tan, 1.0e-29)
 
 @test test_atol(rand_bigf, rand_vals, sinh, 1.0e-30)
 @test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-28)
