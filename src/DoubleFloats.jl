@@ -55,7 +55,9 @@ using AccurateArithmetic
 include("Double.jl")   # DoubleF64, DoubleF16, DoubleF16 
 
 include("doubletriple/double.jl")
+include("doubletriple/double_consts.jl")
 include("doubletriple/triple.jl")
+include("doubletriple/triple_consts.jl")
 
 include("type/constructors.jl")
 include("type/promote.jl")
