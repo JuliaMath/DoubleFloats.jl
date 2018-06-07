@@ -24,6 +24,8 @@ else
     export isone
 end
 
+using Polynomials
+
 # using LinearAlgebra
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse,
