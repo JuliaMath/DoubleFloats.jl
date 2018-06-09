@@ -292,8 +292,6 @@ function tan0qrtrpi(x::DoubleF64)
      return numer/denom
 end
 
-tan(x::DoubleF32) = Double32(tan(DoubleF64(x)))
-tan(x::DoubleF16) = Double32(tan(DoubleF16(x)))
 
 function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(sin(x))
