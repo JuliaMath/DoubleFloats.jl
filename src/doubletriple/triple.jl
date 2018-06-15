@@ -87,6 +87,7 @@ function add222(ahilo, bhilo)
     return zhi, zlo
 end
 
+
 # Algorithm 4.6  (relerr 16 u^2)
 
 function mul222(ahilo, bhilo)
@@ -176,6 +177,24 @@ end
 @inline function add223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return add223(a[1], a[2]f, b[1], b[2])
 end
+
+
+function add313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
+    zhi, t1 = add_2(ahi, b)
+    t7, t4 = add_2(t1, amd)
+    t8 = t4 + alo
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+add133(b::T, ahi::T, amd::T, alo::T) where {T<:AbstractFloat} = add313(ahi, amd, alo, b)
+
+add313(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+    add313(a[1], a[2], a[3], b)
+    
+add133(b::Tuple(T), a::Tuple(T,T,T)) where {T<:AbstractFloat} =
+    add313(a[1], a[2], a[3], b)
+
 
 # subtraction
 
@@ -277,6 +296,30 @@ end
 @inline function sub223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return sub223(a[1], a[2], b[1], b[2])
 end
+
+
+function sub313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, b)
+    t7, t4 = add_2(t1, amd)
+    t8 = t4 + alo
+    zmd, zlo = add_2(t7, t8)
+    return zhi, zmd, zlo
+end
+
+function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
+    zhi, t1 = sub_2(ahi, b)
+    t7, t4 = add_2(t1, amd)
+    zlo = t4 + alo
+    zlo += t7
+    return zhi, zlo
+end
+
+sub313(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+    sub313(a[1], a[2], a[3], b)
+
+sub312(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+    sub312(a[1], a[2], a[3], b)
+
 
 # Algorithm 6.1
 # (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
