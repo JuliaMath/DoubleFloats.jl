@@ -1,13 +1,15 @@
+#=
 DoubleFloat{Float64}(x::Float64) = DoubleFloat{Float64}(x, zero(Float64))
 DoubleFloat{Float32}(x::Float64) = DoubleFloat{Float32}(x, zero(Float64))
 DoubleFloat{Float16}(x::Float16) = DoubleFloat{Float16}(x, zero(Float16))
 
+DoubleFloat{T}(x::F) where {T<:IEEEFloat,F<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
+DoubleFloat{T}(x::I) where {T<:IEEEFloat,I<:Signed} = DoubleFloat{T}(BigFloat(x))
+=#
+
 Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
-
-DoubleFloat{T}(x::F) where {T<:IEEEFloat,F<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
-DoubleFloat{T}(x::I) where {T<:IEEEFloat,I<:Signed} = DoubleFloat{T}(BigFloat(x))
 
 Int128(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
 Int64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int64(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
