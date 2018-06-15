@@ -426,3 +426,68 @@ function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
 
     return hi, lo
 end
+
+
+function mul313(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
+  ahi, amd, alo = a
+  p0,q0 = mul_2(ahi, b)
+  p2,q2 = mul_2(amd, b)
+  p5,q5 = mul_2(alo, b)
+
+  # Start Accumulation
+  p1,p2 = add_2(p2, q0)
+
+  # Six-Three Sum  of p2, q1, q2, p3, 0, p5
+  p2,q1,q2 = add_3(p2, q1, q2)
+
+  # compute (s0, s1, s2) = (p2, q1, q2) + (p3, p4, p5)
+  s0,t0 = add_2(p2, p5)
+  s1,t1 = add_2(q1, 0)
+  s2 = q2
+  s1,t0 = add_2(s1, t0)
+  s2 += (t0 + t1)
+
+  # O(eps^3) order terms
+  s1 += q0 + q5
+  #p0,p1,s0 = renormAs3(p0, p1, s0, s1+s2)
+  s1 += s2
+  s0,s1 = add_hilo_2(s0,s1)
+  p1,s0 = add_hilo_2(p1,s0)
+  p0,p1 = add_hilo_2(p0,p1)
+
+  return p0,p1,s0
+end
+
+mul133(a::Tuple{T], b::Tuple{T,T,T}) where {T<:AbstractFloat} = mul313(b, a)
+    
+function mul312(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
+  ahi, amd, alo = a
+  p0,q0 = mul_2(ahi, b)
+  p2,q2 = mul_2(amd, b)
+  p5,q5 = mul_2(alo, b)
+
+  # Start Accumulation
+  p1,p2 = add_2(p2, q0)
+
+  # Six-Three Sum  of p2, q1, q2, p3, 0, p5
+  p2,q1,q2 = add_3(p2, q1, q2)
+
+  # compute (s0, s1, s2) = (p2, q1, q2) + (p3, p4, p5)
+  s0,t0 = add_2(p2, p5)
+  s1,t1 = add_2(q1, 0)
+  s2 = q2
+  s1,t0 = add_2(s1, t0)
+  s2 += (t0 + t1)
+
+  # O(eps^3) order terms
+  s1 += q0 + q5
+  #p0,p1,s0 = renormAs3(p0, p1, s0, s1+s2)
+  s1 += s2
+  s0 += s1
+  p1 += s0
+  p0,p1 = add_hilo_2(p0,p1)
+
+  return p0,p1
+end
+
+mul132(a::Tuple{T], b::Tuple{T,T,T}) where {T<:AbstractFloat} = mul312(b, a)
