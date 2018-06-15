@@ -181,15 +181,12 @@ function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
     if HI(x) < 1.1197695149986342 # asin(0.9) 
        z = sin_circle(x)
+    elseif x >= onepi
+       z = -sin_circle(x - onepi)
+    elseif x >= halfpi
+       z = -cos_circle(x - halfpi)
     else
-       y = DoubleF64(x)
-       y = DoubleF64(HI(y)*0.5, LO(y)*0.5)
-       a = sub232(HILO(y), pi_1o4_t64)
-       y = DoubleF64(a)
-       y = sin_circle(y)
-       y = square(y)
-       y = DoubleF64(HI(y)*2.0, LO(y)*2.0)
-       z = 1.0 - y
+       z = sin_circle(x)
     end
     return z
 end
@@ -202,7 +199,13 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= twopi
        x = mod2pi(x)
     end
-    z = cos_circle(x)
+    if x >= onepi
+       z = -cos_circle(x - onepi)
+    elseif x >= halfpi
+       z = sin_circle(x - halfpi)
+    else
+       z = cos_circle(x)
+    end
     return z
 end
 
@@ -304,37 +307,3 @@ end
 function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(tan(x))
 end
-
-#=
-function sincos(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    iszero(x) && return zero(typeof(x)), one(typeof(x))
-    !isfinite(x) && return nan(typeof(x)), nan(typeof(x))
-    if !signbit(x)
-       sincos_posx(x)
-    else
-       sincos_negx(x)
-    end
-end
-
-
-@inline function sincos_posx(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    if x >= twopi
-       x = mod2pi(x)
-    end
-    s = sin_circle(x)
-    c = cos_circle(x)
-    return s, c
-end
-
-
-@inline function sincos_negx(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    x = abs(x)
-    if x >= twopi
-       x = mod2pi(x)
-    end
-    s = -sin_circle(x)
-    c = cos_circle(x)
-    return s, c
-end
-
-=#
