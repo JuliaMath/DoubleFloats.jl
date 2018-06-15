@@ -6,6 +6,10 @@ Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
 
+DoubleFloat{Float64}(x::Int64) = DoubleFloat{Float64}(BigFloat(x)) 
+DoubleFloat{Float32}(x::Int32) = DoubleFloat{Float32}(BigFloat(x)) 
+DoubleFloat{Float16}(x::Int16) = DoubleFloat{Float16}(BigFloat(x)) 
+
 DoubleFloat{T}(x::Int128) where {T<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
 DoubleFloat{T}(x::Int64) where {T<:IEEEFloat}  = DoubleFloat{T}(BigFloat(x))
 DoubleFloat{T}(x::Int32) where {T<:IEEEFloat}  = DoubleFloat{T}(BigFloat(x))
