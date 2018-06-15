@@ -1,4 +1,7 @@
-DoubleFloat{T}(x::T) where {T<:IEEEFloat} = DoubleFloat{T}(x, zero(T))
+DoubleFloat{Float64}(x::Float64) = DoubleFloat{Float64}(x, zero(Float64))
+DoubleFloat{Float32}(x::Float64) = DoubleFloat{Float32}(x, zero(Float64))
+DoubleFloat{Float16}(x::Float16) = DoubleFloat{Float16}(x, zero(Float16))
+
 Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
