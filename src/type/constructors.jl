@@ -6,22 +6,8 @@ Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
 
-DoubleFloat{Float64}(x::Int64) = DoubleFloat{Float64}(BigFloat(x)) 
-DoubleFloat{Float32}(x::Int32) = DoubleFloat{Float32}(BigFloat(x)) 
-DoubleFloat{Float16}(x::Int16) = DoubleFloat{Float16}(BigFloat(x)) 
-
-DoubleFloat{T}(x::Int128) where {T<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
-DoubleFloat{T}(x::Int64) where {T<:IEEEFloat}  = DoubleFloat{T}(BigFloat(x))
-DoubleFloat{T}(x::Int32) where {T<:IEEEFloat}  = DoubleFloat{T}(BigFloat(x))
-DoubleFloat{T}(x::Int16) where {T<:IEEEFloat}  = DoubleFloat{T}(BigFloat(x))
-
-DoubleF64(x::Int32) = DoubleFloat{Float64}(Float64(x))
-DoubleF64(x::Int16) = DoubleFloat{Float64}(Float64(x))
-DoubleF64(x::Int8)  = DoubleFloat{Float64}(Float64(x))
-DoubleF32(x::Int16) = DoubleFloat{Float32}(Float32(x))
-DoubleF32(x::Int8)  = DoubleFloat{Float32}(Float32(x))
-DoubleF16(x::Int8)  = DoubleFloat{Float16}(Float16(x))
-
+DoubleFloat{T}(x::F) where {T<:IEEEFloat,F<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
+DoubleFloat{T}(x::I) where {T<:IEEEFloat,I<:Signed} = DoubleFloat{T}(BigFloat(x))
 
 Int128(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
 Int64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int64(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
