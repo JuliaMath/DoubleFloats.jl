@@ -184,7 +184,7 @@ function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     elseif x >= onepi
        z = -sin_circle(x - onepi)
     elseif x >= halfpi
-       z = -cos_circle(x - halfpi)
+       z = cos_circle(x - halfpi)
     else
        z = sin_circle(x)
     end
