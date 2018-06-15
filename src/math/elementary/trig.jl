@@ -202,7 +202,7 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= onepi
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
-       z = sin_circle(x - halfpi)
+       z = -sin_circle(x - halfpi)
     else
        z = cos_circle(x)
     end
