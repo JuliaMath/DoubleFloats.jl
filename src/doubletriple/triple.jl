@@ -501,7 +501,7 @@ function mul313(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
   return p0,p1,s0
 end
 
-mul133(a::Tuple{T], b::Tuple{T,T,T}) where {T<:AbstractFloat} = mul313(b, a)
+mul133(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:AbstractFloat} = mul313(b, a)
     
 function mul312(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
