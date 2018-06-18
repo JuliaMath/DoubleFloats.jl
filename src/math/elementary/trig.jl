@@ -168,9 +168,6 @@ function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return s, c
 end
 
-# for details on the use of asin(0.9) below
-# q.v. Nelson H.F. Beebe, The Mathematical-Function Computation Handbook (p 306)
- 
 
 function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -sin(abs(x))
@@ -200,7 +197,7 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= onepi
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
-       z = sin_circle(x - halfpi)
+       z = -sin_circle(x - halfpi)
     else
        z = cos_circle(x)
     end
