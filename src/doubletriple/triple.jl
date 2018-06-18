@@ -189,10 +189,10 @@ end
 
 add133(b::T, ahi::T, amd::T, alo::T) where {T<:AbstractFloat} = add313(ahi, amd, alo, b)
 
-add313(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+add313(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     add313(a[1], a[2], a[3], b[1])
     
-add133(b::Tuple(T), a::Tuple(T,T,T)) where {T<:AbstractFloat} =
+add133(b::NTuple{1,T}, a::NTuple{3,T}) where {T<:AbstractFloat} =
     add313(a[1], a[2], a[3], b[1])
 
 
@@ -314,10 +314,10 @@ function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     return zhi, zlo
 end
 
-sub313(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+sub313(a::NTuple{3,T}, b::NTuple{T,1}) where {T<:AbstractFloat} =
     sub313(a[1], a[2], a[3], b)
 
-sub312(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
+sub312(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     sub312(a[1], a[2], a[3], b)
 
 
