@@ -179,9 +179,7 @@ function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= twopi
        x = mod2pi(x)
     end
-    if HI(x) < 1.1197695149986342 # asin(0.9) 
-       z = sin_circle(x)
-    elseif x >= onepi
+    if x >= onepi
        z = -sin_circle(x - onepi)
     elseif x >= halfpi
        z = cos_circle(x - halfpi)
@@ -202,7 +200,7 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if x >= onepi
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
-       z = -sin_circle(x - halfpi)
+       z = sin_circle(x - halfpi)
     else
        z = cos_circle(x)
     end
@@ -307,3 +305,4 @@ end
 function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(tan(x))
 end
+
