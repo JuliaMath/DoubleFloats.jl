@@ -190,10 +190,10 @@ end
 add133(b::T, ahi::T, amd::T, alo::T) where {T<:AbstractFloat} = add313(ahi, amd, alo, b)
 
 add313(a::Tuple(T,T,T), b::Tuple(T)) where {T<:AbstractFloat} =
-    add313(a[1], a[2], a[3], b)
+    add313(a[1], a[2], a[3], b[1])
     
 add133(b::Tuple(T), a::Tuple(T,T,T)) where {T<:AbstractFloat} =
-    add313(a[1], a[2], a[3], b)
+    add313(a[1], a[2], a[3], b[1])
 
 
 # subtraction
