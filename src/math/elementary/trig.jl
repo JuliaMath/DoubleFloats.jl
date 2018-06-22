@@ -204,67 +204,26 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return z
 end
 
-#=
-function tan(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    signbit(x) && return -tan(abs(x))
-    iszero(x) && return zero(typeof(x))
-    !isfinite(x) && return nan(typeof(x))
-    if x >= halfpi
-       x = modhalfpi(x)
-    end
-    z = tan_circle(x)
-    return z
-end
-=#
-
 
 function tan(x::DoubleF64)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
-    signbit(x) && return -tan(abs(x))
+    signbit(x) && return -tan(-x)
     
     y = modpi(x)
-    y >= halfpi && return tan(x - onepi)
-    if y >= qrtrpi
+    if y >= halfpi
+        y = value_minus_pi(y)
+        return tan(y)
+    elseif y >= qrtrpi
+        y = value_minus_qrtrpi(y)
         t = tan(y)
-        tanx = (1 + t) / (1 - t)
-        return tanx
+        return (1+t)/(1-t)
     end
-    tan_circle(y)
+    return tan_circle(y)
 end
 
 
-#=     
-     x = modhalfpipm(x)
-     if x > halfpi
-         x = onepi - x
-         return -tan(x)
-     end
-     HI(x) <= 1.8189894035458565e-12 && return x
-     if x > qrtrpi
-         w = halfpi - x
-          if w >= 0.25
-             tanx = tanqrtrpihalfpi(x)
-           else
-                tanx = inv(tan(w))
-             end
-    else
-        tanx  = tan0qrtrpi(x)
-    end
-   
-    return tanx
-end
 
-function tanqrtrpihalfpi(x::DoubleF64)
-         halfx = DoubleF64(HI(x)*0.5, LO(x)*0.5)
-         tanhalfx = tan0qrtrpi(halfx)
-          numer = DoubleF64(HI(tanhalfx)*2.0, LO(tanhalfx)*2.0)
-          denom = tanhalfx * tanhalfx
-            denom = 1.0 - denom
-              tanx = numer/denom
-            return tanx
-end
-=#
 
 const tan0qrtrpi_numercoeffs = [
  DoubleF64(-4.589387262410812e-34, 3.615269061456329e-50),
