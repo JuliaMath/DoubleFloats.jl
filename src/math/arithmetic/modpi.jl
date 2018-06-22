@@ -3,6 +3,24 @@ const onepi_df64  = DoubleF64(3.141592653589793, 1.2246467991473532e-16)
 const halfpi_df64 = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
 const qrtrpi_df64 = DoubleF64(0.7853981633974483, 3.061616997868383e-17)
 
+const pi_1o1_t64_hi = pi_1o1_t64[1]
+const pi_1o1_t64_md = pi_1o1_t64[2]
+const pi_1o1_t64_lo = pi_1o1_t64[3]
+
+const pi_1o4_t64_hi = pi_1o4_t64[1]
+const pi_1o4_t64_md = pi_1o4_t64[2]
+const pi_1o4_t64_lo = pi_1o4_t64[3]
+
+function x_minus_pi(x::DoubleFloat{Float64})
+    hi, lo = sub232(HI(x), LO(x), pi_1o1_t64_hi, pi_1o1_t64_md, pi_1o1_t64_lo)
+    return DoubleFloat{Float64}(hi, lo)
+end
+
+function x_minus_qrtrpi(x::DoubleFloat{Float64})
+    hi, lo = sub232(HI(x), LO(x), pi_1o4_t64_hi, pi_1o4_t64_md, pi_1o4_t64_lo)
+    return DoubleFloat{Float64}(hi, lo)
+end
+
 
 function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return mod2pi_neg(x)
