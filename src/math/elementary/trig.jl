@@ -222,7 +222,20 @@ function tan(x::DoubleF64)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(abs(x))
-     x = modpi(x)
+    
+    y = modpi(x)
+    y >= halfpi && return tan(x - onepi)
+    if y >= qrtrpi
+        t = tan(y)
+        tanx = (1 + t) / (1 - t)
+        return tanx
+    end
+    tan_circle(y)
+end
+
+
+#=     
+     x = modhalfpipm(x)
      if x > halfpi
          x = onepi - x
          return -tan(x)
@@ -242,7 +255,6 @@ function tan(x::DoubleF64)
     return tanx
 end
 
-
 function tanqrtrpihalfpi(x::DoubleF64)
          halfx = DoubleF64(HI(x)*0.5, LO(x)*0.5)
          tanhalfx = tan0qrtrpi(halfx)
@@ -252,6 +264,7 @@ function tanqrtrpihalfpi(x::DoubleF64)
               tanx = numer/denom
             return tanx
 end
+=#
 
 const tan0qrtrpi_numercoeffs = [
  DoubleF64(-4.589387262410812e-34, 3.615269061456329e-50),
