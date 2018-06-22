@@ -11,12 +11,12 @@ const pi_1o4_t64_hi = pi_1o4_t64[1]
 const pi_1o4_t64_md = pi_1o4_t64[2]
 const pi_1o4_t64_lo = pi_1o4_t64[3]
 
-function x_minus_pi(x::DoubleFloat{Float64})
+function value_minus_pi(x::DoubleFloat{Float64})
     hi, lo = sub232(HI(x), LO(x), pi_1o1_t64_hi, pi_1o1_t64_md, pi_1o1_t64_lo)
     return DoubleFloat{Float64}(hi, lo)
 end
 
-function x_minus_qrtrpi(x::DoubleFloat{Float64})
+function value_minus_qrtrpi(x::DoubleFloat{Float64})
     hi, lo = sub232(HI(x), LO(x), pi_1o4_t64_hi, pi_1o4_t64_md, pi_1o4_t64_lo)
     return DoubleFloat{Float64}(hi, lo)
 end
