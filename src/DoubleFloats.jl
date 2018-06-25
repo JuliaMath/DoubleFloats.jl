@@ -16,13 +16,8 @@ export DoubleFloat,
        #spread, sld, tld,
        #signs
 
-if VERSION >= v"0.7.0-"
-    import Base: IEEEFloat, isone
-    using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
-else
-    const IEEEFloat = Union{Float64, Float32, Float16}
-    export isone
-end
+import Base: IEEEFloat, isone
+using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
 using Polynomials
 
