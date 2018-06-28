@@ -1,24 +1,24 @@
-function typedstring(x::DoubleF64)
+function stringtyped(x::DoubleF64)
     str = string("DoubleF64(", HI(x), ", ", LO(x), ")")
     return str
 end
-function typedstring(x::DoubleF32)
+function stringtyped(x::DoubleF32)
     str = string("DoubleF32(", HI(x), ", ", LO(x), ")")
     return str
 end
-function typedstring(x::DoubleF16)
+function stringtyped(x::DoubleF16)
     str = string("DoubleF16(", HI(x), ", ", LO(x), ")")
     return str
 end
-function typedstring(x::QuadrupleF64)
+function stringtyped(x::QuadrupleF64)
     str = string("QuadrupleF64(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
     return str
 end
-function typedstring(x::QuadrupleF32)
+function stringtyped(x::QuadrupleF32)
     str = string("QuadrupleF32(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
     return str
 end
-function typedstring(x::QuadrupleF16)
+function stringtyped(x::QuadrupleF16)
     str = string("QuadrupleF16(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
     return str
 end
