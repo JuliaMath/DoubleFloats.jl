@@ -19,6 +19,7 @@ export DoubleFloat,
 import Base: IEEEFloat, isone
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
+using LinearAlgebra
 using Polynomials
 
 # using LinearAlgebra
