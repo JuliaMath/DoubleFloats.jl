@@ -7,7 +7,7 @@ abstract type MultipartFloat <: AbstractFloat end
 export DoubleFloat,
        DoubleF64, DoubleF32, DoubleF16,
        MultipartFloat, HI, LO, HILO,
-       typedstring, showtyped,
+       stringtyped, showtyped,
        isnonzero, ispos, isneg, isnonpos, isnonneg,
        isposinf, isneginf, isfractional,
        nan, inf, posinf, neginf,
