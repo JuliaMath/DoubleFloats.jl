@@ -34,7 +34,7 @@ julia> x = sqrt(DoubleF64(2)) / sqrt(DoubleF64(6));
 
 julia> string(x)
 "5.7735026918962576450914878050194151e-01"
-julia> typedstring(x)
+julia> stringtyped(x)
 "DoubleF64(0.5773502691896257, 3.3450280739356326e-17)"
 
 julia> show(x)
