@@ -38,6 +38,13 @@ These are the predicates made available for use with DoubleFloats:
  - sinh, cosh, tanh, csch, sech, coth
  - asinh, acosh, atanh, acsch, asech, acoth
 
+#### linear algebra
+ - isdiag, ishermitian, isposdef, issymmetric, istril, istriu
+ - norm, det, dot, tr, condskeel, logdet, logabsdet
+ - transpose, adjoint, tril, triu
+ - diag, diagind
+ - factorize, lu, lufact, qr, qrfact
+ 
 #### also
  - random values in [0,1)
  
