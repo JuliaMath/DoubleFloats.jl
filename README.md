@@ -30,17 +30,20 @@ If your input values are Float64[Float32], map them to Double64[Double32] and pr
 ## Examples
 
 ```julia
-julia> x = DoubleF64(sqrt(2))/DoubleF64(sqrt(6));
+julia> x = sqrt(DoubleF64(2)) / sqrt(DoubleF64(6));
 
 julia> string(x)
-"5.7735026918962585509048999159964415e-01"
+"5.7735026918962576450914878050194151e-01"
 julia> typedstring(x)
-"DoubleF64(0.5773502691896258, 1.3009319487938375e-17)"
+"DoubleF64(0.5773502691896257, 3.3450280739356326e-17)"
 
 julia> show(x)
-5.7735026918962585509048999159964415e-01
+5.7735026918962576450914878050194151e-01
 julia> showtyped(x)
-DoubleF64(0.5773502691896258, 1.3009319487938375e-17)
+DoubleF64(0.5773502691896257, 3.3450280739356326e-17)
+
+julia> 1 - x * inv(x)
+0.0
 ```
 
 ## Questions and Contributions
