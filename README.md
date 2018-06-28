@@ -27,6 +27,22 @@ julia> Pkg.add("DoubleFloats")
 
 If your input values are Float64[Float32], map them to Double64[Double32] and proceed with your computation.  Then map the output values to Float64[Float32], and work with those values. Where throughput is important, this manner of us can be applied to particularly sensitive parts of your computation.
 
+## Examples
+
+```julia
+julia> x = DoubleF64(sqrt(2))/DoubleF64(sqrt(6));
+
+julia> string(x)
+"5.7735026918962585509048999159964415e-01"
+julia> typedstring(x)
+"DoubleF64(0.5773502691896258, 1.3009319487938375e-17)"
+
+julia> show(x)
+5.7735026918962585509048999159964415e-01
+julia> showtyped(x)
+DoubleF64(0.5773502691896258, 1.3009319487938375e-17)
+```
+
 ## Questions and Contributions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic"). 
