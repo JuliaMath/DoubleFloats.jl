@@ -11,11 +11,11 @@ Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
 
-Int128(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
-Int64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int64(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
-Int32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int32(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
-Int16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
-Int8(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int8(round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
+Int128(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
+Int64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int64(round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
+Int32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int32(round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
+Int16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
+Int8(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int8(round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))))
 
 Base.BigFloat(x::DoubleFloat{T}) where {T<:AbstractFloat} = Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))
 

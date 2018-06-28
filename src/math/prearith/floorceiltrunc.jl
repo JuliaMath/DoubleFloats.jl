@@ -17,11 +17,11 @@ function floor(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
 end
 
-floor(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(floor(x))
-floor(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(floor(x))
-floor(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(floor(x))
-floor(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(floor(x))
-floor(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(floor(x))
+floor(::Type{Int128}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(floor(x))
+floor(::Type{Int64}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(floor(x))
+floor(::Type{Int32}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(floor(x))
+floor(::Type{Int16}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(floor(x))
+floor(::Type{Integer}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(floor(x))
 
 function ceil(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
@@ -41,11 +41,11 @@ function ceil(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
 end
 
-ceil(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(ceil(x))
-ceil(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(ceil(x))
-ceil(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(ceil(x))
-ceil(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(ceil(x))
-ceil(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(ceil(x))
+ceil(::Type{Int128}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(ceil(x))
+ceil(::Type{Int64}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(ceil(x))
+ceil(::Type{Int32}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(ceil(x))
+ceil(::Type{Int16}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(ceil(x))
+ceil(::Type{Integer}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(ceil(x))
 
 function trunc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
@@ -56,11 +56,11 @@ function trunc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
 end
 
-trunc(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(trunc(x))
-trunc(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(trunc(x))
-trunc(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(trunc(x))
-trunc(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(trunc(x))
-trunc(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(trunc(x))
+trunc(::Type{Int128}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(trunc(x))
+trunc(::Type{Int64}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(trunc(x))
+trunc(::Type{Int32}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(trunc(x))
+trunc(::Type{Int16}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(trunc(x))
+trunc(::Type{Integer}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(trunc(x))
 
 
 function round(x::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -72,52 +72,52 @@ function round(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
 end
 
-round(::Type{Int128}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(round(x))
-round(::Type{Int64}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(round(x))
-round(::Type{Int32}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(round(x))
-round(::Type{Int16}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(round(x))
-round(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(round(x))
+round(::Type{Int128}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int128(round(x))
+round(::Type{Int64}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int64(round(x))
+round(::Type{Int32}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int32(round(x))
+round(::Type{Int16}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int16(round(x))
+round(::Type{Integer}, digits=x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(round(x))
 
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:Up}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:Up}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
     return ceil(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:Down}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:Down}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
     return floor(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:RoundToZero}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:RoundToZero}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
     return isneg(x) ? ceil(x) : floor(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:RoundFromZero}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:RoundFromZero}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
     return isneg(x) ? floor(x) : ceil(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:Nearest}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:Nearest}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearest)
+    isneg(x) && return -round(-x, digits=RoundNearest)
     a = trunc(x + 0.5)
     return iseven(a) ? a : trunc(x - 0.5)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesAway}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:NearestTiesAway}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearestTiesAway)
-    !isinteger(x - 0.5) && return round(x, RoundNearest)
-    return round(x + 0.5, RoundNearest)
+    isneg(x) && return -round(-x, digits=RoundNearestTiesAway)
+    !isinteger(x - 0.5) && return round(x, digits=RoundNearest)
+    return round(x + 0.5, digits=RoundNearest)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesUp}) where {T<:AbstractFloat}
+function round(x::DoubleFloat{T}, digits=::RoundingMode{:NearestTiesUp}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearestTiesUp)
-    !isinteger(x - 0.5) && return round(x, RoundUp)
-    return round(x + 0.5, RoundNearest)
+    isneg(x) && return -round(-x, digits=RoundNearestTiesUp)
+    !isinteger(x - 0.5) && return round(x, digits=RoundUp)
+    return round(x + 0.5, digits=RoundNearest)
 end
 
 """

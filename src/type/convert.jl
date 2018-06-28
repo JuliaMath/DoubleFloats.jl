@@ -15,7 +15,7 @@ function convert(::Type{DoubleFloat{T}}, x::BigFloat) where {T<:AbstractFloat}
 end
   
 function convert(::Type{BigInt}, x::DoubleFloat{T}) where {T<:AbstractFloat}
-    res = round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x)))
+    res = round(Base.BigInt, digits=Base.BigFloat(HI(x)) + Base.BigFloat(LO(x)))
     return res
 end
 function convert(::Type{DoubleFloat{T}}, x::BigInt) where {T<:AbstractFloat}
