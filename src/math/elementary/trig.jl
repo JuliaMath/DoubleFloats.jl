@@ -2,7 +2,8 @@ const twopi  = DoubleF64(6.283185307179586, 2.4492935982947064e-16)
 const onepi  = DoubleF64(3.141592653589793, 1.2246467991473532e-16)
 const halfpi = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
 const qrtrpi = DoubleF64(0.7853981633974483, 3.061616997868383e-17)
-
+const sixteenthpi = DoubleF64(0.19634954084936207, 7.654042494670958e-18)
+const threesixteenthpi = DoubleF64(0.5890486225480862, 2.296212748401287e-17)
 
 #=
      sin(a) from the Taylor series.
@@ -218,6 +219,10 @@ function tan(x::DoubleF64)
         y = value_minus_qrtrpi(y)
         t = tan(y)
         return (1+t)/(1-t)
+    elseif y >= threesixteenthpi
+        y = -value_minus_qrtrpi(y)
+        t = tan(y)
+        return (1-t)/(1+t)      
     end
     return tan_circle(y)
 end
