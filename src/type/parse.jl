@@ -64,3 +64,7 @@ function Base.tryparse(::Type{QuadrupleF16}, str::T) where {T<:AbstractString}
      return result
 end
 
+# constructors
+DoubleF16(str::T) where {T<:AbstractString} = tryparse(DoubleF16, str)
+DoubleF32(str::T) where {T<:AbstractString} = tryparse(DoubleF32, str)
+DoubleF64(str::T) where {T<:AbstractString} = tryparse(DoubleF64, str)
