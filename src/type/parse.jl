@@ -5,7 +5,7 @@ DoubleF64(str::T) where {T<:AbstractString} = tryparse(DoubleF64, str)
 
 function Base.tryparse(::Type{DoubleF64}, str::T) where {T<:AbstractString}
      str = strip(str)
-     if startswith(str, "DoubleFloat{Float64}"
+     if startswith(str, "DoubleFloat{Float64}")
          str = string("DoubleF64", str[length("DoubleFloat{Float64}")+1:end])
      end
      if !startswith(str, "DoubleF64(")
@@ -16,7 +16,7 @@ end
 
 function Base.tryparse(::Type{DoubleF32}, str::T) where {T<:AbstractString}
      str = strip(str)
-     if startswith(str, "DoubleFloat{Float32}"
+     if startswith(str, "DoubleFloat{Float32}")
          str = string("DoubleF32", str[length("DoubleFloat{Float32}")+1:end])
      end
      if !startswith(str, "DoubleF32(")
@@ -27,7 +27,7 @@ end
 
 function Base.tryparse(::Type{DoubleF16}, str::T) where {T<:AbstractString}
      str = strip(str)
-     if startswith(str, "DoubleFloat{Float16}"
+     if startswith(str, "DoubleFloat{Float16}")
          str = string("DoubleF16", str[length("DoubleFloat{Float16}")+1:end])
      end
      if !startswith(str, "DoubleF16(")
