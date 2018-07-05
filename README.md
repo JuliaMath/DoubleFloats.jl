@@ -46,6 +46,20 @@ julia> 1 - x * inv(x)
 0.0
 ```
 
+## Performance
+
+#### DoubleF64 relative to BigFloat
+
+| op  | speedup |
+|:-----|---------:|
+|  +   | 11x |
+|  *   | 18x |
+|  \   |  7x |
+| trig | 3x-6x |
+
+- results from testing with BenchmarkTools on one machine
+- BigFloat precision was set to 106 bits, for fair comparison
+
 ## Questions and Contributions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic"). 
