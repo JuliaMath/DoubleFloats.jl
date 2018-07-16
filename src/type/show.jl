@@ -9,21 +9,21 @@ function show(io::IO, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function showtyped(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
-    str = typedstring(x)
+    str = stringtyped(x)
     print(io, str)
 end
 
 function showtyped(io::IO, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
-    str = typedstring(x)
+    str = stringtyped(x)
     print(io, str)
 end
 
 function showtyped(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    str = typedstring(x)
+    str = stringtyped(x)
     print(str)
 end
 
 function showtyped(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
-    str = typedstring(x)
+    str = stringtyped(x)
     print(str)
 end
