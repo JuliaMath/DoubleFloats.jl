@@ -1,5 +1,10 @@
 desc = "extended precision floating point types using value pairs"
 keywords = ["floating-point", "doubledouble", "extended-precision", "accuracy", "precision"]
+license = "MIT"
 name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
+
+[deps]
+AccurateArithmetic = "22286c92-06ac-501d-9306-4abd417d9753"
+Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
