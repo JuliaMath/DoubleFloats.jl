@@ -1,0 +1,5 @@
+desc = "extended precision floating point types using value pairs"
+keywords = ["floating-point", "doubledouble", "extended-precision", "accuracy", "precision"]
+name = "DoubleFloats"
+uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
+repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
