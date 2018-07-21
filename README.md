@@ -28,26 +28,40 @@ If your input values are Float64[Float32], map them to Double64[Double32] and pr
 
 ## Examples
 
+#### Double64, Double32, Double16
 ```julia
 julia> using DoubleFloats
 
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6));
-
-julia> string(x)
-"5.7735026918962576450914878050194151e-01"
-julia> show(x)
-5.7735026918962576450914878050194151e-01
-
-julia> stringtyped(x)
-"Double64(0.5773502691896257, 3.3450280739356326e-17)"
-julia> showtyped(x)
-Double64(0.5773502691896257, 3.3450280739356326e-17)
-
-julia> 1 - x * inv(x)
+julia> d64 = sqrt(Double64(2)); 1 - d64 * inv(d64)
 0.0
+julia> d32 = sqrt(Double32(2)); 1 - d32 * inv(d32)
+0.0
+julia> d16 = sqrt(Double16(2)); 1 - d16 * inv(d16)
+0.0
+
+julia> typeof(ans) === Double16
+true
 ```
 
+#### string, show, parse, Meta.parse
+```julia
+julia> using DoubleFloats
 
+julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
+5.7735026918962576450914878050194151e-01
+julia> string(x)
+"5.7735026918962576450914878050194151e-01"
+
+julia> showtyped(x)
+Double64(0.5773502691896257, 3.3450280739356326e-17)
+julia> showtyped(parse(Double64, stringtyped(x)))
+Double64(0.5773502691896257, 3.3450280739356326e-17)
+
+julia> Meta.parse(stringtyped(x))
+:(Double64(0.5773502691896257, 3.3450280739356326e-17))
+```
+
+#### golden ratio equivalences
 ```julia
 julia> using DoubleFloats
 
