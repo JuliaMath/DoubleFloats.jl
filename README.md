@@ -30,17 +30,17 @@ If your input values are Float64[Float32], map them to Double64[Double32] and pr
 ## Examples
 
 ```julia
-julia> x = sqrt(DoubleF64(2)) / sqrt(DoubleF64(6));
+julia> x = sqrt(Double64(2)) / sqrt(Double64(6));
 
 julia> string(x)
 "5.7735026918962576450914878050194151e-01"
 julia> stringtyped(x)
-"DoubleF64(0.5773502691896257, 3.3450280739356326e-17)"
+"Double64(0.5773502691896257, 3.3450280739356326e-17)"
 
 julia> show(x)
 5.7735026918962576450914878050194151e-01
 julia> showtyped(x)
-DoubleF64(0.5773502691896257, 3.3450280739356326e-17)
+Double64(0.5773502691896257, 3.3450280739356326e-17)
 
 julia> 1 - x * inv(x)
 0.0
@@ -48,7 +48,7 @@ julia> 1 - x * inv(x)
 
 ## Performance
 
-#### DoubleF64 relative to BigFloat
+#### Double64 relative to BigFloat
 
 | op  | speedup |
 |:-----|---------:|
@@ -62,7 +62,7 @@ julia> 1 - x * inv(x)
 
 ## Questions and Contributions
 
-Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic"). 
+Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.
 

@@ -6,7 +6,6 @@ repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 license = "MIT"
 version = "0.2.0"
 
-
 [deps]
 AccurateArithmetic = "22286c92-06ac-501d-9306-4abd417d9753"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
