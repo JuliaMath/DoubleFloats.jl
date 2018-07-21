@@ -36,17 +36,42 @@ julia> x = sqrt(Double64(2)) / sqrt(Double64(6));
 
 julia> string(x)
 "5.7735026918962576450914878050194151e-01"
-julia> stringtyped(x)
-"Double64(0.5773502691896257, 3.3450280739356326e-17)"
-
 julia> show(x)
 5.7735026918962576450914878050194151e-01
+
+julia> stringtyped(x)
+"Double64(0.5773502691896257, 3.3450280739356326e-17)"
 julia> showtyped(x)
 Double64(0.5773502691896257, 3.3450280739356326e-17)
 
 julia> 1 - x * inv(x)
 0.0
 ```
+
+#### `MathConstants.golden` with `Float64` and `Double32`
+
+|  typed value | computed value | ~bs(golden - computed) |
+|:----------|:---------------|:-------------:|
+| `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
+| `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
+| `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
+
+
+
+```julia
+julia> using DoubleFloats
+
+julia> ϕ = Double32(MathConstants.golden)
+1.61803398874989490
+julia> phi = "1.61803398874989484820+"
+julia> ϕ⁻¹ = inv(ϕ)
+6.18033988749894902e-01
+
+julia> ϕ == 1 + ϕ⁻¹
+true
+julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
+true
+
 
 ## Performance
 
