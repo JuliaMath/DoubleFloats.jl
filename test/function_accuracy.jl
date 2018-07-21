@@ -2,7 +2,7 @@ setprecision(Base.BigFloat, 512)
 srand(1602);
 const nrands = 1_000 # tested with nrands = 1_000
 
-rand_vals = rand(DoubleF64, nrands);
+rand_vals = rand(Double64, nrands);
 rand_bigf = Base.BigFloat.(rand_vals);
 
 rand1_vals = rand_vals .+ 1.0;
