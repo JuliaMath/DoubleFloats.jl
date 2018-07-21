@@ -218,17 +218,11 @@ function tan(x::Double64)
     elseif y >= qrtrpi
         y = value_minus_qrtrpi(y)       # 0 < y < pi/4
         t = tan(y)
-        # return (1+t)/(1-t)
-        oneplust  = Double64(add322(one_t64, HILO(t)))
-        oneminust = Double64(sub322(one_t64, HILO(t)))
-        return oneplust / oneminust
+        return (1+t)/(1-t)
     elseif y >= threesixteenthpi
         y = -value_minus_qrtrpi(y)     #   0 < y < pi/16
         t = tan(y)
-        # return (1-t)/(1+t)
-        oneplust  = Double64(add322(one_t64, HILO(t)))
-        oneminust = Double64(sub322(one_t64, HILO(t)))
-        return oneminust / oneplust
+        return (1-t)/(1+t)
     end
     return tan_circle(y)               # 0 <= y < 3pi/16 [(3/4 * pi/4)< 0.5891]
 end
