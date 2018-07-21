@@ -6,9 +6,9 @@
 ## Introduction
 
 When you are `using DoubleFloats`, you have three more floating point types:
-- `DoubleF64` is a magnitude ordered, nonoverlapping pair of Float64s
-- `DoubleF32` is a magnitude ordered, nonoverlapping pair of Float32s
-- `DoubleF16` is a magnitude ordered, nonoverlapping pair of Float16s
+- `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
+- `Double32` is a magnitude ordered, nonoverlapping pair of Float32s
+- `Double16` is a magnitude ordered, nonoverlapping pair of Float16s
 
 Many arithmetic operations and elementary functions are available with each type.
 

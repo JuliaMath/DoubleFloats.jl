@@ -1,25 +1,25 @@
 # The Types
 
 
-## DoubleF64
+## Double64
 
 
-`DoubleF64` is the accuracy stalwart.  Very good values are likely to result.
+`Double64` is the accuracy stalwart.  Very good values are likely to result.
 
-When used with reasonably sized values, the computations should limit the accrual of relative error to 10⋅𝘂², 
-where 𝘂 is the relative rounding unit, the unit_in_the_last_place of the significand, often `eps(x)/2`. 
-It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection. 
+When used with reasonably sized values, the computations should limit the accrual of relative error to 10⋅𝘂²,
+where 𝘂 is the relative rounding unit, the unit_in_the_last_place of the significand, often `eps(x)/2`.
+It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection.
 At worst, a sequence of 100_000 arithmetic and elementary operations might admit a relative error of 100_000 * 10⋅𝘂².
 The worst is unlikely.
 
 One right way to use this type is
 
-(a) map your input from Float64s to DoubleF64s    
-(b) compute with DoubleF64s    
-(c) map your resultant values from DoubleF64s to Float64s    
+(a) map your input from Float64s to Double64s
+(b) compute with Double64s
+(c) map your resultant values from Double64s to Float64s
 
 The values obtained with cascaded arithimetic and composed elementary functions
-are reliable and their utility is desireable. 
+are reliable and their utility is desireable.
 
 ### what it is
 
