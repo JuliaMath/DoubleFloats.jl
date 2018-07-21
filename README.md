@@ -4,7 +4,6 @@
 
 ----
 
-[![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
 [![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
 ----
 
