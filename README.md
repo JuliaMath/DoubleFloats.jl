@@ -47,15 +47,6 @@ julia> 1 - x * inv(x)
 0.0
 ```
 
-#### `MathConstants.golden` with `Float64` and `Double32`
-
-|  typed value | computed value | ~bs(golden - computed) |
-|:----------|:---------------|:-------------:|
-| `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
-| `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
-| `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
-
-
 
 ```julia
 julia> using DoubleFloats
@@ -70,6 +61,17 @@ julia> ϕ == 1 + ϕ⁻¹
 true
 julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
 true
+```
+
+
+#### `MathConstants.golden` as `Float64` and `Double32`
+
+|  typed value | computed value | ~abs(golden - computed) |
+|:----------|:---------------|:-------------:|
+| `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
+| `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
+| `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
+
 
 
 ## Performance
