@@ -5,7 +5,7 @@
 ----
 
 [![][pkg-0.7-img]][pkg-0.7-url]  [![][travis-img]][travis-url]
-
+[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
 ----
 
 See [here](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/function_accuracy.jl) for function specific absolute and relative errors over 0:1 and 1:2.
