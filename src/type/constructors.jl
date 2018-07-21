@@ -14,7 +14,7 @@ Base.BigFloat(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} =
     Base.BigFloat(HI(HI(x))) + Base.BigFloat(LO(HI(x))) + Base.BigFloat(HI(LO(x))) + Base.BigFloat(LO(LO(x)))
 
 
-for (F,D) in ((:(Base.Float64), :DoubleF64), (:(Base.Float32), :DoubleF32), (:(Base.Float16), :DoubleF16))
+for (F,D) in ((:(Base.Float64), :Double64), (:(Base.Float32), :Double32), (:(Base.Float16), :Double16))
   @eval begin
     function $D(x::Base.BigFloat)
         hi = $F(x)
@@ -42,6 +42,6 @@ DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = HI(x)
 DoubleFloat{DoubleFloat{T}}(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     DoubleFloat{DoubleFloat{T}}(x, DoubleFloat(zero(T)))
 
-DoubleF64(x::Irrational{S}) where {S} = DoubleF64(Base.BigFloat(x))
-DoubleF32(x::Irrational{S}) where {S} = DoubleF32(Base.BigFloat(x))
-DoubleF16(x::Irrational{S}) where {S} = DoubleF16(Base.BigFloat(x))
+Double64(x::Irrational{S}) where {S} = Double64(Base.BigFloat(x))
+Double32(x::Irrational{S}) where {S} = Double32(Base.BigFloat(x))
+Double16(x::Irrational{S}) where {S} = Double16(Base.BigFloat(x))

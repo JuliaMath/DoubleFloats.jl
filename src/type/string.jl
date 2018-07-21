@@ -1,13 +1,13 @@
-function stringtyped(x::DoubleF64)
-    str = string("DoubleF64(", HI(x), ", ", LO(x), ")")
+function stringtyped(x::Double64)
+    str = string("Double64(", HI(x), ", ", LO(x), ")")
     return str
 end
-function stringtyped(x::DoubleF32)
-    str = string("DoubleF32(", HI(x), ", ", LO(x), ")")
+function stringtyped(x::Double32)
+    str = string("Double32(", HI(x), ", ", LO(x), ")")
     return str
 end
-function stringtyped(x::DoubleF16)
-    str = string("DoubleF16(", HI(x), ", ", LO(x), ")")
+function stringtyped(x::Double16)
+    str = string("Double16(", HI(x), ", ", LO(x), ")")
     return str
 end
 function stringtyped(x::QuadrupleF64)
@@ -42,7 +42,7 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
        n = min(length(a), BigFloatDigits(T)+1)
        str = string(a[1:n],"e",b)
     else
-       n = min(length(str), BigFloatDigits(T)+1) 
+       n = min(length(str), BigFloatDigits(T)+1)
        str = str[1:n]
     end
     setprecision(Base.BigFloat, prec)
@@ -61,7 +61,7 @@ function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
        n = min(length(a), BigFloatDigits(T)+1)
        str = string(a[1:n],"e",b)
     else
-       n = min(length(str), BigFloatDigits(T)+1) 
+       n = min(length(str), BigFloatDigits(T)+1)
        str = str[1:n]
     end
     setprecision(Base.BigFloat, prec)
