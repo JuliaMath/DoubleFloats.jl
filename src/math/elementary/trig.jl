@@ -1,15 +1,15 @@
-const twopi  = DoubleF64(6.283185307179586, 2.4492935982947064e-16)
-const onepi  = DoubleF64(3.141592653589793, 1.2246467991473532e-16)
-const halfpi = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
-const qrtrpi = DoubleF64(0.7853981633974483, 3.061616997868383e-17)
-const sixteenthpi = DoubleF64(0.19634954084936207, 7.654042494670958e-18)
-const threesixteenthpi = DoubleF64(0.5890486225480862, 2.296212748401287e-17)
+const twopi  = Double64(6.283185307179586, 2.4492935982947064e-16)
+const onepi  = Double64(3.141592653589793, 1.2246467991473532e-16)
+const halfpi = Double64(1.5707963267948966, 6.123233995736766e-17)
+const qrtrpi = Double64(0.7853981633974483, 3.061616997868383e-17)
+const sixteenthpi = Double64(0.19634954084936207, 7.654042494670958e-18)
+const threesixteenthpi = Double64(0.5890486225480862, 2.296212748401287e-17)
 
 #=
      sin(a) from the Taylor series.
      Assumes |a| <= pi/32.
 =#
-function sin_taylor(a::DoubleF64)
+function sin_taylor(a::Double64)
     iszero(a) && return(a)
 
     x = -square(a)
@@ -27,8 +27,8 @@ end
 #=
    1 - x^2/2! + x^4/4! - x^6/6! + x^8/8! ...
 =#
-function cos_taylor(a::DoubleF64)
-    iszero(a) && return(one(DoubleF64))
+function cos_taylor(a::Double64)
+    iszero(a) && return(one(Double64))
 
     x2 = square(a)
     r = one(a)
@@ -45,9 +45,9 @@ function cos_taylor(a::DoubleF64)
     return a
 end
 
-function sincos_taylor(a::DoubleF64)
+function sincos_taylor(a::Double64)
     if iszero(a)
-        return a, (one(DoubleF64))
+        return a, (one(Double64))
     end
     s = sin_taylor(a)
     c = cos_taylor(a)
@@ -55,8 +55,8 @@ function sincos_taylor(a::DoubleF64)
 end
 
 
-function tan_taylor(a::DoubleF64)
-    iszero(a) && return(zero(DoubleF64))
+function tan_taylor(a::Double64)
+    iszero(a) && return(zero(Double64))
     a2 = square(a)
     b = a
     r = a
@@ -68,16 +68,16 @@ function tan_taylor(a::DoubleF64)
     return r
 end
 
-function csc_taylor(a::DoubleF64)
+function csc_taylor(a::Double64)
     return inv(sin_taylor(a))
 end
 
-function sec_taylor(a::DoubleF64)
+function sec_taylor(a::Double64)
     return inv(cos_taylor(a))
 end
 
-function cot_taylor(a::DoubleF64)
-    iszero(a) && return(zero(DoubleF64))
+function cot_taylor(a::Double64)
+    iszero(a) && return(zero(Double64))
     a2 = square(a)
     b = inv(a)
     r = b
@@ -206,62 +206,68 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-function tan(x::DoubleF64)
+function tan(x::Double64)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(-x)
-    
-    y = modpi(x)
+
+    y = modpi(x)                        # 0 <= y < pi
     if y >= halfpi
-        y = value_minus_pi(y)
+        y = value_minus_pi(y)           # -pi/2 < y < 0
         return tan(y)
     elseif y >= qrtrpi
-        y = value_minus_qrtrpi(y)
+        y = value_minus_qrtrpi(y)       # 0 < y < pi/4
         t = tan(y)
-        return (1+t)/(1-t)
+        # return (1+t)/(1-t)
+        oneplust  = Double64(add322(one_t64, HILO(t)))
+        oneminust = Double64(sub322(one_t64, HILO(t)))
+        return oneplust / oneminust
     elseif y >= threesixteenthpi
-        y = -value_minus_qrtrpi(y)
+        y = -value_minus_qrtrpi(y)     #   0 < y < pi/16
         t = tan(y)
-        return (1-t)/(1+t)      
+        # return (1-t)/(1+t)
+        oneplust  = Double64(add322(one_t64, HILO(t)))
+        oneminust = Double64(sub322(one_t64, HILO(t)))
+        return oneminust / oneplust
     end
-    return tan_circle(y)
+    return tan_circle(y)               # 0 <= y < 3pi/16 [(3/4 * pi/4)< 0.5891]
 end
 
 
 
 
 const tan0qrtrpi_numercoeffs = [
- DoubleF64(-4.589387262410812e-34, 3.615269061456329e-50),
- DoubleF64(-1.1277602868617984, -3.7260835757356473e-17),
- DoubleF64(0.023504022820282806, -8.687970367035411e-19),
- DoubleF64(0.15800109650013386, 1.0039888332689995e-17),
- DoubleF64(-0.0032234179678582767, 7.13543487768582e-20),
- DoubleF64(-0.00485067399529607, 2.5007870884389995e-19),
- DoubleF64(9.183636558700604e-5, 6.505326980348073e-21),
- DoubleF64(4.3378563109937034e-5, -1.5862612770718012e-21),
- DoubleF64(-6.679371552585612e-7, 2.526644583588966e-24),
- DoubleF64(-8.978969477885054e-8, 4.807483176770941e-24),
- DoubleF64(6.62853386447739e-10, 1.0925131977072127e-26)
+ Double64(-4.589387262410812e-34, 3.615269061456329e-50),
+ Double64(-1.1277602868617984, -3.7260835757356473e-17),
+ Double64(0.023504022820282806, -8.687970367035411e-19),
+ Double64(0.15800109650013386, 1.0039888332689995e-17),
+ Double64(-0.0032234179678582767, 7.13543487768582e-20),
+ Double64(-0.00485067399529607, 2.5007870884389995e-19),
+ Double64(9.183636558700604e-5, 6.505326980348073e-21),
+ Double64(4.3378563109937034e-5, -1.5862612770718012e-21),
+ Double64(-6.679371552585612e-7, 2.526644583588966e-24),
+ Double64(-8.978969477885054e-8, 4.807483176770941e-24),
+ Double64(6.62853386447739e-10, 1.0925131977072127e-26)
 ];
 
 const tan0qrtrpi_denomcoeffs = [
- DoubleF64(-1.1277602868617984, -3.726083575735698e-17),
- DoubleF64(0.023504022820282806, -8.68797036610413e-19),
- DoubleF64(0.5339211921207333, 5.0215742527305713e-17),
- DoubleF64(-0.011058092241285879, 2.163933343013038e-19),
- DoubleF64(-0.03245636645396739, -2.0950660440965625e-18),
- DoubleF64(0.0006439974033112582, -4.907277021564753e-20),
- DoubleF64(0.0005359286750031091, 3.4429445937395886e-20),
- DoubleF64(-9.392512261553479e-6, -6.384836458590209e-22),
- DoubleF64(-2.4709845162823393e-6, -1.6760465043339782e-22),
- DoubleF64(3.015269279339435e-8, -8.41236508210075e-25),
- DoubleF64(1.5859442637424446e-9, 6.30689666197131e-26)
+ Double64(-1.1277602868617984, -3.726083575735698e-17),
+ Double64(0.023504022820282806, -8.68797036610413e-19),
+ Double64(0.5339211921207333, 5.0215742527305713e-17),
+ Double64(-0.011058092241285879, 2.163933343013038e-19),
+ Double64(-0.03245636645396739, -2.0950660440965625e-18),
+ Double64(0.0006439974033112582, -4.907277021564753e-20),
+ Double64(0.0005359286750031091, 3.4429445937395886e-20),
+ Double64(-9.392512261553479e-6, -6.384836458590209e-22),
+ Double64(-2.4709845162823393e-6, -1.6760465043339782e-22),
+ Double64(3.015269279339435e-8, -8.41236508210075e-25),
+ Double64(1.5859442637424446e-9, 6.30689666197131e-26)
 ];
 
 const tan0qrtrpi_numerpoly = Poly(tan0qrtrpi_numercoeffs);
 const tan0qrtrpi_denompoly = Poly(tan0qrtrpi_denomcoeffs);
 
-function tan0qrtrpi(x::DoubleF64)
+function tan0qrtrpi(x::Double64)
      numer = polyval(tan0qrtrpi_numerpoly, x)
      denom = polyval(tan0qrtrpi_denompoly, x)
      return numer/denom

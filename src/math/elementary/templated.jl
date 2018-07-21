@@ -1,15 +1,15 @@
-for F in (# :mod2pi, :square, :cube, :sqrt, 
+for F in (# :mod2pi, :square, :cube, :sqrt,
           :cbrt,
-          :exp, :expm1, :log, :log1p, :log2, :log10, 
+          :exp, :expm1, :log, :log1p, :log2, :log10,
           :sin, :cos, :tan, :csc, :sec, :cot,
           :asin, :acos, :atan, :acsc, :asec, :acot,
           :sinh, :cosh, :tanh, :csch, :sech, :coth,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
-    $F(x::DoubleF32) = DoubleF32($F(DoubleF64(x)))
-    $F(x::DoubleF16) = DoubleF16($F(DoubleF64(x)))
-    $F(x::DoubleFloat{DoubleF32}) = DoubleFloat{DoubleF32}($F(DoubleFloat{DoubleF64}(x)))
-    $F(x::DoubleFloat{DoubleF16}) = DoubleFloat{DoubleF16}($F(DoubleFloat{DoubleF64}(x)))
+    $F(x::Double32) = Double32($F(Double64(x)))
+    $F(x::Double16) = Double16($F(Double64(x)))
+    $F(x::DoubleFloat{Double32}) = DoubleFloat{Double32}($F(DoubleFloat{Double64}(x)))
+    $F(x::DoubleFloat{Double16}) = DoubleFloat{Double16}($F(DoubleFloat{Double64}(x)))
   end
 end
 
@@ -35,20 +35,20 @@ the domain-reachable onto canonical values.
 =#
 
 struct DomainGuard{T}
-          
+
     maxneg::T           # most  negagtive magnitude of primary domain
     minneg::T           # least negative  magnitude of primary domain
     minpos::T           # zero or least positive magnitude of primary domain
     maxpos::T           # +inf or most positive magnitude of pa
 
-    reduct::Function    # comprehensive domain >=>=> canonical domain 
+    reduct::Function    # comprehensive domain >=>=> canonical domain
 
-                        # boolean-valued states for each specialized numerica   
+                        # boolean-valued states for each specialized numerica
     posinf::Bool
     posval::Bool
     negval::Bool
     neginf::Bool
- 
+
     okzero::Bool
 
 end

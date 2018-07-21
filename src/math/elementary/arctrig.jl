@@ -1,5 +1,5 @@
 
-const k_pio2 = DoubleF64(1.5707963267948966, 6.123233995736766e-17)
+const k_pio2 = Double64(1.5707963267948966, 6.123233995736766e-17)
 
 
 function atan(x::DoubleFloat{T}) where {T<:AbstractFloat}
