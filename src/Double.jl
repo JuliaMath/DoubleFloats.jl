@@ -24,9 +24,9 @@ end
 
 
 
-const DoubleF64 = DoubleFloat{Float64}
-const DoubleF32 = DoubleFloat{Float32}
-const DoubleF16 = DoubleFloat{Float16}
+const Double64 = DoubleFloat{Float64}
+const Double32 = DoubleFloat{Float32}
+const Double16 = DoubleFloat{Float16}
 
 const QuadrupleF64 = DoubleFloat{DoubleFloat{Float64}}
 const QuadrupleF32 = DoubleFloat{DoubleFloat{Float32}}
@@ -57,24 +57,24 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[2]
 @inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x
 
-@inline DoubleF64(x::Tuple{Float64,Float64}) = DoubleFloat(x[1], x[2])
-@inline DoubleF32(x::Tuple{Float32,Float32}) = DoubleFloat(x[1], x[2])
-@inline DoubleF16(x::Tuple{Float16,Float16}) = DoubleFloat(x[1], x[2])
-@inline DoubleF64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
-@inline DoubleF32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
-@inline DoubleF16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
+@inline Double64(x::Tuple{Float64,Float64}) = DoubleFloat(x[1], x[2])
+@inline Double32(x::Tuple{Float32,Float32}) = DoubleFloat(x[1], x[2])
+@inline Double16(x::Tuple{Float16,Float16}) = DoubleFloat(x[1], x[2])
+@inline Double64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
+@inline Double32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
+@inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
 @inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
-@inline DoubleF64(hi::T) where {T<:IEEEFloat} = DoubleF64(Float64(hi), zero(Float64))
-@inline DoubleF32(hi::T) where {T<:IEEEFloat} = DoubleF32(Float32(hi), zero(Float32))
-@inline DoubleF16(hi::T) where {T<:IEEEFloat} = DoubleF16(Float16(hi), zero(Float16))
-@inline DoubleF64(hi::T) where {T<:Integer} = DoubleF64(Float64(hi))
-@inline DoubleF32(hi::T) where {T<:Integer} = DoubleF32(Float32(hi))
-@inline DoubleF16(hi::T) where {T<:Integer} = DoubleF16(Float16(hi))
+@inline Double64(hi::T) where {T<:IEEEFloat} = Double64(Float64(hi), zero(Float64))
+@inline Double32(hi::T) where {T<:IEEEFloat} = Double32(Float32(hi), zero(Float32))
+@inline Double16(hi::T) where {T<:IEEEFloat} = Double16(Float16(hi), zero(Float16))
+@inline Double64(hi::T) where {T<:Integer} = Double64(Float64(hi))
+@inline Double32(hi::T) where {T<:Integer} = Double32(Float32(hi))
+@inline Double16(hi::T) where {T<:Integer} = Double16(Float16(hi))
 
-for (F,D,U) in ((:Float64, :DoubleF64, :(Union{Float32, Float16})),
-                (:Float32, :DoubleF32, :(Union{Float64, Float16})),
-                (:Float16, :DoubleF16, :(Union{Float64, Float32})))
+for (F,D,U) in ((:Float64, :Double64, :(Union{Float32, Float16})),
+                (:Float32, :Double32, :(Union{Float64, Float16})),
+                (:Float16, :Double16, :(Union{Float64, Float32})))
   @eval begin
     @inline $D(hi::T, lo::T) where {T<:$U} = $D($F(hi), $F(lo))
     @inline $D(hi::T, lo::I) where {T<:$U, I<:Integer} = $D($F(hi), $F(lo))
@@ -94,12 +94,12 @@ DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{T}) where {T<:IEEE
 DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x, DoubleFloat(zero(T))), y)
 DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
-DoubleF64(x::DoubleF32) = DoubleF64(add_2(Float64(HI(x)), Float64(LO(x))))
-DoubleF64(x::DoubleF16) = DoubleF64(add_2(Float64(HI(x)), Float64(LO(x))))
-DoubleF32(x::DoubleF16) = DoubleF32(add_2(Float32(HI(x)), Float32(LO(x))))
-DoubleF32(x::DoubleF64) = DoubleF32(BigFloat(x))
-DoubleF16(x::DoubleF64) = DoubleF16(BigFloat(x))
-DoubleF16(x::DoubleF32) = DoubleF16(BigFloat(x))
+Double64(x::Double32) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
+Double64(x::Double16) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
+Double32(x::Double16) = Double32(add_2(Float32(HI(x)), Float32(LO(x))))
+Double32(x::Double64) = Double32(BigFloat(x))
+Double16(x::Double64) = Double16(BigFloat(x))
+Double16(x::Double32) = Double16(BigFloat(x))
 
 
 # a type specific hash function helps the type to 'just work'

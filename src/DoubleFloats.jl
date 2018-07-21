@@ -5,7 +5,7 @@ module DoubleFloats
 abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
-       DoubleF64, DoubleF32, DoubleF16,
+       Double64, Double32, Double16,
        MultipartFloat, HI, LO, HILO,
        stringtyped, showtyped,
        isnonzero, ispos, isneg, isnonpos, isnonneg,
@@ -32,7 +32,7 @@ import Base: hash, promote_type, promote_rule, convert,
              isinteger, isodd, iseven, zero, one,
              typemax, typemin, realmax, realmin,
              min, max, minmax, minimum, maximum,
-             floor, ceil, trunc, round, div, fld, cld, 
+             floor, ceil, trunc, round, div, fld, cld,
              rem, mod, rem2pi, mod2pi,
              prevfloat, nextfloat, eps, fma, muladd,
              modf, frexp, ldexp, sqrt, cbrt, hypot,
@@ -50,7 +50,7 @@ using Random
 
 using AccurateArithmetic
 
-include("Double.jl")   # DoubleF64, DoubleF16, DoubleF16 
+include("Double.jl")   # Double64, Double16, Double16
 
 include("doubletriple/double.jl")
 include("doubletriple/double_consts.jl")
@@ -84,7 +84,7 @@ include("math/elementary/arctrig.jl")
 include("math/elementary/hyptrig.jl")
 include("math/elementary/archyptrig.jl")
 include("math/elementary/templated.jl")
-       
+
 include("extras/random.jl")
 
 
