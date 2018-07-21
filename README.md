@@ -43,7 +43,7 @@ julia> typeof(ans) === Double16
 true
 ```
 
-#### string, show, parse, Meta.parse
+#### show, string, parse
 ```julia
 julia> using DoubleFloats
 
@@ -61,7 +61,7 @@ julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
 ```
 
-#### golden ratio equivalences
+#### golden ratio
 ```julia
 julia> using DoubleFloats
 
@@ -77,8 +77,7 @@ julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
 true
 ```
 
-
-#### `MathConstants.golden` as `Float64` and `Double32`
+`MathConstants.golden` as `Float64` and `Double32`
 
 |  typed value | computed value | ~abs(golden - computed) |
 |:----------|:---------------|:-------------:|
