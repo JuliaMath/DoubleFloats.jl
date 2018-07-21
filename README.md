@@ -77,8 +77,6 @@ julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
 true
 ```
 
-`MathConstants.golden` as `Float64` and `Double32`
-
 |  typed value | computed value | ~abs(golden - computed) |
 |:----------|:---------------|:-------------:|
 | `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
