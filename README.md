@@ -30,6 +30,8 @@ If your input values are Float64[Float32], map them to Double64[Double32] and pr
 ## Examples
 
 ```julia
+julia> using DoubleFloats
+
 julia> x = sqrt(Double64(2)) / sqrt(Double64(6));
 
 julia> string(x)
