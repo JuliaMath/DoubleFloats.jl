@@ -15,6 +15,24 @@ function atan(x::DoubleFloat{T}) where {T<:AbstractFloat}
    return z
 end
 
+function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:AbstractFloat}
+   atanyx = atan(y/x) 
+   if x > 0 
+      atanyx
+   elseif x < 0
+      if y >= 0
+         atanyx + T(pi)
+      else
+         atanyx - T(pi)
+      end
+   elseif y > 0
+       T(pi)/2
+   elseif y < 0
+      -T(pi)/2
+   else
+      zero(T)
+   end
+end
 
 function asin(x::DoubleFloat{T}) where {T<:AbstractFloat}
    signbit(x) && return -asin(abs(x))
