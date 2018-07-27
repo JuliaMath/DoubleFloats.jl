@@ -16,15 +16,15 @@ See [here](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/functio
 
 ## Installation
 
-The package is registered in `METADATA.jl` and can be installed with `Pkg.add`.
+The package can be installed with `Pkg3` or `Pkg.add`.
 
 ```julia
+pkg> add DoubleFloats
+```
+```julia
+julia> using Pkg
 julia> Pkg.add("DoubleFloats")
 ```
-
-## Proper Use
-
-If your input values are Float64[Float32], map them to Double64[Double32] and proceed with your computation.  Then map the output values to Float64[Float32], and work with those values. Where throughput is important, this manner of us can be applied to particularly sensitive parts of your computation.
 
 ## Examples
 
@@ -98,6 +98,10 @@ true
 
 - results from testing with BenchmarkTools on one machine
 - BigFloat precision was set to 106 bits, for fair comparison
+
+## Suggested Use
+
+If your input values are Float64[Float32], map them to Double64[Double32] and proceed with your computation.  Then map the output values to Float64[Float32], and work with those values. Where throughput is important, this manner of us can be applied to particularly sensitive parts of your computation.
 
 ## Questions and Contributions
 
