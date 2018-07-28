@@ -234,10 +234,15 @@ function Base.Math.log1p(x::DoubleFloat{T})  where {T<:AbstractFloat}
     end
 end
 
+logtwo(::Type{Float32}) = Double32(0.6931472, -1.9046542e-9)
+logtwo(::Type{Float64}) = Double64(0.6931471805599453, 2.3190468138462996e-17)
+logten(::Type{Float32}) = Double32(2.3025851, -3.1975436e-8)
+logten(::Type{Float64}) = Double64(2.302585092994046, -2.1707562233822494e-16)
+
 function Base.Math.log2(x::DoubleFloat{T})  where {T<:AbstractFloat}
-    log(x) / log2
+    log(x) / logtwo(T)
 end
 
 function Base.Math.log10(x::DoubleFloat{T})  where {T<:AbstractFloat}
-    log(x) / log10
+    log(x) / logten(T)
 end
