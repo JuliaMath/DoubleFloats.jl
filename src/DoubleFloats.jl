@@ -1,5 +1,3 @@
-__precompile__()
-
 module DoubleFloats
 
 abstract type MultipartFloat <: AbstractFloat end
