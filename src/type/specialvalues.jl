@@ -9,9 +9,8 @@ neginf(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat(T(-Inf), T
 typemax(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(typemax(T))
 typemin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(typemin(T))
 
-floatmax(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(realmax(T))
-floatmin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(realmin(T))
-
+floatmax(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(floatmax(T))
+floatmin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(floatmin(T))
 
 isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
 isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))

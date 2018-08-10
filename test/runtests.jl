@@ -6,3 +6,4 @@ phi = Base.MathConstants.golden
 
 include("concrete_accuracy.jl")
 include("function_accuracy.jl")
+include("arithmetic.jl")
