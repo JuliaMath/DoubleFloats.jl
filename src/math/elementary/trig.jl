@@ -170,7 +170,7 @@ function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function sin_kernel(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return -sin(abs(x))
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -187,8 +187,7 @@ function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return z
 end
 
-
-function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function cos_kernel(x::DoubleFloat{T}) where {T<:AbstractFloat}
     signbit(x) && return cos(abs(x))
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -205,6 +204,10 @@ function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return z
 end
 
+cos(x::DoubleFloat{T}) where {T<:AbstractFloat} = cos_kernel(x)
+sin(x::DoubleFloat{T}) where {T<:AbstractFloat} = sin_kernel(x)
+
+Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
 
 function tan(x::Double64)
     iszero(x) && return zero(typeof(x))
@@ -279,4 +282,3 @@ end
 function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return inv(tan(x))
 end
-

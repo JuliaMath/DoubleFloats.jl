@@ -16,3 +16,10 @@
     @test y ^ y isa Double64
 end
 
+@testset "Trig functions" begin
+
+    x = rand(Double64)
+    sinx, cosx = sincos(x)
+    @test sinx ≈ sin(x)
+    @test cosx ≈ cos(x)
+end
