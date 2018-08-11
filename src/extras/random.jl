@@ -3,6 +3,7 @@ import Random.rand
 
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
     u  = rand(rng, UInt64)
+    u  = frexp(u)
     f  = Float64(u)
     uf = UInt64(f)
     ur = uf > u ? uf - u : u - uf
