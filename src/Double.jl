@@ -115,6 +115,4 @@ const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 @inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} =
     hash(z.hi) ⊻ hash(z.lo)
 
-Base.precision(::Double64) = 113
-Base.precision(::Double32) = 53
-Base.precision(::Double16) = 24
+Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)
