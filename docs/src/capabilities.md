@@ -26,6 +26,8 @@ These are the predicates made available for use with DoubleFloats:
 - multiplication, square, cube
 - reciprocation, division, square root, cube root
 
+There are arithmetic operations that take two Float64s or Float32s or Float16s and return the corresponding Double64 or Double32 or Double16.  These operations are available in functional form as `add2`, `sub2`, `mul2`, `div2` and in infix form using Unicode \boxplus \boxminus \boxtimes \boxdiag "⊞ ⊟ ⊠ ⧄".
+
 #### rounding
 - RoundNearest, RoundUp, RoundDown
 - RoundToZero, RoundFromZero
