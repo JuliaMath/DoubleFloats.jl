@@ -2,12 +2,12 @@ using Random
 import Random.rand
 
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
-    u  = rand(rng, UInt64)
-    u  = frexp(u)
-    f  = Float64(u)
-    uf = UInt64(f)
-    ur = uf > u ? uf - u : u - uf
-    rf = Float64(ur)
+    hi, lo  = rand(rng, T, 2)
+    frlo, xplo  = frexp(lo)
+    xplo = Base.exponent(hi) - xplo - abs(Base.exponent(eps(hi)))
+    lo = ldexp(frlo, xplo)
+    lo = rand(Bool) ? lo : -lo
 
-    DoubleFloat(T(5.421010862427522e-20 * f), T(5.421010862427522e-20 * rf))
+    DoubleFloat(hi, lo)
 end
+
