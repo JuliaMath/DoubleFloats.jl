@@ -182,6 +182,8 @@ end
        z = -sin_circle(x - onepi)
     elseif x >= halfpi
        z = cos_circle(x - halfpi)
+    elseif x <= thirtysecondpi
+       z = sin_taylor(x)      
     else
        z = sin_circle(x)
     end
@@ -199,6 +201,8 @@ end
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
        z = -sin_circle(x - halfpi)
+    elseif x <= thirtysecondpi
+       z = cos_taylor(x)      
     else
        z = cos_circle(x)
     end
