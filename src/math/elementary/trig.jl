@@ -212,11 +212,11 @@ function tan(x::Double64)
         y = minus_pi(y)                # -pi/2 < y < 0
         return tan(y)
     elseif y >= qrtrpi
-        y = value_minus_qrtrpi(y)       # 0 < y < pi/4
+        y = minus_qrtrpi(y)       # 0 < y < pi/4
         t = tan(y)
         return (1+t)/(1-t)
     elseif y >= threesixteenthpi
-        y = -value_minus_qrtrpi(y)     #   0 < y < pi/16
+        y = -minus_qrtrpi(y)     #   0 < y < pi/16
         t = tan(y)
         return (1-t)/(1+t)
     end
