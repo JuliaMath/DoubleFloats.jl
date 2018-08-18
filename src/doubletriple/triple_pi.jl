@@ -34,6 +34,19 @@ end
 
 halfpi_minus(x::DoubleFloat{Float64}) = halfpi_minus(HI(x), LO(x))
 
+function qrtrpi_minus(hi::T, lo::T) where {T<:Float64}
+    zhi, t1 = sub_2(0.78539816339744830, hi)
+    t2, t3 = sub_2(3.0616169978683830e-17, lo)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zlo = t5 - 7.4869245242958490e-34
+    zlo += t7
+    return DoubleFloat{Float64}(zhi, zlo)
+end
+
+qrtrpi_minus(x::DoubleFloat{Float64}) = qrtrpi_minus(HI(x), LO(x))
+
+
 function minus_twopi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = sub_2(6.28318530717958600, hi)
     t2, t3 = sub_2(2.4492935982947064e-16, lo)
@@ -69,3 +82,16 @@ function minus_halfpi(hi::T, lo::T) where {T<:Float64}
 end
 
 minus_halfpi(x::DoubleFloat{Float64}) = minus_halfpi(HI(x), LO(x))
+
+function minus_qrtrpi(hi::T, lo::T) where {T<:Float64}
+    zhi, t1 = sub_2(0.78539816339744830, hi)
+    t2, t3 = sub_2(3.0616169978683830e-17, lo)
+    t7, t4 = add_2(t1, t2)
+    t5 = t3 + t4
+    zlo = t5 - 7.4869245242958490e-34
+    zlo += t7
+    return DoubleFloat{Float64}(-zhi, -zlo)
+end
+
+minus_qrtrpi(x::DoubleFloat{Float64}) = minus_qrtrpi(HI(x), LO(x))
+
