@@ -3,6 +3,7 @@ const onepi  = Double64(3.141592653589793, 1.2246467991473532e-16)
 const halfpi = Double64(1.5707963267948966, 6.123233995736766e-17)
 const qrtrpi = Double64(0.7853981633974483, 3.061616997868383e-17)
 const sixteenthpi = Double64(0.19634954084936207, 7.654042494670958e-18)
+const thirtysecondpi = Double64(0.09817477042468103, 3.827021247335479e-18)
 const threesixteenthpi = Double64(0.5890486225480862, 2.296212748401287e-17)
 
 #=
@@ -198,6 +199,8 @@ end
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
        z = -sin_circle(x - halfpi)
+    elseif x >= halfpi - thirtysecondpi
+       z = sin_circle(halfpi - x)   
     else
        z = cos_circle(x)
     end
