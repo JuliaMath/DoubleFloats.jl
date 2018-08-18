@@ -5,7 +5,7 @@ function twopi_minus(hi::T, lo::T) where {T<:Float64}
     t5 = t3 + t4
     zlo = t5 - 5.9895396194366790e-33
     zlo += t7
-    return zhi, zlo
+    return DoubleFloat{Float64}(zhi, zlo)
 end
 
 twopi_minus(x::DoubleFloat{Float64}) = twopi_minus(HI(x), LO(x))
@@ -17,7 +17,7 @@ function pi_minus(hi::T, lo::T) where {T<:Float64}
     t5 = t3 + t4
     zlo = t5 - 2.9947698097183397e-33
     zlo += t7
-    return zhi, zlo
+    return DoubleFloat{Float64}(zhi, zlo)
 end
 
 pi_minus(x::DoubleFloat{Float64}) = pi_minus(HI(x), LO(x))
@@ -29,7 +29,7 @@ function halfpi_minus(hi::T, lo::T) where {T<:Float64}
     t5 = t3 + t4
     zlo = t5 - 1.4973849048591698e-33
     zlo += t7
-    return zhi, zlo
+    return DoubleFloat{Float64}(zhi, zlo)
 end
 
 halfpi_minus(x::DoubleFloat{Float64}) = halfpi_minus(HI(x), LO(x))
