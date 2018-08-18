@@ -58,15 +58,9 @@ end
 
 function tan_taylor(a::Double64)
     iszero(a) && return(zero(Double64))
-    a2 = square(a)
-    b = a
-    r = a
-    for i in 2:n_tan_coeff
-        b = b * a2
-        c = tan_coeff[i] * b
-        r += c
-    end
-    return r
+    s = sin_taylor(a)
+    c = cos_taylor(a)
+    return s/c
 end
 
 function csc_taylor(a::Double64)
@@ -79,15 +73,9 @@ end
 
 function cot_taylor(a::Double64)
     iszero(a) && return(zero(Double64))
-    a2 = square(a)
-    b = inv(a)
-    r = b
-    for i in 2:n_cot_coeff
-        b = b * a2
-        c = cot_coeff[i] * b
-        r += c
-    end
-    return r
+    s = sin_taylor(a)
+    c = cos_taylor(a)
+    return c/s
  end
 
 
@@ -182,6 +170,8 @@ end
        z = -sin_circle(x - onepi)
     elseif x >= halfpi
        z = cos_circle(x - halfpi)
+    elseif x <= thirtysecondpi
+       z = sin_taylor(x)      
     else
        z = sin_circle(x)
     end
@@ -199,6 +189,8 @@ end
        z = -cos_circle(x - onepi)
     elseif x >= halfpi
        z = -sin_circle(x - halfpi)
+    elseif x <= thirtysecondpi
+       z = cos_taylor(x)      
     else
        z = cos_circle(x)
     end
