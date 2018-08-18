@@ -96,7 +96,7 @@ end
     @test test_rtol(rand1_bigf, rand1_vals, sin, 1.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, cos, 1.0e-31)
-    @test test_rtol(rand1_bigf, rand1_vals, cos, 1.0e-27)
+    @test test_rtol(rand1_bigf, rand1_vals, cos, 1.0e-28)
 
     @test test_atol(rand1_bigf, rand1_vals, tan, 1.0e-24)
     @test test_rtol(rand1_bigf, rand1_vals, tan, 1.0e-28)
