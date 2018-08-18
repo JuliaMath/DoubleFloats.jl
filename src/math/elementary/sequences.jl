@@ -1,7 +1,7 @@
 # 1 / factorial(i)
 
 # how many terms are to be used
-const nused_inv_fact = 16
+const nused_inv_fact = 18
 
 const inv_fact = (
   Double64(1.0,0.0),
