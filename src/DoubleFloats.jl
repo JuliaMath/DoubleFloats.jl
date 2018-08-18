@@ -56,6 +56,7 @@ include("doubletriple/double.jl")
 include("doubletriple/double_consts.jl")
 include("doubletriple/triple.jl")
 include("doubletriple/triple_consts.jl")
+include("doubletriple/triple_pi.jl")
 
 include("type/constructors.jl")
 include("type/promote.jl")
