@@ -167,9 +167,9 @@ end
        x = mod2pi(x)
     end
     if x >= onepi
-       z = -sin_circle(x - onepi)
+       z = -sin_circle(minus_pi(x))
     elseif x >= halfpi
-       z = cos_circle(x - halfpi)
+       z = cos_circle(minus_halfpi(x))
     elseif x <= thirtysecondpi
        z = sin_taylor(x)      
     else
@@ -186,9 +186,9 @@ end
        x = mod2pi(x)
     end
     if x >= onepi
-       z = -cos_circle(x - onepi)
+       z = -cos_circle(minus_pi(x))
     elseif x >= halfpi
-       z = -sin_circle(x - halfpi)
+       z = -sin_circle(minus_halfpi(x))
     elseif x <= thirtysecondpi
        z = cos_taylor(x)      
     else
@@ -209,7 +209,7 @@ function tan(x::Double64)
 
     y = modpi(x)                        # 0 <= y < pi
     if y >= halfpi
-        y = value_minus_pi(y)           # -pi/2 < y < 0
+        y = minus_pi(y)                # -pi/2 < y < 0
         return tan(y)
     elseif y >= qrtrpi
         y = value_minus_qrtrpi(y)       # 0 < y < pi/4
