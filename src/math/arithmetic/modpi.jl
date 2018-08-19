@@ -27,14 +27,14 @@ function mod2pi(x::DoubleFloat{Float64})
     x < twopi_df64 && return x
     w1 = mul323(inv_twopi_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
-    y = mul322(twopi_t64, w2)
+    y = mul322(pi_2o1_t64, w2)
     z = Double64(y)
     return z
 end
 
 function mod2pi_neg(x::DoubleFloat{Float64})
     m = mod2pi(-x)
-    return Double64(sub322(twopi_t64, HILO(m)))
+    return Double64(sub322(pi_2o1_t64, HILO(m)))
 end
 
 mod2pi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod2pi(DoubleFloat{Float64}(x)))
