@@ -102,16 +102,16 @@ modhalfpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpipm(DoubleFl
 function modqrtrpi(x::DoubleFloat{Float64})
     signbit(x) && return modqrtrpi_neg(x)
     x < qrtrpi_df64 && return x
-    w1 = mul323(inv_qrtrpi_t64, HILO(x))
+    w1 = mul323(inv_pi1o4_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
-    y = mul322(qrtrpi_t64, w2)
+    y = mul322(pi1o4_t64, w2)
     z = Double64(y)
     return z
 end
 
 function modqrtrpi_neg(x::DoubleFloat{Float64})
     m = modqrtrpi(-x)
-    return Double64(sub322(qrtrpi_t64, HILO(m)))
+    return Double64(sub322(pi1o4_t64, HILO(m)))
 end
 
 modqrtrpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpi(DoubleFloat{Float64}(x)))
@@ -119,9 +119,9 @@ modqrtrpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpi(DoubleFloat{
 
 function modqrtrpipm(x::DoubleFloat{Float64})
     abs(x) < qrtrpi_df64 && return x
-    w1 = mul323(inv_qrtrpi_t64, HILO(x))
+    w1 = mul323(inv_pi1o4_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
-    y = mul322(qrtrpi_t64, w2)
+    y = mul322(pi1o4_t64, w2)
     z = Double64(y)
     return z
 end
