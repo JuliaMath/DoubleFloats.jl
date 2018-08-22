@@ -1,14 +1,5 @@
-@testset "precision" begin
-    @test precision(Double64) == 113
-    @test precision(Double32) == 53
-    @test precision(Double32) == 24
-end
-
-@testset "maxintfloat" begin
-    @test maxintfloat(Double64) >   maxintfloat(Double64) - 1
-    @test maxintfloat(Double64) == (maxintfloat(Double64) - 1) + 1
-    @test maxintfloat(Double32) >   maxintfloat(Double32) - 1
-    @test maxintfloat(Double32) == (maxintfloat(Double32) - 1) + 1
-    @test maxintfloat(Double16) >   maxintfloat(Double16) - 1
-    @test maxintfloat(Double16) == (maxintfloat(Double16) - 1) + 1
+@testset "Exponential functions"  begin
+    @test Double64(10.0)^0 == Double64(1.0)
+    @test Double64(10.0)^1 == Double64(10.0)
+    @test_throws DomainError Double64(0.0)^0
 end
