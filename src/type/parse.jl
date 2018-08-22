@@ -1,5 +1,17 @@
+function splitnumstring(str::AbstractString, dlm)
+    strs = String.(split(str, dlm))
+    strs = map(x->(isempty(x) ? "0.0" : x), strs)
+    n = length(strs)
+    if n > 1
+        strs
+    elseif n == 1
+        [strs[1], "0.0"]
+    else
+        ["0.0", "0.0"]
+    end
+end
+
 # constructors
-Double16(str::T) where {T<:AbstractString} = tryparse(Double16, str)
 Double32(str::T) where {T<:AbstractString} = tryparse(Double32, str)
 Double64(str::T) where {T<:AbstractString} = tryparse(Double64, str)
 
@@ -9,7 +21,7 @@ function Base.tryparse(::Type{Double64}, str::T) where {T<:AbstractString}
          str = string("Double64", str[length("DoubleFloat{Float64}")+1:end])
      end
      if !startswith(str, "Double64(")
-          str = string("Double64(", str, ")")
+         str = string("Double64(", str, ")")
      end
      return trytypedparse(Double64, str)
 end
@@ -20,7 +32,7 @@ function Base.tryparse(::Type{Double32}, str::T) where {T<:AbstractString}
          str = string("Double32", str[length("DoubleFloat{Float32}")+1:end])
      end
      if !startswith(str, "Double32(")
-          str = string("Double32(", str, ")")
+         str = string("Double32(", str, ")")
      end
      return trytypedparse(Double32, str)
 end
@@ -31,15 +43,15 @@ function Base.tryparse(::Type{Double16}, str::T) where {T<:AbstractString}
          str = string("Double16", str[length("DoubleFloat{Float16}")+1:end])
      end
      if !startswith(str, "Double16(")
-          str = string("Double16(", str, ")")
+         str = string("Double16(", str, ")")
      end
      return trytypedparse(Double16, str)
 end
 
 
 function trytypedparse(::Type{Double64}, str::T) where {T<:AbstractString}
-     str = str[1+length("Double64("):end-1]
-     histr, lostr = split(str, ", ")
+     str = str[1+length("Double64("):length(str)-1]
+     histr, lostr = splitnumstring(str, ", ")
      hi = Meta.parse(histr)
      lo = Meta.parse(lostr)
      result = Double64(hi, lo)
@@ -48,7 +60,7 @@ end
 
 function trytypedparse(::Type{Double32}, str::T) where {T<:AbstractString}
      str = str[1+length("Double32("):end-1]
-     histr, lostr = split(str, ", ")
+     histr, lostr = splitnumstring(str, ", ")
      hi = Meta.parse(histr)
      lo = Meta.parse(lostr)
      result = Double32(hi, lo)
@@ -57,7 +69,7 @@ end
 
 function trytypedparse(::Type{Double16}, str::T) where {T<:AbstractString}
      str = str[1+length("Double16("):end-1]
-     histr, lostr = split(str, ", ")
+     histr, lostr = splitnumstring(str, ", ")
      hi = Meta.parse(histr)
      lo = Meta.parse(lostr)
      result = Double16(hi, lo)
@@ -68,7 +80,7 @@ end
 #=
 function Base.tryparse(::Type{QuadrupleF64}, str::T) where {T<:AbstractString}
      str = str[1+length("QuadrupleF64("):end-1]
-     hihistr, hilostr, lohistr, lolostr = split(str, ", ")
+     hihistr, hilostr, lohistr, lolostr = splitnumstring(str, ", ")
      hihi = Meta.parse(hihistr)
      hilo = Meta.parse(hilostr)
      lohi = Meta.parse(lohistr)
@@ -81,7 +93,7 @@ end
 
 function Base.tryparse(::Type{QuadrupleF32}, str::T) where {T<:AbstractString}
      str = str[1+length("QuadrupleF32("):end-1]
-     hihistr, hilostr, lohistr, lolostr = split(str, ", ")
+     hihistr, hilostr, lohistr, lolostr = splitnumstring(str, ", ")
      hihi = Meta.parse(hihistr)
      hilo = Meta.parse(hilostr)
      lohi = Meta.parse(lohistr)
@@ -94,7 +106,7 @@ end
 
 function Base.tryparse(::Type{QuadrupleF16}, str::T) where {T<:AbstractString}
      str = str[1+length("QuadrupleF16("):end-1]
-     hihistr, hilostr, lohistr, lolostr = split(str, ", ")
+     hihistr, hilostr, lohistr, lolostr = splitnumstring(str, ", ")
      hihi = Meta.parse(hihistr)
      hilo = Meta.parse(hilostr)
      lohi = Meta.parse(lohistr)
