@@ -7,5 +7,5 @@
 end
 
 # Double16 is a special case
-@test isinteger(maxintfloat(T))
+@test isinteger(maxintfloat(Double16))
 @test maxintfloat(Double16) == floatmax(Double16)
