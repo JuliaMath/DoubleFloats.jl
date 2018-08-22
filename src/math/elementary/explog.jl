@@ -72,7 +72,7 @@ end
 
 function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     if (n == 0)
-        iszero(a) && throw(DomainError("0^0"))
+        iszero(r) && throw(DomainError("0^0"))
         return one(DoubleFloat{T})
     end
 
@@ -136,7 +136,6 @@ function Base.Math.exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function calc_exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
-
   is_neg = signbit(HI(a))
   xabs = is_neg ? -a : a
   xintpart = modf(xabs)[2]
