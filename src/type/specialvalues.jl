@@ -16,6 +16,7 @@ maxintfloat(::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}(ldexp(0.5, 107)
 maxintfloat(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}(ldexp(0.5f0, 49), ldexp(0.5f0, 25))
 maxintfloat(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float16}(ldexp(Float16(0.9995),16), ldexp(Float16(0.5),5)-2)
 
+
 isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
 isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
 isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
