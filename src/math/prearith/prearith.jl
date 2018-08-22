@@ -36,7 +36,7 @@ end
 function frexp(x::DoubleFloat{T}) where {T<:AbstractFloat}
     frhi, exphi = frexp(HI(x))
     frlo, explo = frexp(LO(x))
-    return (frhi, exphi), (frlo, explo), E
+    return (frhi, exphi), (frlo, explo)
 end
 
 function ldexp(x::DoubleFloat{T}, exponent::I) where {T, I<:Integer}
