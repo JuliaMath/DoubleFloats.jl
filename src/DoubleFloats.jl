@@ -4,7 +4,7 @@ abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
        Double64, Double32, Double16,
-       @d64, @d32, @d16,
+       d64_str, d32_str, d16_str,
        MultipartFloat, HI, LO, HILO,
        stringtyped, showtyped,
        isnonzero, ispos, isneg, isnonpos, isnonneg,
