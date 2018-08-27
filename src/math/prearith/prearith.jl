@@ -69,25 +69,25 @@ function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -prevfloat(-x)
     iszero(LO(x)) && return DoubleFloat(HI(x), eps(HI(x)))
-    return DoubleFloat(HI(x), nextfloat(LO(x)))
+    return DoubleFloat{T}(HI(x), nextfloat(LO(x)))
 end
 
 function prevfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x)
     iszero(LO(x)) && return DoubleFloat(HI(x), -eps(HI(x)))
-    return DoubleFloat(HI(x), prevfloat(LO(x)))
+    return DoubleFloat{T}(HI(x), prevfloat(LO(x)))
 end
 
 function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
      return nextfloat(x, -n)
 end
+
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x, n)
     iszero(LO(x)) && return DoubleFloat(HI(x), T(n)*eps(HI(x)))
-    signbit(LO(x)) && return DoubleFloat(HI(x), -nextfloat(-LO(x),n))
-    return DoubleFloat(HI(x), nextfloat(LO(x),n))
+    return DoubleFloat{T}(HI(x), nextfloat(LO(x),n))
 end
 
 eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/2)
