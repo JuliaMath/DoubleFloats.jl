@@ -41,7 +41,7 @@ julia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)
 julia> typeof(ans) === Double16
 true
 ```
-note: providing a floating-point constant must be done with care,
+note: floating-point constants must be used with care,
 they are evaluated as Float64 values before additional processing
 ```julia
 julia> Double64(0.2)
