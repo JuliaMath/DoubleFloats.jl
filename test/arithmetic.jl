@@ -27,6 +27,22 @@
     @test x ⊘ y == (Double64(x) / Double64(y))
 end
 
+@testset "div,rem,.." begin
+
+    a = 17.0
+    b =  5.0
+    da = Double64(a)
+    db = Double64(b)
+    
+    @test div(da, db) == div(a, b) 
+    @test cld(da, db) == cld(a, b) 
+    @test fld(da, db) == fld(a, b) 
+    @test rem(da, db) == rem(a, b) 
+    @test mod(da, db) == mod(a, b) 
+    @test divrem(da, db) == divrem(a, b) 
+    @test fldmod(da, db) == fldmod(a, b) 
+end
+
 @testset "Trig functions" begin
 
     x = rand(Double64)
