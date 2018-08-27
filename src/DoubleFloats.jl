@@ -69,10 +69,9 @@ include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
 
-
-
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
+include("math/prearith/divrem.jl")
 include("math/arithmetic/fma.jl")
 include("math/arithmetic/modpi.jl")
 include("math/arithmetic/normalize_hypot.jl")
