@@ -41,7 +41,18 @@ julia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)
 julia> typeof(ans) === Double16
 true
 ```
+note: providing a floating-point constant must be done with care,
+they are evaluated as Float64 values before additional processing
+```julia
+julia> Double64(0.2)
+2.0000000000000001110223024625156540e-01
 
+julia> Double64(2)/10
+1.9999999999999999999999999999999937e-01
+
+julia> d64"0.2"
+1.9999999999999999999999999999999937e-01
+```
 #### show, string, parse
 ```julia
 julia> using DoubleFloats
