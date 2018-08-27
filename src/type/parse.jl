@@ -1,3 +1,15 @@
+macro d64_str(val::String)
+    :(Double64(BigFloat($val)))
+end
+
+macro d32_str(val::String)
+    :(Double32(BigFloat($val)))
+end
+
+macro d16_str(val::String)
+    :(Double16(BigFloat($val)))
+end
+
 function splitnumstring(str::AbstractString, dlm)
     strs = String.(split(str, dlm))
     strs = map(x->(isempty(x) ? "0.0" : x), strs)
