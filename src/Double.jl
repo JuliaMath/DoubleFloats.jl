@@ -65,9 +65,22 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
 @inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
-@inline Double64(hi::T) where {T<:IEEEFloat} = Double64(Float64(hi), zero(Float64))
-@inline Double32(hi::T) where {T<:IEEEFloat} = Double32(Float32(hi), zero(Float32))
-@inline Double16(hi::T) where {T<:IEEEFloat} = Double16(Float16(hi), zero(Float16))
+@inline function Double64(x::T) where {T<:IEEEFloat}
+    hi = Float64(x)
+    lo = Float64(x - Float64(hi))
+    return Double64(hi, lo)
+end
+@inline function Double32(x::T) where {T<:IEEEFloat}
+    hi = Float32(x)
+    lo = Float32(x - Float64(hi))
+    return Double32(hi, lo)
+end
+@inline function Double16(x::T) where {T<:IEEEFloat}
+    hi = Float16(x)
+    lo = Float16(x - Float64(hi))
+    return Double16(hi, lo)
+end
+
 @inline Double64(hi::T) where {T<:Integer} = Double64(Float64(hi))
 @inline Double32(hi::T) where {T<:Integer} = Double32(Float32(hi))
 @inline Double16(hi::T) where {T<:Integer} = Double16(Float16(hi))
