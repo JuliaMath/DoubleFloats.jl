@@ -84,10 +84,11 @@ function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
 end
 
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
-    !isfinite(x) && return(x)
-    signbit(x) && return -nextfloat(-x, n)
-    iszero(LO(x)) && return DoubleFloat(HI(x), T(n)*eps(HI(x)))
-    return DoubleFloat{T}(HI(x), nextfloat(LO(x),n))
+   !isfinite(x) && return(x)
+   signbit(x) && return -prevfloat(-x, n)
+   iszero(LO(x)) && return DoubleFloat(HI(x), sign(x)*T(n)*eps(HI(x)))
+   signbit(LO(x)) && return DoubleFloat(HI(x), -prevfloat(-LO(x),n))
+   return DoubleFloat(HI(x), nextfloat(LO(x),n))
 end
 
 eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/2)
