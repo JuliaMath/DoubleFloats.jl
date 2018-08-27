@@ -1,3 +1,9 @@
+
+@testset "Strings" begin
+    result = LO(sqrt(@d64"2")) < LO(nextfloat(sqrt(@d64"2")))
+    @test result
+end
+
 @testset "Adjacent values" begin
     @test nextfloat(Double64(10))  > Double64(10)
     @test nextfloat(Double32(-10)) > Double32(-10)
@@ -7,7 +13,6 @@
     @test nextfloat(Double32(-10),3) > nextfloat(Double32(-10),2)
     @test prevfloat(Double64(10),3)  < prevfloat(Double64(10),2)
     @test prevfloat(Double32(-10),3) < prevfloat(Double32(-10),2)
-    @test LO(sqrt(@d64"2")) < LO(nextfloat(sqrt(@d64"2")))
 end
 
 @testset "Exponential functions"  begin
