@@ -24,7 +24,7 @@ Many arithmetic operations and elementary functions are available with each type
 - asinh, acosh, atanh, acsch, asech, acoth
 
 ----
-- todo: div, fld, cld, rem, mod, divrem, fldmod, round (fractionally), atan2
+- todo: div, fld, cld, rem, mod, divrem, fldmod, round (fractionally)
 
 
 
