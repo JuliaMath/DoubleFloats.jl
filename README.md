@@ -31,11 +31,11 @@ julia> Pkg.add("DoubleFloats")
 ```julia
 julia> using DoubleFloats
 
-julia> d64 = sqrt(Double64(2)); 1 - d64 * inv(d64)
+julia> dbl64 = sqrt(Double64(2)); 1 - dbl64 * inv(dbl64)
 0.0
-julia> d32 = sqrt(Double32(2)); 1 - d32 * inv(d32)
+julia> dbl32 = sqrt(Double32(2)); 1 - dbl32 * inv(dbl32)
 0.0
-julia> d16 = sqrt(Double16(2)); 1 - d16 * inv(d16)
+julia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)
 0.0
 
 julia> typeof(ans) === Double16
