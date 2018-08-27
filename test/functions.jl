@@ -1,7 +1,5 @@
-result1 = LO(sqrt(@d64"2")) < LO(nextfloat(sqrt(@d64"2")))
-
 @testset "Strings" begin
-    @test result1
+    @test LO(sqrt(d64"2")) < LO(nextfloat(sqrt(d64"2")))
 end
 
 @testset "Adjacent values" begin
