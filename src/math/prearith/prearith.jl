@@ -69,14 +69,13 @@ function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -prevfloat(-x)
     iszero(LO(x)) && return DoubleFloat(HI(x), eps(HI(x)))
-    signbit(LO(x)) && return DoubleFloat(HI(x), -nextfloat(-LO(x)))
     return DoubleFloat(HI(x), nextfloat(LO(x)))
 end
+
 function prevfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -nextfloat(-x)
     iszero(LO(x)) && return DoubleFloat(HI(x), -eps(HI(x)))
-    signbit(LO(x)) && return DoubleFloat(HI(x), -prevfloat(-LO(x)))
     return DoubleFloat(HI(x), prevfloat(LO(x)))
 end
 
