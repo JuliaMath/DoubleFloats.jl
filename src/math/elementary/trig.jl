@@ -206,7 +206,8 @@ function tan(x::Double64)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(-x)
-
+    HI(x) <= 2.0e-12 && return x
+     
     y = modpi(x)                        # 0 <= y < pi
     if y >= halfpi
         y = minus_pi(y)                # -pi/2 < y < 0
