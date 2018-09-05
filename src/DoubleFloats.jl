@@ -75,6 +75,7 @@ include("math/prearith/divrem.jl")
 include("math/arithmetic/fma.jl")
 include("math/arithmetic/modpi.jl")
 include("math/arithmetic/normalize_hypot.jl")
+include("math/arithmetic/mixedarith.jl")
 include("math/ops.jl")
 
 include("math/elementary/sequences.jl")
