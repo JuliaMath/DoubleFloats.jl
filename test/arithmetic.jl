@@ -50,3 +50,7 @@ end
     @test sinx ≈ sin(x)
     @test cosx ≈ cos(x)
 end
+
+@testset "promotion" begin
+    @test d64"123" - d64"123" * 0.1 * 10 == 0.0
+end
