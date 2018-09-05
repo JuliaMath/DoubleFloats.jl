@@ -1,10 +1,2 @@
-for F in (:(+), :(-), :(*), :(/), :(%), :(^))
-  @eval begin
-      function $F(x::DoubleFloat{T1}, y::Union{Signed, Unsigned, IEEEFloat}) where {T1<:IEEEFloat}
-         return $F(x, DoubleFloat{T1}(y))
-      end
-      function $F(x::Union{Signed, Unsigned, IEEEFloat}, y::DoubleFloat{T1}) where {T1<:IEEEFloat}
-         return $F(DoubleFloat{T1}(x), y)
-      end
-  end
-end
+Base.sum(x::DoubleFloat{T}, xs::F...) where {T<:IEEEFloat, Union{IEEEFloat, Signed}}  = sum(x, DoubleFloat{T}.(xs...,))
+Base.prod(x::DoubleFloat{T}, xs::F...) where {T<:IEEEFloat, Union{IEEEFloat, Signed}}  = prod(x, DoubleFloat{T}.(xs...,))
