@@ -52,5 +52,5 @@ end
 end
 
 @testset "promotion" begin
-    @test d64"123" - 123 * d64"0.1" * 10.0 == 0.0
+    @test d64"123" - d64"123" * d64"0.1" * 10.0 == 0.0
 end
