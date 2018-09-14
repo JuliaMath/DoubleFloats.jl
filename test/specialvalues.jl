@@ -12,7 +12,6 @@ end
 
 
 @testset "Inf and NaN generation $T" for T in (Double16, Double32, Double64)
-
     @test T(Inf) == inf(T)
     @test T(Inf) == posinf(T)
     @test T(-Inf) == neginf(T)
