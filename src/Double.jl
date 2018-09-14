@@ -66,19 +66,19 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
 @inline function Double64(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(Double64(Float64(x),zero(T)))
+    !isfinite(x) && return(DoubleFloat(Float64(x),Float64(NaN)))
     hi = Float64(x)
     lo = Float64(x - Float64(hi))
     return Double64(hi, lo)
 end
 @inline function Double32(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(Double32(Float32(x),zero(T)))
+    !isfinite(x) && return(DoubleFloat(Float32(x),Float32(NaN)))
     hi = Float32(x)
     lo = Float32(x - Float64(hi))
     return Double32(hi, lo)
 end
 @inline function Double16(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(Double16(Float16(x),zero(T)))
+    !isfinite(x) && return(DoubleFloat(Float16(x),Float16(NaN)))
     hi = Float16(x)
     lo = Float16(x - Float64(hi))
     return Double16(hi, lo)

@@ -51,7 +51,7 @@ using Random
 
 using AccurateArithmetic
 
-include("Double.jl")   # Double64, Double16, Double16
+include("Double.jl")   # Double64, Double32, Double16
 
 include("doubletriple/double.jl")
 include("doubletriple/double_consts.jl")
