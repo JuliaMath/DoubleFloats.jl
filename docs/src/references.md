@@ -7,7 +7,7 @@ M. Joldes, V. Popescu, and J.M. Muller.
 Tight and rigourous error bounds for basic building blocks of double-word arithmetic
 2016, working paper.
 ```
-&nbsp; &nbsp; &rarr;  https://hal.archives-ouvertes.fr/hal-013515      
+&nbsp; &nbsp; &rarr;  https://hal.archives-ouvertes.fr/hal-01351529v2/document
 ```
 [Multiple Precision]
 V. Popescu.
