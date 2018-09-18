@@ -49,7 +49,7 @@ Thème NUM — Systèmes numériques, Projet Arénaire
 Rapport de recherche n 5702 — Septembre 2005 — 67 pages
 =#
 
-# Algorithm 3.3
+# Algorithm 3.3 [Triple-Double Building Blocks]
 
 function renorm(hi::T, md::T, lo::T) where {T<:AbstractFloat}
     md, lo = add_2(md, lo)
@@ -66,7 +66,7 @@ function renorm_hilo(hi::T, md::T, lo::T) where {T<:AbstractFloat}
     return hi, md, lo
 end
 
-# Algorithm 4.1  (relerr 4.5 .. 16 u^2)
+# Algorithm 4.1  (relerr 4.5 .. 16 u^2) [Triple-Double Building Blocks]
 
 function add222(ahilo, bhilo)
     ahi, alo = ahilo
@@ -88,7 +88,7 @@ function add222(ahilo, bhilo)
 end
 
 
-# Algorithm 4.6  (relerr 16 u^2)
+# Algorithm 4.6  (relerr 16 u^2) [Triple-Double Building Blocks]
 
 function mul222(ahilo, bhilo)
     ahi, alo = ahilo
@@ -104,7 +104,7 @@ end
 
 # addition
 
-# Algorithm 5.1 (Add33)
+# Algorithm 5.1 (Add33) [Triple-Double Building Blocks]
 # (ahi,amd,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
 
 function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
@@ -321,7 +321,7 @@ sub312(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     sub312(a[1], a[2], a[3], b)
 
 
-# Algorithm 6.1
+# Algorithm 6.1 [Triple-Double Building Blocks]
 # (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
 
 function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
