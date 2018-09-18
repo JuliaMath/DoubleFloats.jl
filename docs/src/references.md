@@ -2,12 +2,21 @@
 
 
 ```
-[Building Blocks]
+[DoubleDouble Building Blocks]
 M. Joldes, V. Popescu, and J.M. Muller.
 Tight and rigourous error bounds for basic building blocks of double-word arithmetic
 2016, working paper.
 ```
 &nbsp; &nbsp; &rarr;  https://hal.archives-ouvertes.fr/hal-01351529v2/document
+
+```
+[TripleDouble Building Blocks]
+Christoph Quirin Lauter.
+Basic building blocks for a triple-double intermediate format
+2005, research report.
+```
+&nbsp; &nbsp; &rarr;https://hal.inria.fr/inria-00070314/document
+
 ```
 [Multiple Precision]
 V. Popescu.
