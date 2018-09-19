@@ -87,9 +87,28 @@ function add222(ahilo, bhilo)
     return zhi, zlo
 end
 
+"""
+    _Basic building blocks for a triple-double intermediate format_
+
+Christoph Quirin Lauter, 2005
+""" TripleDouble_BuildingBlocks
+
 
 # Algorithm 4.6  (relerr 16 u^2) [Triple-Double Building Blocks]
+"""
+    mul222( (ahi, alo), (bhi, blo) ) ↦ (chi, clo)
 
+### Preconditions
+- abs(alo) ≤ abs(ahi) * pow(2, -53)
+- abs(blo) ≤ abs(bhi) * pow(2, -53)
+
+### Postconditions
+- abs(clo) ≤ abs(ahi) * pow(2, -53)
+- chi + clo == ((ahi + alo) * (bhi + blo)) * (1 + ε), abs(ε) ≤ pow(2, -102)
+- chi + clo == chi
+
+#### [TripleDouble_BuildingBlocks](@ref)
+"""
 function mul222(ahilo, bhilo)
     ahi, alo = ahilo
     bhi, blo = bhilo
