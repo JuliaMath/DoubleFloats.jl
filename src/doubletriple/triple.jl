@@ -71,19 +71,19 @@ end
 function add222(ahilo, bhilo)
     ahi, alo = ahilo
     bhi, blo = bhilo
+    t1 = ahi + bhi
     if abs(ahi) >= abs(bhi)
-        t1 = ahi + bhi
         t2 = ahi - t1
         t3 = t2  + bhi
         t4 = t3  + blo
         t5 = t4  + alo
     else
-        t1 = ahi + bhi
         t2 = bhi - t1
         t3 = t2  + ahi
         t4 = t3  + alo
         t5 = t4  + blo
     end
+    zhi, zlo = two_sum(t1, t5)
     return zhi, zlo
 end
 
