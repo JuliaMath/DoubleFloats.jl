@@ -546,3 +546,10 @@ end
 
 
 mul132(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:AbstractFloat} = mul312(b, a)
+
+
+function muladd222(a::Tuple{T,T}, b::Tuple{T,T}, c::Tuple{T,T}) where {T<:AbstractFloat}
+    m = mul223(a, b)
+    hi, lo = add322(m, c)
+    return hi, lo
+end
