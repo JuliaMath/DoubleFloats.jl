@@ -1,22 +1,20 @@
-## Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
 os:
-  - linux
   - osx
+  - linux
 julia:
   - 1.0
   - nightly
 matrix:
-  fast_finish: true
-
- allow_failures:
-   - julia: nightly
-
+  allow_failures:
+    - julia: nightly
 notifications:
   email: false
 git:
   depth: 99999999
-
+#script:
+#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+#  - julia -e 'Pkg.clone(pwd()); Pkg.build("Roots"); Pkg.test("Roots"; coverage=true)';
 jobs:
   include:
     - stage: "Documentation"
@@ -26,6 +24,5 @@ jobs:
         - julia --project=docs/ -e 'using Pkg; Pkg.instantiate(); Pkg.add(PackageSpec(path=pwd()))'
         - julia --project=docs/ docs/make.jl
       after_success: skip
-
 after_success:
-  - julia -e import Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder());'
+    - julia -e 'cd(Pkg.dir("Roots")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';## Documentation: http://docs.travis-ci.com/user/languages/julia/
