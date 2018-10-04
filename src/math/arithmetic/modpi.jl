@@ -72,7 +72,7 @@ modpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpipm(DoubleFloat{Floa
 function modhalfpi(x::DoubleFloat{Float64})
     signbit(x) && return modhalfpi_neg(x)
     x < halfpi_df64 && return x
-    w1 = mul323(inv_pi1o2_t64, HILO(x))
+    w1 = mul323(inv_pi_1o2_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi1o2_t64, w2)
     z = Double64(y)
