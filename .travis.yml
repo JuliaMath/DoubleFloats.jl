@@ -8,17 +8,24 @@ julia:
   - nightly
 matrix:
   fast_finish: true
-#  allow_failures:
-#    - julia: nightly
+
+ allow_failures:
+   - julia: nightly
+
 notifications:
   email: false
 git:
   depth: 99999999
-## uncomment the following lines to override the default test script
-#script:
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats"; coverage=true)'
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.instantiate(); Pkg.add(PackageSpec(path=pwd()))'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
+
 after_success:
-  - julia -e 'Pkg.add("Documenter"); using Documenter;'
-  - julia -e 'cd(Pkg.dir("DoubleFloats")); include(joinpath("docs", "make.jl"))'
-  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
- 
+  - julia -e import Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder());'
