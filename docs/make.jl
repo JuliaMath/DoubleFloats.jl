@@ -17,7 +17,6 @@ makedocs(
 )
 
 deploydocs(
-    julia = "nightly",
+    julia = "1.0",
     repo = "github.com/JuliaMath/DoubleFloats.jl.git"
 )
-
