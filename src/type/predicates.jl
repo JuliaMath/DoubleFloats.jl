@@ -12,6 +12,7 @@ These are the predicates made available for use with DoubleFloats:
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan,                                   #  value is not a number (eg 0/0)
   issubnormal,                             #  value contains a subnormal part
+  isnormal,                                #  value is finite and not subnormal
   isinteger, isfractional                  #  value == round(value)
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
@@ -61,6 +62,9 @@ isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 
 issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
+
+isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+    isfinite(HI(x)) && !issubnormal(x)
 
 isinteger(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinteger(HI(x)) && isinteger(LO(x))
