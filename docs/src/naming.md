@@ -1,3 +1,8 @@
 # names
 
-__DoubleFloats__ is the package.  `Double` and `FastDouble` are the sorts of type.
+__DoubleFloats__ is the package.  `Double64` and `Double32` are the exported types.
+
+`Double64` is a pair of Float64s, used to provide 106 bit significands with 11 bit exponents.
+
+`Double32` is a pair of Float32s, used to provide 48 bit significands with 8 bit exponents.
+
