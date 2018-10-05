@@ -64,7 +64,7 @@ issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
 isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isfinite(HI(x)) && !issubnormal(x)
+    isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
 isinteger(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinteger(HI(x)) && isinteger(LO(x))
