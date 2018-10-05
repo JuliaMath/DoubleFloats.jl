@@ -2,7 +2,6 @@ using Documenter, DoubleFloats
 
 makedocs(
     modules = [DoubleFloats],
-    clean = false,
     format = :html,
     sitename = "DoubleFloats.jl",
     authors = "Jeffrey Sarnoff, Simon Byrne, Sascha Timme, and other contributors",
@@ -18,5 +17,9 @@ makedocs(
 
 deploydocs(
     julia = "1.0",
-    repo = "github.com/JuliaMath/DoubleFloats.jl.git"
+    repo = "github.com/JuliaMath/DoubleFloats.jl.git",
+    target = "build",
+    osname = "linux",
+    deps   = nothing,
+    make   = nothing
 )
