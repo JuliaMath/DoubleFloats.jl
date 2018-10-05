@@ -15,14 +15,7 @@ git:
 #script:
 #  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("Roots"); Pkg.test("Roots"; coverage=true)';
-jobs:
-  include:
-    - stage: "Documentation"
-      julia: 1.0
-      os: linux
-      script:
-        - julia --project=docs/ -e 'using Pkg; Pkg.instantiate(); Pkg.add(PackageSpec(path=pwd()))'
-        - julia --project=docs/ docs/make.jl
-      after_success: skip
 after_success:
-    - julia -e 'cd(Pkg.dir("Roots")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';## Documentation: http://docs.travis-ci.com/user/languages/julia/
+  - julia -e 'using Pkg; Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("DoubleFloats")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder()); Codecov.submit(process_folder())'
