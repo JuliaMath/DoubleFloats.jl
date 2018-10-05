@@ -11,7 +11,7 @@ See [here](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/functio
 
 ## Documentation
 
-- [Current](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/index.md) &mdash; **most recently tagged version of the documentation.**
+- [Current](https://juliamath.github.io/DoubleFloats.jl/latest/) &mdash; **most recently tagged version of the documentation.**
 
 
 ## Installation
