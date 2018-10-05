@@ -25,7 +25,7 @@ Many arithmetic operations and elementary functions are available with each type
 
 ----
 - todo: round (fractionally)
-
+- todo: elementary functions for Double32s directly
 
 
 ----
