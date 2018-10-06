@@ -2,7 +2,6 @@
 
 __DoubleFloats__ is the package.  `Double64` and `Double32` are the exported types.
 
-`Double64s` hold a pair of Float64s, used to provide 106 bit significands with 11 bit exponents.
+`Double64s` store 106 significand bits, 11 exponent bits and two sign bits (one for the higher order Float64 and one for the lower order Float64, and they often differ).  This gives `Double64s` twice the significand bits of a Float64 with the same exponent range as a Float64.
 
-`Double32s` hold a pair of Float32s, used to provide 48 bit significands with 8 bit exponents.
-
+`Double32s` store 48 significand bits, 8 exponent bits and two sign bits (one for the higher order Float32 and one for the lower order Float32, and they often differ).  This gives `Double32s` twice the significand bits of a Float32 with the same exponent range as a Float32.
