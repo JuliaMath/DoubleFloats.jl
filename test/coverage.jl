@@ -58,5 +58,56 @@ end # predicates
     @test HI(hilo) == hi
     @test LO(hilo) == lo
     @test HILO(hilo) == hilo
-    
+        
 end # Double
+
+@testset "compare $T" for T in (Double16, Double32, Double64)
+
+    two = 2
+    fp2 = T(2)
+    sqrt2  = sqrt(T(2))
+    sqrt5  = sqrt(T(5))
+    
+    @test   sqrt2 == sqrt2
+    @test   sqrt2 >= sqrt2
+    @test   sqrt2 <= sqrt2
+    @test !(sqrt2 != sqrt2)
+    @test !(sqrt2 >  sqrt2)
+    @test !(sqrt2 <  sqrt2)
+
+    @test !(sqrt2 == sqrt5)
+    @test !(sqrt2 >= sqrt5)
+    @test   sqrt2 <= sqrt5
+    @test   sqrt2 != sqrt5
+    @test !(sqrt2 >  sqrt5)
+    @test   sqrt2 <  sqrt5
+
+    @test !(fp2 == sqrt5)
+    @test !(fp2 >= sqrt5)
+    @test   fp2 <= sqrt5
+    @test   fp2 != sqrt5
+    @test !(fp2 >  sqrt5)
+    @test   fp2 <  sqrt5
+
+    @test !(sqrt5 == fp2)
+    @test !(sqrt5 <= fp2)
+    @test   sqrt5 >= fp2
+    @test   sqrt5 != fp2
+    @test !(sqrt5 <  fp2)
+    @test   sqrt5 >  fp2
+
+    @test !(two == sqrt5)
+    @test !(two >= sqrt5)
+    @test   two <= sqrt5
+    @test   two != sqrt5
+    @test !(two >  sqrt5)
+    @test   two <  sqrt5
+
+    @test !(sqrt5 == two)
+    @test !(sqrt5 <= two)
+    @test   sqrt5 >= two)
+    @test   sqrt5 != two)
+    @test !(sqrt5 <  two)
+    @test   sqrt5 >  two    
+    
+end # compare
