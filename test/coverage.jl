@@ -41,7 +41,7 @@ end
   
 end # predicates
 
-@testset "Double $T" for T in (Double16, Double32, Double64)
+@testset "Double $T" for T in (Double32, Double64)
 
     @test HI(one($T)) == one($T)
     @test LO(one($T)) == zero($T)
@@ -61,7 +61,7 @@ end # predicates
         
 end # Double
 
-@testset "compare $T" for T in (Double16, Double32, Double64)
+@testset "compare $T" for T in (Double32, Double64)
 
     two = 2
     fp2 = T(2)
