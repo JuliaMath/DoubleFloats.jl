@@ -40,3 +40,23 @@ end
     @test isfractional(one(T)/2)
   
 end # predicates
+
+@testset "Double $T" for T in (Double16, Double32, Double64)
+
+    @test HI(one($T)) == one($T)
+    @test LO(one($T)) == zero($T)
+    @test HILO(one($T)) == (one($T), zero($T))
+    
+    sqrt2  = sqrt($T(2))
+    hi, lo = sqrt2.hi, sqrt2.lo
+    hilo   = HILO(sqrt2)
+    
+    @test HI(sqrt2) == hi
+    @test LO(sqrt2) == lo
+    @test HILO(sqrt2) == (hi, lo)
+    
+    @test HI(hilo) == hi
+    @test LO(hilo) == lo
+    @test HILO(hilo) == hilo
+    
+end # Double
