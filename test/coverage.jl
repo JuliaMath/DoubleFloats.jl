@@ -106,8 +106,8 @@ end # Double
 
     @test !(sqrt5 == two)
     @test !(sqrt5 <= two)
-    @test   sqrt5 >= two)
-    @test   sqrt5 != two)
+    @test   sqrt5 >= two
+    @test   sqrt5 != two
     @test !(sqrt5 <  two)
     @test   sqrt5 >  two    
     
