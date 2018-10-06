@@ -47,7 +47,7 @@ end # predicates
     @test LO(one($T)) == zero($T)
     @test HILO(one($T)) == (one($T), zero($T))
     
-    sqrt2  = sqrt($T(2))
+    sqrt2  = sqrt(T(2))
     hi, lo = sqrt2.hi, sqrt2.lo
     hilo   = HILO(sqrt2)
     
