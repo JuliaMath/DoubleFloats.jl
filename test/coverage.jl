@@ -11,6 +11,7 @@ sqrt2 = sqrt(2.0)
 @test Double64(sqrt2) == convert(Double64, sqrt2)
 
 end # convert
+
 @testset "maxintfloat $T" for T in (Double32, Double64)
     @test isinteger(maxintfloat(T))
 
@@ -41,11 +42,11 @@ end
   
 end # predicates
 
-@testset "Double $T" for T in (Double32, Double64)
+@testset "double $T" for T in (Double32, Double64)
 
-    @test HI(one($T)) == one($T)
-    @test LO(one($T)) == zero($T)
-    @test HILO(one($T)) == (one($T), zero($T))
+    @test HI(one(T)) == one(T)
+    @test LO(one(T)) == zero(T)
+    @test HILO(one(T)) == (one(T), zero(T))
     
     sqrt2  = sqrt(T(2))
     hi, lo = sqrt2.hi, sqrt2.lo
