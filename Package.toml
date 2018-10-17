@@ -4,14 +4,14 @@ name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 license = "MIT"
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 AccurateArithmetic = "22286c92-06ac-501d-9306-4abd417d9753"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 
 [compat]
-AccurateArithmetic = ">=0.1.3"
+AccurateArithmetic = ">=0.2.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
