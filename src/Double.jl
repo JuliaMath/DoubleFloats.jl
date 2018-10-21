@@ -33,7 +33,11 @@ struct DoubleFloat{T} <: MultipartFloat
    end
 end
 
+"""
+    Double64(x)
 
+Create a DoubleFloat{Float64}.
+"""
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
