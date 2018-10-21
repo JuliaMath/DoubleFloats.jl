@@ -6,8 +6,8 @@ The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 These are the predicates made available for use with DoubleFloats:
 
 > iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
-  ispos, isneg,                            #  value >  0, value <  0
-  isnonneg, isnonpos,                      #  value >= 0, value <= 0
+  ispositive, isnegative,                  #  value >  0, value <  0
+  isnonnegative, isnonpositive,            #  value >= 0, value <= 0
   isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan,                                   #  value is not a number (eg 0/0)
@@ -25,25 +25,24 @@ Return `!iszero(x)`
 isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
 
 """
-    ispos(x)
+    ispositive(x)
 
-Returns `true` if `!isneg(x)` and `isnonzero(x)`.
+Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
 """
-ispos(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
-
-"""
-    isnonneg(x)
-
-Returns `true` if `!isneg(x)`.
-"""
-isnonneg(x::T) where {T<:AbstractFloat} = !isneg(x)
+ispositive(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
 
 """
-    isnonpos(x)
+    isnonnegative(x)
 
-Returns `true` if `isneg(x)` or `iszero(x)`.
+Returns `true` if `!isnegative(x)`.
 """
-isnonpos(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+isnonnegative(x::T) where {T<:AbstractFloat} = !isneg(x)
+"""
+    isnonpositive(x)
+
+Returns `true` if `isnegative(x)` or `iszero(x)`.
+"""
+isnonpositive(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
 
 """
     isfractional(x)
@@ -62,21 +61,21 @@ isnonzero(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 isone(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isone(HI(x)) && iszero(LO(x))
 
-ispos(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+ispositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
 """
-    isneg(x)
+    isnegative(x)
 
 Return `true` if `signbit(HI(x))` is `true`.
 """
-isneg(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x))
 
-isnonneg(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnonnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x))
 
-isnonpos(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnonpositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x)) || iszero(HI(x))
 
 isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
