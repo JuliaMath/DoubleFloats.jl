@@ -67,30 +67,55 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x
 
 """
-    Double64(x)
+    Double64(x::Tuple{Float64, Float64})
 
-Create an extended precision floating point.
+Convert a tuple `x` of `Float64`s to a `Double64`.
 """
 @inline Double64(x::Tuple{Float64,Float64}) = DoubleFloat(x[1], x[2])
+"""
+    Double32(x::Tuple{Float32, Float32})
+
+Convert a tuple `x` of `Float32`s to a `Double32`.
+"""
 @inline Double32(x::Tuple{Float32,Float32}) = DoubleFloat(x[1], x[2])
+"""
+    Double16(x::Tuple{Float16, Float16})
+
+Convert a tuple `x` of `Float16`s to a `Double16`.
+"""
 @inline Double16(x::Tuple{Float16,Float16}) = DoubleFloat(x[1], x[2])
 @inline Double64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
 @inline Double32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
 @inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
 @inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
+"""
+    Double64(x::T) where {T <: IEEEFloat}
+
+Convert `x` to an extended precision `Double64`.
+"""
 @inline function Double64(x::T) where {T<:IEEEFloat}
     !isfinite(x) && return(DoubleFloat(Float64(x),Float64(NaN)))
     hi = Float64(x)
     lo = Float64(x - Float64(hi))
     return Double64(hi, lo)
 end
+"""
+    Double32(x::T) where {T <: IEEEFloat}
+
+Convert `x` to an extended precision `Double32`.
+"""
 @inline function Double32(x::T) where {T<:IEEEFloat}
     !isfinite(x) && return(DoubleFloat(Float32(x),Float32(NaN)))
     hi = Float32(x)
     lo = Float32(x - Float64(hi))
     return Double32(hi, lo)
 end
+"""
+    Double16(x::T) where {T <: IEEEFloat}
+
+Convert `x` to an extended precision `Double16`.
+"""
 @inline function Double16(x::T) where {T<:IEEEFloat}
     !isfinite(x) && return(DoubleFloat(Float16(x),Float16(NaN)))
     hi = Float16(x)
@@ -98,8 +123,23 @@ end
     return Double16(hi, lo)
 end
 
+"""
+    Double64(hi::T) where {T <: Integer}
+
+Promote `hi` to a `Float64` then convert to `Double64`.
+"""
 @inline Double64(hi::T) where {T<:Integer} = Double64(Float64(hi))
+"""
+    Double32(hi::T) where {T <: Integer}
+
+Promote `hi` to a `Float32` then convert to `Double32`.
+"""
 @inline Double32(hi::T) where {T<:Integer} = Double32(Float32(hi))
+"""
+    Double16(hi::T) where {T <: Integer}
+
+Promote `hi` to a `Float16` then convert to `Double16`.
+"""
 @inline Double16(hi::T) where {T<:Integer} = Double16(Float16(hi))
 
 for (F,D,U) in ((:Float64, :Double64, :(Union{Float32, Float16})),
@@ -124,8 +164,20 @@ DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{T}) where {T<:IEEE
 DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x, DoubleFloat(zero(T))), y)
 DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
+"""
+    Double64(x::Double32)
+
+Promote a `Double32` to a `Double64` by converting the `hi` and `lo` attributes
+of `x` to `Double64`s and adding in extended precision.
+"""
 Double64(x::Double32) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
 Double64(x::Double16) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
+"""
+    Double32(x::Double16)
+
+Promote a `Double16` to a `Double32` by converting the `hi` and `lo` attributes
+of `x` to `Double32`s and adding in extended precision.
+"""
 Double32(x::Double16) = Double32(add_2(Float32(HI(x)), Float32(LO(x))))
 Double32(x::Double64) = Double32(BigFloat(x))
 Double16(x::Double64) = Double16(BigFloat(x))
