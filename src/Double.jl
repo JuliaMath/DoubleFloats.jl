@@ -1,7 +1,12 @@
 """
     DoubleFloat{T} <: MultipartFloat
 
-A pair of magnitude-ordered, non-overlapping Floats.
+A pair of magnitude-ordered, non-overlapping Floats of
+type `T`.
+
+`Double16`, `Double32`, `Double64` are aliases for
+`DoubleFloat{Float16}`, `DoubleFloat{Float32}`, and
+`DoubleFloat{Float64}`, respectively.
 """
 struct DoubleFloat{T} <: MultipartFloat
 
@@ -23,21 +28,11 @@ struct DoubleFloat{T} <: MultipartFloat
      return new{DoubleFloat{T}}(zhi, zlo)
    end
    # this form does not alter hi, lo
-   """
-       DoubleFloat(hi::T, lo::T) where {T<:AbstractFloat}
-
-   Create a new `DoubleFloat{T}`.
-   """
    function DoubleFloat(hi::T, lo::T) where {T<:AbstractFloat}
        return new{T}(hi, lo)
    end
 end
 
-"""
-    Double64(x)
-
-Create a DoubleFloat{Float64}.
-"""
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
