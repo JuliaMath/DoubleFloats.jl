@@ -65,6 +65,11 @@ isone(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 ispos(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
+"""
+    isneg(x)
+
+Return `true` if `signbit(HI(x))` is `true`.
+"""
 isneg(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x))
 
