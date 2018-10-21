@@ -17,10 +17,39 @@ These are the predicates made available for use with DoubleFloats:
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
 
+"""
+    isnonzero(x)
+
+Return `!iszero(x)`
+"""
 isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
+
+"""
+    ispos(x)
+
+Returns `true` if `!isneg(x)` and `isnonzero(x)`.
+"""
 ispos(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
+
+"""
+    isnonneg(x)
+
+Returns `true` if `!isneg(x)`.
+"""
 isnonneg(x::T) where {T<:AbstractFloat} = !isneg(x)
+
+"""
+    isnonpos(x)
+
+Returns `true` if `isneg(x)` or `iszero(x)`.
+"""
 isnonpos(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+
+"""
+    isfractional(x)
+
+Returns `true` if `abs(x) < one(x)`.
+"""
 isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
 
@@ -51,9 +80,19 @@ isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 isinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && iszero(LO(x))
 
+"""
+    isposinf(x)
+
+Tests whether a number positive and infinite.
+"""
 isposinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && !signbit(HI(x))
 
+"""
+    isneginf(x)
+
+Tests whether a number is negative and infinite.
+"""
 isneginf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && signbit(HI(x))
 
@@ -63,6 +102,11 @@ isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
+"""
+    isnormal(x)
+
+Tests whether a floating point number is normal.
+"""
 isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
