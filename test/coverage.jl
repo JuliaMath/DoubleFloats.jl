@@ -24,12 +24,12 @@ end
   
     @test iszero(zero(T))
     @test isone(one(T))
-    @test ispos(one(T))
-    @test isneg(-one(T))
-    @test isnonpos(-one(T))
-    @test isnonpos(zero(T))
-    @test isnonneg(one(T))
-    @test isnonneg(zero(T))
+    @test ispositive(one(T))
+    @test isnegative(-one(T))
+    @test isnonpositive(-one(T))
+    @test isnonpositive(zero(T))
+    @test isnonnegative(one(T))
+    @test isnonnegative(zero(T))
   
     @test isinf(T(Inf))
     @test isposinf(T(Inf))
