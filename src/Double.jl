@@ -183,6 +183,11 @@ Double32(x::Double64) = Double32(BigFloat(x))
 Double16(x::Double64) = Double16(BigFloat(x))
 Double16(x::Double32) = Double16(BigFloat(x))
 
+# cleanup to support other pkgs
+DoubleFloat(x::Float64) = DoubleFloat{Float64}(x)
+DoubleFloat(x::Float32) = DoubleFloat{Float32}(x)
+DoubleFloat(x::Float16) = DoubleFloat{Float16}(x)
+
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
