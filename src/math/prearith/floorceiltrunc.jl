@@ -49,7 +49,7 @@ ceil(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(ceil(x))
 
 function trunc(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    if isneg(x)
+    if isnegative(x)
         ceil(x)
     else
         floor(x)
@@ -65,7 +65,7 @@ trunc(::Type{Integer}, x::DoubleFloat{T}) where {T<:AbstractFloat} = Int(trunc(x
 
 function round(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    if isnonneg(x)
+    if isnonnegative(x)
         trunc(x + 0.5)
     else
         -trunc(-x + 0.5)
@@ -91,31 +91,31 @@ end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:RoundToZero}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    return isneg(x) ? ceil(x) : floor(x)
+    return isnegative(x) ? ceil(x) : floor(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:RoundFromZero}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    return isneg(x) ? floor(x) : ceil(x)
+    return isnegative(x) ? floor(x) : ceil(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Nearest}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearest)
+    isnegative(x) && return -round(-x, RoundNearest)
     a = trunc(x + 0.5)
     return iseven(a) ? a : trunc(x - 0.5)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesAway}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearestTiesAway)
+    isnegative(x) && return -round(-x, RoundNearestTiesAway)
     !isinteger(x - 0.5) && return round(x, RoundNearest)
     return round(x + 0.5, RoundNearest)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesUp}) where {T<:AbstractFloat}
     (isinteger(x) || !isfinite(x)) && return x
-    isneg(x) && return -round(-x, RoundNearestTiesUp)
+    isnegative(x) && return -round(-x, RoundNearestTiesUp)
     !isinteger(x - 0.5) && return round(x, RoundUp)
     return round(x + 0.5, RoundNearest)
 end
