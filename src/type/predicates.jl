@@ -6,8 +6,8 @@ The built-in numerical types let you query finiteness (`isfinite`, `isinf`).
 These are the predicates made available for use with DoubleFloats:
 
 > iszero, isnonzero, isone                 #  value == 0, value != 0, value == 1
-  ispos, isneg,                            #  value >  0, value <  0
-  isnonneg, isnonpos,                      #  value >= 0, value <= 0
+  ispositive, isnegative,                  #  value >  0, value <  0
+  isnonnegative, isnonpositive,            #  value >= 0, value <= 0
   isfinite, isinf,                         #  abs(value) != Inf, abs(value) == Inf
   isposinf, isneginf,                      #  value == Inf, value == -Inf
   isnan,                                   #  value is not a number (eg 0/0)
@@ -18,9 +18,9 @@ These are the predicates made available for use with DoubleFloats:
 """ predicates
 
 isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
-ispos(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
-isnonneg(x::T) where {T<:AbstractFloat} = !isneg(x)
-isnonpos(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+ispositive(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
+isnonnegative(x::T) where {T<:AbstractFloat} = !isneg(x)
+isnonpositive(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
 isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
 
@@ -33,16 +33,16 @@ isnonzero(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 isone(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isone(HI(x)) && iszero(LO(x))
 
-ispos(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+ispositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
-isneg(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x))
 
-isnonneg(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnonnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x))
 
-isnonpos(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+isnonpositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x)) || iszero(HI(x))
 
 isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
