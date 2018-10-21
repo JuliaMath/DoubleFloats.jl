@@ -17,10 +17,38 @@ These are the predicates made available for use with DoubleFloats:
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
 
+"""
+    isnonzero(x)
+
+Return `!iszero(x)`
+"""
 isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
+
+"""
+    ispositive(x)
+
+Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
+"""
 ispositive(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
+
+"""
+    isnonnegative(x)
+
+Returns `true` if `!isnegative(x)`.
+"""
 isnonnegative(x::T) where {T<:AbstractFloat} = !isneg(x)
+"""
+    isnonpositive(x)
+
+Returns `true` if `isnegative(x)` or `iszero(x)`.
+"""
 isnonpositive(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+
+"""
+    isfractional(x)
+
+Returns `true` if `abs(x) < one(x)`.
+"""
 isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
 
@@ -36,6 +64,11 @@ isone(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 ispositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
+"""
+    isnegative(x)
+
+Return `true` if `signbit(HI(x))` is `true`.
+"""
 isnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x))
 
@@ -51,9 +84,19 @@ isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 isinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && iszero(LO(x))
 
+"""
+    isposinf(x)
+
+Tests whether a number positive and infinite.
+"""
 isposinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && !signbit(HI(x))
 
+"""
+    isneginf(x)
+
+Tests whether a number is negative and infinite.
+"""
 isneginf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && signbit(HI(x))
 
@@ -63,6 +106,11 @@ isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
+"""
+    isnormal(x)
+
+Tests whether a floating point number is normal.
+"""
 isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
