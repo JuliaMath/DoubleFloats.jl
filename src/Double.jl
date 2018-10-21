@@ -1,4 +1,10 @@
+"""
+    DoubleFloat{T} <: MultipartFloat
+
+A pair of magnitude-ordered, non-overlapping Floats.
+"""
 struct DoubleFloat{T} <: MultipartFloat
+
    hi::T
    lo::T
 
@@ -17,11 +23,15 @@ struct DoubleFloat{T} <: MultipartFloat
      return new{DoubleFloat{T}}(zhi, zlo)
    end
    # this form does not alter hi, lo
+   """
+       DoubleFloat(hi::T, lo::T) where {T<:AbstractFloat}
+
+   Create a new `DoubleFloat{T}`.
+   """
    function DoubleFloat(hi::T, lo::T) where {T<:AbstractFloat}
        return new{T}(hi, lo)
    end
 end
-
 
 
 const Double64 = DoubleFloat{Float64}
