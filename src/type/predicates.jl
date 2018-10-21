@@ -29,20 +29,20 @@ isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
 
 Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
 """
-ispositive(x::T) where {T<:AbstractFloat} = !isneg(x) && isnonzero(x)
+ispositive(x::T) where {T<:AbstractFloat} = !isnegative(x) && isnonzero(x)
 
 """
     isnonnegative(x)
 
 Returns `true` if `!isnegative(x)`.
 """
-isnonnegative(x::T) where {T<:AbstractFloat} = !isneg(x)
+isnonnegative(x::T) where {T<:AbstractFloat} = !isnegative(x)
 """
     isnonpositive(x)
 
 Returns `true` if `isnegative(x)` or `iszero(x)`.
 """
-isnonpositive(x::T) where {T<:AbstractFloat} = isneg(x) || iszero(x)
+isnonpositive(x::T) where {T<:AbstractFloat} = isnegative(x) || iszero(x)
 
 """
     isfractional(x)
