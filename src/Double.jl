@@ -66,6 +66,11 @@ const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
 @inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[2]
 @inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x
 
+"""
+    Double64(x)
+
+Create an extended precision floating point.
+"""
 @inline Double64(x::Tuple{Float64,Float64}) = DoubleFloat(x[1], x[2])
 @inline Double32(x::Tuple{Float32,Float32}) = DoubleFloat(x[1], x[2])
 @inline Double16(x::Tuple{Float16,Float16}) = DoubleFloat(x[1], x[2])
