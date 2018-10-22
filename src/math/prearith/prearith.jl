@@ -99,7 +99,7 @@ end
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
-        DoubleFloat{T}(HI(x)) + n*ulp(LO(x))
+        x + n*ulp(LO(x))
     else
         DoubleFloat{T}(HI(x), n*ulp(ulp(HI(x))))
     end
@@ -108,7 +108,7 @@ end
 function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
-        DoubleFloat{T}(HI(x)) - n*ulp(LO(x))
+        x - n*ulp(LO(x))
     else
         DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x))))
     end
