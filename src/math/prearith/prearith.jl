@@ -79,35 +79,39 @@ end
 
 function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
-    signbit(x) && return -prevfloat(-x)
-    iszero(LO(x)) && return DoubleFloat(HI(x), eps(HI(x)))
-    return DoubleFloat{T}(HI(x), nextfloat(LO(x)))
+    if !iszero(LO(x))
+        DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
+    else
+        DoubleFloat{T}(HI(x), ulp(ulp(HI(x)))
+    end
 end
 
 function prevfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
-    signbit(x) && return -nextfloat(-x)
-    iszero(LO(x)) && return DoubleFloat(HI(x), -eps(HI(x)))
-    return DoubleFloat{T}(HI(x), prevfloat(LO(x)))
-end
-
-function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
-     return nextfloat(x, -n)
+    if !iszero(LO(x))
+        DoubleFloat{T}(HI(x)) + prevfloat(LO(x))
+    else
+        DoubleFloat{T}(HI(x), -ulp(ulp(HI(x)))
+    end
 end
 
 function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
-   !isfinite(x) && return(x)
-   signbit(x) && return -prevfloat(-x, n)
-   iszero(LO(x)) && return DoubleFloat(HI(x), sign(x)*T(n)*eps(HI(x)))
-   signbit(LO(x)) && return DoubleFloat(HI(x), -prevfloat(-LO(x),n))
-   return DoubleFloat(HI(x), nextfloat(LO(x),n))
+    !isfinite(x) && return(x)
+    if !iszero(LO(x))
+        DoubleFloat{T}(HI(x)) + n*ulp(LO(x))
+    else
+        DoubleFloat{T}(HI(x), n*ulp(ulp(HI(x)))
+    end
 end
 
-eps(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/2)
-eps(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * eps(typeof(x))
-
-ulp(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(eps(eps( one(T) ))/4)
-ulp(x::DoubleFloat{T}) where {T<:AbstractFloat} = abs(x) * ulp(typeof(x))
+function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
+    !isfinite(x) && return(x)
+    if !iszero(LO(x))
+        DoubleFloat{T}(HI(x)) - n*ulp(LO(x))
+    else
+        DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x)))
+    end
+end
 
 
 @inline function intpart(x::Tuple{T,T}) where {T<:AbstractFloat}
