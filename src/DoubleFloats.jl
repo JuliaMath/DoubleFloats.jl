@@ -10,7 +10,7 @@ export DoubleFloat,
        isnonzero, ispositive, isnegative, isnonpositive, isnonnegative,
        isposinf, isneginf, isfractional, isnormal,
        nan, inf, posinf, neginf,
-       intpart, fracpart, fmod, ulp,
+       intpart, fracpart, fmod,
        square, cube,
        add2, sub2, mul2, div2,
        ⊕, ⊖, ⊗, ⊘
