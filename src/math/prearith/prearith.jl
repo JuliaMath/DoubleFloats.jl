@@ -65,6 +65,18 @@ function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return shi, slo
 end
 
+posulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
+negulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
+
+function eps(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return LO(x) !== zero(T) ? eps(LO(x)) : eps(posulp(HI(x)))
+end
+
+function ulp(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return LO(x) !== zero(T) ? posulp(LO(x)) : posulp(posulp(HI(x)))
+end
+
+
 function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
     signbit(x) && return -prevfloat(-x)
