@@ -11,6 +11,7 @@ export DoubleFloat,
        isposinf, isneginf, isfractional, isnormal,
        nan, inf, posinf, neginf,
        intpart, fracpart, fmod,
+       ulp,
        square, cube,
        add2, sub2, mul2, div2,
        ⊕, ⊖, ⊗, ⊘
