@@ -77,6 +77,9 @@ function ulp(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return LO(x) !== zero(T) ? posulp(LO(x)) : posulp(posulp(HI(x)))
 end
 
+eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
+ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
+
 
 function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     !isfinite(x) && return(x)
