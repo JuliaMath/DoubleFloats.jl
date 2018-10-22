@@ -18,6 +18,7 @@ export DoubleFloat,
        #signs
 
 import Base: IEEEFloat, isone
+using Base: significand, exponent
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
 using LinearAlgebra
