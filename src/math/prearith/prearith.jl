@@ -66,10 +66,10 @@ function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-ulp(x::T) where {T<:Base.IEEEFloat} = Base.significand(x) !== -one(T) ? eps(x) : eps(x)/2
+ulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
 
-posulp(x::T) where {T<:Base.IEEEFloat} = Base.significand(x) !== -one(T) ? eps(x) : eps(x)/2
-negulp(x::T) where {T<:Base.IEEEFloat} = Base.significand(x) !== one(T) ? -eps(x) : -eps(x)/2
+posulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
+negulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
 
 ulp(::Type{T}) where {T<:Base.IEEEFloat} = ulp(one(T))
 posulp(::Type{T}) where {T<:Base.IEEEFloat} = ulp(one(T))
