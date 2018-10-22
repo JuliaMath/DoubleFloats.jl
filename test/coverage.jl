@@ -117,8 +117,8 @@ end # compare
     fp2 = T(2)
     sqrt2  = sqrt(T(2))
 
-    @test eps(fp2) >= ulp(fp2)
-    @test eps(sqrt2) >= ulp(sqrt2)
+    @test eps(fp2) >= DoubleFloats.ulp(fp2)
+    @test eps(sqrt2) >= DoubleFloats.ulp(sqrt2)
     
     @test nextfloat(fp2) > fp2
     @test nextfloat(sqrt2) > sqrt2
