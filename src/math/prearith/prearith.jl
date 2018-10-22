@@ -48,26 +48,26 @@ function ldexp(dhi::Tuple{T,T}, dlo::Tuple{T,T}) where {T<:AbstractFloat}
 end
 
 function exponent(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    ehi = exponent(HI(x))
-    elo = exponent(LO(x))
+    ehi = Base.exponent(HI(x))
+    elo = Base.exponent(LO(x))
     return ehi, elo
 end
 
 function significand(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    shi = significand(HI(x))
-    slo = significand(LO(x))
+    shi = Base.significand(HI(x))
+    slo = Base.significand(LO(x))
     return shi, slo
 end
 
 function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    shi = sign(HI(x))
-    slo = sign(LO(x))
+    shi = Base.sign(HI(x))
+    slo = Base.sign(LO(x))
     return shi, slo
 end
 
 
-posulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
-negulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
+posulp(x::T) where {T<:Base.IEEEFloat} = Base.significand(x) !== -one(T) ? eps(x) : eps(x)/2
+negulp(x::T) where {T<:Base.IEEEFloat} = Base.significand(x) !== one(T) ? -eps(x) : -eps(x)/2
 
 function eps(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return LO(x) !== zero(T) ? eps(LO(x)) : eps(posulp(HI(x)))
