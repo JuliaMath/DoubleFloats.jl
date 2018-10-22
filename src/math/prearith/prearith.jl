@@ -60,8 +60,8 @@ function significand(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    shi = Base.sign(HI(x))
-    slo = Base.sign(LO(x))
+    shi = sign(HI(x))
+    slo = sign(LO(x))
     return shi, slo
 end
 
