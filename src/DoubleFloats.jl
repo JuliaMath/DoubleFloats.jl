@@ -17,8 +17,6 @@ export DoubleFloat,
        #spread, sld, tld,
        #signs
 
-import Base: IEEEFloat, isone
-using Base: significand, exponent
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
 using LinearAlgebra
@@ -28,9 +26,10 @@ using Polynomials
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse,
              signbit, sign, abs, flipsign, copysign,
+             significand, exponent,
              (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
-             iszero, isinf, isnan, isinf, isfinite, issubnormal,
+             IEEEFloat, iszero, isone, isinf, isnan, isinf, isfinite, issubnormal,
              isinteger, isodd, iseven, zero, one,
              typemax, typemin, floatmax, floatmin, maxintfloat,
              min, max, minmax, minimum, maximum,
