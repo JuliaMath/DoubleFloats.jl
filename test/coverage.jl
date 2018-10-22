@@ -112,3 +112,29 @@ end # Double
     @test   sqrt5 >  two    
     
 end # compare
+
+@testset "eps $T" for T in (Double32, Double64)
+    fp2 = T(2)
+    sqrt2  = sqrt(T(2))
+
+    @test eps(fp2) >= ulp(fp2)
+    @test eps(sqrt2) >= ulp(sqrt2)
+    
+    @test nextfloat(fp2) > fp2
+    @test nextfloat(sqrt2) > sqrt2
+    
+    @test prevfloat(fp2) < fp2
+    @test prevfloat(sqrt2) < sqrt2
+    
+    @test nextfloat(-fp2) > -fp2
+    @test nextfloat(-sqrt2) > -sqrt2
+    
+    @test prevfloat(-fp2) < -fp2
+    @test prevfloat(-sqrt2) < -sqrt2
+    
+    @test nextfloat(fp2,2) > fp2
+    @test nextfloat(sqrt2,2) > sqrt2
+    
+    @test nextfloat(fp2,3) > nextfloat(fp2,2)
+    @test prevfloat(fp2,3) < prevfloat(fp2,2)
+end
