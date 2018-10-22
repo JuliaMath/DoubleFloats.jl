@@ -65,6 +65,7 @@ function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return shi, slo
 end
 
+
 posulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
 negulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
 
@@ -82,7 +83,7 @@ function nextfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
     else
-        DoubleFloat{T}(HI(x), ulp(ulp(HI(x)))
+        DoubleFloat{T}(HI(x), ulp(ulp(HI(x))))
     end
 end
 
@@ -91,7 +92,7 @@ function prevfloat(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + prevfloat(LO(x))
     else
-        DoubleFloat{T}(HI(x), -ulp(ulp(HI(x)))
+        DoubleFloat{T}(HI(x), -ulp(ulp(HI(x))))
     end
 end
 
@@ -100,7 +101,7 @@ function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + n*ulp(LO(x))
     else
-        DoubleFloat{T}(HI(x), n*ulp(ulp(HI(x)))
+        DoubleFloat{T}(HI(x), n*ulp(ulp(HI(x))))
     end
 end
 
@@ -109,7 +110,7 @@ function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) - n*ulp(LO(x))
     else
-        DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x)))
+        DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x))))
     end
 end
 
