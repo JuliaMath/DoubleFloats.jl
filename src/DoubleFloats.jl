@@ -14,6 +14,7 @@ export DoubleFloat,
        intpart, fracpart, fmod,
        square, cube,
        add2, sub2, mul2, div2,
+       matmul,
        ⊕, ⊖, ⊗, ⊘
        #spread, sld, tld,
        #signs
