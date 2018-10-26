@@ -83,7 +83,7 @@ function add222(ahilo, bhilo)
         t4 = t3  + alo
         t5 = t4  + blo
     end
-    zhi, zlo = two_sum(t1, t5)
+    zhi, zlo = add_2(t1, t5)
     return zhi, zlo
 end
 
