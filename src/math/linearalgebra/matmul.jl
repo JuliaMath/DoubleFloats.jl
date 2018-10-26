@@ -1,5 +1,3 @@
-import Base:*
-
 function (*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     if isempty(a) || isempty(b)
         throw(ErrorException("cannot multiply empty matrices"))
