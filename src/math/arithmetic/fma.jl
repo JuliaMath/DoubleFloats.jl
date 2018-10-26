@@ -1,43 +1,75 @@
-function fma(a::T, b::T, c::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    hi, lo = fma_2(a, b, c)
-    return DoubleFloat(hi, lo)
+import Base: muladd, fma
+
+"""
+    two_sum(a, b)
+Computes `hi = fl(a+b)` and `lo = err(a+b)`.
+"""
+@inline function two_sum(a::T, b::T) where {T<:AbstractFloat}
+    hi = a + b
+    a1 = hi - b
+    b1 = hi - a1
+    lo = (a - a1) + (b - b1)
+    return hi, lo
 end
 
-function fma_4(a::T, b::T, c::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    c_hi = HI(c) * onehalf(F)
-    c_lo = LO(c) * onehalf(F)
 
-    fma1 = fma(HI(a), HI(b), c_hi)
-    fma2 = fma(HI(a), LO(b), c_hi)
-    fma3 = fma(LO(a), HI(b), c_lo)
-    fma4 = fma(LO(a), LO(b), c_lo)
-
-    return add_4(fma1, fma2, fma3, fma4)
+"""
+    two_hilo_sum(a, b)
+*unchecked* requirement `|a| ≥ |b|`
+Computes `s = fl(a+b)` and `e = err(a+b)`.
+"""
+@inline function two_hilo_sum(a::T, b::T) where {T<:AbstractFloat}
+    s = a + b
+    e = b - (s - a)
+    return s, e
 end
 
-function fma_(a::T, b::T, c::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    c_hi = HI(c) * half(F)
-    c_lo = LO(c) * half(F)
-
-    fma1 = fma(HI(a), HI(b), c_hi)
-    fma2 = fma(HI(a), LO(b), c_hi)
-    fma3 = fma(LO(a), HI(b), c_lo)
-    fma4 = fma(LO(a), LO(b), c_lo)
-
-    return add_3(fma1, fma2, fma3, fma4)
+@inline function two_prod(a::T, b::T) where {T<:AbstractFloat}
+    s = a * b
+    t = fma(a, b, -s)
+    return s, t
 end
 
-fma_3(a::T, b::T, c::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} =
-    fma_(a, b, c)
 
-function fma_2(a::T, b::T, c::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    c_hi = halfx(HI(c))
-    c_lo = halfx(LO(c))
 
-    fma1 = fma(HI(a), HI(b), c_hi)
-    fma2 = fma(HI(a), LO(b), c_hi)
-    fma3 = fma(LO(a), HI(b), c_lo)
-    fma4 = fma(LO(a), LO(b), c_lo)
-
-    return add_2(fma1, fma2, fma3, fma4)
+function fma(xxₕᵢ::T, xxₗₒ::T, yyₕᵢ::T, yyₗₒ::T, zzₕᵢ::T, zzₗₒ::T) where {T<:AbstractFloat}
+   cₕᵢ, c1 = two_prod(xxₕᵢ, yyₕᵢ)
+   t0 = xxₗₒ * yyₗₒ
+   t1 = fma(xₕᵢ, yₗₒ, t0)
+   c2 = fma(xₗₒ, yₕᵢ, t1)
+   c3 = c1 + c2
+   zₕᵢ, zₗₒ = two_hilo_sum(cₕᵢ, c3)
+   
+   sₕᵢ, sₗₒ = two_sum(zzₕᵢ, zₕᵢ)
+   tₕᵢ, tₗₒ = two_sum(zzₗₒ, zₗₒ)
+   c = sₗₒ + tₕᵢ
+   vₕᵢ, vₗₒ = two_hilo_sum(sₕᵢ, c)
+   w = tₗₒ + vₗₒ
+   zₕᵢ, zₗₒ = two_hilo_sum(vₕᵢ, w)
+   return zₕᵢ, zₗₒ
 end
+
+@inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
+end
+
+function muladd(xxₕᵢ::T, xxₗₒ::T, yyₕᵢ::T, yyₗₒ::T, zzₕᵢ::T, zzₗₒ::T) where {T<:AbstractFloat}
+   cₕᵢ, c1 = two_prod(xxₕᵢ, yyₕᵢ)
+   t0 = xxₗₒ * yyₗₒ
+   c2 = fma(xxₗₒ, yyₕᵢ, t0)
+   c3 = c1 + c2
+   zₕᵢ, zₗₒ = two_hilo_sum(cₕᵢ, c3)
+   
+   sₕᵢ, sₗₒ = two_sum(zzₕᵢ, zₕᵢ)
+   tₕᵢ, tₗₒ = two_sum(zzₗₒ, zₗₒ)
+   c = sₗₒ + tₕᵢ
+   vₕᵢ, vₗₒ = two_hilo_sum(sₕᵢ, c)
+   w = tₗₒ + vₗₒ
+   zₕᵢ, zₗₒ = two_hilo_sum(vₕᵢ, w)
+   return zₕᵢ, zₗₒ
+end
+
+@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return muladd(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
+end
+
