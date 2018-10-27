@@ -32,44 +32,43 @@ end
 
 
 
-function fma(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {T<:AbstractFloat}
-   cₕ, c1 = two_prod(xxₕ, yyₕ)
-   t0 = xxₗ * yyₗ
-   t1 = fma(xxₕ, yyₗ, t0)
-   c2 = fma(xxₗ, yyₕ, t1)
+function fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:AbstractFloat}
+   chi, c1 = two_prod(xhi, yhi)
+   t0 = xlo * ylo
+   t1 = fma(xhi, ylo, t0)
+   c2 = fma(xlo, yhi, t1)
    c3 = c1 + c2
-   zₕ, zₗ = two_hilo_sum(cₕ, c3)
-   
-   sₕ, sₗ = two_sum(zzₕ, zₕ)
-   tₕ, tₗ = two_sum(zzₗ, zₗ)
-   c = sₗ + tₕ
-   vₕ, vₗ = two_hilo_sum(sₕ, c)
-   w = tₗ + vₗ
-   zₕ, zₗ = two_hilo_sum(vₕ, w)
-   return zₕ, zₗ
+   dhi, dlo = two_hilo_sum(chi, c3)
+
+   shi, slo = two_sum(zhi, dhi)
+   thi, tlo = two_sum(zlo, dlo)
+   c = slo + thi
+   vhi, vlo = two_hilo_sum(shi, c)
+   w = tlo + vlo
+   hi, lo = two_hilo_sum(vhi, w)
+   return hi, lo
 end
 
 @inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
    return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
 
-function muladd(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {T<:AbstractFloat}
-   cₕ, c1 = two_prod(xxₕ, yyₕ)
-   t0 = xxₗ * yyₗ
-   c2 = fma(xxₗ, yyₕ, t0)
+function muladd(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:AbstractFloat}
+   chi, c1 = two_prod(xhi, yhi)
+   t0 = xlo * ylo
+   c2 = fma(xlo, yhi, t0)
    c3 = c1 + c2
-   zₕ, zₗ = two_hilo_sum(cₕ, c3)
-   
-   sₕ, sₗ = two_sum(zzₕ, zₕ)
-   tₕ, tₗ = two_sum(zzₗ, zₗ)
-   c = sₗ + tₕ
-   vₕ, vₗ = two_hilo_sum(sₕ, c)
-   w = tₗ + vₗ
-   zₕ, zₗ = two_hilo_sum(vₕ, w)
-   return zₕ, zₗ
+   dhi, dlo = two_hilo_sum(chi, c3)
+
+   shi, slo = two_sum(zhi, dhi)
+   thi, tlo = two_sum(zlo, dlo)
+   c = slo + thi
+   vhi, vlo = two_hilo_sum(shi, c)
+   w = tlo + vlo
+   hi, lo = two_hilo_sum(vhi, w)
+   return hi, lo
 end
 
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
    return muladd(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
-
