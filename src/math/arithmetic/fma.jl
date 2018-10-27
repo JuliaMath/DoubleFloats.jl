@@ -33,7 +33,7 @@ end
 
 
 function fma(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {T<:AbstractFloat}
-   cₕᵢ, c1 = two_prod(xxₕ, yyₕ)
+   cₕ, c1 = two_prod(xxₕ, yyₕ)
    t0 = xxₗ * yyₗ
    t1 = fma(xxₕ, yyₗ, t0)
    c2 = fma(xxₗ, yyₕ, t1)
