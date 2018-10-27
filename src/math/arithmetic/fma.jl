@@ -44,7 +44,7 @@ function fma(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {
    tₕ, tₗ = two_sum(zzₗ, zₗ)
    c = sₗ + tₕ
    vₕ, vₗ = two_hilo_sum(sₕ, c)
-   w = tₗ + vₗₒ
+   w = tₗ + vₗ
    zₕ, zₗ = two_hilo_sum(vₕ, w)
    return zₕ, zₗ
 end
