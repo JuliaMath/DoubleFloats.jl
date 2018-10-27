@@ -35,8 +35,8 @@ end
 function fma(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = two_prod(xxₕ, yyₕ)
    t0 = xxₗ * yyₗ
-   t1 = fma(xₕ, yₗ, t0)
-   c2 = fma(xₗ, yₕ, t1)
+   t1 = fma(xxₕ, yyₗ, t0)
+   c2 = fma(xxₗ, yyₕ, t1)
    c3 = c1 + c2
    zₕ, zₗ = two_hilo_sum(cₕ, c3)
    
