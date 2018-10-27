@@ -27,3 +27,6 @@ convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::DoubleFloat{T}) where {T<:IEEEFl
 
 convert(::Type{T}, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = HI(HI(x))
 convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::T) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat{T}(x), DoubleFloat{T}(zero(T)))
+
+convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1],x[2])
+ 
