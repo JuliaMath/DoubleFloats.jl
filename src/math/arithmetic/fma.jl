@@ -46,7 +46,7 @@ function fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:AbstractF
    vhi, vlo = two_hilo_sum(shi, c)
    w = tlo + vlo
    hi, lo = two_hilo_sum(vhi, w)
-   return hi, lo
+   return DoubleFloat{T}(hi, lo)
 end
 
 @inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -89,7 +89,7 @@ function muladd(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:Abstra
    vhi, vlo = two_hilo_sum(shi, c)
    w = tlo + vlo
    hi, lo = two_hilo_sum(vhi, w)
-   return hi, lo
+   return DoubleFloat{T}(hi, lo)
 end
 
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
