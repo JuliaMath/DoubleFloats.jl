@@ -54,7 +54,7 @@ end
 end
 
 function muladd(xxₕ::T, xxₗ::T, yyₕ::T, yyₗ::T, zzₕ::T, zzₗ::T) where {T<:AbstractFloat}
-   cₕᵢ, c1 = two_prod(xxₕ, yyₕ)
+   cₕ, c1 = two_prod(xxₕ, yyₕ)
    t0 = xxₗ * yyₗ
    c2 = fma(xxₗ, yyₕ, t0)
    c3 = c1 + c2
