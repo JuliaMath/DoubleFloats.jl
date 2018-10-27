@@ -53,6 +53,29 @@ end
    return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
 
+@inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return fma(x.hi, x.lo, y.hi, y.lo, z[1], z[2])
+end
+@inline function fma(x::DoubleFloat{T}, y::Tuple{T,T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return fma(x.hi, x.lo, y[1], y[2], z.hi, z.lo)
+end
+@inline function fma(x::Tuple{T,T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return fma(x[1], x[2], y.hi, y.lo, z.hi, z.lo)
+end
+@inline function fma(x::DoubleFloat{T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return fma(x.hi, x.lo, y[1], y[2], z[1], z[2])
+end
+@inline function fma(x::Tuple{T,T}, y::Tuple{T,T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return fma(x[1], x[2], y[1], y[2], z.hi, z.lo)
+end
+@inline function fma(x::Tuple{T,T}, y::DoubleFloat{T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return fma(x[1], x[2], y.hi, y.lo, z[1], z[2])
+end
+@inline function fma(x::Tuple{T,T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return fma(x[1], x[2], y[1], y[2], z[1], z[2])
+end
+
+
 function muladd(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:AbstractFloat}
    chi, c1 = two_prod(xhi, yhi)
    t0 = xlo * ylo
@@ -71,4 +94,27 @@ end
 
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
    return muladd(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
+end
+
+
+@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return muladd(x.hi, x.lo, y.hi, y.lo, z[1], z[2])
+end
+@inline function muladd(x::DoubleFloat{T}, y::Tuple{T,T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return muladd(x.hi, x.lo, y[1], y[2], z.hi, z.lo)
+end
+@inline function muladd(x::Tuple{T,T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return muladd(x[1], x[2], y.hi, y.lo, z.hi, z.lo)
+end
+@inline function muladd(x::DoubleFloat{T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return muladd(x.hi, x.lo, y[1], y[2], z[1], z[2])
+end
+@inline function muladd(x::Tuple{T,T}, y::Tuple{T,T}, z::DoubleFloat{T}) where {T<:AbstractFloat}
+   return muladd(x[1], x[2], y[1], y[2], z.hi, z.lo)
+end
+@inline function muladd(x::Tuple{T,T}, y::DoubleFloat{T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return muladd(x[1], x[2], y.hi, y.lo, z[1], z[2])
+end
+@inline function muladd(x::Tuple{T,T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:AbstractFloat}
+   return muladd(x[1], x[2], y[1], y[2], z[1], z[2])
 end
