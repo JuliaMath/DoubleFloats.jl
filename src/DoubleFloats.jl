@@ -74,11 +74,14 @@ include("type/parse.jl")
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
 include("math/prearith/divrem.jl")
+
 include("math/arithmetic/fma.jl")
 include("math/arithmetic/modpi.jl")
 include("math/arithmetic/normalize_hypot.jl")
 include("math/arithmetic/mixedarith.jl")
 include("math/ops.jl")
+
+include("math/linearalgebra/matmul.jl")
 
 include("math/elementary/sequences.jl")
 include("math/elementary/explog.jl")
