@@ -7,11 +7,60 @@
 [![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
 ----
 
-See [here](https://github.com/JuliaMath/DoubleFloats.jl/blob/master/test/function_accuracy.jl) for function specific absolute and relative errors over 0:1 and 1:2.
-
 ## Documentation
 
 - [Current](https://juliamath.github.io/DoubleFloats.jl/latest/) &mdash; **most recently tagged version of the documentation.**
+
+## Accuracy
+
+
+results for f(x), x in 0..1
+ 
+
+| function |   abserr   |   relerr   |
+|:--------:|:----------:|:----------:|
+|   exp    |  1.0e-31   |   1.0e-31  |
+|   log    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sin    |  1.0e-31   |   1.0e-31  |
+|   cos    |  1.0e-31   |   1.0e-31  |
+|   tan    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|  asin    |  1.0e-30   |   1.0e-30  |
+|  acos    |  1.0e-30   |   1.0e-29  |
+|  atan    |  1.0e-31   |   1.0e-30  |
+|          |            |            |
+|          |            |            |
+|   sinh   |  1.0e-31   |   1.0e-29  |
+|   cosh   |  1.0e-31   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-29  |
+|          |            |            |
+|  asinh   |  1.0e-31   |   1.0e-29  |
+|  atanh   |  1.0e-31   |   1.0e-30  |
+
+
+results for f(x), x in 1..2
+ 
+
+| function |   abserr   |   relerr   |
+|:--------:|:----------:|:----------:|
+|   exp    |  1.0e-30   |   1.0e-31  |
+|   log    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sin    |  1.0e-31   |   1.0e-31  |
+|   cos    |  1.0e-31   |   1.0e-28  |
+|   tan    |  1.0e-24   |   1.0e-28  | asymptote
+|          |            |            |
+|  asin    |  1.0e-30   |   1.0e-30  |
+|  acos    |  1.0e-30   |   1.0e-29  |
+|  atan    |  1.0e-31   |   1.0e-30  |
+|          |            |            |
+|          |            |            |
+|   sinh   |  1.0e-30   |   1.0e-31  |
+|   cosh   |  1.0e-30   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|  asinh   |  1.0e-31   |   1.0e-31  |
 
 
 ## Installation
