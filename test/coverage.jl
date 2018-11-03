@@ -1,5 +1,6 @@
 @testset "convert" begin
 
+one = 1
 bf = BigFloat(pi)
 df = Double64(bf)
 sqrt2 = sqrt(2.0)
@@ -9,6 +10,10 @@ sqrt2 = sqrt(2.0)
 
 @test Double32(sqrt2) == convert(Double32, sqrt2)
 @test Double64(sqrt2) == convert(Double64, sqrt2)
+
+@test one == convert(Int, Double64(1))
+@test BigInt(one) == convert(BigInt, Double32(1))
+@test Double16(1) == convert(Double16, BigInt(1))
 
 end # convert
 
