@@ -65,16 +65,19 @@ end # Double
 @testset "compare $T" for T in (Double16, Double32, Double64)
 
     one = 1
+    fp1 = T(1)
     two = 2.0
     fp2 = T(2)
     sqrt2  = sqrt(T(2))
     sqrt5  = sqrt(T(5))
     
     @test isequal(sqrt2, sqrt2)
-    @test isless(sqrt2, sqrt5)
+    @test isless(sqrt2, sqrt5
     
     @test sqrt5 != two
     @test two != sqrt5
+    @test two == fp2
+    @test fp2 == two
     @test two < sqrt5
     @test !(sqrt5 < two)
     @test two <= sqrt5
@@ -86,6 +89,8 @@ end # Double
 
     @test sqrt5 != one
     @test one != sqrt5
+    @test fp1 == one
+    @test one == fp1
     @test one < sqrt5
     @test !(sqrt5 < one)
     @test one <= sqrt5
