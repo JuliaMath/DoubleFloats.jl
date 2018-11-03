@@ -1,4 +1,6 @@
-function triple(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+using Base: IEEEFloat
+
+function triple(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
     hi = T(x), 
@@ -8,7 +10,7 @@ function triple(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     return hi,md,lo
 end
 
-function triple(::Type{T}, x::String) where {T<:Base.IEEEFloat}
+function triple(::Type{T}, x::String) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
     z = parse(BigFloat, x)
@@ -46,7 +48,7 @@ end
 end
 
 
-function triple_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+function triple_inv(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
     x = inv(x)
