@@ -37,10 +37,6 @@ const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
 
-const QuadrupleF64 = DoubleFloat{DoubleFloat{Float64}}
-const QuadrupleF32 = DoubleFloat{DoubleFloat{Float32}}
-const QuadrupleF16 = DoubleFloat{DoubleFloat{Float16}}
-
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(F)
@@ -158,11 +154,6 @@ DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, Do
 DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
 DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
-DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(DoubleFloat(y),DoubleFloat(zero(T))))
-DoubleFloat{T}(x::T, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(DoubleFloat(x), DoubleFloat(zero(T))), y)
-DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y, DoubleFloat(zero(T))))
-DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x, DoubleFloat(zero(T))), y)
-DoubleFloat{T}(x::DoubleFloat{DoubleFloat{T}}, y::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
 """
     Double64(x::Double32)
