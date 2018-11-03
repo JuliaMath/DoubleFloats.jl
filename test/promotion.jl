@@ -1,7 +1,7 @@
 @testset "promote $T" for T in (Double16, Double32, Double64)
 
 
-@test promote_type(DoubleFloat{Float64}}, DoubleFloat{Float32}) == DoubleFloat{Float64}
+@test promote_type(DoubleFloat{Float64}, DoubleFloat{Float32}) == DoubleFloat{Float64}
 
 end
 #=
