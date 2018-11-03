@@ -165,18 +165,18 @@ DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(Doubl
 Promote a `Double32` to a `Double64` by converting the `hi` and `lo` attributes
 of `x` to `Double64`s and adding in extended precision.
 """
-Double64(x::Double32) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
-Double64(x::Double16) = Double64(add_2(Float64(HI(x)), Float64(LO(x))))
+Double64(x::Double32) = isfinite(x) ? Double64(add_2(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
+Double64(x::Double16) = isfinite(x) ? Double64(add_2(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
 """
     Double32(x::Double16)
 
 Promote a `Double16` to a `Double32` by converting the `hi` and `lo` attributes
 of `x` to `Double32`s and adding in extended precision.
 """
-Double32(x::Double16) = Double32(add_2(Float32(HI(x)), Float32(LO(x))))
-Double32(x::Double64) = Double32(BigFloat(x))
-Double16(x::Double64) = Double16(BigFloat(x))
-Double16(x::Double32) = Double16(BigFloat(x))
+Double32(x::Double16) = Double32(add_2(snHI(x)), Float32(LO(x))
+Double32(x::Double64) = isfinite(x) ? Double32(BigFloat(x)) : Double32(Float32(x))
+Double16(x::Double64) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
+Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
 
 # cleanup to support other pkgs
 DoubleFloat(x::Float64) = DoubleFloat{Float64}(x, 0.0)
