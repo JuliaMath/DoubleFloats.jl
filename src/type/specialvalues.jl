@@ -23,18 +23,3 @@ isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
 isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
 isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(Inf))
 isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} = (HI(x) === T(-Inf))
-
-
-zero(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(DoubleFloat(zero(T)), DoubleFloat(zero(T)))
-one(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(DoubleFloat(one(T)), DoubleFloat(zero(T)))
-
-nan(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(nan(DoubleFloat{T}), nan(DoubleFloat{T}))
-inf(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(inf(DoubleFloat{T}), zero(DoubleFloat{T}))
-posinf(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(posinf(DoubleFloat{T}), zero(DoubleFloat{T}))
-neginf(::Type{DoubleFloat{DoubleFloat{T}}}) where {T<:AbstractFloat} = DoubleFloat(neginf(DoubleFloat{T}), zero(DoubleFloat{T}))
-
-
-isnan(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = (HI(HI(x)) === T(NaN))
-isinf(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = (HI(HI(x)) === T(Inf))
-isposinf(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = (HI(HI(x)) === T(Inf))
-isneginf(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = (HI(HI(x)) === T(-Inf))
