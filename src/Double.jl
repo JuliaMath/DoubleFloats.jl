@@ -157,7 +157,6 @@ end
 
 DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y))
 DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
-DoubleFloat{T}(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x,y)
 
 
 """
