@@ -77,7 +77,7 @@ end # Double
     sqrt5  = sqrt(T(5))
     
     @test isequal(sqrt2, sqrt2)
-    @test isless(sqrt2, sqrt5
+    @test isless(sqrt2, sqrt5)
     
     @test sqrt5 != two
     @test two != sqrt5
