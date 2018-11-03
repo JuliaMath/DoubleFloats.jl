@@ -39,7 +39,7 @@ struct DomainGuard{T}
     maxneg::T           # most  negagtive magnitude of primary domain
     minneg::T           # least negative  magnitude of primary domain
     minpos::T           # zero or least positive magnitude of primary domain
-    maxpos::T           # +inf or most positive magnitude of pa
+    maxpos::T           # +inf or most positive magnitude of primary domain
 
     reduct::Function    # comprehensive domain >=>=> canonical domain
 
