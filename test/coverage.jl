@@ -17,15 +17,20 @@ sqrt2 = sqrt(2.0)
 
 end # convert
 
-@testset "convert $T" for T in (Double16, Double32, Double64)
-    @test Int64(5) == Int64(T(5))
-    @test Int32(5) == Int32(T(5))
-    @test Int16(5) == Int16(T(5))
-    @test Float64(5) == Float64(T(5))
-    @test Float32(5) == Float32(T(5))
-    @test Float16(5) == Float16(T(5))
-    @test T(5) = T(BigFloat(5))
-    @test T(5) = T(BigInt(5)) 
+@testset "construct $T" for T in (Double16, Double32, Double64)
+    
+    i5 = 5
+    five = T(5)
+    
+    @test Int64(i5) == Int64(five)
+    @test Int32(i5) == Int32(five)
+    @test Int16(i5) == Int16(five)
+    @test Float64(i5) == Float64(five)
+    @test Float32(i5) == Float32(five)
+    @test Float16(i5) == Float16(five)
+    @test five = T(BigFloat(i5))
+    @test five = T(BigInt(i5))
+    
 end
 
 @testset "maxintfloat $T" for T in (Double16, Double32, Double64)
