@@ -5,7 +5,7 @@
     @test maxintfloat(T) == (maxintfloat(T) - one(T)) + one(T)
     @test maxintfloat(T) != (maxintfloat(T) + one(T)) - one(T)
     
-    @test maintfloat(T) < floatmax(T)
+    @test maxintfloat(T) < floatmax(T)
 end
 
 
