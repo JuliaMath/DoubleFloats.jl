@@ -14,13 +14,13 @@ struct DoubleFloat{T} <: MultipartFloat
    lo::T
 
    # this form ensure hi, lo are canonically valued
-   function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
+   function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
        hi, lo = add_2(hi, lo)
        return new{T}(hi, lo)
    end
 
    # this form does not alter hi, lo
-   function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
+   function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
        return new{T}(hi, lo)
    end
 
