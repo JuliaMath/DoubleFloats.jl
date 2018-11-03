@@ -3,11 +3,11 @@ using Base: IEEEFloat
 function triple(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
-    hi = T(x), 
+    hi = T(x)
     md = T(x - hi)
     lo = T(x - hi - md)
     setprecision(BigFloat, prec)
-    return hi,md,lo
+    return hi, md, lo
 end
 
 function triple(::Type{T}, x::String) where {T<:IEEEFloat}
