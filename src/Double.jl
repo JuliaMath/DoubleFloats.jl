@@ -173,7 +173,7 @@ Double64(x::Double16) = isfinite(x) ? Double64(add_2(Float64(HI(x)), Float64(LO(
 Promote a `Double16` to a `Double32` by converting the `hi` and `lo` attributes
 of `x` to `Double32`s and adding in extended precision.
 """
-Double32(x::Double16) = Double32(add_2(snHI(x)), Float32(LO(x))
+Double32(x::Double16) = isfinite(x) ? Double32(BigFloat(x)) : Double32(Float32(x))
 Double32(x::Double64) = isfinite(x) ? Double32(BigFloat(x)) : Double32(Float32(x))
 Double16(x::Double64) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
 Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
