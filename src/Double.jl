@@ -188,6 +188,8 @@ DoubleFloat(x::Float64) = DoubleFloat{Float64}(x)
 DoubleFloat(x::Float32) = DoubleFloat{Float32}(x)
 DoubleFloat(x::Float16) = DoubleFloat{Float16}(x)
 
+eltype(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = T
+eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
