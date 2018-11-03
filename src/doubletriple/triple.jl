@@ -103,6 +103,7 @@ function add222(ahilo, bhilo)
         t5 = t4  + blo
     end
     zhi, zlo = add_2(t1, t5)
+    zhi, zlo = clean0s(zhi, zlo)
     return zhi, zlo
 end
 
@@ -169,6 +170,7 @@ function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:Abstra
     t5 = t3 + t4
     zmd = t5 + t6
     zmd += t7
+    zhi, zmd = clean0s(zhi, zmd)
     return zhi, zmd
 end
 
@@ -198,6 +200,7 @@ function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     zmd = t5 + alo
     zmd += t7
+    zhi, zmd = clean0s(zhi, zmd)
     return zhi, zmd
 end
 
@@ -264,6 +267,7 @@ function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:Abstra
     t5 = t3 + t4
     t8 = t5 + t6
     zmd = t7 + t8
+    zhi, zmd = clean0s(zhi, zmd)
     return zhi, zmd
 end
 
@@ -293,6 +297,7 @@ function sub322(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     zmd = t5 + alo
     zmd += t7
+    zhi, zmd = clean0s(zhi, zmd)
     return zhi, zmd
 end
 
@@ -322,6 +327,7 @@ function sub232(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     zmd = t5 - blo
     zmd += t7
+    zhi, zmd = clean0s(zhi, zmd)
     return zhi, zmd
 end
 
@@ -358,6 +364,7 @@ function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     t7, t4 = add_2(t1, amd)
     zlo = t4 + alo
     zlo += t7
+    zhi, zlo = clean0s(zhi, zlo)
     return zhi, zlo
 end
 
