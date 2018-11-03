@@ -43,7 +43,7 @@ function ldexp(x::DoubleFloat{T}, exponent::I) where {T, I<:Integer}
     return DoubleFloat(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function ldexp(dhi::Tuple{T,T}, dlo::Tuple{T,T}) where {T<:AbstractFloat}
+function ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:AbstractFloat, I<:Integer}
     return DoubleFloat(ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
