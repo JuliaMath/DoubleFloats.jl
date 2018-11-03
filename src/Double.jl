@@ -180,9 +180,11 @@ Double16(x::Double64) = Double16(BigFloat(x))
 Double16(x::Double32) = Double16(BigFloat(x))
 
 # cleanup to support other pkgs
-DoubleFloat(x::Float64) = DoubleFloat{Float64}(x)
-DoubleFloat(x::Float32) = DoubleFloat{Float32}(x)
-DoubleFloat(x::Float16) = DoubleFloat{Float16}(x)
+DoubleFloat(x::Float64) = DoubleFloat{Float64}(x, 0.0)
+DoubleFloat(x::Float32) = DoubleFloat{Float32}(x, 0.0f0)
+DoubleFloat(x::Float16) = DoubleFloat{Float16}(x, zero(Float16))
+
+precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
 eltype(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = T
 eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
