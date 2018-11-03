@@ -17,6 +17,17 @@ sqrt2 = sqrt(2.0)
 
 end # convert
 
+@testset "convert $T" for T in (Double16, Double32, Double64)
+    @test Int64(5) == Int64(T(5))
+    @test Int32(5) == Int32(T(5))
+    @test Int16(5) == Int16(T(5))
+    @test Float64(5) == Float64(T(5))
+    @test Float32(5) == Float32(T(5))
+    @test Float16(5) == Float16(T(5))
+    @test T(5) = T(BigFloat(5))
+    @test T(5) = T(BigInt(5)) 
+end
+
 @testset "maxintfloat $T" for T in (Double16, Double32, Double64)
     @test isinteger(maxintfloat(T))
 
