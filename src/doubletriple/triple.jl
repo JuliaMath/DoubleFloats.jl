@@ -27,7 +27,7 @@ triple64(x::String) = triple(Float64, x)
 triple32(x::String) = triple(Float32, x)
 triple16(x::String) = triple(Float16, x)
 
-@inline function clean0s(hi::T, md::T, lo::T)
+@inline function clean0s(hi::T, md::T, lo::T) where {T}
     if !iszero(hi)
         hi, md, lo
     elseif iszero(md)
@@ -37,7 +37,7 @@ triple16(x::String) = triple(Float16, x)
     end
 end
 
-@inline function clean0s(hi::T, lo::T)
+@inline function clean0s(hi::T, lo::T) where {T}
     if !iszero(hi)
         hi, lo
     else
