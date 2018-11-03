@@ -12,7 +12,7 @@ sqrt2 = sqrt(2.0)
 
 end # convert
 
-@testset "maxintfloat $T" for T in (Double32, Double64)
+@testset "maxintfloat $T" for T in (Double16, Double32, Double64)
     @test isinteger(maxintfloat(T))
 
     # Previous integer is representable, next integer is not
@@ -20,7 +20,7 @@ end # convert
     @test maxintfloat(T) != (maxintfloat(T) + one(T)) - one(T)
 end
 
-@testset "predicates $T" for T in (Double32, Double64)
+@testset "predicates $T" for T in (Double16, Double32, Double64)
   
     @test iszero(zero(T))
     @test isone(one(T))
@@ -42,7 +42,7 @@ end
   
 end # predicates
 
-@testset "double $T" for T in (Double32, Double64)
+@testset "double $T" for T in (Double16, Double32, Double64)
 
     @test HI(one(T)) == one(T)
     @test LO(one(T)) == zero(T)
@@ -62,7 +62,7 @@ end # predicates
         
 end # Double
 
-@testset "compare $T" for T in (Double32, Double64)
+@testset "compare $T" for T in (Double16, Double32, Double64)
 
     two = 2
     fp2 = T(2)
@@ -113,7 +113,7 @@ end # Double
     
 end # compare
 
-@testset "eps $T" for T in (Double32, Double64)
+@testset "eps $T" for T in (Double16, Double32, Double64)
     fp2 = T(2)
     sqrt2  = sqrt(T(2))
 
