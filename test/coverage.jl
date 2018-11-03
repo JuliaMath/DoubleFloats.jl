@@ -64,6 +64,7 @@ end # Double
 
 @testset "compare $T" for T in (Double16, Double32, Double64)
 
+    one = 1
     two = 2.0
     fp2 = T(2)
     sqrt2  = sqrt(T(2))
@@ -82,6 +83,17 @@ end # Double
     @test sqrt5 > two
     @test !(two >= sqrt5)
     @test sqrt5 >= two
+
+    @test sqrt5 != one
+    @test one != sqrt5
+    @test one < sqrt5
+    @test !(sqrt5 < one)
+    @test one <= sqrt5
+    @test !(sqrt5 <= one)
+    @test !(one > sqrt5)
+    @test sqrt5 > one
+    @test !(one >= sqrt5)
+    @test sqrt5 >= one
         
     @test   sqrt2 == sqrt2
     @test   sqrt2 >= sqrt2
