@@ -11,7 +11,7 @@ typemin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(typemi
 
 floatmin(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(floatmin(T))
 
-floatmax(::Type{DoubleFloat{Float64}}) = Double32(ldexp(Float64(0.9999999999999999), 1024), ldexp(Float64(0.9999999999999999), 970))
+floatmax(::Type{DoubleFloat{Float64}}) = Double64(ldexp(Float64(0.9999999999999999), 1024), ldexp(Float64(0.9999999999999999), 970))
 floatmax(::Type{DoubleFloat{Float32}}) = Double32(ldexp(Float32(0.99999994f0), 128), ldexp(Float32(0.99999994f0), 103))
 floatmax(::Type{DoubleFloat{Float16}}) = Double16(ldexp(Float16(0.9995),16), ldexp(Float16(0.9996),4))
 
