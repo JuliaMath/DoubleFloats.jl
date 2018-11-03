@@ -24,6 +24,7 @@ function splitnumstring(str::AbstractString, dlm)
 end
 
 # constructors
+Double16(str::T) where {T<:AbstractString} = tryparse(Double16, str)
 Double32(str::T) where {T<:AbstractString} = tryparse(Double32, str)
 Double64(str::T) where {T<:AbstractString} = tryparse(Double64, str)
 
