@@ -10,18 +10,6 @@ function stringtyped(x::Double16)
     str = string("Double16(", HI(x), ", ", LO(x), ")")
     return str
 end
-function stringtyped(x::QuadrupleF64)
-    str = string("QuadrupleF64(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
-    return str
-end
-function stringtyped(x::QuadrupleF32)
-    str = string("QuadrupleF32(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
-    return str
-end
-function stringtyped(x::QuadrupleF16)
-    str = string("QuadrupleF16(", HI(HI(x)), ", ", LO(HI(x)), ", ", HI(LO(x)), ", ", LO(LO(x)),")")
-    return str
-end
 
 @inline BigFloatBits(::Type{Float64}) = 512
 @inline BigFloatBits(::Type{Float32}) = 256
@@ -36,25 +24,6 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     setprecision(Base.BigFloat, BigFloatBits(T))
     bf = Base.BigFloat(x)
     bf = round(bf, digits=BigFloatBits(T), base=2)
-    str = string(bf)
-    if occursin('e', str)
-       a, b = split(str, "e")
-       n = min(length(a), BigFloatDigits(T)+1)
-       str = string(a[1:n],"e",b)
-    else
-       n = min(length(str), BigFloatDigits(T)+1)
-       str = str[1:n]
-    end
-    setprecision(Base.BigFloat, prec)
-    return str
-end
-
-function string(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat}
-    !isfinite(HI(HI(x))) && return string(HI(HI(x)))
-    prec = precision(Base.BigFloat)
-    setprecision(Base.BigFloat, BigFloatBits(T)*2)
-    bf = Base.BigFloat(x)
-    bf = round(bf, digits=BigFloatBits(T)*2, base=2)
     str = string(bf)
     if occursin('e', str)
        a, b = split(str, "e")
