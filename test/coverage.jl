@@ -28,8 +28,8 @@ end # convert
     @test Float64(i5) == Float64(five)
     @test Float32(i5) == Float32(five)
     @test Float16(i5) == Float16(five)
-    @test five = T(BigFloat(i5))
-    @test five = T(BigInt(i5))
+    @test five == T(BigFloat(i5))
+    @test five == T(BigInt(i5))
     
 end
 
