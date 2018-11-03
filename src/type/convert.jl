@@ -14,11 +14,11 @@ function convert(::Type{DoubleFloat{T}}, x::BigFloat) where {T<:AbstractFloat}
     return DoubleFloat(hi, lo)
 end
   
-function convert(::Type{BigInt}, x::DoubleFloat{T}) where {T<:AbstractFloat}
+function convert(::Type{BigInt}, x::DoubleFloat{T}) where {T<:IEEEFloat}
     res = round(Base.BigInt, Base.BigFloat(HI(x)) + Base.BigFloat(LO(x)))
     return res
 end
-function convert(::Type{DoubleFloat{T}}, x::BigInt) where {T<:AbstractFloat}
+function convert(::Type{DoubleFloat{T}}, x::BigInt) where {T<:IEEEFloat}
     return convert(DoubleFloat{T}, BigFloat(x))
 end
 
