@@ -16,12 +16,12 @@ Base.BigFloat(x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} =
 
 for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16))
   @eval begin
-    function Base.$D(x::BigFloat)
+    function $D(x::BigFloat)
         hi = $F(x)
         lo = $F(x - hi)
         return $D(hi, lo)
     end
-    Base.$D(x::BigInt) = $D(BigFloat(x))
+    $D(x::BigInt) = $D(BigFloat(x))
   end
 end
 
