@@ -47,6 +47,10 @@ function ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:AbstractFloat, I<:Int
     return DoubleFloat(ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
+function ldexp(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:AbstractFloat, I<:Integer}
+    return ldexp(dhilo[1], dhilo[2])
+end
+
 function exponent(x::DoubleFloat{T}) where {T<:AbstractFloat}
     ehi = Base.exponent(HI(x))
     elo = Base.exponent(LO(x))
