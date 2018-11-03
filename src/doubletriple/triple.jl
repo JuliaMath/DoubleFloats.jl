@@ -1,7 +1,7 @@
 function triple(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
-    hi = T(x)
+    hi = T(x), 
     md = T(x - hi)
     lo = T(x - hi - md)
     setprecision(BigFloat, prec)
@@ -26,6 +26,25 @@ triple16(x::BigFloat) = triple(Float16, x)
 triple64(x::String) = triple(Float64, x)
 triple32(x::String) = triple(Float32, x)
 triple16(x::String) = triple(Float16, x)
+
+@inline function clean0s(hi::T, md::T, lo::T)
+    if !iszero(hi)
+        hi, md, lo
+    elseif iszero(md)
+        lo, md, hi
+    else
+        md, lo, hi
+    end
+end
+
+@inline function clean0s(hi::T, lo::T)
+    if !iszero(hi)
+        hi, lo
+    else
+        lo, hi
+    end
+end
+
 
 function triple_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     prec = precision(BigFloat)
@@ -60,9 +79,9 @@ end
 
 
 function renorm_hilo(hi::T, md::T, lo::T) where {T<:AbstractFloat}
-    md, lo = add_2(md, lo)
-    hi, m  = add_2(hi, md)
-    md, lo = add_2(m,  md)
+    md, lo = add_hilo_2(md, lo)
+    hi, m  = add_hilo_2(hi, md)
+    md, lo = add_hilo_2(m,  md)
     return hi, md, lo
 end
 
@@ -134,6 +153,7 @@ function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:Abstra
     t5 = t3 + t4
     t8 = t5 + t6
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -163,6 +183,7 @@ function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     t8 = t5 + alo
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -190,6 +211,7 @@ function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     t7, t4 = add_2(t1, t2)
     t5 = t3 + t4
     zmd, zlo = add_2(t7, t5)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -203,6 +225,7 @@ function add313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     t7, t4 = add_2(t1, amd)
     t8 = t4 + alo
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -225,6 +248,7 @@ function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:Abstra
     t5 = t3 + t4
     t8 = t5 + t6
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -254,6 +278,7 @@ function sub323(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     t8 = t5 + alo
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -282,6 +307,7 @@ function sub233(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     t5 = t3 + t4
     t8 = t5 - blo
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -309,6 +335,7 @@ function sub223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     t7, t4 = add_2(t1, t2)
     t5 = t3 + t4
     zmd, zlo = add_2(t7, t5)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
@@ -322,6 +349,7 @@ function sub313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     t7, t4 = add_2(t1, amd)
     t8 = t4 + alo
     zmd, zlo = add_2(t7, t8)
+    zhi, zmd, zlo = clean0s(zhi,zmd,zlo)
     return zhi, zmd, zlo
 end
 
