@@ -26,7 +26,7 @@ using Polynomials
 
 # using LinearAlgebra
 import Base: hash, promote_type, promote_rule, convert,
-             string, show, parse,
+             string, show, parse, eltype,
              signbit, sign, abs, flipsign, copysign,
              significand, exponent,
              (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
