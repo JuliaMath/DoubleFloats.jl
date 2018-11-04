@@ -51,10 +51,6 @@ end
 @inline LO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.lo
 @inline HILO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi, x.lo
 
-@inline HI(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.hi
-@inline LO(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.lo
-@inline HILO(x::T) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} = x.hi, x.lo
-
 @inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
 @inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
 @inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
@@ -63,9 +59,10 @@ end
 @inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x[2]
 @inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x
 
-@inline HI(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[1]
-@inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x[2]
-@inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{DoubleFloat{F}}} = x
+@inline HI(x::Tuple{T1,T2}) where {T1,T2} = x[1]
+@inline LO(x::Tuple{T1,T2}) where {T1,T2} = x[2]
+@inline HILO(x::Tuple{T1,T2}) where {T1,T2} = x
+
 
 """
     Double64(x::Tuple{Float64, Float64})
