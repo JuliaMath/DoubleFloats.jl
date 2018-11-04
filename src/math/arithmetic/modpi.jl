@@ -1,7 +1,5 @@
-const twopi_df64  = Double64(6.283185307179586, 2.4492935982947064e-16)
-const onepi_df64  = Double64(3.141592653589793, 1.2246467991473532e-16)
-const halfpi_df64 = Double64(1.5707963267948966, 6.123233995736766e-17)
-const qrtrpi_df64 = Double64(0.7853981633974483, 3.061616997868383e-17)
+const twopi_d64  = Double64(pi_2o1_d64)
+const onepi_d64  = Double64(pi_1o1_d64)
 
 const pi_1o1_t64_hi = pi_1o1_t64[1]
 const pi_1o1_t64_md = pi_1o1_t64[2]
@@ -24,7 +22,7 @@ end
 
 function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return mod2pi_neg(x)
-    x < twopi_df64 && return x
+    x < twopi_d64 && return x
     w1 = mul323(inv_pi_2o1_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_2o1_t64, w2)
@@ -42,7 +40,7 @@ mod2pi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod2pi(DoubleFloat{Float6
 
 function modpi(x::DoubleFloat{Float64})
     signbit(x) && return modpi_neg(x)
-    x < onepi_df64 && return x
+    x < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o1_t64, w2)
