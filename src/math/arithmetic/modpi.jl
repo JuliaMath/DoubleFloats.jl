@@ -53,7 +53,7 @@ modpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpi(DoubleFloat{Float64}
 modpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpi(DoubleFloat{Float64}(x)))
 
 function modpipm(x::DoubleFloat{Float64})
-    abs(x) < onepi_df64 && return x
+    abs(x) < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o1_t64, w2)
@@ -66,7 +66,7 @@ modpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpipm(DoubleFloat{Floa
 
 function modhalfpi(x::DoubleFloat{Float64})
     signbit(x) && return modhalfpi_neg(x)
-    x < halfpi_df64 && return x
+    x < halfpi_d64 && return x
     w1 = mul323(inv_pi_1o2_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o2_t64, w2)
@@ -83,7 +83,7 @@ modhalfpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpi(DoubleFloat{
 modhalfpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpi(DoubleFloat{Float64}(x)))
 
 function modhalfpipm(x::DoubleFloat{Float64})
-    abs(x) < halfpi_df64 && return x
+    abs(x) < halfpi_d64 && return x
     w1 = mul323(inv_pi_1o2_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o2_t64, w2)
@@ -96,7 +96,7 @@ modhalfpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpipm(DoubleFl
 
 function modqrtrpi(x::DoubleFloat{Float64})
     signbit(x) && return modqrtrpi_neg(x)
-    x < qrtrpi_df64 && return x
+    x < qrtrpi_d64 && return x
     w1 = mul323(inv_pi_1o4_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o4_t64, w2)
@@ -113,7 +113,7 @@ modqrtrpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpi(DoubleFloat{
 modqrtrpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpi(DoubleFloat{Float64}(x)))
 
 function modqrtrpipm(x::DoubleFloat{Float64})
-    abs(x) < qrtrpi_df64 && return x
+    abs(x) < qrtrpi_d64 && return x
     w1 = mul323(inv_pi_1o4_t64, HILO(x))
     w2 = add_2(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_1o4_t64, w2)
@@ -129,15 +129,11 @@ modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFl
 #=
     rem2pi(x) =  x - 2π*round(x/(2π),r)
     rem2pi(x, RoundDown) == mod2pi(x)
-
     •    if r == RoundNearest, then the result is in the interval [-π, π]. This will
         generally be the most accurate result.
-
     •    if r == RoundToZero, then the result is in the interval [0, 2π] if x is positive,.
         or [-2π, 0] otherwise.
-
     •    if r == RoundDown, then the result is in the interval [0, 2π].
-
     •    if r == RoundUp, then the result is in the interval [-2π, 0].
 =#
 
@@ -185,4 +181,4 @@ remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
 remqrtepi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(remqrtpi(DoubleFloat{Float64}(x), rounding))
 remqrtrpi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
-    DoubleFloat{Float16}(remqrtrpi(DoubleFloat{Float64}(x), rounding))
+DoubleFloat{Float16}(remqrtrpi(DoubleFloat{Float64}(x), rounding))
