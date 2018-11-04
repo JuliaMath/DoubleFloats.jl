@@ -429,6 +429,10 @@ function mul323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   return p0,p1,s0
 end
 
+mul233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
+    mul323(b, a)
+
+
 function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
   bhi, blo = b
@@ -439,7 +443,7 @@ function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   p5,q5 = mul_2(alo, bhi)
 
   # Start Accumulation
-  p1,p2,q0 = add_3(p1, p2, q0)
+  p1,p2,q0 = add_3(p1, p2, q0T
 
   # Six-Three Sum  of p2, q1, q2, p3, p4, p5
   p2,q1,q2 = add_3(p2, q1, q2)
