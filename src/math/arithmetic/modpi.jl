@@ -42,6 +42,37 @@ end
 
 
 
+# in -pi..+pi
+# determine nearest multiple of pi/2
+# within (pi/2) quadrant determine nearest multiple of pi/16
+
+function whichquadrant(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
+    if signbit(x) # quadrant -2 or -1
+        quadrant = -x < T(pi)/2 ? -2 : -1
+    else          # quadrant  1 or  2
+        quadrant =  x < T(pi)/2 ? 1 :  2
+    end
+    return quadrant
+end
+
+function which64th(x::DoubleFloat{Float64}, quadrant::Int)
+    y = T(mul232(HILO(x), nv_pi_1o2_t64))
+    z = trunc(Int, y*4)
+    return z
+end
+function which64th(x::DoubleFloat{Float32}, quadrant::Int)
+    y = T(mul232(HILO(x), nv_pi_1o2_t32))
+    z = trunc(Int, y*4)
+    return z
+end
+function which64th(x::DoubleFloat{Float16}, quadrant::Int)
+    y = T(mul232(HILO(x), nv_pi_1o2_t16))
+    z = trunc(Int, y*4)
+    return z
+end
+
+
+# ========================================== ^^^^^ =========================================
 
 const pi_1o1_t64_hi = pi_1o1_t64[1]
 const pi_1o1_t64_md = pi_1o1_t64[2]
