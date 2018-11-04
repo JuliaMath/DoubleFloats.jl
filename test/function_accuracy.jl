@@ -70,8 +70,8 @@ end
     @test test_atol(rand_bigf, rand_vals, atan, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, atan, 1.0e-30)
 
-   # @test test_atol(rand_bigf, rand_vals, sinh, 1.0e-31)
-   # @test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-29)
+    @test test_atol(rand_bigf, rand_vals, sinh, 1.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-29)
 
     @test test_atol(rand_bigf, rand_vals, cosh, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, cosh, 1.0e-31)
@@ -101,8 +101,8 @@ end
     @test test_atol(rand1_bigf, rand1_vals, tan, 1.0e-24)
     @test test_rtol(rand1_bigf, rand1_vals, tan, 1.0e-28)
 
-    # @test test_atol(rand1_bigf, rand1_vals, sinh, 1.0e-30)
-    # @test test_rtol(rand1_bigf, rand1_vals, sinh, 1.0e-31)
+    @test test_atol(rand1_bigf, rand1_vals, sinh, 1.0e-30)
+    @test test_rtol(rand1_bigf, rand1_vals, sinh, 1.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, cosh, 1.0e-30)
     @test test_rtol(rand1_bigf, rand1_vals, cosh, 1.0e-31)
