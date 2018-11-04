@@ -154,3 +154,38 @@ rem2pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(rem2pi(DoubleFloat{Float64}(x), rounding))
 rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
     DoubleFloat{Float16}(rem2pi(DoubleFloat{Float64}(x), rounding))
+
+
+rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = modpi(x)
+rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rempi(-x, RoundDown)
+rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modhalfpipm(x)
+rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
+    signbit(x) ? rempi(x, RoundUp) : rempi(x, RoundDown)
+
+rempi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+    DoubleFloat{Float32}(rempi(DoubleFloat{Float64}(x), rounding))
+rempi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
+    DoubleFloat{Float16}(rempi(DoubleFloat{Float64}(x), rounding))
+
+
+remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = modhalfpi(x)
+remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -remhalfpi(-x, RoundDown)
+remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modqrtrpipm(x)
+remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
+    signbit(x) ? remhalfpi(x, RoundUp) : remhalfpi(x, RoundDown)
+
+remhalfpi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+    DoubleFloat{Float32}(remhalfpi(DoubleFloat{Float64}(x), rounding))
+remhalfpi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
+    DoubleFloat{Float16}(remhalfpi(DoubleFloat{Float64}(x), rounding))
+
+remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = modqrtrpi(x)
+remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -remqrtrpi(-x, RoundDown)
+# remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modeighthpipm(x)
+remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
+    signbit(x) ? remqrtrpi(x, RoundUp) : remqrtrpi(x, RoundDown)
+
+remqrtepi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+    DoubleFloat{Float32}(remqrtpi(DoubleFloat{Float64}(x), rounding))
+remqrtrpi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
+    DoubleFloat{Float16}(remqrtrpi(DoubleFloat{Float64}(x), rounding))
