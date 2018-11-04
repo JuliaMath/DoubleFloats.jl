@@ -1,3 +1,48 @@
+#=
+    x / 2pi
+            x * tripleprecision(inv(2pi))
+            intpart, fracpart
+=#
+function rem2pi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
+    hi, md, lo = mul233(HILO(x), inv_pi_2o1_t64)
+
+    intfrac_hi = modf(hi)
+    intfrac_md = modf(md)
+    intfrac_lo = modf(lo)
+    fracparts = intfrac_hi[1], intfrac_md[1], intfrac_lo[1]
+    # fracpart is the signed (directed) portion of a circle
+    hi, md, lo = mul333(fracparts, pi_2o1_t64)
+    return T(hi, md)
+end
+
+function rem1pi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
+    hi, md, lo = mul233(HILO(x), inv_pi_1o1_t64)
+
+    intfrac_hi = modf(hi)
+    intfrac_md = modf(md)
+    intfrac_lo = modf(lo)
+    fracparts = intfrac_hi[1], intfrac_md[1], intfrac_lo[1]
+    # fracpart is the signed (directed) portion of a circle
+    hi, md, lo = mul333(fracparts, pi_1o1_t64)
+    return T(hi, md)
+end
+
+"""
+    negpi_pospi(x)
+
+    x --> [-pi..+pi)
+"""
+function negpi_pospi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
+    result = rem2pi(x)
+    if result >= T(pi)
+        result = -rem2pi(-x)
+    end
+    return result
+end
+
+
+
+
 const pi_1o1_t64_hi = pi_1o1_t64[1]
 const pi_1o1_t64_md = pi_1o1_t64[2]
 const pi_1o1_t64_lo = pi_1o1_t64[3]
