@@ -99,3 +99,57 @@ end
 @inline function (>=)(x::Integer, y::DoubleFloat{T}) where {T<:AbstractFloat}
     return (>=)(DoubleFloat{T}(x), y)
 end
+
+# mixing numbers and tuples
+
+@inline function (==)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (LO(x) === LO(y)) && (HI(x) === HI(y))
+end
+@inline function (!=)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (LO(x) !== LO(y)) || (HI(x) !== HI(y))
+end
+@inline function (<)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
+end
+@inline function (>)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) > LO(y))
+end
+@inline function (<=)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) <= LO(y))
+end
+@inline function (>=)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) >= LO(y))
+end
+
+@inline function isequal(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return x == y
+end
+@inline function isless(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat}
+    return x < y
+end
+
+@inline function (==)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (LO(x) === LO(y)) && (HI(x) === HI(y))
+end
+@inline function (!=)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (LO(x) !== LO(y)) || (HI(x) !== HI(y))
+end
+@inline function (<)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
+end
+@inline function (>)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) > LO(y))
+end
+@inline function (<=)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) <= LO(y))
+end
+@inline function (>=)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return (HI(x) > HI(y)) || (HI(x) === HI(y) && LO(x) >= LO(y))
+end
+
+@inline function isequal(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return x == y
+end
+@inline function isless(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    return x < y
+end
