@@ -97,7 +97,7 @@ Convert `x` to an extended precision `Double64`.
         hi = Float64(x)
         lo = Float64(x - Float64(hi))
     else
-        hi = x
+        hi = Float64(x)
         lo = NaN
     end
     return Double64(hi, lo)
@@ -112,7 +112,7 @@ Convert `x` to an extended precision `Double32`.
         hi = Float32(x)
         lo = Float32(x - Float32(hi))
     else
-        hi = x
+        hi = Float32(x)
         lo = NaN32
     end
     return Double32(hi, lo)
@@ -128,7 +128,7 @@ Convert `x` to an extended precision `Double16`.
         hi = Float16(x)
         lo = Float16(x - Float16(hi))
     else
-        hi = x
+        hi = Float16(x)
         lo = NaN16
     end
     return Double16(hi, lo)
