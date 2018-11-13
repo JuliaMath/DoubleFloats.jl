@@ -93,9 +93,13 @@ Convert a tuple `x` of `Float16`s to a `Double16`.
 Convert `x` to an extended precision `Double64`.
 """
 @inline function Double64(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(DoubleFloat{Float64}(Float64(x)))
-    hi = Float64(x)
-    lo = Float64(x - Float64(hi))
+    if isfinite(x)
+        hi = Float64(x)
+        lo = Float64(x - Float64(hi))
+    else
+        hi = x
+        lo = NaN
+    end
     return Double64(hi, lo)
 end
 """
@@ -104,20 +108,29 @@ end
 Convert `x` to an extended precision `Double32`.
 """
 @inline function Double32(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(DoubleFloat{Float32}(Float32(x)))
-    hi = Float32(x)
-    lo = Float32(x - Float64(hi))
+    if isfinite(x)
+        hi = Float32(x)
+        lo = Float32(x - Float32(hi))
+    else
+        hi = x
+        lo = NaN32
+    end
     return Double32(hi, lo)
 end
+
 """
     Double16(x::T) where {T <: IEEEFloat}
 
 Convert `x` to an extended precision `Double16`.
 """
 @inline function Double16(x::T) where {T<:IEEEFloat}
-    !isfinite(x) && return(DoubleFloat{Float16}(Float16(x)))
-    hi = Float16(x)
-    lo = Float16(x - Float64(hi))
+    if isfinite(x)
+        hi = Float16(x)
+        lo = Float16(x - Float16(hi))
+    else
+        hi = x
+        lo = NaN16
+    end
     return Double16(hi, lo)
 end
 
@@ -127,12 +140,14 @@ end
 Promote `hi` to a `Float64` then convert to `Double64`.
 """
 @inline Double64(hi::T) where {T<:Integer} = Double64(Float64(hi))
+
 """
     Double32(hi::T) where {T <: Integer}
 
 Promote `hi` to a `Float32` then convert to `Double32`.
 """
 @inline Double32(hi::T) where {T<:Integer} = Double32(Float32(hi))
+
 """
     Double16(hi::T) where {T <: Integer}
 
