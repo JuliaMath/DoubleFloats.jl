@@ -176,13 +176,9 @@ Double16(x::Double64) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x
 Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
 
 # cleanup to support other pkgs
-DoubleFloat(x::Float64) = DoubleFloat{Float64}(x, 0.0)
-DoubleFloat(x::Float32) = DoubleFloat{Float32}(x, 0.0f0)
-DoubleFloat(x::Float16) = DoubleFloat{Float16}(x, zero(Float16))
-DoubleFloat{Float64}(x::Float64) = DoubleFloat{Float64}(x, 0.0)
-DoubleFloat{Float32}(x::Float32) = DoubleFloat{Float64}(x, 0.0f0)
-DoubleFloat{Float16}(x::Float16) = DoubleFloat{Float64}(x, zero(Float16))
-
+DoubleFloat(x::Float64) = Double64(x, 0.0)
+DoubleFloat(x::Float32) = Double32(x, 0.0f0)
+DoubleFloat(x::Float16) = Double16(x, zero(Float16))
 
 precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
