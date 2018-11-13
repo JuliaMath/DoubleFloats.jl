@@ -6,7 +6,7 @@ julia:
   - 0.7
   - 1.0
   - nightly
-matrix:
+# matrix
   # allow_failures:
   #  - julia: 0.7
 notifications:
