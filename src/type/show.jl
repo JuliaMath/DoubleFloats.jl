@@ -8,7 +8,7 @@ function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     return nothing
 end
 
-show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
+#show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
     
 show(io::IO, ::MIME"text/plain", x::DoubleFloat{T}) where {T<:IEEEFloat} = show(io, x)
 
