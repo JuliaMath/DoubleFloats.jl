@@ -1,9 +1,9 @@
 function show(io::IOContext, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
     if compact
-        print(io.io, x.hi)
+        print(io, x.hi)
     else
-        print(io.io, x)
+        print(io, x)
     end
     return nothing
 end
