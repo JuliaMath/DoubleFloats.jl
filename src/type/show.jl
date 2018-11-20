@@ -1,12 +1,3 @@
-function show(io::IOContext, x::DoubleFloat{T}) where {T<:IEEEFloat}
-    compact = get(io, :compact, true)
-    if compact
-        str = string(x.hi)
-    else
-        str = string(x)
-    end
-    print(io.io, str)
-end
 
 function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
