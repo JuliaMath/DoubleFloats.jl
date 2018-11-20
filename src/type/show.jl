@@ -1,4 +1,4 @@
-function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
+function show(io::IOContext, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
     if compact
         print(io.io, x.hi)
@@ -6,6 +6,16 @@ function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
         print(io.io, x)
     end
     return nothing
+end
+
+function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
+    compact = get(io, :compact, true)
+    if compact
+        str = string(x.hi)
+    else
+        str = string(x)
+    end
+    print(io, str)
 end
 
 #show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
