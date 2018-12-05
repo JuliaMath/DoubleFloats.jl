@@ -63,3 +63,14 @@ julia> svdvals(m) .- svdvals(dm)
  1.178081989479917838447488783454471231112449340685927119701212949822873249002416e-32
  1.349926144342590313924882555904511808363939217207918450313311400847944711997193e-33
 
+
+
+# for eigvals
+using LinearAlgebra
+import LinearAlgebra: rmul!, lmul!
+# from GenericLinearAlgebra.jl
+juliaBLAS.jl
+householder.jl
+eigenGeneral.jl
+(eigenSelfAdjoint.jl) ?
+
