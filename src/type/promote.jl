@@ -24,9 +24,10 @@ promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float64}}) = BigFloat
 promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float32}}) = BigFloat
 promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float16}}) = BigFloat
 
+promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float16}}) = DoubleFloat{Float16}
+promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}
+promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}
+
 widen(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float32}
 widen(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float64}
 widen(::Type{DoubleFloat{Float64}}) = BigFloat
-
-
-
