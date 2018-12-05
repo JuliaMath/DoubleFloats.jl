@@ -26,10 +26,24 @@ end
 end
 
 @inline function copysign(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
-    signbit(y) ? -(abs(x)) : abs(x)
+    signbit(y) ? -abs(x) : abs(x)
 end
 @inline function copysign(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    signbit(y) ? -(abs(x)) : abs(x)
+    signbit(y) ? -abs(x) : abs(x)
+end
+
+flipsign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
+copysign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
+
+flipsign(x::DoubleFloat{T}, y::S) where {T<:AbstractFloat, S<:Signed} =
+    signbit(y) ? -x : x
+copysign(x::DoubleFloat{T}, y::S) where {T<:AbstractFloat, S<:Signed} =
+    signbit(y) ? -abs(x) : abs(x)
+
+
+for T in [DSigned, Integer, BigInt, Float32, Float64, Real, Complex, Rational]
+    @eval flipsign(x::$T, ::Unsigned) = +x
+    @eval copysign(x::$T, ::Unsigned) = +x
 end
 
 
