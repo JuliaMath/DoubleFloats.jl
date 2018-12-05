@@ -23,3 +23,10 @@ promote_rule(::Type{DoubleFloat{Float16}}, ::Type{BigFloat}) = BigFloat
 promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float64}}) = BigFloat
 promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float32}}) = BigFloat
 promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float16}}) = BigFloat
+
+widen(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float32}
+widen(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float64}
+widen(::Type{DoubleFloat{Float64}}) = BigFloat
+
+
+
