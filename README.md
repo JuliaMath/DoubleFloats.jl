@@ -107,12 +107,17 @@ julia> d64"0.2"
 julia> using DoubleFloats
 
 julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-5.7735026918962576450914878050194151e-01
+0.5773502691896257
+
 julia> string(x)
 "5.7735026918962576450914878050194151e-01"
 
+julia> show(IOContext(Base.stdout,:compact=>false),x)
+5.7735026918962576450914878050194151e-01
+
 julia> showtyped(x)
 Double64(0.5773502691896257, 3.3450280739356326e-17)
+
 julia> showtyped(parse(Double64, stringtyped(x)))
 Double64(0.5773502691896257, 3.3450280739356326e-17)
 
