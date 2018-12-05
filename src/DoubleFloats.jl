@@ -27,7 +27,7 @@ using Polynomials
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, eltype,
              signbit, sign, abs, flipsign, copysign,
-             significand, exponent, precision,
+             significand, exponent, precision, widen,
              (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,
              IEEEFloat, iszero, isone, isinf, isnan, isinf, isfinite, issubnormal,
