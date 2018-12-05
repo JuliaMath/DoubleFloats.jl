@@ -41,7 +41,7 @@ copysign(x::DoubleFloat{T}, y::S) where {T<:AbstractFloat, S<:Signed} =
     signbit(y) ? -abs(x) : abs(x)
 
 
-for T in [DSigned, Integer, BigInt, Float32, Float64, Real, Complex, Rational]
+for T in [Signed, Integer, BigInt, Float32, Float64, Real, Complex, Rational]
     @eval flipsign(x::$T, ::Unsigned) = +x
     @eval copysign(x::$T, ::Unsigned) = +x
 end
