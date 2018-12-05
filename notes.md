@@ -34,3 +34,32 @@ julia> Float32.((m*m) .- (dm*dm))
 
 matmul2x2(m) = [(m[1,1]*m[1,1])+(m[1,2]*m[2,1]) (m[1,1]*m[1,2])+(m[1,2]*m[2,2]);
                        (m[2,1]*m[1,1])+(m[2,2]*m[2,1]) (m[2,1]*m[1,2])+(m[2,2]*m[2,2])]
+
+
+
+julia> using DoubleFloats, GenericLinearAlgebra, Random
+
+julia> m = reshape(rand(BigFloat,2*2), (2,2)); fm=Float64.(m); dm=Double64.(m);
+
+julia> eigvals(m) .- eigvals(dm)
+ERROR: UndefVarError: eigvals not defined
+Stacktrace:
+ [1] top-level scope at none:0
+
+julia> eigvals!(m) .- eigvals!(dm)
+ERROR: UndefVarError: eigvals! not defined
+Stacktrace:
+ [1] top-level scope at none:0
+
+julia> using LinearAlgebra
+
+julia> eigvals(m) .- eigvals(dm)
+2-element Array{Complex{BigFloat},1}:
+ -4.071640696197188570653575899471960596590629652118186673225473327733181438654675e-32 + 0.0im
+ -5.696254126141096064103930886586648783736560608141594381619979715602311585541413e-33 - 0.0im
+
+julia> svdvals(m) .- svdvals(dm)
+2-element Array{BigFloat,1}:
+ 1.178081989479917838447488783454471231112449340685927119701212949822873249002416e-32
+ 1.349926144342590313924882555904511808363939217207918450313311400847944711997193e-33
+
