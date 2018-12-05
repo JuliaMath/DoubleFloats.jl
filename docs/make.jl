@@ -2,23 +2,18 @@ using Documenter, DoubleFloats
 
 makedocs(
     modules = [DoubleFloats],
-    format = :html,
     sitename = "DoubleFloats.jl",
     authors = "Jeffrey Sarnoff, Simon Byrne, Sascha Timme, and other contributors",
-    pages = [
+    pages = Any[
         "Home" => "index.md",
         "Overview" => "appropriate.md",
         "Names" => "naming.md",
         "Capabilities" => "capabilities.md",
         "Refs" => "references.md"
-    ],
+    ]
 )
 
 deploydocs(
-    julia = "1.0",
     repo = "github.com/JuliaMath/DoubleFloats.jl.git",
-    target = "build",
-    osname = "linux",
-    deps   = nothing,
-    make   = nothing
+    target = "build"
 )
