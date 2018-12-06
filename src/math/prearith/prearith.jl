@@ -40,13 +40,6 @@ flipsign(x::DoubleFloat{T}, y::S) where {T<:AbstractFloat, S<:Signed} =
 copysign(x::DoubleFloat{T}, y::S) where {T<:AbstractFloat, S<:Signed} =
     signbit(y) ? -abs(x) : abs(x)
 
-
-for T in [Signed, Integer, BigInt, Float32, Float64, Real, Complex, Rational]
-    @eval flipsign(x::$T, ::Unsigned) = +x
-    @eval copysign(x::$T, ::Unsigned) = +x
-end
-
-
 function frexp(x::DoubleFloat{T}) where {T<:AbstractFloat}
     frhi, exphi = frexp(HI(x))
     frlo, explo = frexp(LO(x))
