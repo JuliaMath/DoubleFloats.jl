@@ -1,4 +1,3 @@
-
 function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
     if compact
