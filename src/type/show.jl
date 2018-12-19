@@ -41,12 +41,6 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
   end
 end
 
-#show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
-    
-show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat} = show(io, ::MIME"text/plain", x)
-
-show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(io, ::MIME"text/plain", x)
-
 show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
 show(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(Base.stdout, x)
