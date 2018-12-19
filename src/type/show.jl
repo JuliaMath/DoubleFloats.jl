@@ -21,11 +21,20 @@ end
 
 for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Double16")) 
   @eval begin
-    function show(io::IO,  ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
+    function show(io::IO, x::Vector{DoubleFloat{$T}})
         println(io, string(length(x),"-element ","Array{",$D,",1}:"))
         for a in x
             spc = signbit(a.hi) ? "" : " "
             println(io, string(spc,a))
+        end
+        return nothing
+    end
+    function show(io::IOContext, x::Vector{DoubleFloat{$T}})
+        iostream = io.io
+        println(iostream, string(length(x),"-element ","Array{",$D,",1}:"))
+        for a in x
+            spc = signbit(a.hi) ? "" : " "
+            println(io, spc, a)
         end
         return nothing
     end
