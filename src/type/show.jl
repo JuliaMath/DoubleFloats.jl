@@ -29,7 +29,7 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
         end
         return nothing
     end
-    function show(io::IOContext, ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
+    function show(io::IOContext, x::Vector{DoubleFloat{$T}})
         iostream = io.io
         println(iostream, string(length(x),"-element ","Array{",$D,",1}:"))
         for a in x
