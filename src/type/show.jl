@@ -19,6 +19,18 @@ function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 
+for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Double16")) 
+  @eval begin
+    function show(io::IO,  ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
+        println(io, string(length(x),"-element ","Array{",$D,",1}:"))
+        for a in x
+            println(io, string(spc,a))
+        end
+        return nothing
+    end
+  end
+end
+
 #show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
     
 show(io::IO, ::MIME"text/plain", x::DoubleFloat{T}) where {T<:IEEEFloat} = show(io, x)
