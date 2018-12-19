@@ -21,7 +21,7 @@ end
 
 for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Double16")) 
   @eval begin
-    function show(io::IO, x::Vector{DoubleFloat{$T}})
+    function show(io::IO, ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
         println(io, string(length(x),"-element ","Array{",$D,",1}:"))
         for a in x
             spc = signbit(a.hi) ? "" : " "
@@ -29,7 +29,7 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
         end
         return nothing
     end
-    function show(io::IOContext, x::Vector{DoubleFloat{$T}})
+    function show(io::IOContext, ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
         iostream = io.io
         println(iostream, string(length(x),"-element ","Array{",$D,",1}:"))
         for a in x
@@ -39,13 +39,13 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
         return nothing
     end
   end
-end
+endte
 
 #show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
     
-show(io::IO, ::MIME"text/plain", x::DoubleFloat{T}) where {T<:IEEEFloat} = show(io, x)
+show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat} = show(io, ::MIME"text/plain", x)
 
-show(io::IO, ::MIME"text/plain", x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(io, x)
+show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(io, ::MIME"text/plain", x)
 
 show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
