@@ -39,7 +39,7 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
         return nothing
     end
   end
-endte
+end
 
 #show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
     
