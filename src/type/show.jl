@@ -24,6 +24,7 @@ for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Dou
     function show(io::IO,  ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
         println(io, string(length(x),"-element ","Array{",$D,",1}:"))
         for a in x
+            spc = signbit(a.hi) ? "" : " "
             println(io, string(spc,a))
         end
         return nothing
