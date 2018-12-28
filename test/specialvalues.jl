@@ -116,8 +116,8 @@ end
     xnan = pinf+minf
     @test_broken !(xnan == xnan)
     # a famous special case
-    @test_broken hypot(pinf, xnan) == pinf
-    @test_broken hypot(minf, xnan) == pinf
+    @test isinf(hypot(pinf, xnan))
+    @test isinf(hypot(minf, xnan))
     One = T(1)
     Zero = T(0)
     for op in (+,-,*)

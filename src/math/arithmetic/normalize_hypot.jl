@@ -1,7 +1,9 @@
 function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     ax = abs(x)
     ay = abs(y)
-    ay, ax = minmax(ax, ay)
+    if ax < ay
+        ax, ay = ay, ax
+    end
 
     r = ay
     if !iszero(ax)
