@@ -1,7 +1,13 @@
 @inline function (==)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    return (LO(x) === LO(y)) && (HI(x) === HI(y))
+    if ((LO(x) === LO(y)) && (HI(x) === HI(y)))
+        return true
+    end
+    return (LO(x) === zero(T)) && (LO(y) === zero(T)) && (HI(x) == HI(y))
 end
 @inline function (!=)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
+    if (LO(x) === zero(T)) && (LO(y) === zero(T))
+        return (HI(x) != HI(y))
+    end
     return (LO(x) !== LO(y)) || (HI(x) !== HI(y))
 end
 @inline function (<)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -25,16 +31,25 @@ end
 end
 
 @inline function (==)(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
-    return iszero(LO(x)) && (HI(x) === y)
+    iszero(LO(x)) || return false
+    (HI(x) === y) && return true
+    return ((HI(x) == zero(T)) && (y == zero(T)))
 end
 @inline function (==)(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    return iszero(LO(y)) && (HI(y) === x)
+    iszero(LO(y)) || return false
+    (HI(y) === x) && return true
+    return ((HI(y) == zero(T)) && (x == zero(T)))
 end
 @inline function (!=)(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
-    return !iszero(LO(x)) || (HI(x) !== y)
+    !iszero(LO(x)) && return true
+    (HI(x) === y) && return false
+    return ((HI(x) != zero(T)) || (y != zero(T)))
 end
 @inline function (!=)(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
     return !iszero(LO(y)) || (HI(y) !== x)
+    !iszero(LO(y)) && return true
+    (HI(y) === x) && return false
+    return ((HI(y) != zero(T)) || (x != zero(T)))
 end
 
 @inline function (<)(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}

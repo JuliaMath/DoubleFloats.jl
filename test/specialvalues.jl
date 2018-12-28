@@ -16,14 +16,14 @@ end
     tiny = floatmin(T)
     @test Zero == T(0)
     @test Zero == T(0.0)
-    @test_broken Zero == mZero
+    @test Zero == mZero
     @test ! (Zero === mZero) # note identity
     @test ! (Zero < mZero)
     @test ! (mZero < Zero)
     @test tiny > Zero
     @test (-tiny) < mZero
     @test Zero^1 == Zero
-    @test_broken mZero^1 == Zero
+    @test mZero^1 == Zero
     @test Zero^One == Zero
     @test_broken Zero^Half == Zero
     @test isnan(Zero/Zero)

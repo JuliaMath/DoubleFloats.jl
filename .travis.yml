@@ -19,6 +19,9 @@ after_success:
 
 jobs:
   include:
+    - stage: "Test"
+      script:
+        - julia --color=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("DoubleFloats"); Pkg.test("DoubleFloats", coverage=true)'
     - stage: "Documentation"
       julia: 1.0
       os: linux
