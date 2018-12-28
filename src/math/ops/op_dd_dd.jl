@@ -45,6 +45,10 @@ end
 @inline function square_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
     ahi, alo = HILO(a)
     zhi = ahi * ahi
+    if isinf(zhi)
+        # canonical form?
+        return zhi, zero(T)
+    end
     zlo = fma(ahi, ahi, -zhi)   
     zlo += (ahi * alo) * 2
     zlo += alo * alo
@@ -52,6 +56,9 @@ end
 end
 
 @inline function cube_dd_dd(a::Tuple{T,T}) where {T<:AbstractFloat}
+    if !isfinite(HI(a))
+        return HI(a), zero(T)
+    end
     zhi, zlo = square_dd_dd(a)
     zhi, zlo = mul_dddd_dd((zhi, zlo), a)
     return zhi, zlo

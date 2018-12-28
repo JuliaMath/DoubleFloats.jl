@@ -64,7 +64,9 @@ end
     @test_broken pinf == T(Inf)
     @test_broken minf == T(-Inf)
     @test_broken pinf == -minf
-    @test_broken isinf(square(mhuge))
+    @test isinf(square(huge))
+    @test isinf(square(mhuge))
+    @test_broken isinf(cube(huge))
     @test_broken isinf(cube(mhuge))
     @test isinf(huge+huge)
     @test isinf(mhuge+mhuge)
@@ -98,10 +100,19 @@ end
     @test_broken inv(minf) === mZero
     @test !(One/minf === Zero)
     @test !(inv(minf) === Zero)
+
+    # this form is broken by problems with comparisons or generation of Inf
     @test_broken square(pinf) == pinf
     @test_broken square(minf) == pinf
     @test_broken cube(pinf) == pinf
     @test_broken cube(minf) == minf
+
+    # meanwhile check the actual arithmetic
+    @test isinf(square(pinf)) && (square(pinf) > 0)
+    @test isinf(square(minf)) && (square(minf) > 0)
+    @test isinf(cube(pinf)) && (cube(pinf) > 0)
+    @test isinf(cube(minf)) && (cube(minf) < 0)
+
     @test isnan(rem(pinf,One))
     @test isnan(rem(minf,One))
     # do we need to test all of the signs?
