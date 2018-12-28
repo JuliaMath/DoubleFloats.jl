@@ -15,11 +15,11 @@ end
 end
 
 @inline function square_db_db(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    return DoubleFloat{T}(square_dd_dd(HILO(x)))
+    return DoubleFloat{T}(square_dd_dd(HILO(x))...)
 end
 
 @inline function cube_db_db(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    return DoubleFloat{T}(cube_dd_dd(HILO(x)))
+    return DoubleFloat{T}(cube_dd_dd(HILO(x))...)
 end
 
 @inline function sqrt_db_db(x::DoubleFloat{T}) where {T<:AbstractFloat}

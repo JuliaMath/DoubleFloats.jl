@@ -47,6 +47,6 @@ end
 end
 
 @inline function dvi_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    z = div(HI(x), HI(y))
+    z = HI(x) / HI(y)
     return DoubleFloat{T}(z, zero(T))
 end

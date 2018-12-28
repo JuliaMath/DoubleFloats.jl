@@ -29,8 +29,12 @@ end
     @test isnan(Zero/Zero)
     pinf = T(Inf)
     minf = T(-Inf)
-    @test_broken One/Zero == pinf
-    @test_broken One/mZero == minf
+    x = One/Zero
+    @test isinf(x) && (x > 0)
+    x = One/mZero
+    @test isinf(x) && (x < 0)
+    @test One/Zero == pinf
+    @test One/mZero == minf
     @test_broken inv(Zero) == pinf
     @test_broken inv(mZero) == minf
     @test isnan(rem(One,Zero))
@@ -61,8 +65,8 @@ end
     minf = huge*mhuge
     @test isinf(pinf)
     @test isinf(minf)
-    @test_broken pinf == T(Inf)
-    @test_broken minf == T(-Inf)
+    @test pinf == T(Inf)
+    @test minf == T(-Inf)
     @test_broken pinf == -minf
     @test isinf(square(huge))
     @test isinf(square(mhuge))
@@ -101,17 +105,10 @@ end
     @test !(One/minf === Zero)
     @test !(inv(minf) === Zero)
 
-    # this form is broken by problems with comparisons or generation of Inf
-    @test_broken square(pinf) == pinf
-    @test_broken square(minf) == pinf
-    @test_broken cube(pinf) == pinf
-    @test_broken cube(minf) == minf
-
-    # meanwhile check the actual arithmetic
-    @test isinf(square(pinf)) && (square(pinf) > 0)
-    @test isinf(square(minf)) && (square(minf) > 0)
-    @test isinf(cube(pinf)) && (cube(pinf) > 0)
-    @test isinf(cube(minf)) && (cube(minf) < 0)
+    @test square(pinf) == pinf
+    @test square(minf) == pinf
+    @test cube(pinf) == pinf
+    @test cube(minf) == minf
 
     @test isnan(rem(pinf,One))
     @test isnan(rem(minf,One))
