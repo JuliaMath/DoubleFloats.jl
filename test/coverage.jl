@@ -190,3 +190,16 @@ end # compare
     @test nextfloat(fp2,3) > nextfloat(fp2,2)
     @test prevfloat(fp2,3) < prevfloat(fp2,2)
 end
+
+@testset "random Double16" begin
+    rng = Random.MersenneTwister()
+    Random.seed!(rng, 1103)
+    T = Float16
+    DT = DoubleFloat{T}
+    # first make sure we don't throw when sample(T) is 0
+    a = rand(rng,DT,2^(precision(T)+2))
+
+    # This takes a few seconds.
+    # a = rand(rng,DT,2^(precision(DT)+2))
+    # @test_broken count(a .== zero(T)) > 0
+end
