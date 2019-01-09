@@ -16,6 +16,6 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 
 For Double64 arguments within 0.0..2.0   
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _except tan(x), cot(x) as they approach ±Inf_
-- expect the `abserr` to be 1e-30 or less
-- expect the `relerr` to be 1e-28 or less
+- expect the `abserr` of elementary functions to be 1e-30 or less
+- expect the `relerr` of elementary functions to be 1e-28 or less
 
