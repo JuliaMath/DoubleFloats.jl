@@ -22,6 +22,21 @@ julia> using Pkg
 julia> Pkg.add("DoubleFloats")
 ```
 
+
+## More Performant Than BigFloat
+
+Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
+
+| op  | speedup |
+|:-----|---------:|
+|  +   | 11x |
+|  *   | 18x |
+|  \   |  7x |
+| trig | 3x-6x |
+
+> &nbsp; &nbsp; &nbsp; &nbsp; results from testing with BenchmarkTools on one machine
+
+
 ## Examples
 
 #### Double64, Double32, Double16
@@ -96,20 +111,6 @@ true
 | `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
 
 
-
-## Performance relative to BigFloat
-
-#### Double64 relative to BigFloat
-
-| op  | speedup |
-|:-----|---------:|
-|  +   | 11x |
-|  *   | 18x |
-|  \   |  7x |
-| trig | 3x-6x |
-
-| &nbsp; &nbsp; &nbsp; &nbsp; results from testing with BenchmarkTools on one machine
-| &nbsp; &nbsp; &nbsp; &nbsp; for fair comparison, BigFloat precision was set to 106 bits
 
 ## Questions and Contributions
 
