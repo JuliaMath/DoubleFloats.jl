@@ -101,7 +101,7 @@ isneginf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && signbit(HI(x))
 
 isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isnan(HI(x)))
+    isnan(HI(x))
 
 issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
