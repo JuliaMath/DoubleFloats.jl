@@ -7,7 +7,8 @@ This package provides versions of the built-in IEEE 754 Standard floating point 
 | `Double16`  | &nbsp;22 bits         | &nbsp;5 bits       | `Float16` |
 
 
-Arithmetic (`+`, `-`, `*`, `/`) is exact and elementary functions are quite accurate.
+Arithmetic (`+`, `-`, `*`, `/`) is exact and elementary functions are quite accurate
+(they are at least as accurate as the routines in the C "double-double" library, and often more accurate).
 
 For Double64 arguments within 0.0..2.0 (excepting values approaching a vertical asymptote),
-elementary functions have an absolute error of ~1e-30 and relative error of ~1e-28 or better.
+elementary functions have absolute error of ~ 1e-30 and relative error of ~1e-28 or better.
