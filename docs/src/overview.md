@@ -97,7 +97,7 @@ true
 
 
 
-## Performance
+## Performance relative to BigFloat
 
 #### Double64 relative to BigFloat
 
@@ -108,8 +108,8 @@ true
 |  \   |  7x |
 | trig | 3x-6x |
 
-- results from testing with BenchmarkTools on one machine
-- BigFloat precision was set to 106 bits, for fair comparison
+| &nbsp; &nbsp; &nbsp; &nbsp; results from testing with BenchmarkTools on one machine
+| &nbsp; &nbsp; &nbsp; &nbsp; for fair comparison, BigFloat precision was set to 106 bits
 
 ## Questions and Contributions
 
