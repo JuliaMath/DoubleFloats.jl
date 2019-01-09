@@ -8,9 +8,8 @@ makedocs(
         "Home" => "index.md",
         "Overview" => "overview.md",
         "Characteristics" => "characteristics.md",
-        "Appropriate Use" => "appropriate.md",
-        "Names" => "naming.md",
         "Capabilities" => "capabilities.md",
+        "Appropriate Uses" => "appropriate.md",
         "Refs" => "references.md"
     ]
 )
