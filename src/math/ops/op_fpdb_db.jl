@@ -21,20 +21,20 @@ end
 
 @inline function add_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = x + HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function sub_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = x - HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function mul_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = x * HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function dvi_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = div(x, HI(y))
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
