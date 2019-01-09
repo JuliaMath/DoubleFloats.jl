@@ -26,4 +26,4 @@ to the cumulative relative error (𝘂 is the relative rounding unit, usually `�
 
 It is possible for relative error to accrue steadily. Using reasonably sized values,
 after 100_000 DoubleFloat ops, the relative error could be 100_000 * 10⋅𝘂². To mitigate this,
-our algorithmic decisions were informed by extensive numerical investigation.
+our algorithm choices were informed by extensive numerical exploration.
