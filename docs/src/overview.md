@@ -1,4 +1,4 @@
-This package provides extended precision versions of Float64, Float32, Float16.
+This package provides extended precision versions of `Float64`, `Float32`, `Float16`.
 
 | type name   | significand precision | exponent precision | base type |
 |:------------|:---------------------:|:------------------:|:----------|
