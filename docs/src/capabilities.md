@@ -31,23 +31,22 @@ These are the predicates made available for use with DoubleFloats:
 There are arithmetic operations that take two Float64s or Float32s or Float16s and return the corresponding Double64 or Double32 or Double16.  These operations are available in functional form as `add2`, `sub2`, `mul2`, `div2` and in infix form using Unicode \oplus \ominus \otimes \oslash "⊕ ⊖ ⊗ ⊘".
 
 #### rounding
-- RoundNearest, RoundUp, RoundDown
-- RoundToZero, RoundFromZero
-- RoundNearestTiesAway, RoundNearestTiesUp
+- `RoundNearest`, `RoundUp`, `RoundDown`
+- `RoundToZero`, `RoundFromZero`
 
 #### elementary mathematical functions
- - log, exp
- - sin, cos, tan, csc, sec, cot
- - asin, acos, atan, acsc, asec, acot
- - sinh, cosh, tanh, csch, sech, coth
- - asinh, acosh, atanh, acsch, asech, acoth
+ - `log`, `exp`
+ - `sin`, `cos`, `tan`, `csc`, `sec`, `cot`
+ - `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
+ - `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
+ - `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
 
 #### linear algebra
- - isdiag, ishermitian, isposdef, issymmetric, istril, istriu
- - norm, det, dot, tr, condskeel, logdet, logabsdet
- - transpose, adjoint, tril, triu
- - diag, diagind
- - factorize, lu, lufact, qr, qrfact
+ - `isdiag`, `ishermitian`, `isposdef`, `issymmetric`, `istril`, `istriu`
+ - `norm`, `det`, `dot`, `tr`, `condskeel`, `logdet`, `logabsdet`
+ - `transpose`, `adjoint`, `tril`, `triu`
+ - `diag`, `diagind`
+ - `factorize`, `lu`, `lufact`, `qr`, `qrfact`
  
 #### also
  - random values in [0,1)
