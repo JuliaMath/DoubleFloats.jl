@@ -11,9 +11,8 @@ This package provides versions of the standard floating point types with extende
 - elementary functions are quite accurate
 - often better than C "double-double" libraries
 
-For Double64 arguments within 0.0..2.0
+For Double64 arguments within 0.0..2.0   
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _except tan(x) where x ~= pi/2_
 - expect the `abserr` to be 1e-30 or less
 - expect the `relerr` to be 1e-28 or less
 
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _except tan(x) where x ~= pi/2_
- 
