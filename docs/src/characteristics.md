@@ -29,5 +29,9 @@ more resiliant: our algorithms come frome seminal papers and extensive numeric i
 
 ----
 
-> _should you encounter a situation where either error grows
+&nbsp;
+
+&nbsp;
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _should you encounter a situation where either error grows
    strongly in one direction, please submit an issue_
