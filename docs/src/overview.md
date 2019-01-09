@@ -1,4 +1,4 @@
-This package provides versions of the built-in IEEE 754 Standard floating point types with extended precision significands.
+This package provides versions of the standard floating point types with extended precision significands.
 
 | type name   | significand precision | exponent precision | base type |
 |:------------|:---------------------:|:------------------:|:----------|
