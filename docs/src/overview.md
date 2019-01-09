@@ -12,4 +12,5 @@ This package provides versions of the built-in IEEE 754 Standard floating point 
 - often better than C "double-double" libraries
 
 For Double64 arguments within 0.0..2.0 (excepting values approaching a vertical asymptote),
+
 expect an absolute error of ~1e-30 or less and a relative error of ~1e-28 or less.
