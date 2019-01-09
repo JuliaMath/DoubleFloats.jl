@@ -79,10 +79,10 @@ isnonpositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x)) || iszero(HI(x))
 
 isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isfinite(HI(x)) ## && isfinite(LO(x))
+    isfinite(HI(x))
 
 isinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isinf(HI(x)) && iszero(LO(x))
+    isinf(HI(x))
 
 """
     isposinf(x)
@@ -90,7 +90,7 @@ isinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 Tests whether a number positive and infinite.
 """
 isposinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isinf(HI(x)) && !signbit(HI(x))
+    isinf(HI(x))
 
 """
     isneginf(x)
@@ -101,7 +101,7 @@ isneginf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && signbit(HI(x))
 
 isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    isnan(HI(x)) ## && iszero(LO(x))
+    isnan(HI(x)))
 
 issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
