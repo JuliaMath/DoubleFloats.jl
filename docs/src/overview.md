@@ -12,5 +12,5 @@ This package provides versions of the standard floating point types with extende
 - often better than C "double-double" libraries
 
 For Double64 arguments within 0.0..2.0 (_except tan(x) where x ~= pi/2_)
-- expect the absolute error to be 1e-30 or less
 - expect the relative error to be 1e-28 or less
+- expect the absolute error to be 1e-30 or less
