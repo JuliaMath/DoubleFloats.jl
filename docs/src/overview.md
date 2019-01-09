@@ -6,6 +6,7 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 | `Double32`  | &nbsp;48 bits         | &nbsp;8 bits       |◊| `Float32` | 24 bits               | &nbsp;8 bits       |
 | `Double16`  | &nbsp;22 bits         | &nbsp;5 bits       |◊| `Float16` | 11 bits               | &nbsp;5 bits       |
 
+----
 
 - arithmetic (`+`, `-`, `*`, `/`) is exact
 - elementary functions are quite accurate
