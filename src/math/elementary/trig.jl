@@ -203,7 +203,7 @@ sin(x::DoubleFloat{T}) where {T<:AbstractFloat} = sin_kernel(x)
 Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
 
 function tan(x::Double64)
-    abs(modpi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
+    abs(modpi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(-x)
