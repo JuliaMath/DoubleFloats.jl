@@ -19,8 +19,10 @@ For `Double64` arguments within 0.0..2.0
 - expect the `abserr` of elementary functions to be 1e-30 or less
 - expect the `relerr` of elementary functions to be 1e-28 or less
 
-When used with reasonably sized values, expect computations to limit the accrual of relative error to 10⋅𝘂²
-(where 𝘂 is the relative rounding unit, the unit_in_the_last_place of the significand, often `eps(x)/2`).
+----
+
+When used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂²
+to the cumulative relative error (𝘂 is the relative rounding unit, the last place in the significand).
 
 It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection.
 A sequence of 100_000 arithmetic and elementary functions may evince a relative error of 100_000 * 10⋅𝘂²,
