@@ -57,19 +57,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Documentation-1",
-    "page": "Overview",
-    "title": "Documentation",
-    "category": "section",
-    "text": "Current &mdash; most recently tagged version of the documentation."
-},
-
-{
     "location": "overview/#Installation-1",
     "page": "Overview",
     "title": "Installation",
     "category": "section",
     "text": "pkg> add DoubleFloatsorjulia> using Pkg\njulia> Pkg.add(\"DoubleFloats\")"
+},
+
+{
+    "location": "overview/#More-Performant-Than-BigFloat-1",
+    "page": "Overview",
+    "title": "More Performant Than BigFloat",
+    "category": "section",
+    "text": "Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.op speedup\n+ 11x\n* 18x\n\\ 7x\ntrig 3x-6x&nbsp; &nbsp; &nbsp; &nbsp; these results are from BenchmarkTools, on one machine"
 },
 
 {
@@ -102,22 +102,6 @@ var documenterSearchIndex = {"docs": [
     "title": "golden ratio",
     "category": "section",
     "text": "julia> using DoubleFloats\n\njulia> ϕ = Double32(MathConstants.golden)\n1.61803398874989490\njulia> phi = \"1.61803398874989484820+\"\njulia> ϕ⁻¹ = inv(ϕ)\n6.18033988749894902e-01\n\njulia> ϕ == 1 + ϕ⁻¹\ntrue\njulia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹\ntruetyped value computed value ~abs(golden - computed)\nMathConstants.golden 1.6180339887498948482045868+ 0.0\nFloat64(MathConstants.golden) 1.618033988749895 1.5e-16\nDouble32(MathConstants.golden) 1.618033988749894_90 5.2e-17"
-},
-
-{
-    "location": "overview/#Performance-relative-to-BigFloat-1",
-    "page": "Overview",
-    "title": "Performance relative to BigFloat",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "overview/#Double64-relative-to-BigFloat-1",
-    "page": "Overview",
-    "title": "Double64 relative to BigFloat",
-    "category": "section",
-    "text": "op speedup\n+ 11x\n* 18x\n\\ 7x\ntrig 3x-6x| &nbsp; &nbsp; &nbsp; &nbsp; results from testing with BenchmarkTools on one machine | &nbsp; &nbsp; &nbsp; &nbsp; for fair comparison, BigFloat precision was set to 106 bits"
 },
 
 {
