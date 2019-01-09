@@ -105,9 +105,9 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Performance-1",
+    "location": "overview/#Performance-relative-to-BigFloat-1",
     "page": "Overview",
-    "title": "Performance",
+    "title": "Performance relative to BigFloat",
     "category": "section",
     "text": ""
 },
@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Double64 relative to BigFloat",
     "category": "section",
-    "text": "op speedup\n+ 11x\n* 18x\n\\ 7x\ntrig 3x-6xresults from testing with BenchmarkTools on one machine\nBigFloat precision was set to 106 bits, for fair comparison"
+    "text": "op speedup\n+ 11x\n* 18x\n\\ 7x\ntrig 3x-6x| &nbsp; &nbsp; &nbsp; &nbsp; results from testing with BenchmarkTools on one machine | &nbsp; &nbsp; &nbsp; &nbsp; for fair comparison, BigFloat precision was set to 106 bits"
 },
 
 {
