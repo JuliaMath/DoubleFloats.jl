@@ -6,7 +6,8 @@ makedocs(
     authors = "Jeffrey Sarnoff, Simon Byrne, Sascha Timme, and other contributors",
     pages = Any[
         "Home" => "index.md",
-        "Overview" => "overview.md"
+        "Overview" => "overview.md",
+        "Characteristics" => "characteristics.md",
         "Appropriate Use" => "appropriate.md",
         "Names" => "naming.md",
         "Capabilities" => "capabilities.md",
