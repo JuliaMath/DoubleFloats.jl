@@ -26,3 +26,6 @@ to the cumulative relative error (𝘂 is the relative rounding unit, usually `�
 Relative error can accrue steadily. After 100_000 DoubleFloat ops with reasonably sized values,
 the `relerr` could approach 100_000 * 10⋅𝘂². In practice these functions are considerably
 more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.
+
+> _should you encounter non-contrived situations where the absolute or the relative error grows
+   strongly and in one direction, please submit an issue_
