@@ -33,20 +33,20 @@ Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFlo
 
 @inline function add_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = HI(x) + HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function sub_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = HI(x) - HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function mul_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = HI(x) * HI(y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function dvi_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = div(HI(x), HI(y))
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
