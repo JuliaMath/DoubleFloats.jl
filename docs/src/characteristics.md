@@ -27,5 +27,5 @@ Relative error can accrue steadily. After 100_000 DoubleFloat ops with reasonabl
 the `relerr` could approach 100_000 * 10⋅𝘂². In practice these functions are considerably
 more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.
 
-> _should you encounter in practice a situation where either error grows
+> _should you encounter a situation where either error grows
    strongly in one direction, please submit an issue_
