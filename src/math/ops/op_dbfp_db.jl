@@ -18,7 +18,6 @@ end
     return !isnan(HI(res)) ? res : dvi_dbfp_db_nonfinite(x,y)
 end
 
-
 @inline function add_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
     z = HI(x) + y
     return DoubleFloat{T}(z, T(NaN))
