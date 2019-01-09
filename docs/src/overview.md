@@ -30,7 +30,7 @@ Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
 |  \   |  7x |
 | trig | 3x-6x |
 
-> &nbsp; &nbsp; &nbsp; &nbsp; _these results are from BenchmarkTools, on one machine_
+ &nbsp; &nbsp; &nbsp; &nbsp; _these results are from BenchmarkTools, on one machine_
 
 
 ## Examples
