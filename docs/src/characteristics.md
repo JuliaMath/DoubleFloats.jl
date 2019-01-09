@@ -24,6 +24,6 @@ For `Double64` arguments within 0.0..2.0
 When used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂²
 to the cumulative relative error (𝘂 is the relative rounding unit for an `x`, usually `eps(x)/2`).
 
-It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection.
-A sequence of 100_000 arithmetic and elementary functions may evince a relative error of 100_000 * 10⋅𝘂²,
-this is a conservative bound and reasonably unlikely.
+It is possible to accrue relative error steadily; so some experimentation has guided underlying algorithms.
+A sequence of 100_000 arithmetic and elementary functions could evince a relative error of 100_000 * 10⋅𝘂²,
+this is a very conservative bound and unlikely in practice.
