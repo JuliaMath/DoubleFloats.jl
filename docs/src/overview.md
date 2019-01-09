@@ -7,10 +7,6 @@
 [![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
 ----
 
-## Documentation
-
-- [Current](https://juliamath.github.io/DoubleFloats.jl/latest/) &mdash; **most recently tagged version of the documentation.**
-
 ## Installation
 
 ```julia
