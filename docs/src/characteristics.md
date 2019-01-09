@@ -27,4 +27,3 @@ to the cumulative relative error (𝘂 is the relative rounding unit for an `x`,
 It is possible to accrue relative error steadily.
 A sequence of 100_000 arithmetic and elementary functions could evince a relative error of 100_000 * 10⋅𝘂²,
 To reduce the liklihood of steadily accruing relative error,some experimentation guided algorithmic choices.
-This is a very conservative bound and unlikely in practice.
