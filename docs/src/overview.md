@@ -11,58 +11,6 @@
 
 - [Current](https://juliamath.github.io/DoubleFloats.jl/latest/) &mdash; **most recently tagged version of the documentation.**
 
-## Accuracy
-
-
-results for f(x), x in 0..1
- 
-
-| function |   abserr   |   relerr   |
-|:--------:|:----------:|:----------:|
-|   exp    |  1.0e-31   |   1.0e-31  |
-|   log    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sin    |  1.0e-31   |   1.0e-31  |
-|   cos    |  1.0e-31   |   1.0e-31  |
-|   tan    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|  asin    |  1.0e-30   |   1.0e-30  |
-|  acos    |  1.0e-30   |   1.0e-29  |
-|  atan    |  1.0e-31   |   1.0e-30  |
-|          |            |            |
-|          |            |            |
-|   sinh   |  1.0e-31   |   1.0e-29  |
-|   cosh   |  1.0e-31   |   1.0e-31  |
-|   tanh   |  1.0e-31   |   1.0e-29  |
-|          |            |            |
-|  asinh   |  1.0e-31   |   1.0e-29  |
-|  atanh   |  1.0e-31   |   1.0e-30  |
-
-
-results for f(x), x in 1..2
- 
-
-| function |   abserr   |   relerr   |   notes   |
-|:--------:|:----------:|:----------:|:---------:|
-|   exp    |  1.0e-30   |   1.0e-31  | |
-|   log    |  1.0e-31   |   1.0e-31  | |
-|          |            |            | |
-|   sin    |  1.0e-31   |   1.0e-31  | |
-|   cos    |  1.0e-31   |   1.0e-28  | |
-|   tan    |  1.0e-24   |   1.0e-28  | near asymptote |
-|          |            |            | |
-|  asin    |  1.0e-30   |   1.0e-30  | |
-|  acos    |  1.0e-30   |   1.0e-29  | |
-|  atan    |  1.0e-31   |   1.0e-30  | |
-|          |            |            | |
-|          |            |            | |
-|   sinh   |  1.0e-30   |   1.0e-31  | |
-|   cosh   |  1.0e-30   |   1.0e-31  | |
-|   tanh   |  1.0e-31   |   1.0e-31  | |
-|          |            |            | |
-|  asinh   |  1.0e-31   |   1.0e-31  | |
-
-
 ## Installation
 
 ```julia
@@ -163,13 +111,6 @@ true
 - results from testing with BenchmarkTools on one machine
 - BigFloat precision was set to 106 bits, for fair comparison
 
-## Good Ways To Use This
-
-In addition to simply `using DoubleFloats` and going from there, these two suggestions are easily managed
-and will go a long way in increasing the robustness of the work and reliability in the computational results.   
-
-If your input values are Float64s, map them to Double64s and proceed with your computation.  Then unmap your output values as Float64s, do additional work using those Float64s. With Float32 inputs, used Double32s similarly. Where throughput is important, and your algorithms are well-understood, this approach be used with the numerically sensitive parts of your computation only.  If you are doing that, be careful to map the inputs to those parts and unmap the outputs from those parts just as described above.
-
 ## Questions and Contributions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
@@ -194,9 +135,6 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
-
-[pkg-0.6-img]: http://pkg.julialang.org/badges/DoubleFloats_0.6.svg
-[pkg-0.6-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.6
-[pkg-0.7-img]: http://pkg.julialang.org/badges/DoubleFloats_0.7.svg
-[pkg-0.7-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.7
+[pkg-1.0-img]: http://pkg.julialang.org/badges/DoubleFloats_1.0.svg
+[pkg-1.0-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=1.0
 
