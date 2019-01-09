@@ -65,14 +65,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Accuracy-1",
-    "page": "Overview",
-    "title": "Accuracy",
-    "category": "section",
-    "text": "results for f(x), x in 0..1function abserr relerr\nexp 1.0e-31 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-31\ntan 1.0e-31 1.0e-31\n  \nasin 1.0e-30 1.0e-30\nacos 1.0e-30 1.0e-29\natan 1.0e-31 1.0e-30\n  \n  \nsinh 1.0e-31 1.0e-29\ncosh 1.0e-31 1.0e-31\ntanh 1.0e-31 1.0e-29\n  \nasinh 1.0e-31 1.0e-29\natanh 1.0e-31 1.0e-30results for f(x), x in 1..2function abserr relerr notes\nexp 1.0e-30 1.0e-31 \nlog 1.0e-31 1.0e-31 \n   \nsin 1.0e-31 1.0e-31 \ncos 1.0e-31 1.0e-28 \ntan 1.0e-24 1.0e-28 near asymptote\n   \nasin 1.0e-30 1.0e-30 \nacos 1.0e-30 1.0e-29 \natan 1.0e-31 1.0e-30 \n   \n   \nsinh 1.0e-30 1.0e-31 \ncosh 1.0e-30 1.0e-31 \ntanh 1.0e-31 1.0e-31 \n   \nasinh 1.0e-31 1.0e-31 "
-},
-
-{
     "location": "overview/#Installation-1",
     "page": "Overview",
     "title": "Installation",
@@ -129,19 +121,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Good-Ways-To-Use-This-1",
-    "page": "Overview",
-    "title": "Good Ways To Use This",
-    "category": "section",
-    "text": "In addition to simply using DoubleFloats and going from there, these two suggestions are easily managed and will go a long way in increasing the robustness of the work and reliability in the computational results.   If your input values are Float64s, map them to Double64s and proceed with your computation.  Then unmap your output values as Float64s, do additional work using those Float64s. With Float32 inputs, used Double32s similarly. Where throughput is important, and your algorithms are well-understood, this approach be used with the numerically sensitive parts of your computation only.  If you are doing that, be careful to map the inputs to those parts and unmap the outputs from those parts just as described above."
-},
-
-{
     "location": "overview/#Questions-and-Contributions-1",
     "page": "Overview",
     "title": "Questions and Contributions",
     "category": "section",
-    "text": "Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\").Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.[contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/ [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats [gitter-url]: https://gitter.im/juliamath/users[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master [travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true [appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues[pkg-0.6-img]: http://pkg.julialang.org/badges/DoubleFloats0.6.svg [pkg-0.6-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.6 [pkg-0.7-img]: http://pkg.julialang.org/badges/DoubleFloats0.7.svg [pkg-0.7-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.7"
+    "text": "Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\").Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.[contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/ [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats [gitter-url]: https://gitter.im/juliamath/users[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master [travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true [appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues[pkg-1.0-img]: http://pkg.julialang.org/badges/DoubleFloats_1.0.svg [pkg-1.0-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=1.0"
 },
 
 {
