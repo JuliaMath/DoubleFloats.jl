@@ -1,30 +1,6 @@
 var documenterSearchIndex = {"docs": [
 
 {
-    "location": "#",
-    "page": "Home",
-    "title": "Home",
-    "category": "page",
-    "text": ""
-},
-
-{
-    "location": "#DoubleFloats-1",
-    "page": "Home",
-    "title": "DoubleFloats",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "#Introduction-1",
-    "page": "Home",
-    "title": "Introduction",
-    "category": "section",
-    "text": "When you are using DoubleFloats, you have three more floating point types:Double64 is a magnitude ordered, nonoverlapping pair of Float64s\nDouble32 is a magnitude ordered, nonoverlapping pair of Float32s\nDouble16 is a magnitude ordered, nonoverlapping pair of Float16sMany arithmetic operations and elementary functions are available with each type.flipsign, copysign, signbit, sign, abs\n==, !=, <, <=, >=, >, isless, isequal\n+, -, *, /, ^, floor, ceil, trunc, round (to integer)\nsquare, cube, sqrt, cbrt\nhypot, normalize\nexp, expm1, log, log1p\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acothtodo: round (fractionally)\ntodo: elementary functions for Double32s directlyOverview\nCapabilities\nreference material"
-},
-
-{
     "location": "overview/#",
     "page": "Overview",
     "title": "Overview",
