@@ -1,6 +1,15 @@
 Base.:(+)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x + DoubleFloat{T}(y[1], y[2])
 Base.:(+)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) + y
 
+Base.:(-)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x - DoubleFloat{T}(y[1], y[2])
+Base.:(-)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) - y
+
+Base.:(*)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x * DoubleFloat{T}(y[1], y[2])
+Base.:(*)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) * y
+
+Base.:(/)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x / DoubleFloat{T}(y[1], y[2])
+Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) / y
+
 
 @inline function add_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     res = DoubleFloat{T}(add_dddd_dd(HILO(x), HILO(y)))
@@ -12,24 +21,15 @@ end
     return !isnan(HI(res)) ? res : sub_dbdb_db_nonfinite(x,y)
 end
 
-Base.:(-)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x - DoubleFloat{T}(y[1], y[2])
-Base.:(-)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) - y
-
 @inline function mul_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     res = DoubleFloat{T}(mul_dddd_dd(HILO(x), HILO(y)))
     !isnan(HI(res))  ? res : mul_dbdb_db_nonfinite(x,y)
 end
 
-Base.:(*)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x * DoubleFloat{T}(y[1], y[2])
-Base.:(*)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) * y
-
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     res = DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
     !isnan(HI(res)) ? res : dvi_dbdb_db_nonfinite(x,y)
 end
-
-Base.:(/)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:AbstractFloat} = x / DoubleFloat{T}(y[1], y[2])
-Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2]) / y
 
 @inline function add_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     z = HI(x) + HI(y)
