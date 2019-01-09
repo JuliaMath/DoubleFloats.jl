@@ -21,20 +21,20 @@ end
 
 @inline function add_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
     z = HI(x) + y
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function sub_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
     z = HI(x) - y
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function mul_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
     z = HI(x) * y
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
 
 @inline function dvi_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:AbstractFloat}
     z = div(HI(x), y)
-    return DoubleFloat{T}(z, zero(T))
+    return DoubleFloat{T}(z, T(NaN))
 end
