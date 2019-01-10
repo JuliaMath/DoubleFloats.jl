@@ -5,7 +5,7 @@ makedocs(
     sitename = "DoubleFloats.jl",
     authors = "Jeffrey Sarnoff, Simon Byrne, Sascha Timme, and other contributors",
     pages = Any[
-        "Overview" => "overview.md",
+        "Overview" => "index.md",
         "Characteristics" => "characteristics.md",
         "Capabilities" => "capabilities.md",
         "Appropriate Uses" => "appropriate.md",
