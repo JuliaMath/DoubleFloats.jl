@@ -10,9 +10,9 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 &nbsp;
 
 
-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double64` is a magnitude ordered, nonoverlapping pair of Float64s
-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double32` is a magnitude ordered, nonoverlapping pair of Float32s
-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double16` is a magnitude ordered, nonoverlapping pair of Float16s
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double64` is a magnitude ordered, nonoverlapping pair of Float64s
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double32` is a magnitude ordered, nonoverlapping pair of Float32s
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double16` is a magnitude ordered, nonoverlapping pair of Float16s
 
 ----
 
