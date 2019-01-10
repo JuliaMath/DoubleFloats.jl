@@ -1,14 +1,14 @@
 This package provides extended precision versions of `Float64`, `Float32`, `Float16`.
 
 
-| type name   | significand precision | exponent precision | | base type |significand precision  | exponent precision |
-|:------------|:---------------------:|:------------------:|-|:----------|:---------------------:|:------------------:|
-| `Double64`  | 106 bits              | 11 bits            |◊| `Float64` | 53 bits               | 11 bits            |
-| `Double32`  | &nbsp;48 bits         | &nbsp;8 bits       |◊| `Float32` | 24 bits               | &nbsp;8 bits       |
-| `Double16`  | &nbsp;22 bits         | &nbsp;5 bits       |◊| `Float16` | 11 bits               | &nbsp;5 bits       |
+| type name   | significand   | exponent       |◊| base type |significand | exponent      |
+|:------------|:-------------:|:--------------:|-|:----------|:----------:|:-------------:|
+| `Double64`  | 106 bits      | 11 bits        |◊| `Float64` | 53 bits    | 11 bits       |
+| `Double32`  | &nbsp;48 bits | &nbsp;8 bits   |◊| `Float32` | 24 bits    | &nbsp;8 bits  |
+| `Double16`  | &nbsp;22 bits | &nbsp;5 bits   |◊| `Float16` | 11 bits    | &nbsp;5 bits  |
 
 
-&nbsp;
+----
 
 > `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
 >
