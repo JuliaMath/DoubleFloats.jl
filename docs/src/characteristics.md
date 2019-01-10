@@ -6,11 +6,13 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 | `Double32`  | &nbsp;48 bits         | &nbsp;8 bits       |◊| `Float32` | 24 bits               | &nbsp;8 bits       |
 | `Double16`  | &nbsp;22 bits         | &nbsp;5 bits       |◊| `Float16` | 11 bits               | &nbsp;5 bits       |
 
+&nbsp; 
+&nbsp;
 
 
-- `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
-- `Double32` is a magnitude ordered, nonoverlapping pair of Float32s
-- `Double16` is a magnitude ordered, nonoverlapping pair of Float16s
+- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double64` is a magnitude ordered, nonoverlapping pair of Float64s
+- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double32` is a magnitude ordered, nonoverlapping pair of Float32s
+- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`Double16` is a magnitude ordered, nonoverlapping pair of Float16s
 
 ----
 
