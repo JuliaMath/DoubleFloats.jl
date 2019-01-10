@@ -1,7 +1,7 @@
 var documenterSearchIndex = {"docs": [
 
 {
-    "location": "overview/#",
+    "location": "#",
     "page": "Overview",
     "title": "Overview",
     "category": "page",
@@ -9,7 +9,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#DoubleFloats.jl-1",
+    "location": "#DoubleFloats.jl-1",
     "page": "Overview",
     "title": "DoubleFloats.jl",
     "category": "section",
@@ -17,7 +17,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Math-with-85-accurate-bits.-1",
+    "location": "#Math-with-85-accurate-bits.-1",
     "page": "Overview",
     "title": "Math with 85+ accurate bits.",
     "category": "section",
@@ -25,7 +25,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#[![Build-Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branchmaster)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)-1",
+    "location": "#[![Build-Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branchmaster)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)-1",
     "page": "Overview",
     "title": "(Image: Build Status)",
     "category": "section",
@@ -33,7 +33,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Installation-1",
+    "location": "#Installation-1",
     "page": "Overview",
     "title": "Installation",
     "category": "section",
@@ -41,7 +41,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#More-Performant-Than-BigFloat-1",
+    "location": "#More-Performant-Than-BigFloat-1",
     "page": "Overview",
     "title": "More Performant Than BigFloat",
     "category": "section",
@@ -49,7 +49,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Examples-1",
+    "location": "#Examples-1",
     "page": "Overview",
     "title": "Examples",
     "category": "section",
@@ -57,7 +57,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Double64,-Double32,-Double16-1",
+    "location": "#Double64,-Double32,-Double16-1",
     "page": "Overview",
     "title": "Double64, Double32, Double16",
     "category": "section",
@@ -65,7 +65,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#show,-string,-parse-1",
+    "location": "#show,-string,-parse-1",
     "page": "Overview",
     "title": "show, string, parse",
     "category": "section",
@@ -73,7 +73,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#golden-ratio-1",
+    "location": "#golden-ratio-1",
     "page": "Overview",
     "title": "golden ratio",
     "category": "section",
@@ -81,7 +81,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "overview/#Questions-and-Contributions-1",
+    "location": "#Questions-and-Contributions-1",
     "page": "Overview",
     "title": "Questions and Contributions",
     "category": "section",
@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Characteristics",
     "category": "page",
-    "text": "This package provides extended precision versions of Float64, Float32, Float16.| type name   | significand precision | exponent precision | | base type |significand precision  | exponent precision | |:––––––|:––––––––––-:|:–––––––––:|-|:–––––|:––––––––––-:|:–––––––––:| | Double64  | 106 bits              | 11 bits            |◊| Float64 | 53 bits               | 11 bits            | | Double32  | &nbsp;48 bits         | &nbsp;8 bits       |◊| Float32 | 24 bits               | &nbsp;8 bits       | | Double16  | &nbsp;22 bits         | &nbsp;5 bits       |◊| Float16 | 11 bits               | &nbsp;5 bits       |arithmetic (+, -, *, /) is exact\nelementary functions are quite accurate\noften better than C \"double-double\" librariesFor Double64 arguments within 0.0..2.0    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; except tan(x), cot(x) as they approach ±Infexpect the abserr of elementary functions to be 1e-30 or less\nexpect the relerr of elementary functions to be 1e-28 or lessWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100000 DoubleFloat ops with reasonably sized values, the relerr could approach 100000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; should you encounter a situation where either error grows    strongly in one direction, please submit an issue"
+    "text": "This package provides extended precision versions of Float64, Float32, Float16.| type name   | significand precision | exponent precision | | base type |significand precision  | exponent precision | |:––––––|:––––––––––-:|:–––––––––:|-|:–––––|:––––––––––-:|:–––––––––:| | Double64  | 106 bits              | 11 bits            |◊| Float64 | 53 bits               | 11 bits            | | Double32  | &nbsp;48 bits         | &nbsp;8 bits       |◊| Float32 | 24 bits               | &nbsp;8 bits       | | Double16  | &nbsp;22 bits         | &nbsp;5 bits       |◊| Float16 | 11 bits               | &nbsp;5 bits       |Double64 is a magnitude ordered, nonoverlapping pair of Float64s\nDouble32 is a magnitude ordered, nonoverlapping pair of Float32s\nDouble16 is a magnitude ordered, nonoverlapping pair of Float16sarithmetic (+, -, *, /) is exact\nelementary functions are quite accurate\noften better than C \"double-double\" librariesFor Double64 arguments within 0.0..2.0    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; except tan(x), cot(x) as they approach ±Infexpect the abserr of elementary functions to be 1e-30 or less\nexpect the relerr of elementary functions to be 1e-28 or lessWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100000 DoubleFloat ops with reasonably sized values, the relerr could approach 100000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; should you encounter a situation where either error grows    strongly in one direction, please submit an issue"
 },
 
 {
