@@ -8,6 +8,7 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 | `Double16`  | &nbsp;22 bits         | &nbsp;5 bits       |◊| `Float16` | 11 bits               | &nbsp;5 bits       |
 
 
+&nbsp;
 
 > `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
 >
