@@ -81,11 +81,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#Questions-and-Contributions-1",
+    "location": "#Questions-1",
     "page": "Overview",
-    "title": "Questions and Contributions",
+    "title": "Questions",
     "category": "section",
-    "text": "Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\").Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.[contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/ [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats [gitter-url]: https://gitter.im/juliamath/users[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master [travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true [appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues[pkg-1.0-img]: http://pkg.julialang.org/badges/DoubleFloats_1.0.svg [pkg-1.0-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=1.0"
+    "text": "Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\")."
+},
+
+{
+    "location": "#Contributions-1",
+    "page": "Overview",
+    "title": "Contributions",
+    "category": "section",
+    "text": "Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.[contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/ [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats [gitter-url]: https://gitter.im/juliamath/users[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master [travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true [appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues[pkg-1.0-img]: http://pkg.julialang.org/badges/DoubleFloats_1.0.svg [pkg-1.0-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=1.0"
 },
 
 {
