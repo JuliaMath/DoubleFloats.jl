@@ -35,7 +35,7 @@ Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
 
 ## Examples
 
-#### Double64, Double32, Double16
+### Double64, Double32, Double16
 ```julia
 julia> using DoubleFloats
 
@@ -61,7 +61,7 @@ julia> Double64(2)/10
 julia> d64"0.2"
 1.9999999999999999999999999999999937e-01
 ```
-#### show, string, parse
+### show, string, parse
 ```julia
 julia> using DoubleFloats
 
@@ -84,7 +84,7 @@ julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
 ```
 
-#### golden ratio
+### golden ratio
 ```julia
 julia> using DoubleFloats
 
@@ -108,9 +108,11 @@ true
 
 
 
-## Questions and Contributions
+## Questions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
+
+## Contributions
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.
 
