@@ -10,7 +10,7 @@ s3 = "5"     ; v3 = 5
  
 end
 
-@testset "T_str"
+@testset "T_str" begin
 
 @test d64"12.125" === Double64(v1)
 @test d32"12.125" === Double32(v1)
