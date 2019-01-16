@@ -4,9 +4,6 @@
 
 ----
 
-[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
-----
-
 ## Installation
 
 ```julia
