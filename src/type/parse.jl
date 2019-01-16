@@ -65,8 +65,8 @@ end
 function trytypedparse(::Type{Double64}, str::T) where {T<:AbstractString}
      str = str[1+length("Double64("):length(str)-1]
      histr, lostr = splitnumstring(str, ", ")
-     hi = Meta.parse(histr)
-     lo = Meta.parse(lostr)
+     hi = Float64(Meta.parse(histr))
+     lo = Float64(Meta.parse(lostr))
      result = Double64(hi, lo)
      return result
 end
@@ -74,8 +74,8 @@ end
 function trytypedparse(::Type{Double32}, str::T) where {T<:AbstractString}
      str = str[1+length("Double32("):end-1]
      histr, lostr = splitnumstring(str, ", ")
-     hi = Meta.parse(histr)
-     lo = Meta.parse(lostr)
+     hi = Float32(Meta.parse(histr))
+     lo = Float32(Meta.parse(lostr))
      result = Double32(hi, lo)
      return result
 end
@@ -83,8 +83,8 @@ end
 function trytypedparse(::Type{Double16}, str::T) where {T<:AbstractString}
      str = str[1+length("Double16("):end-1]
      histr, lostr = splitnumstring(str, ", ")
-     hi = Meta.parse(histr)
-     lo = Meta.parse(lostr)
+     hi = Float16(Meta.parse(histr))
+     lo = Float16(Meta.parse(lostr))
      result = Double16(hi, lo)
      return result
 end
