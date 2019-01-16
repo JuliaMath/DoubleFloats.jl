@@ -1,3 +1,10 @@
+"""
+    DoubleFloats
+
+A package for extended precision floating point math.
+
+exported types: `Double64`, `Double32`, `Double16`
+"""
 module DoubleFloats
 
 abstract type MultipartFloat <: AbstractFloat end
