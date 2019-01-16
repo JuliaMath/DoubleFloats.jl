@@ -2,7 +2,7 @@ s1 = "12.125"; v1 = 12.125
 s2 = "-0.125"; v2 = -0.125
 s3 = "5"     ; v3 = 5
 
-@testset "parse T" for T in (Double16, Double32, Double64)
+@testset "parse $T" for T in (Double16, Double32, Double64)
   
 @test T(s1) === T(v1)
 @test T(s2) === T(v2)
