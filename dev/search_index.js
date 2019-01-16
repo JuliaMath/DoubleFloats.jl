@@ -25,14 +25,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#[![Build-Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branchmaster)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)-1",
-    "page": "Overview",
-    "title": "(Image: Build Status)",
-    "category": "section",
-    "text": ""
-},
-
-{
     "location": "#Installation-1",
     "page": "Overview",
     "title": "Installation",
