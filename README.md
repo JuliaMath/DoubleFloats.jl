@@ -4,12 +4,9 @@
 
 ----
 
-[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)
+[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://jeffreysarnoff.github.io/DoubleFloats.jl/latest/)
+
 ----
-
-## Documentation
-
-- [Current](https://juliamath.github.io/DoubleFloats.jl/latest/) &mdash; **most recently tagged version of the documentation.**
 
 ## Accuracy
 
