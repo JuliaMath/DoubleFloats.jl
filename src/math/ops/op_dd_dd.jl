@@ -59,7 +59,7 @@ end
 
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:AbstractFloat}
-    (isnan(HI(x)) | iszero(HI(x)) && return x
+    (isnan(HI(x)) | iszero(HI(x))) && return x
     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
 
     half = T(0.5)
