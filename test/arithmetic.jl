@@ -28,7 +28,6 @@
 end
 
 @testset "div,rem,.." begin
-
     a = 17.0
     b =  5.0
     da = Double64(a)
@@ -44,7 +43,6 @@ end
 end
 
 @testset "Trig functions" begin
-
     x = rand(Double64)
     sinx, cosx = sincos(x)
     @test sinx ≈ sin(x)
