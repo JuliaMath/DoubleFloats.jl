@@ -18,7 +18,7 @@ end
 end
 
 @inline function isequal(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    return x == y
+    return x == y || (isnan(x) && isnan(y))
 end
 @inline function isless(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     return x < y
