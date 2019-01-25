@@ -4,7 +4,7 @@
 
 ----
 
-[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://jeffreysarnoff.github.io/DoubleFloats.jl/latest/)
+[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/latest/)
 
 ----
 
