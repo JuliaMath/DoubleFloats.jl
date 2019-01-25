@@ -27,7 +27,7 @@ end
 end
 
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    (isnan(LO(x)) | isnan(LO(y))) && return dvi_dbdb_db_nonfinite(x,y)
+    (iszero(HI(y)) | isnan(LO(x)) | isnan(LO(y))) && return dvi_dbdb_db_nonfinite(x,y)
     return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
 end
 
@@ -47,6 +47,6 @@ end
 end
 
 @inline function dvi_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    z = div(HI(x), HI(y))
+    z = HI(x) / HI(y)
     return DoubleFloat{T}(z, T(NaN))
 end
