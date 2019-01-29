@@ -114,18 +114,24 @@ Tests whether a floating point number is normal.
 isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
-isinteger(x::DoubleFloat{T}) where {T<:AbstractFloat} =
+@inline isinteger(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinteger(HI(x)) && isinteger(LO(x))
 
 isfractional(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !isinteger(LO(x)) || !isinteger(HI(x))
 
-isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    iszero(LO(x)) ?
-        isinteger(HI(x)) && isodd(HI(x)) :
-        isinteger(LO(x)) && isodd(LO(x))
+isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} -
+    if isinteger(x)
+       (iszero(LO(x)) && isodd(HI(x)) || isodd(LO(x))
+    else
+       false
+    end
+end
 
-iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} =
-    iszero(LO(x)) ?
-        isinteger(HI(x)) && iseven(HI(x)) :
-        isinteger(LO(x)) && iseven(LO(x))
+iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} -
+    if isinteger(x)
+       (iszero(LO(x)) && iseven(HI(x)) || iseven(LO(x))
+    else
+       false
+    end
+end
