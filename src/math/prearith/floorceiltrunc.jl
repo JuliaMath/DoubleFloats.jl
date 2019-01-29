@@ -5,15 +5,15 @@ function floor(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if isinteger(HI(x))
         if isfractional(LO(x))
             if signbit(LO(x))
-                DoubleFloat(HI(x)-one(T), zero(T))
+                DoubleFloat{T}(HI(x)-one(T), zero(T))
             else
-                DoubleFloat(HI(x), zero(T))
+                DoubleFloat{T}(HI(x), zero(T))
             end
         else # LO(x) is mixed: +/- int.frac
             DoubleFloat(HI(x), floor(LO(x)))
         end
     else # HI(x) is mixed or fractional
-        DoubleFloat(floor(HI(x)), zero(T))
+        DoubleFloat{T}(floor(HI(x)), zero(T))
     end
 end
 
@@ -29,15 +29,15 @@ function ceil(x::DoubleFloat{T}) where {T<:AbstractFloat}
     if isinteger(HI(x))
         if isfractional(LO(x))
             if signbit(LO(x))
-                DoubleFloat(HI(x), zero(T))
+                DoubleFloat{T}(HI(x), zero(T))
             else
-                DoubleFloat(HI(x)+one(T), zero(T))
+                DoubleFloat{T}(HI(x)+one(T), zero(T))
             end
         else # LO(x) is mixed: +/- int.frac
             DoubleFloat(HI(x), ceil(LO(x)))
         end
     else # HI(x) is mixed or fractional
-        DoubleFloat(ceil(HI(x)), zero(T))
+        DoubleFloat{T}(ceil(HI(x)), zero(T))
     end
 end
 
@@ -129,12 +129,12 @@ function spread(x::DoubleFloat{T}) where {T<:AbstractFloat}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
-              signbit(HI(x)) ? DoubleFloat(HI(x)-one(T), zero(T)) : DoubleFloat(HI(x), zero(T))
+              signbit(HI(x)) ? DoubleFloat{T}(HI(x)-one(T), zero(T)) : DoubleFloat{T}(HI(x), zero(T))
         else
-              signbit(HI(x)) ? DoubleFloat(HI(x), zero(T)) : DoubleFloat(HI(x)+one(T), zero(T))
+              signbit(HI(x)) ? DoubleFloat{T}(HI(x), zero(T)) : DoubleFloat{T}(HI(x)+one(T), zero(T))
         end
     else
-        signbit(HI(x)) ? DoubleFloat(floor(HI(x)), zero(T)) :  DoubleFloat(ceil(HI(x)), zero(T))
+        signbit(HI(x)) ? DoubleFloat{T}(floor(HI(x)), zero(T)) :  DoubleFloat{T}(ceil(HI(x)), zero(T))
     end
 end
 
