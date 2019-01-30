@@ -138,15 +138,22 @@ function spread(x::DoubleFloat{T}) where {T<:AbstractFloat}
     end
 end
 
+function spread(x::T) where {T<:AbstractFloat}
+    (!isfinite(x) || isinteger(x)) && return x
+    return trunc(x + sign(x))
+end
+
 """
     tld(x, y)
 Truncate the result of x/y.
-""" tld
+"""
+tld(x::T, y::T) where {T<:AbstractFloat} = trunc(x/y)
 
 """
     sld(x, y)
 Spread the result of x/y.
 """ sld
+sld(x::T, y::T) where {T<:AbstractFloat} = spread(x/y)
 
 for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
