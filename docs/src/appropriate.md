@@ -14,9 +14,9 @@ The worst is unlikely.
 
 One right way to use this type is
 
-(a) map your input from Float64s to Double64s
-(b) compute with Double64s
-(c) map your resultant values from Double64s to Float64s
+- map your input from Float64s to Double64s
+- compute with Double64s
+- map your resultant values from Double64s to Float64s
 
 The values obtained with cascaded arithimetic and composed elementary functions
 are reliable and their utility is desireable.
