@@ -120,7 +120,7 @@ isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 isfractional(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !isinteger(LO(x)) || !isinteger(HI(x))
 
-isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} -
+isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     if isinteger(x)
        (iszero(LO(x)) && isodd(HI(x))) || isodd(LO(x))
     else
@@ -128,7 +128,7 @@ isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} -
     end
 end
 
-iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} -
+iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     if isinteger(x)
        (iszero(LO(x)) && iseven(HI(x))) || iseven(LO(x))
     else
