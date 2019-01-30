@@ -10,7 +10,7 @@ b = Double32(5)
 c = Double16(1.125)
 ```
 
-## from 2 Floats
+## from two Floats
 
 ```julia
 using DoubleFloats
