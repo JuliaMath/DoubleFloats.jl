@@ -89,6 +89,38 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "construction/#",
+    "page": "Construction",
+    "title": "Construction",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "construction/#Construction-1",
+    "page": "Construction",
+    "title": "Construction",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "construction/#from-Integers,-Floats-and-Irrationals-1",
+    "page": "Construction",
+    "title": "from Integers, Floats and Irrationals",
+    "category": "section",
+    "text": "using DoubleFloats\n\na = Double64(pi)\nb = Double32(5)\nc = Double16(1.125)"
+},
+
+{
+    "location": "construction/#from-two-Reals-1",
+    "page": "Construction",
+    "title": "from two Reals",
+    "category": "section",
+    "text": "using DoubleFloats\n\na = 10.0\nb = cbrt(10.0)\nc = DoubleFloat(a, b)using this form is necessary when constructing a DoubleFloat from two numbers"
+},
+
+{
     "location": "characteristics/#",
     "page": "Characteristics",
     "title": "Characteristics",
@@ -125,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Capabilities",
     "title": "the basic arithmetic operations",
     "category": "section",
-    "text": "addition, subtraction \nmultiplication, square, cube\nreciprocation, division, square root, cube rootThere are arithmetic operations that take two Float64s or Float32s or Float16s and return the corresponding Double64 or Double32 or Double16.  These operations are available in functional form as add2, sub2, mul2, div2 and in infix form using Unicode \\oplus \\ominus \\otimes \\oslash \"⊕ ⊖ ⊗ ⊘\"."
+    "text": "addition, subtraction \nmultiplication, square, cube\nreciprocation, division, square root, cube rootThere are arithmetic operations that take two Float64s or Float32s or Float16s and return the corresponding Double64 or Double32 or Double16.  These operations are available in functional form as add2, sub2, mul2, div2 and in infix form using \"⊕ ⊖ ⊗ ⊘\" ( \\oplus \\ominus \\otimes \\oslash)."
 },
 
 {
@@ -133,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Capabilities",
     "title": "rounding",
     "category": "section",
-    "text": "RoundNearest, RoundUp, RoundDown\nRoundToZero, RoundFromZero"
+    "text": "RoundNearest, RoundUp, RoundDown\nRoundToZero, RoundFromZero\nspread   – the nearest integer to x, away from zero; spread complements trunc.\ntld(x,y) = trunc(x/y)\nsld(x,y) = spread(s/y)"
 },
 
 {
@@ -181,7 +213,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Appropriate Uses",
     "title": "Double64",
     "category": "section",
-    "text": "Double64 is the accuracy stalwart.  Very good values are likely to result.When used with reasonably sized values, the computations should limit the accrual of relative error to 10⋅𝘂², where 𝘂 is the relative rounding unit, the unitinthelastplace of the significand, often eps(x)/2. It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection. At worst, a sequence of 100000 arithmetic and elementary operations might admit a relative error of 100000 * 10⋅𝘂². The worst is unlikely.One right way to use this type is(a) map your input from Float64s to Double64s (b) compute with Double64s (c) map your resultant values from Double64s to Float64sThe values obtained with cascaded arithimetic and composed elementary functions are reliable and their utility is desireable."
+    "text": "Double64 is the accuracy stalwart.  Very good values are likely to result.When used with reasonably sized values, the computations should limit the accrual of relative error to 10⋅𝘂², where 𝘂 is the relative rounding unit, the unitinthelastplace of the significand, often eps(x)/2. It is possible to accrue relative error steadily; so some experimentation has guided algorithmic selection. At worst, a sequence of 100000 arithmetic and elementary operations might admit a relative error of 100000 * 10⋅𝘂². The worst is unlikely.One right way to use this type ismap your input from Float64s to Double64s\ncompute with Double64s\nmap your resultant values from Double64s to Float64sThe values obtained with cascaded arithimetic and composed elementary functions are reliable and their utility is desireable."
 },
 
 {
@@ -197,7 +229,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Appropriate Uses",
     "title": "how it is used",
     "category": "section",
-    "text": "Were one working with Float32s (a 24-bit significand), the entire result would have become unreliable. With Double, the relative error accompanying any basic arithmetic operation is 10⋅𝘂² (10×𝘂^𝟐). It is reasonable to see this squaring as pulling in almost second significand\'s bits.  Our possibly accrued relative error does eat into the number of reliable bits in this second order significance. Nonetheless, if your use requires less than one million successive arithmetic operations, the result obtained is reliable as a Float64 or as a Float32.Capabilities\nreference material"
+    "text": "Were one working with Float32s (a 24-bit significand), the entire result would have become unreliable. With Double, the relative error accompanying any basic arithmetic operation is 10⋅𝘂² (10×𝘂^𝟐). It is reasonable to see this squaring as pulling in almost second significand\'s bits.  Our possibly accrued relative error does eat into the number of reliable bits in this second order significance. Nonetheless, if your use requires less than one million successive arithmetic operations, the result obtained is reliable as a Float64 or as a Float32."
 },
 
 {
