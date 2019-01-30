@@ -25,6 +25,12 @@ struct DoubleFloat{T} <: MultipartFloat
 
 end
 
+function DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    hi,lo = HILO(x)
+    hi,lo = add_2(hi, lo)
+    return DoubleFloat{T}(hi, lo)
+end
+
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
