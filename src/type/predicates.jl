@@ -126,7 +126,6 @@ isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     else
        false
     end
-end
 
 iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     if isinteger(x)
@@ -134,4 +133,3 @@ iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     else
        false
     end
-end
