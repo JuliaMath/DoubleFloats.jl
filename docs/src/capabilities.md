@@ -35,7 +35,7 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
 - `RoundToZero`, `RoundFromZero`
 
 - `spread`
-    -- the nearest integer to x, away from zero; spread complements trunc().
+    -- the nearest integer to x, away from zero; spread complements `trunc`.
 - `tld(x,y) = trunc(x/y)`
 - `sld(x,y) = spread(s/y)`
 
