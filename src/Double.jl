@@ -30,19 +30,6 @@ const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
 
-DoubleFloat(hi::DoubleFloat{T}, lo::DoubleFloat{T}) where {T<:IEEEFloat} =
-    DoubleFloat{T}(hi, lo)
-
-function DoubleFloat{T}(hi::DoubleFloat{T}, lo::DoubleFloat{T}) where {T<:IEEEFloat}
-    hi1, lo1 = HILO(hi)
-    hi2, lo2 = HILO(lo)
-    hihi, hilo, lohi, lolo = add_4(hi1, hi2, lo1, lo2)
-    zhi = DoubleFloat{T}(hihi, hilo)
-    zlo = DoubleFloat{T}(lohi, lolo)
-    return DoubleFloat{T}(zhi, zlo)
-end
-
-
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(F)
 @inline HILO(x::T) where {T<:IEEEFloat} = x, zero(F)
