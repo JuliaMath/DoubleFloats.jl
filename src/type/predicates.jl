@@ -122,7 +122,7 @@ isfractional(x::DoubleFloat{T}) where {T<:AbstractFloat} =
 
 isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} -
     if isinteger(x)
-       (iszero(LO(x)) && isodd(HI(x)) || isodd(LO(x))
+       (iszero(LO(x)) && isodd(HI(x))) || isodd(LO(x))
     else
        false
     end
@@ -130,7 +130,7 @@ end
 
 iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} -
     if isinteger(x)
-       (iszero(LO(x)) && iseven(HI(x)) || iseven(LO(x))
+       (iszero(LO(x)) && iseven(HI(x))) || iseven(LO(x))
     else
        false
     end
