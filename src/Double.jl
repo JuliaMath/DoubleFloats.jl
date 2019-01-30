@@ -1,8 +1,7 @@
 """
     DoubleFloat{T} <: MultipartFloat
 
-A pair of magnitude-ordered, non-overlapping Floats of
-type `T`.
+A pair of magnitude-ordered, non-overlapping Floats of type `T`.
 
 `Double16`, `Double32`, `Double64` are aliases for
 `DoubleFloat{Float16}`, `DoubleFloat{Float32}`, and
