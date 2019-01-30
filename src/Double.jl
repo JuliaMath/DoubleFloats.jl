@@ -25,6 +25,9 @@ struct DoubleFloat{T} <: MultipartFloat
 
 end
 
+DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
+DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
+
 function DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     hi,lo = HILO(x)
     hi,lo = add_2(hi, lo)
