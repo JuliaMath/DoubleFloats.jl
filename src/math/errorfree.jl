@@ -9,6 +9,8 @@ the implemented version benchmarked slightly better under a variety of inputs (j
 end
 =#
 
+const FloatWithFMA = Union{Float64, Float32, Float16}
+
 """
     two_sum(a, b)
 Computes `hi = fl(a+b)` and `lo = err(a+b)`.
