@@ -14,7 +14,7 @@ struct DoubleFloat{T} <: MultipartFloat
 
    # this form ensure hi, lo are canonically valued
    function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
-       hi, lo = add_2(hi, lo)
+       hi, lo = two_sum(hi, lo)
        return new{T}(hi, lo)
    end
 
@@ -30,7 +30,7 @@ DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + 
 
 function DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     hi,lo = HILO(x)
-    hi,lo = add_2(hi, lo)
+    hi,lo = two_sum(hi, lo)
     return DoubleFloat{T}(hi, lo)
 end
 
@@ -172,8 +172,8 @@ DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(Doubl
 Promote a `Double32` to a `Double64` by converting the `hi` and `lo` attributes
 of `x` to `Double64`s and adding in extended precision.
 """
-Double64(x::Double32) = isfinite(x) ? Double64(add_2(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
-Double64(x::Double16) = isfinite(x) ? Double64(add_2(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
+Double64(x::Double32) = isfinite(x) ? Double64(two_sum(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
+Double64(x::Double16) = isfinite(x) ? Double64(two_sum(Float64(HI(x)), Float64(LO(x)))) : Double64(Float64(x))
 """
     Double32(x::Double16)
 
@@ -199,13 +199,13 @@ eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
-@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} =
+@inline hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} =
     hash(z.hi, h) ⊻ hash(z.lo)
 
-@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, T<:DoubleFloat{F}} =
+@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, T<:DoubleFloat{F}} =
     hash(z.hi) ⊻ hash(z.lo)
 
-@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} =
+@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} =
     hash(z.hi) ⊻ hash(z.lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)

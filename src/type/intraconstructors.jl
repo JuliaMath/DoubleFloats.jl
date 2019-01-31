@@ -62,7 +62,7 @@ function Double32(x::Double64)
     lo64b = lo64 - lo64b
     hi32a, hi32b = Float32(hi64a), Float32(hi64b)
     lo32a, lo32b = Float32(lo64a), Float32(lo64b)
-    hi32, lo32 = add_hilo_2(hi32a, hi32b, lo32a, lo32b)
+    hi32, lo32 = two_hilo_sum(hi32a, hi32b, lo32a, lo32b)
     return Double32(hi32, lo32)
 end
 
@@ -74,7 +74,7 @@ function Double16(x::Double64)
     lo64b = lo64 - lo64b
     hi16a, hi16b = Float16(hi64a), Float16(hi64b)
     lo16a, lo16b = Float16(lo64a), Float16(lo64b)
-    hi16, lo16 = add_hilo_2(hi16a, hi16b, lo16a, lo16b)
+    hi16, lo16 = two_hilo_sum(hi16a, hi16b, lo16a, lo16b)
     return Double16(hi16, lo16)
 end
 
@@ -86,7 +86,7 @@ function Double16(x::Double32)
     lo32b = lo32 - lo32b
     hi16a, hi16b = Float16(hi64a), Float16(hi64b)
     lo16a, lo16b = Float16(lo64a), Float16(lo64b)
-    hi16, lo16 = add_hilo_2(hi16a, hi16b, lo16a, lo16b)
+    hi16, lo16 = two_hilo_sum(hi16a, hi16b, lo16a, lo16b)
     return Double16(hi16, lo16)
 end
 

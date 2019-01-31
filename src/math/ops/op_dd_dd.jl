@@ -36,9 +36,9 @@ end
     xhi, xlo = one(T), zero(T)
     yhi, ylo = y
     hi = xhi / yhi
-    uh, ul = mul_2(hi, yhi)
+    uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi, lo = add_2(hi, lo)
+    hi, lo = two_sum(hi, lo)
     return hi, lo
 end
 =#

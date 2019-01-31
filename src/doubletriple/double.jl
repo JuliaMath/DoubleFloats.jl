@@ -1,4 +1,4 @@
-function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+function double(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, max(prec, 768))
     hi = T(x)
@@ -7,7 +7,7 @@ function double(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
     return hi, lo
 end
 
-function double(::Type{T}, x::String) where {T<:Base.IEEEFloat}
+function double(::Type{T}, x::String) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
     z = parse(BigFloat, x)
@@ -25,7 +25,7 @@ double64(x::String) = double(Float64, x)
 double32(x::String) = double(Float32, x)
 double16(x::String) = double(Float16, x)
 
-function double_inv(::Type{T}, x::BigFloat) where {T<:Base.IEEEFloat}
+function double_inv(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, max(prec, 768))
     x = inv(x)
@@ -53,7 +53,7 @@ double16inv(x::BigFloat) = double_inv(Float16, x)
 
   > For multiplying a double-word number by a floating-point number,
     where FMA is available, use Algorithm 9.
-    
+
   > For multiplying two double-word numbers, if an FMA instruction
     is available, then Algorithm 12 is to be favored.
 
@@ -215,7 +215,7 @@ function DWDivDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Abst
 end
 
 # Algorithm 18 in ref: relerr < 10u² (6u² seen) [reltime 107]
-# (note DWTimesDW3 replaces DWTimesDW2 per ref) 
+# (note DWTimesDW3 replaces DWTimesDW2 per ref)
 
 function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    tₕᵢ = inv(yₕᵢ)
@@ -228,8 +228,8 @@ function DWDivDW3(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:Abst
    return zₕᵢ, zₗₒ
 end
 
-# inv(...) using Algorithms 17 and 18   
- 
+# inv(...) using Algorithms 17 and 18
+
 # Algorithm 17 in ref: relerr 15u² + 56u³  [reltime 48]
 
 function DWInvDW2(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
@@ -244,7 +244,7 @@ function DWInvDW2(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
 end
 
 # Algorithm 18 in ref: relerr < 10u² (6u² seen)  [reltime 72]
-# (note DWTimesDW3 replaces DWTimesDW2 per ref) 
+# (note DWTimesDW3 replaces DWTimesDW2 per ref)
 
 function DWInvDW3(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    tₕᵢ = inv(yₕᵢ)
@@ -255,4 +255,3 @@ function DWInvDW3(yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    zₕᵢ, zₗₒ = DWPlusFP(dₕᵢ, dₗₒ, tₕᵢ)
    return zₕᵢ, zₗₒ
 end
-
