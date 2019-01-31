@@ -3,7 +3,7 @@
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_sum(xhi, yhi)
-    thi, tlo = two_sumxlo, ylo)
+    thi, tlo = two_sum(xlo, ylo)
     c = lo + thi
     hi, lo = two_hilo_sum(hi, c)
     c = tlo + lo
