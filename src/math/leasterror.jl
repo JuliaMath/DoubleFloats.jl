@@ -19,3 +19,7 @@ end
     lo /= hi
     return hi, lo
 end
+
+function two_cbrt(a::T) where {T<:FloatWithFMA}
+     return HILO(DoubleFloat{T}(a, zero(T))^(one(T)/3))
+end
