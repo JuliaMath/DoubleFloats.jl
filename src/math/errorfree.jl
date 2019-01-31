@@ -36,11 +36,26 @@ function three_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
     return hi, md, lo
 end
 
+
+"""
+    two_sumof3(a, b, c)
+
+Computes `hi = fl(a+b+c)` and `lo = err(a+b+c)`.
+"""
+function two_sumof3(a::T,b::T,c::T) where {T<:FloatWithFMA}
+    s, t = two_sum(b, c)
+    x, u = two_sum(a, s)
+    y    = u + t
+    x, y = two_sum(x, y)
+    return x, y
+end
+
 """
     two_diff(a, b)
+
 Computes `hi = fl(a-b)` and `lo = err(a-b)`.
 """
-@inline function two_diff(a::T, b::T) where {T<:AbstractFloat}
+@inline function two_diff(a::T, b::T) where {T<:FloatWithFMA}
     hi = a - b
     a1 = hi + b
     b1 = hi - a1
@@ -49,17 +64,30 @@ Computes `hi = fl(a-b)` and `lo = err(a-b)`.
 end
 
 """
+    two_diffof3(a, b, c)
+
+Computes `hi = fl(a-b-c)` and `lo = err(a-b-c)`.
+"""
+function two_diffof3(a::T, b::T, c::T) where {T<:FloatWithFMA}
+    s, t = two_diff(-b, c)
+    x, u = two_sum(a, s)
+       y = u + t
+    x, y = two_sum(x, y)
+    return x, y
+end
+        
+"""
     two_hilo_sum(a, b)
 *unchecked* requirement `|a| ≥ |b|`
 Computes `s = fl(a+b)` and `e = err(a+b)`.
 """
-@inline function two_hilo_sum(a::T, b::T) where {T<:AbstractFloat}
+@inline function two_hilo_sum(a::T, b::T) where {T<:FloatWithFMA}
     s = a + b
     e = b - (s - a)
     return s, e
 end
 
-@inline function two_prod(a::T, b::T) where {T<:AbstractFloat}
+@inline function two_prod(a::T, b::T) where {T<:FloatWithFMA}
     s = a * b
     t = fma(a, b, -s)
     return s, t
