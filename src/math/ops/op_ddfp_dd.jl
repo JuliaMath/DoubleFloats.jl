@@ -1,12 +1,12 @@
 @inline function add_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:AbstractFloat}
     hi, lo = x
-    hi, lo = two_sum(hi, y, lo)
+    hi, lo = two_sumof3(hi, y, lo)
     return hi, lo
 end
 
 @inline function sub_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:AbstractFloat}
     hi, lo = x
-    hi, lo = two_sum(hi, lo, -y)
+    hi, lo = two_sumof3(hi, lo, -y)
     return hi, lo
 end
 
