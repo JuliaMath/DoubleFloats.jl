@@ -77,14 +77,14 @@ function signs(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-ulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
+ulp(x::T) where {T<:IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
 
-posulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
-negulp(x::T) where {T<:Base.IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
+posulp(x::T) where {T<:IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
+negulp(x::T) where {T<:IEEEFloat} = significand(x) !== one(T) ? -eps(x) : -eps(x)/2
 
-ulp(::Type{T}) where {T<:Base.IEEEFloat} = ulp(one(T))
-posulp(::Type{T}) where {T<:Base.IEEEFloat} = ulp(one(T))
-negulp(::Type{T}) where {T<:Base.IEEEFloat} = ulp(one(T))
+ulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
+posulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
+negulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 
 function eps(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return LO(x) !== zero(T) ? eps(LO(x)) : eps(posulp(HI(x)))
@@ -139,14 +139,14 @@ end
     hi, lo = x
     ihi = modf(hi)[2]
     ilo = modf(lo)[2]
-    return add_2(ihi, ilo)
+    return two_sum(ihi, ilo)
 end
 
 @inline function fracpart(x::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = x
     fhi = modf(hi)[1]
     flo = modf(lo)[1]
-    return add_2(fhi, flo)
+    return two_sum(fhi, flo)
 end
 
 function intpart(x::DoubleFloat{T}) where {T<:AbstractFloat}
@@ -164,8 +164,8 @@ function modf(x::DoubleFloat{T}) where {T<:AbstractFloat}
     hi, lo = HILO(x)
     fhi, ihi = modf(hi)
     flo, ilo = modf(lo)
-    ihi, ilo = add_2(ihi, ilo)
-    fhi, flo = add_2(fhi, flo)
+    ihi, ilo = two_sum(ihi, ilo)
+    fhi, flo = two_sum(fhi, flo)
     i = DoubleFloat(ihi, ilo)
     f = DoubleFloat(fhi, flo)
     return f, i

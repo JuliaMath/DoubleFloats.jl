@@ -1,4 +1,4 @@
-using DoubleFloats, AccurateArithmetic
+using DoubleFloats
 using Test
 
 using Random

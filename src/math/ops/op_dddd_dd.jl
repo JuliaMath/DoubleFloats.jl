@@ -2,12 +2,12 @@
 @inline function add_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
-    hi, lo = add_(xhi, yhi)
-    thi, tlo = add_(xlo, ylo)
+    hi, lo = two_sum(xhi, yhi)
+    thi, tlo = two_sum(xlo, ylo)
     c = lo + thi
-    hi, lo = add_hilo_(hi, c)
+    hi, lo = two_hilo_sum(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_(hi, c)
+    hi, lo = two_hilo_sum(hi, c)
     return hi, lo
 end
 
@@ -16,12 +16,12 @@ end
 @inline function sub_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
-    hi, lo = sub_(xhi, yhi)
-    thi, tlo = sub_(xlo, ylo)
+    hi, lo = two_diff(xhi, yhi)
+    thi, tlo = two_diff(xlo, ylo)
     c = lo + thi# Algorithm 9 from Tight and rigourous error bounds. relative error <= 2u²
-    hi, lo = add_hilo_(hi, c)
+    hi, lo = two_hilo_sum(hi, c)
     c = tlo + lo
-    hi, lo = add_hilo_(hi, c)
+    hi, lo = two_hilo_sum(hi, c)
     return hi, lo
 end
 
@@ -29,12 +29,12 @@ end
 @inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
-    hi, lo = mul_(xhi, yhi)
+    hi, lo = two_prod(xhi, yhi)
     t = xlo * ylo
     t = fma(xhi, ylo, t)
     t = fma(xlo, yhi, t)
     t = lo + t
-    hi, lo = add_hilo_(hi, t)
+    hi, lo = two_hilo_sum(hi, t)
     return hi, lo
 end
 
@@ -52,9 +52,9 @@ end
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi
-    uh, ul = mul_2(hi, yhi)
+    uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi,lo = add_hilo_2(hi, lo)
+    hi,lo = two_hilo_sum(hi, lo)
     return hi, lo
 end
 
@@ -65,8 +65,8 @@ end
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi
-    uh, ul = mul_2(hi, yhi)
+    uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi,lo = add_hilo_2(hi, lo)
+    hi,lo = two_hilo_sum(hi, lo)
     return hi, lo
 end

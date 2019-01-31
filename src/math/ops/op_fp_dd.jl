@@ -58,15 +58,15 @@ end
 
 
 @inline function root2_fp_dd(x::T) where {T<:AbstractFloat}
-    return root2_(x)
+    return two_sqrt(x)
 end
 
 @inline function root3_fp_dd(x::T) where {T<:AbstractFloat}
-    return root3_(x)
+    return two_cbrt(x)
 end
 
 @inline function root4_fp_dd(x::T) where {T<:AbstractFloat}
-     return root2_(sqrt(x))
+     return two_sqrt(sqrt(x))
 end
 
 @inline function root5_fp_dd(x::T) where {T<:AbstractFloat}
@@ -74,5 +74,5 @@ end
 end
 
 @inline function root6_fp_dd(x::T) where {T<:AbstractFloat}
-    return root3_(sqrt(x))
+    return two_cbrt(sqrt(x))
 end

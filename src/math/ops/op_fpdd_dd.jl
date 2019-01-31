@@ -1,20 +1,20 @@
 @inline function add_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
-    yhi, ylo = add_2(x, yhi, ylo)
+    yhi, ylo = two_sumof3(x, yhi, ylo)
     return yhi, ylo
 end
 
 @inline function sub_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     yhi, ylo = y
-    yhi, ylo = sub_2(x, yhi, ylo)
+    yhi, ylo = two_diffof3(x, yhi, ylo)
     return yhi, ylo
 end
 
 @inline function mul_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = y
-    hihi, hilo = mul_2(x, hi)
-    lohi, lolo = mul_2(x, lo)
-    hi, lo = add_2(hihi, hilo, lohi, lolo)
+    hihi, hilo = two_prod(x, hi)
+    lohi, lolo = two_prod(x, lo)
+    hi, lo = two_sumof4(hihi, hilo, lohi, lolo)
     return hi, lo
 end
 
