@@ -60,6 +60,7 @@ using Random
 include("Double.jl")   # Double64, Double32, Double16
 
 include("math/errorfree.jl")
+include("math/leasterror.jl")
 
 include("doubletriple/double.jl")
 include("doubletriple/double_consts.jl")
