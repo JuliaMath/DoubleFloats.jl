@@ -57,8 +57,6 @@ import Base: hash, promote_type, promote_rule, convert,
 # import LinearAlgebra: normalize
 using Random
 
-using AccurateArithmetic
-
 include("Double.jl")   # Double64, Double32, Double16
 
 include("math/errorfree.jl")
