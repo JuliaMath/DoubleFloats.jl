@@ -14,7 +14,7 @@ end
     hi, lo = x
     hihi, hilo = two_prod(y, hi)
     lohi, lolo = two_prod(y, lo)
-    hi, lo = two_sum(hihi, hilo, lohi, lolo)
+    hi, lo = two_sumof4(hihi, hilo, lohi, lolo)
     return hi, lo
 end
 
