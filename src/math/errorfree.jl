@@ -51,6 +51,20 @@ function two_sumof3(a::T,b::T,c::T) where {T<:FloatWithFMA}
 end
 
 """
+    two_sumof4(a, b, c, d)
+
+Computes `hi = fl(a+b+c+d)` and `lo = err(a+b+c+d)`.
+"""
+function two_sumof4(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a ,  b)
+    t0, t2 = two_sum(t0,  c)
+    a,  t3 = two_sum(t0,  d)
+    t0  = t1 + t2
+    b   = t0 + t3
+    return a, b
+end
+
+"""
     two_diff(a, b)
 
 Computes `hi = fl(a-b)` and `lo = err(a-b)`.
