@@ -37,7 +37,7 @@ minprecdblfloat(::Type{T}) where {T<:IEEEFloat} =
 =#
 # Float63 -> 128, Float32 -> 58, Float16 -> 27
 lrgprecdblfloat(::Type{T}) where {T<:IEEEFloat} = 
-    Int(ceil(Int, minprecdblfloat(T) * 1.2)))
+    Int(ceil(Int, minprecdblfloat(T) * 1.2))
 
 bigfloatbits(::Type{T}) where {T<:IEEEFloat} =
     nextpow(2, (trailing_ones(Base.significand_mask(T))+1)*2) - 1
