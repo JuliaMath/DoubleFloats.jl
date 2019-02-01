@@ -215,12 +215,16 @@ function Base.Math.expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    y = DoubleFloat(log(HI(x)), zero(T))
-    z = exp(y)
-    adj = (z - x) / (z + x)
-    adj = mul_by_two(adj)
-    y = y - adj
-    return y
+    if x == zero(DoubleFloat{T})
+        return neginf(DoubleFloat{T})
+    else
+        y = DoubleFloat(log(HI(x)), zero(T))
+        z = exp(y)
+        adj = (z - x) / (z + x)
+        adj = mul_by_two(adj)
+        y = y - adj
+        return y
+    end
 end
 
 
