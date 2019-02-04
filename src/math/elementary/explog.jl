@@ -215,6 +215,7 @@ function Base.Math.expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    x === zero(DoubleFloat{T}) && return neginf(DoubleFloat{T})
     y = DoubleFloat(log(HI(x)), zero(T))
     z = exp(y)
     adj = (z - x) / (z + x)
