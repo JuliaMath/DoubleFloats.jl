@@ -19,28 +19,6 @@ function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 
-for (T,D) in ((:Float64, :"Double64"), (:Float32, :"Double32"), (:Float16, :"Double16")) 
-  @eval begin
-    function show(io::IO, ::MIME"text/plain", x::Vector{DoubleFloat{$T}})
-        println(io, string(length(x),"-element ","Array{",$D,",1}:"))
-        for a in x
-            spc = signbit(a.hi) ? "" : " "
-            println(io, string(spc,a))
-        end
-        return nothing
-    end
-    function show(io::IOContext, x::Vector{DoubleFloat{$T}})
-        iostream = io.io
-        println(iostream, string(length(x),"-element ","Array{",$D,",1}:"))
-        for a in x
-            spc = signbit(a.hi) ? "" : " "
-            println(io, spc, a)
-        end
-        return nothing
-    end
-  end
-end
-
 show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
 show(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(Base.stdout, x)
@@ -50,10 +28,6 @@ function showtyped(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     str = stringtyped(x)
     print(io, str)
 end
-
-showtyped(io::IO, ::MIME"text/plain", x::DoubleFloat{T}) where {T<:IEEEFloat} = showtyped(io, x)
-
-showtyped(io::IO, ::MIME"text/plain", x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = showtyped(io, x)
 
 showtyped(x::DoubleFloat{T}) where {T<:IEEEFloat} = showtyped(Base.stdout, x)
 
