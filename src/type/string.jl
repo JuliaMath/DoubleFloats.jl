@@ -44,11 +44,11 @@ bigfloatbits(::Type{T}) where {T<:IEEEFloat} =
 
 BigFloatBits(::Type{Float64}) = 127 # bigfloatbits(Float64)
 BigFloatBits(::Type{Float32}) =  63 # bigfloatbits(Float32)
-BigFloatBits(::Type{Float32}) =  31 # bigfloatbits(Float16)
+BigFloatBits(::Type{Float16}) =  31 # bigfloatbits(Float16)
 
 BigFloatDigits(::Type{Float64}) = 35 # bigfloatbits(Float64)
 BigFloatDigits(::Type{Float32}) = 16 # bigfloatbits(Float32)
-BigFloatDigits(::Type{Float32}) =  8 # bigfloatbits(Float16)
+BigFloatDigits(::Type{Float16}) =  8 # bigfloatbits(Float16)
 
 #= old
 @inline BigFloatBits(::Type{Float64}) = 512
