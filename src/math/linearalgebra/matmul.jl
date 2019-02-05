@@ -70,12 +70,11 @@ function Base.:(*)(a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:Abstract
     result_rows, result_cols = arows, bcols  
     result = reshape(Array{DoubleFloat{T}, 1}(undef, result_rows*result_cols), (result_rows, result_cols))
    
-    aa = DoubleFloat{T}.(a)
     for bcol = 1:bcols
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = fma(aa[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds result[arow,bcol] = asum
         end
