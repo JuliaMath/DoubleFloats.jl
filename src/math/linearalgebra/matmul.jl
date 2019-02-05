@@ -1,4 +1,5 @@
-function (*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
+#function (*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
+function (mmul)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     if isempty(a) || isempty(b)
         throw(ErrorException("cannot multiply empty matrices"))
     end
