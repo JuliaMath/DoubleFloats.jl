@@ -8,6 +8,13 @@ using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
 
 ## Vectors and Matrices
 
+```julia
+using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
+
+n = 25
+vector = rand(Double64, n)
+matrix = reshape(rand(Double64,n*n),n,n)
+```
 
 ## Operations
 
