@@ -221,7 +221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Vectors and Matrices",
     "category": "section",
-    "text": ""
+    "text": "using DoubleFloats, GenericLinearAlgebra, LinearAlgebra\n\nn = 25\nvector = rand(Double64, n)\nmatrix = reshape(rand(Double64,n*n),n,n)"
 },
 
 {
