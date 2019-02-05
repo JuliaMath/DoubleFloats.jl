@@ -4,7 +4,7 @@
 
 ----
 
-[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/latest/)
+[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)
 
 ----
 
@@ -176,19 +176,6 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 [contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/
 [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats
 [gitter-url]: https://gitter.im/juliamath/users
-
-[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg
-[docs-current-url]: https://juliamath.github.io/DoubleFloats.jl
-
-[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl
-
-[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl
-
-[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl
-
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
 
