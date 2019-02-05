@@ -229,7 +229,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Operations",
     "category": "section",
-    "text": "det, tr, inv\n+, -, *, /\nlu, qr, schur\nsvdvals, eigvals"
+    "text": "det, tr, inv\n+, -, *, /\nsvdvals, eigvals"
+},
+
+{
+    "location": "linearalgebra/#Matrix-Predicates-1",
+    "page": "Linear Algebra",
+    "title": "Matrix Predicates",
+    "category": "section",
+    "text": "iszero, isone, isdiag, \nissquare, issymmetric, ishermitian, \nisposdef, isposdef!\nistril, istriu"
+},
+
+{
+    "location": "linearalgebra/#Matrix-Factorizations-1",
+    "page": "Linear Algebra",
+    "title": "Matrix Factorizations",
+    "category": "section",
+    "text": "general: lu, lu!, qr, qr!\nsquare: schur, schur!, hessenberg, hessenberg!\nsquare+symmetric, Hermitian: cholesky, cholesky!"
 },
 
 {
