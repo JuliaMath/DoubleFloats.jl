@@ -11,7 +11,8 @@ end
 end
 
 @inline function inv_fp_dd(x::T) where {T<:AbstractFloat}
-    return inv_2(x)
+    hi, lo = two_inv(x)
+    return hi, lo
 end
 
 @inline function square_fp_dd(a::T) where {T<:AbstractFloat}
@@ -26,7 +27,7 @@ end
     return zhi, zlo
 end
 
-    
+
 @inline function powr2_fp_dd(x::T) where {T<:AbstractFloat}
     return powr2_(x)
 end
