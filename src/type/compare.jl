@@ -156,72 +156,72 @@ end
 
 
 @inline function (==)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x == yy
 end
 @inline function (!=)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x != yy
 end
 @inline function (<)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x < yy
 end
 @inline function (>)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x > yy
 end
 @inline function (<=)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x <= yy
 end
 @inline function (>=)(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return x >= yy
 end
 
 @inline function isequal(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return isequal(x, yy)
 end
 @inline function isless(x::DoubleFloat{T}, y::Rational) where {T<:AbstractFloat}
-    yy = DoubleFloat{T}(numerator(y)) / denominator(y))
+    yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return isless(x, yy)
 end
 
 
 
 @inline function (==)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx == y
 end
 @inline function (!=)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx != y
 end
 @inline function (<)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx < y
 end
 @inline function (>)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx > y
 end
 @inline function (<=)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx <= y
 end
 @inline function (>=)(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return xx >= y
 end
 
 @inline function isequal(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return isequal(xx, y)
 end
 @inline function isless(x::Rational, y::DoubleFloat{T}) where {T<:AbstractFloat}
-    xx = DoubleFloat{T}(numerator(x)) / denominator(x))
+    xx = DoubleFloat{T}(numerator(x)) / denominator(x)
     return isless(xx, y)
 end
 
