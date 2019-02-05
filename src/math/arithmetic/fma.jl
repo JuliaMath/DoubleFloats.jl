@@ -22,7 +22,7 @@ end
 end
 
 function fma(x::T, y::T, zhi::T, zlo::T) where {T<:AbstractFloat}
-   chi, c1 = two_prod(xhi, yhi)
+   chi, c1 = two_prod(x, y)
    shi, slo = two_sum(zhi, chi)
    thi, tlo = two_sum(zlo, c1)
    c = slo + thi
@@ -43,7 +43,7 @@ function fma(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:AbstractFloat}
    c2 = fma(xlo, yhi, t1)
    c3 = c1 + c2
    dhi, dlo = two_hilo_sum(chi, c3)
-   shi, slo = two_sum(zhi, dhi)
+   shi, slo = two_sum(z, dhi)
    c = slo + dlo
    hi, lo = two_hilo_sum(shi, c)
    return DoubleFloat{T}(hi, lo)
