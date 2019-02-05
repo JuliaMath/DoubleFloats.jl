@@ -209,6 +209,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "linearalgebra/#Using-1",
+    "page": "Linear Algebra",
+    "title": "Using",
+    "category": "section",
+    "text": "using DoubleFloats, GenericLinearAlgebra, LinearAlgebra"
+},
+
+{
     "location": "linearalgebra/#Vectors-and-Matrices-1",
     "page": "Linear Algebra",
     "title": "Vectors and Matrices",
