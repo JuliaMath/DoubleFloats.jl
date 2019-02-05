@@ -193,6 +193,38 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "linearalgebra/#",
+    "page": "Linear Algebra",
+    "title": "Linear Algebra",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "linearalgebra/#Linear-Algebra-1",
+    "page": "Linear Algebra",
+    "title": "Linear Algebra",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "linearalgebra/#Vectors-and-Matrices-1",
+    "page": "Linear Algebra",
+    "title": "Vectors and Matrices",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "linearalgebra/#Operations-1",
+    "page": "Linear Algebra",
+    "title": "Operations",
+    "category": "section",
+    "text": "det, tr, inv\n+, -, *, /\nlu, qr, schur\nsvdvals, eigvals"
+},
+
+{
     "location": "appropriate/#",
     "page": "Appropriate Uses",
     "title": "Appropriate Uses",
