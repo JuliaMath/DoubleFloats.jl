@@ -1,5 +1,11 @@
 # Linear Algebra
 
+## Using
+
+```julia
+using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
+```
+
 ## Vectors and Matrices
 
 
