@@ -1,14 +1,45 @@
 macro d64_str(val::String)
-    :(Double64(BigFloat($val)))
+    quote
+      begin
+        local oldprec = precision(BigFloat)
+        setprecision(BigFloat, 254)
+        local dbl = Double64(BigFloat($val))
+        setprecision(BigFloat, oldprec)
+        dbl
+      end
+    end
 end
 
 macro d32_str(val::String)
-    :(Double32(BigFloat($val)))
+    quote
+      begin
+        local oldprec = precision(BigFloat)
+        setprecision(BigFloat, 126)
+        local dbl = Double64(BigFloat($val))
+        setprecision(BigFloat, oldprec)
+        dbl
+      end
+    end
 end
 
 macro d16_str(val::String)
-    :(Double16(BigFloat($val)))
+    quote
+      begin
+        local oldprec = precision(BigFloat)
+        setprecision(BigFloat, 62)
+        local dbl = Double64(BigFloat($val))
+        setprecision(BigFloat, oldprec)
+        dbl
+      end
+    end
 end
+
+# constructors
+Double16(str::T) where {T<:AbstractString} = @d16_str(str)
+Double32(str::T) where {T<:AbstractString} = @d32_str(str)
+Double64(str::T) where {T<:AbstractString} = @d64_str(str)
+
+#=
 
 function splitnumstring(str::AbstractString, dlm)
     strs = String.(split(str, dlm))
@@ -88,3 +119,4 @@ function trytypedparse(::Type{Double16}, str::T) where {T<:AbstractString}
      result = Double16(hi, lo)
      return result
 end
+=#
