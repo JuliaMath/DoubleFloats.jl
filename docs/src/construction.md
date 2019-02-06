@@ -5,12 +5,13 @@
 ```julia
 using DoubleFloats
 
-a = Double64(pi)
-b = Double32("5.12345") # prevent early conversion to Float64
+a1 = Double64(22) / 17
+a2 = DblF64"22" / DblF64"17"
+a1 === a2
 
-a = DblF64"pi"
-b = DblF32"5"
-c = DblF16"1.125"
+b1 = Double32("5.12345") # prevent early conversion to Float64
+b2 = DblF32"5.12345"
+b1 === b2
 
 ```
 
