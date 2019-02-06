@@ -4,6 +4,7 @@ using Test
 using Random
 phi = Base.MathConstants.golden
 
+include("matmul.jl")
 include("specialvalues.jl")
 include("arithmetic.jl")
 include("functions.jl")
