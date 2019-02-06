@@ -6,7 +6,7 @@
   return result
 end
 
-macro DblF64_str(val::AbstractString)
+macro df64_str(val::AbstractString)
   :(Double64($val))
 end
 
@@ -18,7 +18,7 @@ end
   return result
 end
 
-macro DblF32_str(val::AbstractString)
+macro df32_str(val::AbstractString)
   :(Double32($val))
 end
 
@@ -30,7 +30,7 @@ end
   return result
 end
 
-macro DblF16_str(val::AbstractString)
+macro df16_str(val::AbstractString)
   :(Double16($val))
 end
 
