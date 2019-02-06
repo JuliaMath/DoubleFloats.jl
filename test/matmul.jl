@@ -21,6 +21,11 @@
     # Incompatible Dimension
     @test_throws DimensionMismatch Double64.(B1)*Double64.(A1)
 
+    # Test in-place multiplication
+    C1 = Array{Double64,2}(undef, 3, 2)
+    C1out = LinearAlgebra.mul!(C1, A1, B1)
+    @test C1 == A1B1
+    @test C1 === C1out
 
     #Test with zero inner dimension (zero result)
     A2 = Array{Float64,2}(undef, 2, 0)
@@ -38,6 +43,11 @@
     @test DA2FB2 isa Array{Double64,2}
     @test FA2DB2 isa Array{Double64,2}
 
+    # Test in-place multiplication
+    C2 = Array{Double64,2}(undef, 2, 3)
+    C2out = LinearAlgebra.mul!(C2, A2, B2)
+    @test C2 == A2B2
+    @test C2 === C2out
 
     #Test with zero outer dimensions (empty result)
     A3 = Array{Float64,2}(undef, 0, 3)
@@ -55,5 +65,10 @@
     @test DA3FB3 isa Array{Double64,2}
     @test FA3DB3 isa Array{Double64,2}
 
+    # Test in-place multiplication
+    C3 = Array{Double64,2}(undef, 0, 0)
+    C3out = LinearAlgebra.mul!(C3, A3, B3)
+    @test C3 == A3B3
+    @test C3 === C3out
 
 end
