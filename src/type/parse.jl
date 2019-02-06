@@ -6,7 +6,7 @@
   return result
 end
 
-macro dbl64_str(val::AbstractString)
+macro DblF64_str(val::AbstractString)
   :(Double64($val))
 end
 
@@ -18,7 +18,7 @@ end
   return result
 end
 
-macro dbl32_str(val::AbstractString)
+macro DblF32_str(val::AbstractString)
   :(Double64($val))
 end
 
@@ -30,8 +30,22 @@ end
   return result
 end
 
-macro dbl16_str(val::AbstractString)
+macro DblF16_str(val::AbstractString)
   :(Double64($val))
+end
+
+# DEPRECATED
+
+macro d64_str(val::AbstractString)
+  :(Double64($val))
+end
+
+macro d32_str(val::AbstractString)
+  :(Double32($val))
+end
+
+macro d16_str(val::AbstractString)
+  :(Double16($val))
 end
 
 #=
