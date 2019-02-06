@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Construction",
     "title": "from Integers, Floats and Irrationals",
     "category": "section",
-    "text": "using DoubleFloats\n\na = Double64(pi)\nb = Double32(5)\nc = Double16(1.125)"
+    "text": "using DoubleFloats\n\na = Double64(pi)\nb = Double32(\"5.12345\") # prevent early conversion to Float64\n\na = DblF64\"pi\"\nb = DblF32\"5\"\nc = DblF16\"1.125\"\n"
 },
 
 {
