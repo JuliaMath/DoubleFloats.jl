@@ -105,11 +105,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "construction/#from-Integers,-Floats-and-Irrationals-1",
+    "location": "construction/#from-Integers,-Floats-and-Rationals-1",
     "page": "Construction",
-    "title": "from Integers, Floats and Irrationals",
+    "title": "from Integers, Floats and Rationals",
     "category": "section",
-    "text": "using DoubleFloats\n\na1 = Double64(22) / 17\na2 = DblF64\"22\" / DblF64\"17\"\na1 === a2\n\nb1 = Double32(\"5.12345\") # prevent early conversion to Float64\nb2 = DblF32\"5.12345\"\nb1 === b2\n"
+    "text": "using DoubleFloats\n\na1 = Double64(22) / 7\na2 = df64\"22\" / df64\"7\"\na1 === a2\n\nb1 = Double32(\"5.12345\") # prevent early conversion to Float64\nb2 = df32\"5.12345\"\nb1 === b2\n\nc1 = Double16(22//7)\nc2 = df16\"22\" / df16\"7\"\nc1 === c2"
 },
 
 {
