@@ -11,7 +11,8 @@ abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
        Double64, Double32, Double16,
-       @DblF64_str, @DblF32_str, @DblF16_str,
+       @d64_str, @d32_str, @d16_str,               # Deprecated
+       @DblF64_str, @DblF32_str, @DblF16_str,      # Current Use
        MultipartFloat, HI, LO, HILO,
        stringtyped, showtyped,
        isnonzero, ispositive, isnegative, isnonpositive, isnonnegative,
