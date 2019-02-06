@@ -12,8 +12,8 @@ end
 
 @testset "T_str" begin
 
-@test DblF64"12.125" === Double64(s1)
-@test DblF32"-0.125" === Double32(s2)
-@test DblF16"5" === Double16(s3)
+@test df64"12.125" === Double64(s1)
+@test df32"-0.125" === Double32(s2)
+@test df16"5" === Double16(s3)
 
 end
