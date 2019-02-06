@@ -8,9 +8,9 @@ using DoubleFloats
 a = Double64(pi)
 b = Double32("5.12345") # prevent early conversion to Float64
 
-a = d64"pi"
-b = d32"5"
-c = d16"1.125"
+a = DblF64"pi"
+b = DblF32"5"
+c = DblF16"1.125"
 
 ```
 
