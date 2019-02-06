@@ -1,4 +1,4 @@
-using DoubleFloats
+using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
 using Test
 
 using Random
