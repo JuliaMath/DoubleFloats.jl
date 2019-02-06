@@ -28,7 +28,7 @@ export DoubleFloat,
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
-using LinearAlgebra
+using GenericLinearAlgebra, LinearAlgebra
 using Polynomials
 
 # using LinearAlgebra
