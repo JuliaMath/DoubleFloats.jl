@@ -4,7 +4,7 @@ name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 license = "MIT"
-version = "0.6.0"
+version = "0.6.1"
 
 [deps]
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
