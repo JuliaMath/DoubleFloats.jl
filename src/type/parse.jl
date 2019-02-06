@@ -13,25 +13,25 @@ end
 @inline function Double32(str::S) where {S<:AbstractString}
   oldprec = precision(BigFloat)
   setprecision(BigFloat, 126)
-  result = Double64(BigFloat(str))
+  result = Double32(BigFloat(str))
   setprecision(BigFloat, oldprec)
   return result
 end
 
 macro DblF32_str(val::AbstractString)
-  :(Double64($val))
+  :(Double32($val))
 end
 
 @inline function Double16(str::S) where {S<:AbstractString}
   oldprec = precision(BigFloat)
   setprecision(BigFloat, 62)
-  result = Double64(BigFloat(str))
+  result = Double16(BigFloat(str))
   setprecision(BigFloat, oldprec)
   return result
 end
 
 macro DblF16_str(val::AbstractString)
-  :(Double64($val))
+  :(Double16($val))
 end
 
 # DEPRECATED
