@@ -1,43 +1,38 @@
-macro d64_str(val::String)
-    quote
-      begin
-        local oldprec = precision(BigFloat)
-        setprecision(BigFloat, 254)
-        local dbl = Double64(BigFloat($val))
-        setprecision(BigFloat, oldprec)
-        dbl
-      end
-    end
+@inline function Double64(str::S) where {S<:AbstractString}
+  oldprec = precision(BigFloat)
+  setprecision(BigFloat, 254)
+  result = Double64(BigFloat(str))
+  setprecision(BigFloat, oldprec)
+  return result
 end
 
-macro d32_str(val::String)
-    quote
-      begin
-        local oldprec = precision(BigFloat)
-        setprecision(BigFloat, 126)
-        local dbl = Double64(BigFloat($val))
-        setprecision(BigFloat, oldprec)
-        dbl
-      end
-    end
+macro dbl64_str(val::AbstractString)
+  :(Double64($val))
 end
 
-macro d16_str(val::String)
-    quote
-      begin
-        local oldprec = precision(BigFloat)
-        setprecision(BigFloat, 62)
-        local dbl = Double64(BigFloat($val))
-        setprecision(BigFloat, oldprec)
-        dbl
-      end
-    end
+@inline function Double32(str::S) where {S<:AbstractString}
+  oldprec = precision(BigFloat)
+  setprecision(BigFloat, 126)
+  result = Double64(BigFloat(str))
+  setprecision(BigFloat, oldprec)
+  return result
 end
 
-# constructors
-Double16(str::T) where {T<:AbstractString} = @d16_str(:($str))
-Double32(str::T) where {T<:AbstractString} = @d32_str(:($str))
-Double64(str::T) where {T<:AbstractString} = @d64_str(:($str))
+macro dbl32_str(val::AbstractString)
+  :(Double64($val))
+end
+
+@inline function Double16(str::S) where {S<:AbstractString}
+  oldprec = precision(BigFloat)
+  setprecision(BigFloat, 62)
+  result = Double64(BigFloat(str))
+  setprecision(BigFloat, oldprec)
+  return result
+end
+
+macro dbl16_str(val::AbstractString)
+  :(Double64($val))
+end
 
 #=
 
