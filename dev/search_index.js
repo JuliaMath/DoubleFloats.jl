@@ -290,15 +290,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "references/#",
-    "page": "Refs",
-    "title": "Refs",
+    "page": "References",
+    "title": "References",
     "category": "page",
     "text": ""
 },
 
 {
     "location": "references/#References-1",
-    "page": "Refs",
+    "page": "References",
     "title": "References",
     "category": "section",
     "text": "[Double-Double Building Blocks]\nM. Joldes, V. Popescu, and J.M. Muller.\nTight and rigourous error bounds for basic building blocks of double-word arithmetic\n2016, working paper.https://hal.archives-ouvertes.fr/hal-01351529v2/document[Triple-Double Building Blocks]\nChristoph Quirin Lauter.\nBasic building blocks for a triple-double intermediate format\n2005, research report.https://hal.inria.fr/inria-00070314/document[Multiple Precision]\nV. Popescu.\nTowards fast and certified multiple-precision librairies.\n2017, thesis.https://hal.archives-ouvertes.fr/tel-01534090/document      [mpfun]\nA Thread-Safe Arbitrary Precision Computation Package\nDavid H. Bailey ∗\nMarch 20, 2017http://www.davidhbailey.com/dhbpapers/mpfun2015.pdf     http://www.davidhbailey.com/dhbsoftware/mpfun-fort-v15.tar.gz     http://www.davidhbailey.com/dhbsoftware/mpfun-mpfr-v07.tar.gz[Faithful Floats]\nM. Lange and S.M. Rump.\nFaithfully Rounded Floating-point Computations\n2017, preprint.http://www.ti3.tu-harburg.de/paper/rump/LaRu2017b.pdf      Nelson H.F. Beebe\nThe Mathematical-Function Computation Handbook\nSpringer, 2017, bookJ.-M. Muller, N. Brisebarre, F. de Dinechin, C.-P. Jeannerod, V. Lefevre,\n    G. Melquiond, N. Revol, D. Stehle, and S. Torres.\nHandbook of Floating-Point Arithmetic\nBirkhauser Boston, 2010, book"
