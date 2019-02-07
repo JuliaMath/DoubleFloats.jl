@@ -4,7 +4,7 @@
 
 ----
 
-[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)
+[![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)&nbsp;&nbsp;&nbsp;[![codecov](https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/DoubleFloats.jl)
 
 ----
 
@@ -178,8 +178,3 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 [gitter-url]: https://gitter.im/juliamath/users
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
-
-[pkg-0.6-img]: http://pkg.julialang.org/badges/DoubleFloats_0.6.svg
-[pkg-0.6-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.6
-[pkg-0.7-img]: http://pkg.julialang.org/badges/DoubleFloats_0.7.svg
-[pkg-0.7-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=0.7
