@@ -92,8 +92,6 @@ true
 | `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
 | `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
 
-
-
 ## Performance
 
 #### Double64 relative to BigFloat
