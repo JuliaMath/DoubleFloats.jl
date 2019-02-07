@@ -2,11 +2,11 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 
 ----
 
-| type name   | significand   | exponent       |◊| base type |significand | exponent      |
-|:------------|:-------------:|:--------------:|:-:|:----------|:----------:|:-------------:|
-| `Double64`  | 106 bits      | 11 bits        |◊| `Float64` | 53 bits    | 11 bits       |
-| `Double32`  | 48 bits | 8 bits   |◊| `Float32` | 24 bits    | 8 bits  |
-| `Double16`  | 22 bits | 5 bits   |◊| `Float16` | 11 bits    | 5 bits  |
+| type name  | significand | exponent | ◊ | base type | significand | exponent |
+|:-----------|:-----------:|:--------:|:-:|:----------|:-----------:|:--------:|
+| `Double64` |  106 bits   | 11 bits  | ◊ | `Float64` |   53 bits   | 11 bits  |
+| `Double32` |   48 bits   |  8 bits  | ◊ | `Float32` |   24 bits   |  8 bits  |
+| `Double16` |   22 bits   |  5 bits  | ◊ | `Float16` |   11 bits   |  5 bits  |
 
 
 ----
@@ -25,8 +25,9 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 
 ----
 
-For `Double64` arguments within 0.0..2.0   
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _except tan(x), cot(x) as they approach ±Inf_
+For `Double64` arguments within 0.0..2.0
+_except tan(x), cot(x) as they approach ±Inf_
+
 - expect the `abserr` of elementary functions to be 1e-30 or less
 - expect the `relerr` of elementary functions to be 1e-28 or less
 
@@ -39,5 +40,5 @@ the `relerr` could approach 100,000 * 10⋅𝘂². In practice these functions a
 more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.
 
 &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _should you encounter a situation where either error grows
+_should you encounter a situation where either error grows
    strongly in one direction, please submit an issue_

@@ -20,14 +20,13 @@ julia> Pkg.add("DoubleFloats")
 
 Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
 
-| op  | speedup |
-|:-----|---------:|
-|  +   | 11x |
-|  *   | 18x |
-|  \   |  7x |
-| trig | 3x-6x |
-
- &nbsp; &nbsp; &nbsp; &nbsp; _these results are from BenchmarkTools, on one machine_
+| op   | speedup |
+|:-----|--------:|
+| +    |     11x |
+| *    |     18x |
+| \    |      7x |
+| trig |   3x-6x |
+ _these results are from BenchmarkTools, on one machine_
 
 
 ## Examples
@@ -97,11 +96,11 @@ julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
 true
 ```
 
-|  typed value | computed value | ~abs(golden - computed) |
-|:----------|:---------------|:-------------:|
-| `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
-| `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
-| `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
+| typed value                      | computed value                   | ~abs(golden - computed) |
+|:---------------------------------|:---------------------------------|:-----------------------:|
+| `MathConstants.golden`           | 1.61803_39887_49894_84820_45868+ |           0.0           |
+| `Float64(MathConstants.golden)`  | 1.61803_39887_49895              |         1.5e-16         |
+| `Double32(MathConstants.golden)` | 1.61803_39887_49894_90           |         5.2e-17         |
 
 
 
@@ -120,17 +119,9 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 [docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl
 
-[travis-img]: https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/JuliaMath/DoubleFloats.jl
-
-[appveyor-img]: https://ci.appveyor.com/api/projects/status/xx7nimfpnl1r4gx0?svg=true
-[appveyor-url]: https://ci.appveyor.com/project/JuliaMath/doublefloats-jl
-
 [codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl
 
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
-[pkg-1.0-img]: http://pkg.julialang.org/badges/DoubleFloats_1.0.svg
-[pkg-1.0-url]: http://pkg.julialang.org/?pkg=DoubleFloats&ver=1.0
 
