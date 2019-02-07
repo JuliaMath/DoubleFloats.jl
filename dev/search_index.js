@@ -125,7 +125,31 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Characteristics",
     "category": "page",
-    "text": "This package provides extended precision versions of Float64, Float32, Float16.type name significand exponent ◊ base type significand exponent\nDouble64 106 bits 11 bits ◊ Float64 53 bits 11 bits\nDouble32 48 bits 8 bits ◊ Float32 24 bits 8 bits\nDouble16 22 bits 5 bits ◊ Float16 11 bits 5 bitsDouble64 is a magnitude ordered, nonoverlapping pair of Float64sDouble32 is a magnitude ordered, nonoverlapping pair of Float32sDouble16 is a magnitude ordered, nonoverlapping pair of Float16sarithmetic (+, -, *, /) is exact\nelementary functions are quite accurate\noften better than C \"double-double\" librariesFor Double64 arguments within 0.0..2.0 except tan(x), cot(x) as they approach ±Infexpect the abserr of elementary functions to be 1e-30 or less\nexpect the relerr of elementary functions to be 1e-28 or lessWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonably sized values, the relerr could approach 100,000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.&nbsp; should you encounter a situation where either error grows    strongly in one direction, please submit an issue"
+    "text": ""
+},
+
+{
+    "location": "characteristics/#Characteristics-1",
+    "page": "Characteristics",
+    "title": "Characteristics",
+    "category": "section",
+    "text": "This package provides extended precision versions of Float64, Float32, Float16.type name significand exponent ◊ base type significand exponent\nDouble64 106 bits 11 bits ◊ Float64 53 bits 11 bits\nDouble32 48 bits 8 bits ◊ Float32 24 bits 8 bits\nDouble16 22 bits 5 bits ◊ Float16 11 bits 5 bits"
+},
+
+{
+    "location": "characteristics/#Representation-1",
+    "page": "Characteristics",
+    "title": "Representation",
+    "category": "section",
+    "text": "Double64 is a magnitude ordered, nonoverlapping pair of Float64sDouble32 is a magnitude ordered, nonoverlapping pair of Float32sDouble16 is a magnitude ordered, nonoverlapping pair of Float16sarithmetic (+, -, *, /) is exact\nelementary functions are quite accurate\noften better than C \"double-double\" libraries"
+},
+
+{
+    "location": "characteristics/#Accuracy-1",
+    "page": "Characteristics",
+    "title": "Accuracy",
+    "category": "section",
+    "text": "For Double64 arguments within 0.0..2.0expect the abserr of elementary functions to be 1e-30 or better\nexpect the relerr of elementary functions to be 1e-28 or betterFor tan or cot as they approach ±Infexpect the relerr of atan(tan(x)), acot(cot(x)) to be 1e-26 or betterWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonably sized values, the relerr could approach 100,000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.should you encounter a situation where either error grows    strongly in one direction, please submit an issue"
 },
 
 {
