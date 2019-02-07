@@ -1,3 +1,5 @@
+# Characteristics
+
 This package provides extended precision versions of `Float64`, `Float32`, `Float16`.
 
 ----
@@ -8,8 +10,8 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 | `Double32` |   48 bits   |  8 bits  | ◊ | `Float32` |   24 bits   |  8 bits  |
 | `Double16` |   22 bits   |  5 bits  | ◊ | `Float16` |   11 bits   |  5 bits  |
 
+## Representation
 
-----
 
 > `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
 >
@@ -24,12 +26,17 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 - often better than C "double-double" libraries
 
 ----
+## Accuracy
 
 For `Double64` arguments within 0.0..2.0
-_except tan(x), cot(x) as they approach ±Inf_
 
-- expect the `abserr` of elementary functions to be 1e-30 or less
-- expect the `relerr` of elementary functions to be 1e-28 or less
+- expect the `abserr` of elementary functions to be 1e-30 or better
+- expect the `relerr` of elementary functions to be 1e-28 or better
+
+For `tan` or `cot` as they approach ±Inf
+
+- expect the `relerr` of `atan(tan(x))`, `acot(cot(x))` to be 1e-26 or better
+ 
 
 ----
 
@@ -39,6 +46,7 @@ Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonabl
 the `relerr` could approach 100,000 * 10⋅𝘂². In practice these functions are considerably
 more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.
 
-&nbsp;
+----
+
 _should you encounter a situation where either error grows
    strongly in one direction, please submit an issue_
