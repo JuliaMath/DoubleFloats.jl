@@ -11,7 +11,7 @@ makedocs(
         "Capabilities" => "capabilities.md",
         "Linear Algebra" => "linearalgebra.md",
         "Appropriate Uses" => "appropriate.md",
-        "Refs" => "references.md"
+        "References" => "references.md"
     ]
 )
 
