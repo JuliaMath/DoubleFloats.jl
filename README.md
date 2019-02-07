@@ -8,58 +8,6 @@
 
 ----
 
-## Accuracy
-
-
-results for f(x), x in 0..1
- 
-
-| function |   abserr   |   relerr   |
-|:--------:|:----------:|:----------:|
-|   exp    |  1.0e-31   |   1.0e-31  |
-|   log    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sin    |  1.0e-31   |   1.0e-31  |
-|   cos    |  1.0e-31   |   1.0e-31  |
-|   tan    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|  asin    |  1.0e-30   |   1.0e-30  |
-|  acos    |  1.0e-30   |   1.0e-29  |
-|  atan    |  1.0e-31   |   1.0e-30  |
-|          |            |            |
-|          |            |            |
-|   sinh   |  1.0e-31   |   1.0e-29  |
-|   cosh   |  1.0e-31   |   1.0e-31  |
-|   tanh   |  1.0e-31   |   1.0e-29  |
-|          |            |            |
-|  asinh   |  1.0e-31   |   1.0e-29  |
-|  atanh   |  1.0e-31   |   1.0e-30  |
-
-
-results for f(x), x in 1..2
- 
-
-| function |   abserr   |   relerr   |   notes   |
-|:--------:|:----------:|:----------:|:---------:|
-|   exp    |  1.0e-30   |   1.0e-31  | |
-|   log    |  1.0e-31   |   1.0e-31  | |
-|          |            |            | |
-|   sin    |  1.0e-31   |   1.0e-31  | |
-|   cos    |  1.0e-31   |   1.0e-28  | |
-|   tan    |  1.0e-24   |   1.0e-28  | near asymptote |
-|          |            |            | |
-|  asin    |  1.0e-30   |   1.0e-30  | |
-|  acos    |  1.0e-30   |   1.0e-29  | |
-|  atan    |  1.0e-31   |   1.0e-30  | |
-|          |            |            | |
-|          |            |            | |
-|   sinh   |  1.0e-30   |   1.0e-31  | |
-|   cosh   |  1.0e-30   |   1.0e-31  | |
-|   tanh   |  1.0e-31   |   1.0e-31  | |
-|          |            |            | |
-|  asinh   |  1.0e-31   |   1.0e-31  | |
-
-
 ## Installation
 
 ```julia
@@ -96,7 +44,7 @@ julia> Double64(0.2)
 julia> Double64(2)/10
 1.9999999999999999999999999999999937e-01
 
-julia> d64"0.2"
+julia> df64"0.2"
 1.9999999999999999999999999999999937e-01
 ```
 #### show, string, parse
@@ -159,6 +107,59 @@ true
 
 - results from testing with BenchmarkTools on one machine
 - BigFloat precision was set to 106 bits, for fair comparison
+
+
+## Accuracy
+
+
+results for f(x), x in 0..1
+ 
+
+| function |   abserr   |   relerr   |
+|:--------:|:----------:|:----------:|
+|   exp    |  1.0e-31   |   1.0e-31  |
+|   log    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sin    |  1.0e-31   |   1.0e-31  |
+|   cos    |  1.0e-31   |   1.0e-31  |
+|   tan    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|  asin    |  1.0e-30   |   1.0e-30  |
+|  acos    |  1.0e-30   |   1.0e-29  |
+|  atan    |  1.0e-31   |   1.0e-30  |
+|          |            |            |
+|          |            |            |
+|   sinh   |  1.0e-31   |   1.0e-29  |
+|   cosh   |  1.0e-31   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-29  |
+|          |            |            |
+|  asinh   |  1.0e-31   |   1.0e-29  |
+|  atanh   |  1.0e-31   |   1.0e-30  |
+
+
+results for f(x), x in 1..2
+ 
+
+| function |   abserr   |   relerr   |   notes   |
+|:--------:|:----------:|:----------:|:---------:|
+|   exp    |  1.0e-30   |   1.0e-31  | |
+|   log    |  1.0e-31   |   1.0e-31  | |
+|          |            |            | |
+|   sin    |  1.0e-31   |   1.0e-31  | |
+|   cos    |  1.0e-31   |   1.0e-28  | |
+|   tan    |  1.0e-24   |   1.0e-28  | near asymptote |
+|          |            |            | |
+|  asin    |  1.0e-30   |   1.0e-30  | |
+|  acos    |  1.0e-30   |   1.0e-29  | |
+|  atan    |  1.0e-31   |   1.0e-30  | |
+|          |            |            | |
+|          |            |            | |
+|   sinh   |  1.0e-30   |   1.0e-31  | |
+|   cosh   |  1.0e-30   |   1.0e-31  | |
+|   tanh   |  1.0e-31   |   1.0e-31  | |
+|          |            |            | |
+|  asinh   |  1.0e-31   |   1.0e-31  | |
+
 
 ## Good Ways To Use This
 
