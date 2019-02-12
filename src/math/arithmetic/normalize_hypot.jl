@@ -1,4 +1,4 @@
-function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     ax = abs(x)
     ay = abs(y)
     ay, ax = minmax(ax, ay)
@@ -27,7 +27,7 @@ function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
 
     x_normalized^2 + y_normalized^2 == one(promote_type(typeof(x),typeof(y)))
 """
-function normalize(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+function normalize(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:AbstractFloat}
     hypotenuse = hypot(x, y)
     if !iszero(hypotenuse) && isfinite(hypotenuse)
         xnorm = x / hypotenuse

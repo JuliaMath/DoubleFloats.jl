@@ -4,11 +4,11 @@ convert(::Type{T}, x::DoubleFloat{T}) where {T<:IEEEFloat} = HI(x)
 convert(::Type{DoubleFloat{T}}, x::I) where {T<:IEEEFloat, I<:Integer} = DoubleFloat{T}(T(x))
 convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat, I<:Integer} = I(round(BigInt, BigFloat(HI(x))+ BigFloat(LO(x))))
 
-function convert(::Type{BigFloat}, x::DoubleFloat{T}) where {T<:IEEEFloat}
+function convert(::Type{BigFloat}, x::DoubleFloat{T}) where {T<:AbstractFloat}
     res = Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))
     return res
 end
-function convert(::Type{DoubleFloat{T}}, x::BigFloat) where {T<:IEEEFloat}
+function convert(::Type{DoubleFloat{T}}, x::BigFloat) where {T<:AbstractFloat}
     hi = T(x)
     lo = T(x - hi)
     return DoubleFloat(hi, lo)

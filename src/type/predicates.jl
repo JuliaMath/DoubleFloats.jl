@@ -22,46 +22,46 @@ These are the predicates made available for use with DoubleFloats:
 
 Return `!iszero(x)`
 """
-isnonzero(x::T) where {T<:IEEEFloat} = !iszero(x)
+isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
 
 """
     ispositive(x)
 
 Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
 """
-ispositive(x::T) where {T<:IEEEFloat} = !isnegative(x) && isnonzero(x)
+ispositive(x::T) where {T<:AbstractFloat} = !isnegative(x) && isnonzero(x)
 
 """
     isnonnegative(x)
 
 Returns `true` if `!isnegative(x)`.
 """
-isnonnegative(x::T) where {T<:IEEEFloat} = !isnegative(x)
+isnonnegative(x::T) where {T<:AbstractFloat} = !isnegative(x)
 """
     isnonpositive(x)
 
 Returns `true` if `isnegative(x)` or `iszero(x)`.
 """
-isnonpositive(x::T) where {T<:IEEEFloat} = isnegative(x) || iszero(x)
+isnonpositive(x::T) where {T<:AbstractFloat} = isnegative(x) || iszero(x)
 
 """
     isfractional(x)
 
 Returns `true` if `abs(x) < one(x)`.
 """
-isfractional(x::T) where {T<:IEEEFloat} = abs(x) < one(T)
+isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
 
-iszero(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+iszero(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     iszero(HI(x)) # && iszero(LO(x))
 
-isnonzero(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnonzero(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !iszero(HI(x)) # || !iszero(LO(x))
 
-isone(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isone(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isone(HI(x)) && iszero(LO(x))
 
-ispositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+ispositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
 """
@@ -69,19 +69,19 @@ ispositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 Return `true` if `signbit(HI(x))` is `true`.
 """
-isnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x))
 
-isnonnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnonnegative(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !signbit(HI(x))
 
-isnonpositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnonpositive(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     signbit(HI(x)) || iszero(HI(x))
 
-isfinite(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isfinite(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isfinite(HI(x))
 
-isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x))
 
 """
@@ -89,7 +89,7 @@ isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 Tests whether a number positive and infinite.
 """
-isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isposinf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x))
 
 """
@@ -97,13 +97,13 @@ isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 Tests whether a number is negative and infinite.
 """
-isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isneginf(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinf(HI(x)) && signbit(HI(x))
 
-isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnan(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isnan(HI(x))
 
-issubnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+issubnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     issubnormal(LO(x)) || issubnormal(HI(x))
 
 """
@@ -111,23 +111,23 @@ issubnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 Tests whether a floating point number is normal.
 """
-isnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isnormal(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
-@inline isinteger(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+@inline isinteger(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     isinteger(HI(x)) && isinteger(LO(x))
 
-isfractional(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isfractional(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     !isinteger(LO(x)) || !isinteger(HI(x))
 
-isodd(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+isodd(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     if isinteger(x)
        (iszero(LO(x)) && isodd(HI(x))) || isodd(LO(x))
     else
        false
     end
 
-iseven(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+iseven(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     if isinteger(x)
        (iszero(LO(x)) && iseven(HI(x))) || iseven(LO(x))
     else

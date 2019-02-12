@@ -72,7 +72,7 @@ Rapport de recherche n 5702 — Septembre 2005 — 67 pages
 
 # Algorithm 3.3 [Triple-Double Building Blocks]
 
-function renorm(hi::T, md::T, lo::T) where {T<:IEEEFloat}
+function renorm(hi::T, md::T, lo::T) where {T<:AbstractFloat}
     md, lo = two_sum(md, lo)
     hi, m  = two_sum(hi, md)
     md, lo = two_sum(m,  md)
@@ -80,7 +80,7 @@ function renorm(hi::T, md::T, lo::T) where {T<:IEEEFloat}
 end
 
 
-function renorm_hilo(hi::T, md::T, lo::T) where {T<:IEEEFloat}
+function renorm_hilo(hi::T, md::T, lo::T) where {T<:AbstractFloat}
     md, lo = two_hilo_sum(md, lo)
     hi, m  = two_hilo_sum(hi, md)
     md, lo = two_hilo_sum(m,  md)
@@ -148,7 +148,7 @@ end
 # Algorithm 5.1 (Add33) [Triple-Double Building Blocks]
 # (ahi,amd,alo) + (bhi,bmd,blo) :: (zhi,zmd,zlo)
 
-function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, bhi)
     t2, t3 = two_sum(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -160,11 +160,11 @@ function add333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFl
     return zhi, zmd, zlo
 end
 
-@inline function add333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function add333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return add333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
-function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, bhi)
     t2, t3 = two_sum(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -176,11 +176,11 @@ function add332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFl
     return zhi, zmd
 end
 
-@inline function add332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function add332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return add332(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
-function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
+function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, bhi)
     t2, t3 = two_sum(amd, blo)
     t7, t4 = two_sum(t1, t2)
@@ -191,11 +191,11 @@ function add323(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function add323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function add323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return add323(a[1], a[2], a[3], b[1], b[2])
 end
 
-function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
+function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, bhi)
     t2, t3 = two_sum(amd, blo)
     t7, t4 = two_sum(t1, t2)
@@ -206,11 +206,11 @@ function add322(ahi::T, amd::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
     return zhi, zmd
 end
 
-@inline function add322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function add322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return add322(a[1], a[2], a[3], b[1], b[2])
 end
 
-function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:IEEEFloat}
+function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, bhi)
     t2, t3 = two_sum(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -220,12 +220,12 @@ function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function add223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function add223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return add223(a[1], a[2]f, b[1], b[2])
 end
 
 
-function add313(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
+function add313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     zhi, t1 = two_sum(ahi, b)
     t7, t4 = two_sum(t1, amd)
     t8 = t4 + alo
@@ -234,18 +234,18 @@ function add313(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-add133(b::T, ahi::T, amd::T, alo::T) where {T<:IEEEFloat} = add313(ahi, amd, alo, b)
+add133(b::T, ahi::T, amd::T, alo::T) where {T<:AbstractFloat} = add313(ahi, amd, alo, b)
 
-add313(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:IEEEFloat} =
+add313(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     add313(a[1], a[2], a[3], b[1])
 
-add133(b::NTuple{1,T}, a::NTuple{3,T}) where {T<:IEEEFloat} =
+add133(b::NTuple{1,T}, a::NTuple{3,T}) where {T<:AbstractFloat} =
     add313(a[1], a[2], a[3], b[1])
 
 
 # subtraction
 
-function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -257,11 +257,11 @@ function sub333(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFl
     return zhi, zmd, zlo
 end
 
-@inline function sub333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function sub333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return sub333(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
-function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -273,11 +273,11 @@ function sub332(ahi::T, amd::T, alo::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFl
     return zhi, zmd
 end
 
-@inline function sub332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function sub332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return sub332(a[1], a[2], a[3], b[1], b[2], b[3])
 end
 
-function sub323(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:IEEEFloat}
+function sub323(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -288,11 +288,11 @@ function sub323(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function sub323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function sub323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return sub323(a[1], a[2], a[3], b[1], b[2])
 end
 
-function sub322(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:IEEEFloat}
+function sub322(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -303,11 +303,11 @@ function sub322(ahi::T, amd::T, alo::T, bhi::T, bmd::T) where {T<:IEEEFloat}
     return zhi, zmd
 end
 
-@inline function sub322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function sub322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return sub322(a[1], a[2], a[3], b[1], b[2])
 end
 
-function sub233(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function sub233(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -318,11 +318,11 @@ function sub233(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function sub233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function sub233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return sub233(a[1], a[2], b[1], b[2], b[3])
 end
 
-function sub232(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
+function sub232(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -333,11 +333,11 @@ function sub232(ahi::T, amd::T, bhi::T, bmd::T, blo::T) where {T<:IEEEFloat}
     return zhi, zmd
 end
 
-@inline function sub232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+@inline function sub232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     return sub232(a[1], a[2], b[1], b[2], b[3])
 end
 
-function sub223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:IEEEFloat}
+function sub223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, bhi)
     t2, t3 = two_diff(amd, bmd)
     t7, t4 = two_sum(t1, t2)
@@ -347,12 +347,12 @@ function sub223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function sub223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function sub223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return sub223(a[1], a[2], b[1], b[2])
 end
 
 
-function sub313(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
+function sub313(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, b)
     t7, t4 = two_sum(t1, amd)
     t8 = t4 + alo
@@ -361,7 +361,7 @@ function sub313(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
+function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     zhi, t1 = two_diff(ahi, b)
     t7, t4 = two_sum(t1, amd)
     zlo = t4 + alo
@@ -370,17 +370,17 @@ function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:IEEEFloat}
     return zhi, zlo
 end
 
-sub313(a::NTuple{3,T}, b::NTuple{T,1}) where {T<:IEEEFloat} =
+sub313(a::NTuple{3,T}, b::NTuple{T,1}) where {T<:AbstractFloat} =
     sub313(a[1], a[2], a[3], b)
 
-sub312(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:IEEEFloat} =
+sub312(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     sub312(a[1], a[2], a[3], b)
 
 
 # Algorithm 6.1 [Triple-Double Building Blocks]
 # (ahi,alo) * (bhi,blo) :: (zhi,zmd,zlo)
 
-function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
+function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:AbstractFloat}
     zhi, t1 = two_prod(ahi, bhi)
     t2, t3 = two_prod(ahi, blo)
     t4, t5 = two_prod(alo, bhi)
@@ -391,12 +391,12 @@ function mul223(ahi::T, alo::T, bhi::T, blo::T) where {T<:IEEEFloat}
     return zhi, zmd, zlo
 end
 
-@inline function mul223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function mul223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
     return mul223(a[1], a[2], b[1], b[2])
 end
 
 
-function mul323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+function mul323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
   bhi, blo = b
   p0,q0 = two_prod(ahi, bhi)
@@ -431,7 +431,7 @@ end
 
 
 
-function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
+function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
   bhi, blo = b
   p0,q0 = two_prod(ahi, bhi)
@@ -464,14 +464,14 @@ function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:IEEEFloat}
   return p0,p1
 end
 
-mul233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat} =
+mul233(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
     mul323(b,a)
 
-mul232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat} =
+mul232(a::Tuple{T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat} =
     mul322(b,a)
 
 
-function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     ahi, amd, alo = a
     bhi, bmd, blo = b
 
@@ -501,7 +501,7 @@ function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
 end
 
 
-function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
+function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     ahi, amd, alo = a
     bhi, bmd, blo = b
 
@@ -529,7 +529,7 @@ function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:IEEEFloat}
 end
 
 
-function mul313(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:IEEEFloat}
+function mul313(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
   bhi = b[1]
   p0,q0 = two_prod(ahi, bhi)
@@ -555,10 +555,10 @@ function mul313(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:IEEEFloat}
   return p0,p1,s0
 end
 
-mul133(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:IEEEFloat} = mul313(b, a)
+mul133(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:AbstractFloat} = mul313(b, a)
 
 
-function mul312(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:IEEEFloat}
+function mul312(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:AbstractFloat}
   ahi, amd, alo = a
   bhi = b[1]
   p0,q0 = two_prod(ahi, bhi)
@@ -584,10 +584,10 @@ function mul312(a::Tuple{T,T,T}, b::Tuple{T}) where {T<:IEEEFloat}
 end
 
 
-mul132(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:IEEEFloat} = mul312(b, a)
+mul132(a::NTuple{1,T}, b::NTuple{3,T}) where {T<:AbstractFloat} = mul312(b, a)
 
 
-function muladd222(a::Tuple{T,T}, b::Tuple{T,T}, c::Tuple{T,T}) where {T<:IEEEFloat}
+function muladd222(a::Tuple{T,T}, b::Tuple{T,T}, c::Tuple{T,T}) where {T<:AbstractFloat}
     m = mul223(a, b)
     hi, lo = add322(m, c)
     return hi, lo

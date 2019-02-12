@@ -1,4 +1,4 @@
-function sinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function sinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 0 && return -sinh(-x)
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
@@ -8,7 +8,7 @@ function sinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return z
 end
 
-function cosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function cosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 0 && return cosh(-x)
     iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
@@ -18,11 +18,11 @@ function cosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return z
 end
 
-function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return sinh(x) / cosh(x)
 end
 #=
-function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 0 && return -tanh(-x)
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
@@ -33,11 +33,11 @@ function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 =#
 
-csch(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+csch(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     inv(sinh(x))
 
-sech(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+sech(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     inv(cosh(x))
 
-coth(x::DoubleFloat{T}) where {T<:IEEEFloat} =
+coth(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     inv(tanh(x))

@@ -1,5 +1,5 @@
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
-@inline function add_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function add_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_sum(xhi, yhi)
@@ -13,7 +13,7 @@ end
 
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 # reworked for subtraction
-@inline function sub_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function sub_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_diff(xhi, yhi)
@@ -26,7 +26,7 @@ end
 end
 
 # Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
-@inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_prod(xhi, yhi)
@@ -40,7 +40,7 @@ end
 
 #=
 # reltime 60
-@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     yinv = inv_dd_dd(y)
     hi, lo = mul_dddd_dd(x, yinv)
     return hi, lo
@@ -48,7 +48,7 @@ end
 =#
 # reltime 107
 
-@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:AbstractFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi
@@ -61,7 +61,7 @@ end
 # reltime 40
 
 
-@inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:AbstractFloat
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi

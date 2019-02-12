@@ -3,7 +3,7 @@
 
 A more performant version of `a * b` where a, b are matrices
 """
-function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:IEEEFloat}
+function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows
@@ -27,7 +27,7 @@ function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where
 end
 
 
-function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:IEEEFloat}
+function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows
@@ -51,7 +51,7 @@ function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:IEEEFloa
 end
 
 
-function Base.:(*)(a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:IEEEFloat}
+function Base.:(*)(a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows
@@ -78,7 +78,7 @@ end
     mul!(c, a, b)
 A more performant version of `c = a * b` where a, b, c are matrices
 """
-function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:IEEEFloat}
+function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows
@@ -102,7 +102,7 @@ function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},
 end
 
 
-function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:IEEEFloat}
+function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows
@@ -126,7 +126,7 @@ function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},
 end
 
 
-function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:IEEEFloat}
+function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:AbstractFloat}
     arows, acols = size(a)
     brows, bcols = size(b)
     if  acols != brows

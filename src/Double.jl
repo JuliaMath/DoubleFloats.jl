@@ -80,7 +80,7 @@ Convert a tuple `x` of `Float16`s to a `Double16`.
 @inline Double64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
 @inline Double32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
 @inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
-@inline DoubleFloat(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2])
+@inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
 """
     Double64(x::T) where {T <: IEEEFloat}
@@ -192,8 +192,8 @@ DoubleFloat(x::Float16) = Double16(x, zero(Float16))
 
 precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
-eltype(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = T
-eltype(x::DoubleFloat{T}) where {T<:IEEEFloat} = T
+eltype(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = T
+eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb

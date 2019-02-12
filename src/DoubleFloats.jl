@@ -7,7 +7,7 @@ exported types: `Double64`, `Double32`, `Double16`
 """
 module DoubleFloats
 
-abstract type MultipartFloat <: IEEEFloat end
+abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
        Double64, Double32, Double16,
