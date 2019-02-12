@@ -13,7 +13,7 @@ end
     @test prevfloat(Double32(-10),3) < prevfloat(Double32(-10),2)
 end
 
-@testset "Exponential functions"  begin
+@testset "power functions"  begin
     @test Double64(10.0)^0 == Double64(1.0)
     @test Double64(10.0)^1 == Double64(10.0)
     @test_throws DomainError Double64(0.0)^0
