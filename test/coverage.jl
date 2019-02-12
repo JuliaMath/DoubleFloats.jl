@@ -31,6 +31,8 @@ end # convert
     @test five == T(BigFloat(i5))
     @test five == T(BigInt(i5))
     
+    @test five == T(five)
+    @test five == T(T(five))
 end
 
 @testset "maxintfloat $T" for T in (Double16, Double32, Double64)
