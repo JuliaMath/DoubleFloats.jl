@@ -6,6 +6,8 @@ const sixteenthpi = Double64(0.19634954084936207, 7.654042494670958e-18)
 const thirtysecondpi = Double64(0.09817477042468103, 3.827021247335479e-18)
 const threesixteenthpi = Double64(0.5890486225480862, 2.296212748401287e-17)
 
+atanxy(x::T, y::T) where {T<:Real} = atan(y, x)
+
 #=
      sin(a) from the Taylor series.
      Assumes |a| <= pi/32.
