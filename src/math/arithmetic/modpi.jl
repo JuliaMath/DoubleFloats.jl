@@ -97,7 +97,7 @@ function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return mod2pi_neg(x)
     x < twopi_d64 && return x
     w1 = mul323(inv_pi_2o1_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sumof3(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
     y = mul322(pi_2o1_t64, w2)
     z = Double64(y)
     return z
