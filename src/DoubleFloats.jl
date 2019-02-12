@@ -64,6 +64,11 @@ include("Double.jl")   # Double64, Double32, Double16
 include("math/errorfree.jl")
 include("math/leasterror.jl")
 
+include("doubletriple/double.jl")
+include("doubletriple/double_consts.jl")
+include("doubletriple/triple.jl")
+include("doubletriple/triple_consts.jl")
+include("doubletriple/triple_pi.jl")
 
 include("type/constructors.jl")
 include("type/promote.jl")
@@ -75,11 +80,6 @@ include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
 
-include("doubletriple/double.jl")
-include("doubletriple/double_consts.jl")
-include("doubletriple/triple.jl")
-include("doubletriple/triple_consts.jl")
-include("doubletriple/triple_pi.jl")
 
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
