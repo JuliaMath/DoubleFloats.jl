@@ -9,7 +9,10 @@ end
 
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
-    return Complex{DoubleFloat{T}}(exp_real(rea, ima), exp_imag(rea, ima))
+    erea = exp(rea)
+    rea = erea * cos(ima)
+    ima = erea * sin(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
