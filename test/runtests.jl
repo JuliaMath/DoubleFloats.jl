@@ -6,6 +6,7 @@ phi = Base.MathConstants.golden
 
 include("specialvalues.jl")
 include("compare.jl")
+include("promote.jl")
 
 include("arithmetic.jl")
 include("functions.jl")
