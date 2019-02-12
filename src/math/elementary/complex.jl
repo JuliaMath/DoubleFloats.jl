@@ -226,4 +226,4 @@ end
 
 # above is done
 
-tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
+
