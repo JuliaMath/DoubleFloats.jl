@@ -4,10 +4,12 @@ using Test
 using Random
 phi = Base.MathConstants.golden
 
-include("matmul.jl")
 include("specialvalues.jl")
+include("compare.jl")
+
 include("arithmetic.jl")
 include("functions.jl")
+include("matmul.jl")
 
 include("concrete_accuracy.jl")
 include("function_accuracy.jl")
