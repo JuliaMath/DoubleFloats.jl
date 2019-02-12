@@ -55,7 +55,8 @@ import Base: hash, promote_type, promote_rule, convert,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
 
-# import LinearAlgebra: normalize
+import LinearAlgebra: mul!
+
 using Random
 
 include("Double.jl")   # Double64, Double32, Double16
