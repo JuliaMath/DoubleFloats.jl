@@ -24,7 +24,13 @@ end
 
 function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
-    rea, ima =  sin(rea) * cosh(ima), cos(rea) * sinh(ima)
+    rea, ima = sin(rea) * cosh(ima), cos(rea) * sinh(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+function cos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    rea, ima = cos(rea) * cosh(ima), -sin(rea) * sinh(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
