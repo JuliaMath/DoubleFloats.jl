@@ -34,7 +34,15 @@ function cos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
-tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sin(x) / cos(x)
+function tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = 2*real(x), 2*imag(x)
+    den = cos(rea) + cosh(ima)
+    rea = sin(rea) / den
+    ima = sinh(ima) / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
