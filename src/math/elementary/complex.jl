@@ -2,6 +2,8 @@
      return x.re, x.im
 end
 
+square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
+
 # development from functions.wolfram.com
 
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
