@@ -253,18 +253,12 @@ function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t17, t19)
 end
 
-# !!FIXME!!
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
-    t2 = square(rea + 1)
-    t3 = square(ima)
-    t6 = square(1 - rea)
-    t10 = inv((t6 + t3) * (t2 + t3))
-    t10 = log(t10)/4
-    t12 = square(rea)
-    t17 = atan(2 / (-t3 - t12 + 1) * ima)
-    t17 = (t17*0.5) + pio2(DoubleFloat{T})
-    return Complex{DoubleFloat{T}}(t10, t17)
+    ima2 = square(ima)
+    realpart = (log(square(rea + 1) + ima2) - log(square(rea) - 2*rea + ima2 + 1)) * 0.25 
+    imagpart = (atanxy(1 + rea, ima) - atanxy(1 - rea, -ima)) * 0.5 
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
 function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
@@ -318,9 +312,18 @@ function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t34, t45)
 end
 
-#!!FIXME!!!
 function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
-    return Complex{DoubleFloat{T}}(rea, ima)
+    rea2 = square(rea)
+    ima2 = square(ima)
+    den = rea2 + ima2
+    num = den + 1
+    num1 = num + 2*rea
+    num2 = num - 2*rea
+    realpart = (log(num1/den) - log(num2/den)) * 0.25
+    num1 = rea / den
+    num2 = ima / den
+    imagpart = (atanxy(num1 + 1, -num2) - atanxy(1 - num1, num2)) * 0.5
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
