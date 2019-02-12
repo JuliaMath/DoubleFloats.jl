@@ -225,7 +225,7 @@ function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t5 = square(t3 - 1) ^ 2
     t10 = (t2 + t5 + 2 * (t3 + 1) * t1)
     t10 = sqrt(sqrt(t10))
-    t14 = arctanxy(-t3 + t1 + 1, 2 * ima * rea)
+    t14 = atanxy(-t3 + t1 + 1, 2 * ima * rea)
     t15 = t14 / 2
     t16 = cos(t15)
     t18 = t16 * t10 + rea
@@ -234,7 +234,7 @@ function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t22 = t20 * t10 + ima
     t23 = square(t22)
     t25 = log(t19 + t23) / 2
-    t27 = arctanxy(t18, t22)
+    t27 = atanxy(t18, t22)
     return Complex{DoubleFloat{T}}(t25, t27)
 end
 
@@ -260,7 +260,7 @@ function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t10 = inv((t6 + t3) * (t2 + t3))
     t10 = log(t10)/4
     t12 = square(rea)
-    t17 = arctan(2 / (-t3 - t12 + 1) * ima)
+    t17 = atan(2 / (-t3 - t12 + 1) * ima)
     t17 = (t17*0.5) + pio2(DoubleFloat{T})
     return Complex{DoubleFloat{T}}(t10, t17)
 end
@@ -303,7 +303,7 @@ function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t14 = sqrt(t13)
     t17 = sqrt(inv(t14 * t7))
     t20 = inv(t13)
-    t24 = arctanxy(-t20 * (t1 + t2 - 1), -2 * t20 * ima)
+    t24 = atanxy(-t20 * (t1 + t2 - 1), -2 * t20 * ima)
     t25 = t24 / 2
     t26 = cos(t25)
     t28 = t17 * ima
@@ -312,7 +312,7 @@ function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t34 = (2 * t26 * t17 * t8 + t11 * t7 - 2 * t30 + 1)
     t34 = log(t32 * t4) / 2
     t37 = t17 * (t1 + t2 + rea)
-    t45 = arctanxy((t26 * t37 + rea + t30) * t4, -(t26 * t28 - t29 * t37 + ima) * t4)
+    t45 = atanxy((t26 * t37 + rea + t30) * t4, -(t26 * t28 - t29 * t37 + ima) * t4)
     return Complex{DoubleFloat{T}}(t34, t45)
 end
 
