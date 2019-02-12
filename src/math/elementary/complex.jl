@@ -42,6 +42,15 @@ function tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+function csc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    den = cos(2*rea) - cosh(2*ima)
+    rea, ima = 2*sin(rea)*cosh(ima), 2*cos(rea)*sinh(ima)
+    rea = -rea / den 
+    ima = ima / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
 
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
