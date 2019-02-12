@@ -1,7 +1,11 @@
+@inline function reim(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+     return x.re, x.im
+end
+
 # development from functions.wolfram.com
 
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     fourthroot = sqrt(hypot(rea, ima))
     halfatan = atan(rea, ima) * 0.5
     rea = fourthroot * cos(halfatan)
@@ -10,7 +14,7 @@ function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     erea = exp(rea)
     rea = erea * cos(ima)
     ima = erea * sin(ima)
@@ -18,20 +22,20 @@ function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     rea = log(square(x) + square(y)) * 0.5
     ima = atan(rea, ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     rea, ima = sin(rea) * cosh(ima), cos(rea) * sinh(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function cos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     rea, ima = cos(rea) * cosh(ima), -sin(rea) * sinh(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
@@ -45,7 +49,7 @@ function tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function csc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     den = cos(2*rea) - cosh(2*ima)
     rea, ima = 2*(sin(rea)*cosh(ima)), 2*(cos(rea)*sinh(ima))
     rea = -rea / den 
@@ -54,7 +58,7 @@ function csc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function sec(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     den = cos(2*rea) + cosh(2*ima)
     rea, ima = 2*(cos(rea)*cosh(ima)), 2*(sin(rea)*sinh(ima))
     rea = rea / den 
@@ -73,13 +77,13 @@ end
 
 
 function sinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     rea, ima = sinh(rea) * cos(ima), cosh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function cosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     rea, ima = cosh(rea) * cos(ima), sinh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
@@ -93,7 +97,7 @@ function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     den = cos(2*ima) - cosh(2*rea)
     rea, ima = 2*(sinh(rea)*cos(ima)), 2*(cosh(rea)*sin(ima))
     rea = -rea / den 
@@ -102,7 +106,7 @@ function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     den = cos(2*ima) + cosh(2*rea)
     rea, ima = 2*(cos(ima)*cosh(rea)), 2*(sin(ima)*sinh(rea))
     rea = rea / den 
@@ -111,7 +115,7 @@ function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = 2*real(x), 2*imag(x)
+    rea, ima = reim(x)
     den = cos(ima) - cosh(rea)
     rea = -sinh(rea) / den
     ima = sin(ima) / den
@@ -119,10 +123,32 @@ function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 
+function asin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    xp1sq = square(rea + 1)
+    xm1sq = square(rea - 1)
+    ysq   = square(ima)
+    xp1py = sqrt(xp1sq + ysq)
+    xm1py = sqrt(xm1sq + ysq)
+    rea = asin((xp1py - xm1py) * 0.5)
+    x = (xm1py + xp1py) * 0.5
+    ima = sign(ima) * log(x + sqrt(square(x) - 1))
+   return Complex{DoubleFloat{T}}(rea, ima)
+end
 
-# above is done
+function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    xp1sq = square(rea + 1)
+    xm1sq = square(rea - 1)
+    ysq   = square(ima)
+    xp1py = sqrt(xp1sq + ysq)
+    xm1py = sqrt(xm1sq + ysq)
+    rea = acos((xp1py - xm1py) * 0.5)
+    x = (xm1py + xp1py) * 0.5
+    ima = -sign(ima) * log(x + sqrt(square(x) - 1))
+   return Complex{DoubleFloat{T}}(rea, ima)
+end
 
-tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
@@ -150,3 +176,7 @@ function atan_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     result = log(result) * 0.25
     return result
 end
+
+# above is done
+
+tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
