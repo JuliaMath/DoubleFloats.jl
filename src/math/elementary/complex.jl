@@ -72,6 +72,55 @@ end
 
 
 
+function sinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    rea, ima = sinh(rea) * cos(ima), cosh(rea) * sin(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+function cosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    rea, ima = cosh(rea) * cos(ima), sinh(rea) * sin(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = 2*real(x), 2*imag(x)
+    den = cosh(rea) + cos(ima)
+    rea = sinh(rea) / den
+    ima = sin(ima) / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    den = cos(2*ima) - cosh(2*rea)
+    rea, ima = 2*(sinh(rea)*cos(ima)), 2*(cosh(rea)*sin(ima))
+    rea = -rea / den 
+    ima = ima / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+#
+function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    den = cos(2*rea) + cosh(2*ima)
+    rea, ima = 2*(cos(rea)*cosh(ima)), 2*(sin(rea)*sinh(ima))
+    rea = rea / den 
+    ima = ima / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = 2*real(x), 2*imag(x)
+    den = cos(rea) - cosh(ima)
+    rea = -sin(rea) / den
+    ima = sinh(ima) / den
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
+
+
 
 
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
