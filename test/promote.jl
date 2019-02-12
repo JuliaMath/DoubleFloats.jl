@@ -14,5 +14,4 @@
   @test promote_type(Double64, Double32) === Double64
   @test promote_type(Double64, Double16) === Double64
   @test promote_type(Double32, Double16) === Double32
-
 end  
