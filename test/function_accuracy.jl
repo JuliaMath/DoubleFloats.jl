@@ -2,7 +2,7 @@ setprecision(Base.BigFloat, 512)
 Random.seed!(1602);
 const nrands = 1_000 # tested with nrands = 1_000
 
-function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:IEEEFloat, T2<:IEEEFloat}
+function excise_nans_infs(v1::Vector{T1}, v2::Vector{T2}) where {T1<:AbstractFloat, T2<:AbstractFloat}
     n1 = length(v1)
     n2 = length(v2)
     n1 == n2 || throw(ErrorException("vectors must be of the same length"))
