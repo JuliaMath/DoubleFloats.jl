@@ -241,6 +241,35 @@ function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t35, t44)
 end
 
+function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    t1 = square(rea)
+    t2 = square(t1)
+    t3 = square(ima)
+    t5 = square(t3 - 1) ^ 2
+    t10 = (t2 + t5 + 2 * (t3 + 1) * t1)
+    t10 = sqrt(sqrt(t10))
+    t14 = arctanxy(-t3 + t1 + 1, 2 * ima * rea)
+    t15 = t14 / 2
+    t16 = cos(t15)
+    t18 = t16 * t10 + rea
+    t19 = square(t18)
+    t20 = sin(t15)
+    t22 = t20 * t10 + ima
+    t23 = square(t22)
+    t25 = log(t19 + t23) / 2
+    t27 = arctanxy(t18, t22)
+    return Complex{DoubleFloat{T}}(t25, t27)
+end
+
+function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+end
+
+function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+end
+
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     t1 = square(ima)
