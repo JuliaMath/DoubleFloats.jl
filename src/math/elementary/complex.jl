@@ -7,6 +7,14 @@ function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    erea = exp(rea)
+    rea = erea * cos(ima)
+    ima = erea * sin(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
 tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sin(x) / cos(x)
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
