@@ -37,14 +37,14 @@ const inv_pi_1o64_d64  = ( 20.37183271576260400, -1.2594353072116790e-15)
 const inv_pi_1o128_d64 = ( 40.74366543152521000, -2.5188706144233580e-15)
 const inv_pi_1o256_d64 = ( 81.48733086305042000, -5.0377412288467160e-15)
 
-const pi_1o1_d32 = HILO(Double{Float32}(Double{Float64}(pi_1o1_d64)))
-const pi_1o1_d16 = HILO(Double{Float16}(Double{Float64}(pi_1o1_d64)))
+const pi_1o1_d32 = HILO(DoubleFloat{Float32}(DoubleFloat{Float64}(pi_1o1_d64)))
+const pi_1o1_d16 = HILO(DoubleFloat{Float16}(DoubleFloat{Float64}(pi_1o1_d64)))
 
 const pi_1o2_d32 = (Float32(1.5707964), Float32(-4.371139e-8))
 const pi_1o2_d16 = (Float16(1.57), Float16(0.0004838))
 
-const pi_1o4_d32 = HILO(Double{Float32}(Double{Float64}(pi_1o4_d64)))
-const pi_1o4_d16 = HILO(Double{Float16}(Double{Float64}(pi_1o4_d64)))
+const pi_1o4_d32 = HILO(DoubleFloat{Float32}(DoubleFloat{Float64}(pi_1o4_d64)))
+const pi_1o4_d16 = HILO(DoubleFloat{Float16}(DoubleFloat{Float64}(pi_1o4_d64)))
 
 pio1(::Type{Double64}) = Double64(pi_1o1_d64)
 pio1(::Type{Double32}) = Double32(pi_1o1_d32)
