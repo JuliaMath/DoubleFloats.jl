@@ -11,6 +11,7 @@ include("promote.jl")
 include("arithmetic.jl")
 include("functions.jl")
 include("matmul.jl")
+include("complex.jl")
 
 include("concrete_accuracy.jl")
 include("function_accuracy.jl")
