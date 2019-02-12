@@ -264,6 +264,16 @@ end
 
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
+    t2 = (rea - 1) ^ 2
+    t3 = ima ^ 2
+    t5 = sqrt(t2 + t3)
+    t8 = (rea + 1) ^ 2
+    t10 = sqrt(t8 + t3)
+    t15 = sqrt((t5 + t10) ^ 2 / 4 - 1)
+    t17 = log(t5 / 2 + t10 / 2 + t15)
+    t19 = acos(-t10 / 2 + t5 / 2)
+    t19 = pio1(DoubleFloat{T}) - t19
+    return Complex{DoubleFloat{T}}(t17, t19)
 end
 
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
