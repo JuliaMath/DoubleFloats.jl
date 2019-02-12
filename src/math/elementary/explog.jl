@@ -1,4 +1,4 @@
-function exp_taylor(a::DoubleFloat{T}) where {T<:AbstractFloat}
+function exp_taylor(a::DoubleFloat{T}) where {T<:IEEEFloat}
   x = a
   x2 = x*x
   x3 = x*x2
@@ -24,10 +24,10 @@ function exp_taylor(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-@inline exp_zero_half(a::DoubleFloat{T}) where {T<:AbstractFloat} =
+@inline exp_zero_half(a::DoubleFloat{T}) where {T<:IEEEFloat} =
     exp_taylor(a)
 
-@inline function exp_half_one(a::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function exp_half_one(a::DoubleFloat{T}) where {T<:IEEEFloat}
     z = mul_by_half(a)
     z = exp_zero_half(z)
     z = square(z)
@@ -35,7 +35,7 @@ end
 end
 
 
-function mul_by_half(r::DoubleFloat{T}) where {T<:AbstractFloat}
+function mul_by_half(r::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, xphi = frexp(HI(r))
     frlo, xplo = frexp(LO(r))
     xphi -= 1
@@ -45,7 +45,7 @@ function mul_by_half(r::DoubleFloat{T}) where {T<:AbstractFloat}
     return DoubleFloat{T}(hi, lo)
 end
 
-function mul_by_two(r::DoubleFloat{T}) where {T<:AbstractFloat}
+function mul_by_two(r::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, xphi = frexp(HI(r))
     frlo, xplo = frexp(LO(r))
     xphi += 1
@@ -55,7 +55,7 @@ function mul_by_two(r::DoubleFloat{T}) where {T<:AbstractFloat}
     return DoubleFloat{T}(hi, lo)
 end
 
-function mul_pow2(r::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
+function mul_pow2(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     frhi, xphi = frexp(HI(r))
     frlo, xplo = frexp(LO(r))
     xphi += n
@@ -65,12 +65,12 @@ function mul_pow2(r::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     return DoubleFloat{T}(hi, lo)
 end
 
-function mul_pwr2(r::DoubleFloat{T}, n::Real) where {T<:AbstractFloat}
+function mul_pwr2(r::DoubleFloat{T}, n::Real) where {T<:IEEEFloat}
     m = 2.0^n
     return DoubleFloat{T}(HI(r)*m, LO(r)*m)
 end
 
-function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
+function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     if (n == 0)
         iszero(r) && throw(DomainError("0^0"))
         return one(DoubleFloat{T})
@@ -99,7 +99,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:AbstractFloat}
     return s
 end
 
-function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:AbstractFloat}
+function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:IEEEFloat}
    if isinteger(n)
       return r^Int(n)
    else
@@ -107,7 +107,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:AbstractFloat
    end
 end
 
-function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:AbstractFloat}
+function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:IEEEFloat}
    if isinteger(n)
       return r^Int(n)
    else
@@ -115,7 +115,7 @@ function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:AbstractFloat}
    end
 end
 
-function Base.Math.exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
+function Base.Math.exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
   if iszero(HI(a))
     return one(DoubleFloat{T})
   elseif isone(abs(HI(a))) && iszero(LO(a))
@@ -135,7 +135,7 @@ function Base.Math.exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
   return calc_exp(a)
 end
 
-function calc_exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
+function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
   is_neg = signbit(HI(a))
   xabs = is_neg ? -a : a
   xintpart = modf(xabs)[2]
@@ -181,7 +181,7 @@ end
 #=
 # ratio of polys from
 # https://github.com/sukop/doubledouble/blob/master/doubledouble.py
-function calc_exp_frac(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function calc_exp_frac(x::DoubleFloat{T}) where {T<:IEEEFloat}
   u = (((((((((((x +
                    156.0)*x + 12012.0)*x +
                    600600.0)*x + 21621600.0)*x +
@@ -203,7 +203,7 @@ end
 
 
 
-function Base.Math.expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
+function Base.Math.expm1(a::DoubleFloat{T}) where {T<:IEEEFloat}
    u = exp(a)
    if (u == one(DoubleFloat{T}))
        x
@@ -214,7 +214,7 @@ function Base.Math.expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
    end
 end
 
-function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function Base.Math.log(x::DoubleFloat{T}) where {T<:IEEEFloat}
     x === zero(DoubleFloat{T}) && return neginf(DoubleFloat{T})
     y = DoubleFloat(log(HI(x)), zero(T))
     z = exp(y)
@@ -225,7 +225,7 @@ function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-function Base.Math.log1p(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function Base.Math.log1p(x::DoubleFloat{T})  where {T<:IEEEFloat}
     u = 1.0 + x
     if u == one(DoubleFloat{T})
         x
@@ -244,10 +244,10 @@ logten(::Type{Float32}) = Double32(2.3025851, -3.1975436e-8)
 logtwo(::Type{Float16}) = Double16(0.6934, -0.0002122)
 logten(::Type{Float16}) = Double16(2.303, -0.0001493)
 
-function Base.Math.log2(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function Base.Math.log2(x::DoubleFloat{T})  where {T<:IEEEFloat}
     log(x) / logtwo(T)
 end
 
-function Base.Math.log10(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function Base.Math.log10(x::DoubleFloat{T})  where {T<:IEEEFloat}
     log(x) / logten(T)
 end

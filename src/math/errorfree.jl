@@ -1,7 +1,7 @@
 #=
 this is a canonical implementation
 the implemented version benchmarked slightly better under a variety of inputs (julia v1.0.1)
-@inline function two_sum(a::T, b::T) where {T<:AbstractFloat}
+@inline function two_sum(a::T, b::T) where {T<:IEEEFloat}
     hi = a + b
     v  = hi - a
     lo = (a - (hi - v)) + (b - v)

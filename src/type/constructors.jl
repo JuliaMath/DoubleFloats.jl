@@ -8,8 +8,8 @@ Base.Int32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int32(round(BigInt, BigFloa
 Base.Int16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(round(BigInt, BigFloat(HI(x)) + BigFloat(LO(x))))
 Base.Int8(x::DoubleFloat{T}) where {T<:IEEEFloat} = Int8(round(BigInt, BigFloat(HI(x)) + BigFloat(LO(x))))
 
-@inline Base.BigFloat(x::DoubleFloat{T}) where {T<:AbstractFloat} = BigFloat(HI(x)) + BigFloat(LO(x))
-@inline Base.BigInt(x::DoubleFloat{T}) where {T<:AbstractFloat} = BigInt(BigFloat(x))
+@inline Base.BigFloat(x::DoubleFloat{T}) where {T<:IEEEFloat} = BigFloat(HI(x)) + BigFloat(LO(x))
+@inline Base.BigInt(x::DoubleFloat{T}) where {T<:IEEEFloat} = BigInt(BigFloat(x))
 
 for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16))
   @eval begin

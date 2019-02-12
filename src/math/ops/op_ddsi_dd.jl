@@ -11,7 +11,7 @@
     the precision with each next stage of the iterative process
     
 =#
-function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
+function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:IEEEFloat}
     one1 = one(T)
     hi, lo = a
     n_fp = T(n)
@@ -63,7 +63,7 @@ function rootn_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
 end
 
 
-function root5_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:AbstractFloat}
+function root5_ddsi_dd(a::Tuple{T,T}, n::Signed) where {T<:IEEEFloat}
     one1 = one(T)
     hi, lo = a
     n_fp = T(n)

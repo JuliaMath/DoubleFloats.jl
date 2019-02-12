@@ -16,7 +16,7 @@ julia> Pkg.add("DoubleFloats")
 ```
 
 
-## More Performant Than BigFloat
+## More Performant Than BigFloat(_, 2*significand_bit
 
 Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
 
@@ -123,5 +123,3 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl
 
 [issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
-
-
