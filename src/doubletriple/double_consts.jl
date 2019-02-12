@@ -44,6 +44,10 @@ pio2(::Type{Double64}) = Double64(pi_1o2_d64)
 pio2(::Type{Double32}) = Double32(pi_1o2_d32)
 pio2(::Type{Double16}) = Double16(pi_1o2_d16)
 
+pio4(::Type{Double64}) = Double64(pi_1o4_d64)
+pio4(::Type{Double32}) = Double32(pi_1o4_d32)
+pio4(::Type{Double16}) = Double16(pi_1o4_d16)
+
 # below is to be removed
 const twopi_d64  = (6.283185307179586, 2.4492935982947064e-16)
 const onepi_d64  = (3.141592653589793, 1.2246467991473532e-16)
