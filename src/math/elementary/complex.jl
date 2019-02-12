@@ -22,6 +22,12 @@ function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    rea, ima =  sin(rea) * cosh(ima), cos(rea) * sinh(ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
+
 tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sin(x) / cos(x)
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
