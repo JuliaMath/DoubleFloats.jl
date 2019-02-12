@@ -19,6 +19,10 @@ function cosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    return sinh(x) / cosh(x)
+end
+#=
+function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 0 && return -tanh(-x)
     iszero(x) && return zero(x)
     !isfinite(x) && return nan(typeof(x))
@@ -27,6 +31,7 @@ function tanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     z = (epos - eneg) / (epos + eneg)
     return z
 end
+=#
 
 csch(x::DoubleFloat{T}) where {T<:AbstractFloat} =
     inv(sinh(x))
