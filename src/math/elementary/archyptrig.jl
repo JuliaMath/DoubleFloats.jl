@@ -1,11 +1,11 @@
-function asinh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function asinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     result = abs(x)
     result = result + sqrt(square(result) + 1.0)
     result = log(result)
     return copysign(result, x)
 end
 
-function acosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function acosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     x < 1.0 && throw(DomainError("$x"))
     !isfinite(x) && return nan(typeof(x))
     result = x + sqrt(square(x) - 1.0)
@@ -13,7 +13,7 @@ function acosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return result
 end
 
-function atanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function atanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(x) > 1.0 && throw(DomainError("$x"))
     !isfinite(x) && return nan(typeof(x))
     twox = DoubleFloat{T}(x.hi+x.hi, x.lo+x.lo)
@@ -23,7 +23,7 @@ function atanh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return result
 end
 
-function acsch(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function acsch(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && return zero(DoubleFloat{T})
     isnan(x) && return nan(typeof(x))
     iszero(x) && return signbit(x) ? -DoubleFloat{T}(Inf) : DoubleFloat{T}(Inf)
@@ -33,7 +33,7 @@ function acsch(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return result
 end
 
-function asech(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function asech(x::DoubleFloat{T}) where {T<:IEEEFloat}
     iszero(x) && return inf(DoubleFloat{T})
     isone(x) && return zero(DoubleFloat{T})
     !isfinite(x) && return nan(typeof(x))
@@ -43,7 +43,7 @@ function asech(x::DoubleFloat{T}) where {T<:AbstractFloat}
     return log(result)
 end
 
-function acoth(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function acoth(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isone(x) && return inf(DoubleFloat{T})
     isone(-x) && return -inf(DoubleFloat{T})
     (-1.0 < x < 1.0) && throw(DomainError("$x"))

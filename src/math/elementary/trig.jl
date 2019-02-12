@@ -81,7 +81,7 @@ function cot_taylor(a::Double64)
 
 
 
-function index_npio32(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function index_npio32(x::DoubleFloat{T}) where {T<:IEEEFloat}
     result = 1
     while x >= npio32[result]
         result += 1
@@ -97,7 +97,7 @@ end
 
 
 
-@inline function sin_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function sin_circle(x::DoubleFloat{T}) where {T<:IEEEFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -110,7 +110,7 @@ end
     return result
 end
 
-@inline function cos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function cos_circle(x::DoubleFloat{T}) where {T<:IEEEFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -124,7 +124,7 @@ end
 end
 
 
-@inline function tan_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function tan_circle(x::DoubleFloat{T}) where {T<:IEEEFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -142,7 +142,7 @@ end
 
 
 
-function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function sincos_circle(x::DoubleFloat{T}) where {T<:IEEEFloat}
     idx = index_npio32(x)
     pipart = npio32[idx]
     rest = x - pipart
@@ -159,7 +159,7 @@ function sincos_circle(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-@inline function sin_kernel(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function sin_kernel(x::DoubleFloat{T}) where {T<:IEEEFloat}
     signbit(x) && return -sin(abs(x))
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -171,14 +171,14 @@ end
     elseif x >= halfpi
        z = cos_circle(minus_halfpi(x))
     elseif x <= thirtysecondpi
-       z = sin_taylor(x)      
+       z = sin_taylor(x)
     else
        z = sin_circle(x)
     end
     return z
 end
 
-@inline function cos_kernel(x::DoubleFloat{T}) where {T<:AbstractFloat}
+@inline function cos_kernel(x::DoubleFloat{T}) where {T<:IEEEFloat}
     signbit(x) && return cos(abs(x))
     iszero(x) && return one(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -190,19 +190,19 @@ end
     elseif x >= halfpi
        z = -sin_circle(minus_halfpi(x))
     elseif x <= thirtysecondpi
-       z = cos_taylor(x)      
+       z = cos_taylor(x)
     else
        z = cos_circle(x)
     end
     return z
 end
 
-function cos(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("cos(x) only defined for finite x"))
     return cos_kernel(x)
 end
 
-function sin(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("sin(x) only defined for finite x"))
     return sin_kernel(x)
 end
@@ -216,7 +216,7 @@ function tan(x::Double64)
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(-x)
     HI(x) <= 2.0e-12 && return x
-     
+
     y = modpi(x)                        # 0 <= y < pi
     if y >= halfpi
         y = minus_pi(y)                # -pi/2 < y < 0
@@ -274,17 +274,17 @@ function tan0qrtrpi(x::Double64)
 end
 
 
-function csc(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
     return inv(sin(x))
 end
 
-function sec(x::DoubleFloat{T}) where {T<:AbstractFloat}
-    isinf(x) && throw(DomainError("sec(x) only defined for finite x")) 
+function sec(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isinf(x) && throw(DomainError("sec(x) only defined for finite x"))
     return inv(cos(x))
 end
 
-function cot(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("cot(x) only defined for finite x"))
     abs(modpi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
     return inv(tan(x))

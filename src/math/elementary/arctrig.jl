@@ -2,7 +2,7 @@
 const k_pio2 = Double64(1.5707963267948966, 6.123233995736766e-17)
 
 
-function atan(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function atan(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return -atan(abs(x))
    y = DoubleFloat{T}(atan(x.hi))
    s, c = sin(y), cos(y)
@@ -15,9 +15,9 @@ function atan(x::DoubleFloat{T}) where {T<:AbstractFloat}
    return z
 end
 
-function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:AbstractFloat}
-   atanyx = atan(y/x) 
-   if x > 0 
+function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:IEEEFloat}
+   atanyx = atan(y/x)
+   if x > 0
       atanyx
    elseif x < 0
       if y >= 0
@@ -34,7 +34,7 @@ function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:AbstractFloat}
    end
 end
 
-function asin(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function asin(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return -asin(abs(x))
    abs(x) > 1.0 && throw(DomainError("$x"))
    y = x
@@ -43,7 +43,7 @@ function asin(x::DoubleFloat{T}) where {T<:AbstractFloat}
    return DoubleFloat{T}(z.hi+z.hi, z.lo+z.lo)
 end
 
-function acos(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function acos(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return DoubleFloat{T}(onepi - acos(abs(x)))
    abs(x) > 1.0 && throw(DomainError("$x"))
    y = x
@@ -52,10 +52,10 @@ function acos(x::DoubleFloat{T}) where {T<:AbstractFloat}
    return DoubleFloat{T}(z.hi+z.hi, z.lo+z.lo)
 end
 
-acsc(x::DoubleFloat{T}) where {T<:AbstractFloat} = asin(inv(x))
-asec(x::DoubleFloat{T}) where {T<:AbstractFloat} = acos(inv(x))
+acsc(x::DoubleFloat{T}) where {T<:IEEEFloat} = asin(inv(x))
+asec(x::DoubleFloat{T}) where {T<:IEEEFloat} = acos(inv(x))
 
-function acot(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function acot(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return DoubleFloat{T}(onepi - acot(abs(x)))
    iszero(x) && return k_pio2
    z = k_pio2 - atan(abs(x))
