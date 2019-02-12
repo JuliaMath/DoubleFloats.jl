@@ -220,7 +220,7 @@ end
 
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
    invx = inv(x)
-   result = sqrt(invx + 1) * sqrt(invx - 1) + invx
+   result = sqrt(invx + 1) * sqrt(invx - 1) - invx
    result = log(result)
    return result
 end
