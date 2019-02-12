@@ -115,7 +115,7 @@ function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
+    rea, ima = 2*real(x), 2*imag(x)
     den = cos(ima) - cosh(rea)
     rea = -sinh(rea) / den
     ima = sin(ima) / den
