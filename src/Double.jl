@@ -83,11 +83,11 @@ Convert a tuple `x` of `Float16`s to a `Double16`.
 @inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
 
 """
-    Double64(x::T) where {T <: IEEEFloat}
+    Double64(::Real)
 
 Convert `x` to an extended precision `Double64`.
 """
-@inline function Double64(x::T) where {T<:IEEEFloat}
+@inline function Double64(x::T) where {T<:Real}
     if isfinite(x)
         hi = Float64(x)
         lo = Float64(x - Float64(hi))
@@ -98,11 +98,11 @@ Convert `x` to an extended precision `Double64`.
     return Double64(hi, lo)
 end
 """
-    Double32(x::T) where {T <: IEEEFloat}
+    Double32(::Real}
 
 Convert `x` to an extended precision `Double32`.
 """
-@inline function Double32(x::T) where {T<:IEEEFloat}
+@inline function Double32(x::T) where {T<:Real}
     if isfinite(x)
         hi = Float32(x)
         lo = Float32(x - Float32(hi))
@@ -114,11 +114,11 @@ Convert `x` to an extended precision `Double32`.
 end
 
 """
-    Double16(x::T) where {T <: IEEEFloat}
+    Double16(::Real)
 
 Convert `x` to an extended precision `Double16`.
 """
-@inline function Double16(x::T) where {T<:IEEEFloat}
+@inline function Double16(x::T) where {T<:Real}
     if isfinite(x)
         hi = Float16(x)
         lo = Float16(x - Float16(hi))
