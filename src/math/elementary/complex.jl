@@ -217,30 +217,6 @@ function acot_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 
-function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(z)
-    t1 = square(ima)
-    t2 = square(rea)
-    t3 = t1 + t2
-    t4 = inv(t3)
-    t6 = square(t2)
-    t8 = square(t1 - 1)
-    t13 = square(t3)
-    t14 = inv(t13)
-    t16 = t14 * (t6 + t8 + 2 * (t1 + 1) * t2)
-    t16 = sqrt(sqrt(t16))
-    t23 = atanxy(1 + t14 * (-t1 + t2), -2 * t14 * ima * rea)
-    t24 = t23 / 2
-    t25 = cos(t24)
-    t28 = square(t4 * rea + t25 * t16)
-    t30 = sin(t24)
-    t33 = square(t4 * ima - t30 * t16)
-    t35 = log(t28 + t33)/2
-    t37 = t16 * t3
-    t44 = atanxy((t25 * t37 + rea) * t4, (t30 * t37 - ima) * t4)
-    return Complex{DoubleFloat{T}}(t35, t44)
-end
-
 function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     t1 = square(rea)
@@ -278,6 +254,32 @@ end
 
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
+end
+
+
+
+function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(z)
+    t1 = square(ima)
+    t2 = square(rea)
+    t3 = t1 + t2
+    t4 = inv(t3)
+    t6 = square(t2)
+    t8 = square(t1 - 1)
+    t13 = square(t3)
+    t14 = inv(t13)
+    t16 = t14 * (t6 + t8 + 2 * (t1 + 1) * t2)
+    t16 = sqrt(sqrt(t16))
+    t23 = atanxy(1 + t14 * (-t1 + t2), -2 * t14 * ima * rea)
+    t24 = t23 / 2
+    t25 = cos(t24)
+    t28 = square(t4 * rea + t25 * t16)
+    t30 = sin(t24)
+    t33 = square(t4 * ima - t30 * t16)
+    t35 = log(t28 + t33)/2
+    t37 = t16 * t3
+    t44 = atanxy((t25 * t37 + rea) * t4, (t30 * t37 - ima) * t4)
+    return Complex{DoubleFloat{T}}(t35, t44)
 end
 
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
