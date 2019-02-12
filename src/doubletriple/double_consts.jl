@@ -43,8 +43,8 @@ const pi_1o1_d16 = HILO(Double16(pi))
 const pi_1o2_d32 = (Float32(1.5707964), Float32(-4.371139e-8))
 const pi_1o2_d16 = (Float16(1.57), Float16(0.0004838))
 
-const pi_1o4_d32 = (Float32(1.5707964), Float32(-4.371139e-8))
-const pi_1o4_d16 = (Float16(1.57), Float16(0.0004838))
+const pi_1o4_d32 = (0.7853982f0, -2.1855694f-8)
+const pi_1o4_d16 = (Float16(0.785), Float16(0.0002419))
 
 pio1(::Type{Double64}) = Double64(pi_1o1_d64)
 pio1(::Type{Double32}) = Double32(pi_1o1_d32)
