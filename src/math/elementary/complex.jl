@@ -101,27 +101,26 @@ function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
-#
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
-    den = cos(2*rea) + cosh(2*ima)
-    rea, ima = 2*(cos(rea)*cosh(ima)), 2*(sin(rea)*sinh(ima))
+    den = cos(2*ima) + cosh(2*rea)
+    rea, ima = 2*(cos(ima)*cosh(rea)), 2*(sin(ima)*sinh(rea))
     rea = rea / den 
-    ima = ima / den
+    ima = -ima / den
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = 2*real(x), 2*imag(x)
-    den = cos(rea) - cosh(ima)
-    rea = -sin(rea) / den
-    ima = sinh(ima) / den
+    den = cos(ima) - cosh(rea)
+    rea = -sinh(rea) / den
+    ima = sin(ima) / den
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 
 
-
+# above is done
 
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
 
