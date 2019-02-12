@@ -1,8 +1,3 @@
-function inv(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
-    return Complex{DoubleFloat{T}}(inv_real(rea, ima), inv_imag(rea, ima))
-end
-
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
     return Complex{DoubleFloat{T}}(sqrt_real(rea, ima), sqrt_imag(rea, ima))
