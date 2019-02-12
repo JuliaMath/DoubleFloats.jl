@@ -10,7 +10,7 @@ end
 
 function cosh(x::DoubleFloat{T}) where {T<:AbstractFloat}
     x < 0 && return cosh(-x)
-    iszero(x) && return zero(x)
+    iszero(x) && return one(x)
     !isfinite(x) && return nan(typeof(x))
 
     y = exp(x) + exp(-x)
