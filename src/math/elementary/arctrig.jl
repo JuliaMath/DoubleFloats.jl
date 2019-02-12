@@ -1,9 +1,10 @@
-
 const k_pio2 = Double64(1.5707963267948966, 6.123233995736766e-17)
 
 
 function atan(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return -atan(abs(x))
+   isinf(x) && return DoubleFloat{T}(pi)/2
+   iszero(x) && return x
    y = DoubleFloat{T}(atan(x.hi))
    s, c = sin(y), cos(y)
    c2 = square(c)
