@@ -18,7 +18,7 @@ end
 
 function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:IEEEFloat}
    iszero(y) && iszero(x) && return x
-   iszero(x) && return copysign(pio2(DoubleFloat{T}}), y)
+   iszero(x) && return copysign(pio2(DoubleFloat{T}), y)
    iszero(y) && return signbit(x) ? pio1(DoubleFloat{T}) : zero(DoubleFloat{T})
    atanyx = atan(y/x)
    if x > 0
