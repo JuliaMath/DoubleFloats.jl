@@ -254,9 +254,16 @@ end
 
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
+    t2 = square(rea + 1)
+    t3 = square(ima)
+    t6 = square(1 - rea)
+    t10 = inv((t6 + t3) * (t2 + t3))
+    t10 = log(t10)/4
+    t12 = square(rea)
+    t17 = arctan(2 / (-t3 - t12 + 1) * ima)
+    t17 = (t17*0.5) + pio2(DoubleFloat{T})
+    return Complex{DoubleFloat{T}}(t10, t17)
 end
-
-
 
 function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(z)
