@@ -151,7 +151,7 @@ function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
-
+# !!FIXME!!
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     return Complex{DoubleFloat{T}}(atan_real(rea, ima), atan_imag(rea, ima))
@@ -187,6 +187,7 @@ function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return acos(inv(z))
 end
 
+# !!FIXME!!
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     return Complex{DoubleFloat{T}}(acot_real(rea, ima), acot_imag(rea, ima))
@@ -252,6 +253,7 @@ function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t17, t19)
 end
 
+# !!FIXME!!
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     t2 = square(rea + 1)
@@ -309,13 +311,16 @@ function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t28 = t17 * ima
     t29 = sin(t25)
     t30 = t29 * t28
-    t34 = (2 * t26 * t17 * t8 + t11 * t7 - 2 * t30 + 1)
+    t32 = (2 * t26 * t17 * t8 + t11 * t7 - 2 * t30 + 1)
     t34 = log(t32 * t4) / 2
     t37 = t17 * (t1 + t2 + rea)
     t45 = atanxy((t26 * t37 + rea + t30) * t4, -(t26 * t28 - t29 * t37 + ima) * t4)
     return Complex{DoubleFloat{T}}(t34, t45)
 end
 
-# above is done
-
+#!!FIXME!!!
+function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
 
