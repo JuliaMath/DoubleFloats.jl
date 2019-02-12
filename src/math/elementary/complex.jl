@@ -216,6 +216,8 @@ function acot_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     return result
 end
 
+
+
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
    invx = inv(x)
    result = sqrt(invx + 1) * sqrt(invx - 1) + invx
