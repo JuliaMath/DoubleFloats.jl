@@ -180,14 +180,11 @@ function atan_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function acsc(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    im1 = zero(DoubleFloat{T}) + im
-    return -(im1 * log((im1/z) + sqrt(1 - inv(z^2))))
+    return asin(inv(z))
 end
 
 function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    im1 = zero(DoubleFloat{T}) + im
-    p = pio2(DoubleFloat{T})
-    return p + (im1 * log((im1/z) + sqrt(1 - inv(z^2))))
+    return acos(inv(z))
 end
 
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
