@@ -97,6 +97,7 @@ include("math/elementary/arctrig.jl")
 include("math/elementary/hyptrig.jl")
 include("math/elementary/archyptrig.jl")
 include("math/elementary/templated.jl")
+include("math/elementary/complex.jl")
 
 include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
