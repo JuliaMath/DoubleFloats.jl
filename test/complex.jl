@@ -26,9 +26,9 @@ d1i = Complex(Double64(0), Double64(1))
   @test isapprox(acos(f0), Complex{Float64}(acos(d0)))
   @test isapprox(atan(f0), Complex{Float64}(atan(d0)))
 #=
-  @test isapprox(acsc(f0), Complex{Float64}(acsc(d0)))
-  @test isapprox(asec(f0), Complex{Float64}(asec(d0)))
-  @test isapprox(acot(f0), Complex{Float64}(acot(d0)))
+  @test isapprox(acsc(f1), Complex{Float64}(acsc(d1)))
+  @test isapprox(asec(f1), Complex{Float64}(asec(d1)))
+  @test isapprox(acot(f11), Complex{Float64}(acot(d11)))
 
   @test isapprox(sinh(f0), Complex{Float64}(sinh(d0)))
   @test isapprox(cosh(f0), Complex{Float64}(cosh(d0)))
