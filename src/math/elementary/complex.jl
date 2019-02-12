@@ -26,7 +26,7 @@ end
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea = log(square(rea) + square(ima)) * 0.5
-    ima = atan(rea, ima)
+    ima = atan(real(x), ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
