@@ -36,8 +36,8 @@ function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function asin(x::DoubleFloat{T}) where {T<:IEEEFloat}
-   signbit(x) && return -asin(abs(x))
    abs(x) > 1.0 && throw(DomainError("$x"))
+   signbit(x) && return -asin(abs(x))
    y = x
    y = y / (1.0 + sqrt(1.0 - square(y)))
    z = atan(y)
@@ -45,8 +45,8 @@ function asin(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function acos(x::DoubleFloat{T}) where {T<:IEEEFloat}
-   signbit(x) && return DoubleFloat{T}(onepi - acos(abs(x)))
    abs(x) > 1.0 && throw(DomainError("$x"))
+   signbit(x) && return DoubleFloat{T}(onepi - acos(abs(x)))
    y = x
    y = sqrt(1.0 - square(y)) / (1.0 + y)
    z = atan(y)
