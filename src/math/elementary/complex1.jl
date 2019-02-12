@@ -1,6 +1,10 @@
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = real(x), imag(x)
-    return Complex{DoubleFloat{T}}(sqrt_real(rea, ima), sqrt_imag(rea, ima))
+    fourthroot = sqrt(hypot(rea, ima))
+    halfatan = atan(rea, ima) * 0.5
+    rea = fourthroot * cos(halfatan)
+    ima = fourthroot * sin(halfatan)
+    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
