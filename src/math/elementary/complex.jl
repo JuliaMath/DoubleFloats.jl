@@ -1,4 +1,11 @@
-
+function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = real(x), imag(x)
+    fourthroot = sqrt(hypot(rea, ima))
+    halfatan = atan(rea, ima) * 0.5
+    rea = fourthroot * cos(halfatan)
+    ima = fourthroot * sin(halfatan)
+    return Complex{DoubleFloat{T}}(rea, ima)
+end
 
 tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sin(x) / cos(x)
 tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = sinh(x) / cosh(x)
