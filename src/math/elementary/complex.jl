@@ -151,7 +151,7 @@ end
 
 
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = real(x), imag(x)
+    rea, ima = reim(x)
     return Complex{DoubleFloat{T}}(atan_real(rea, ima), atan_imag(rea, ima))
 end
 
@@ -175,6 +175,53 @@ function atan_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     result = num / den
     result = log(result) * 0.25
     return result
+end
+
+function acsc(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    im1 = zero(DoubleFloat{T}) + im
+    return -(im1 * log((im1/z) + sqrt(1 - inv(z^2))))
+end
+
+function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    im1 = zero(DoubleFloat{T}) + im
+    p = pio2(DoubleFloat{T})
+    return p + (im1 * log((im1/z) + sqrt(1 - inv(z^2))))
+end
+
+function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    return Complex{DoubleFloat{T}}(acot_real(rea, ima), acot_imag(rea, ima))
+end
+
+# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/01/
+#  (1/2)*(atan((2* x)/(1 - x^2 - y^2)) + (1/2)*(sign(x^2 + y^2 - 1) + 1)*pi*sign(x))
+#  (1/2)*(atan((2* x)/(x^2 + y^2 - 1)) + (Pi/4) Sign[x] (1 - Sign[x^2 + y^2 - 1])
+function acot_real(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+    x2 = square(x)
+    y2 = square(y)
+    a = 2*x / ((x2 + y2) - 1)
+    b = pio2(DoubleFloat{T}) * (1 - sign(x2 + y2 - 1)) * sign(x)
+    result = (atan(a) + b) * 0.5
+    return result
+end
+
+# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/02/
+# (1/4)*log((x^2 + (y + 1)^2)/(x^2 + (1 - y)^2))
+# (1/4)*log( (x^2 + (y+1)^2)/(x^2 + (y - 1)^2))
+function acot_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+    x2 = square(x)
+    num = x2 + square(1 + y)
+    den = x2 + square(y - 1)
+    result = num / den
+    result = log(result) * 0.25
+    return result
+end
+
+function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+   invx = inv(x)
+   result = sqrt(invx + 1) * sqrt(invx - 1) + invx
+   result = log(result)
+   return result
 end
 
 # above is done
