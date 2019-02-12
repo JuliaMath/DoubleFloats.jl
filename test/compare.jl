@@ -96,3 +96,24 @@ r3 = 3//1
   @test isequal(r2, d2)
 
 end
+
+
+@testset "compare to tuple" begin
+  @test d2 == HILO(d2)
+  @test d2 != HILO(d3)
+  @test d2 <  HILO(d3)
+  @test d2 <= HILO(d3)
+  @test d3 >  HILO(d2)
+  @test d3 >= HILO(d2)
+  @test isless(d2, HILO(d3))
+  @test isequal(d2, HILO(d2))
+  
+  @test HILO(d2) == d2
+  @test HILO(d2) != d3
+  @test HILO(d2) <  d3
+  @test HILO(d2) <= d3
+  @test HILO(d3) >  d2
+  @test HILO(d3) >= d2
+  @test isless(HILO(d2), d3)
+  @test isequal(HILO(d2), d2)  
+end
