@@ -9,7 +9,7 @@ square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     fourthroot = sqrt(hypot(rea, ima))
-    halfatan = atan(rea, ima) * 0.5
+    halfatan = atan(ima, rea) * 0.5
     rea = fourthroot * cos(halfatan)
     ima = fourthroot * sin(halfatan)
     return Complex{DoubleFloat{T}}(rea, ima)
@@ -18,16 +18,16 @@ end
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     erea = exp(rea)
-    rea = erea * cos(ima)
-    ima = erea * sin(ima)
-    return Complex{DoubleFloat{T}}(rea, ima)
+    realpart = erea * cos(ima)
+    imagpart = erea * sin(ima)
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     realpart = log(square(rea) + square(ima)) * 0.5
-    ima = atan(ima, rea)
-    return Complex{DoubleFloat{T}}(realpart, ima)
+    imagpart = atan(ima, rea)
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
 function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
