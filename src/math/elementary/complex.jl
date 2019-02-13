@@ -179,24 +179,7 @@ function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
-    t1 = square(rea)
-    t2 = square(t1)
-    t3 = square(ima)
-    t5 = square(t3 - 1) ^ 2
-    t10 = (t2 + t5 + 2 * (t3 + 1) * t1)
-    t10 = sqrt(sqrt(t10))
-    t14 = atanxy(-t3 + t1 + 1, 2 * ima * rea)
-    t15 = t14 / 2
-    t16 = cos(t15)
-    t18 = t16 * t10 + rea
-    t19 = square(t18)
-    t20 = sin(t15)
-    t22 = t20 * t10 + ima
-    t23 = square(t22)
-    t25 = log(t19 + t23) / 2
-    t27 = atanxy(t18, t22)
-    return Complex{DoubleFloat{T}}(t25, t27)
+    return log( x + sqrt(square(x) + 1) )
 end
 
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
@@ -247,30 +230,7 @@ function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
-    t1 = square(ima)
-    t2 = square(rea)
-    t4 = inv(t1 + t2)
-    t5 = 2 * rea
-    t7 = sqrt(t1 + t2 - t5 + 1)
-    t8 = rea + 1
-    t9 = square(t8)
-    t11 = sqrt(t9 + t1)
-    t13 = t1 + t2 + t5 + 1
-    t14 = sqrt(t13)
-    t17 = sqrt(inv(t14 * t7))
-    t20 = inv(t13)
-    t24 = atanxy(-t20 * (t1 + t2 - 1), -2 * t20 * ima)
-    t25 = t24 / 2
-    t26 = cos(t25)
-    t28 = t17 * ima
-    t29 = sin(t25)
-    t30 = t29 * t28
-    t32 = (2 * t26 * t17 * t8 + t11 * t7 - 2 * t30 + 1)
-    t34 = log(t32 * t4) / 2
-    t37 = t17 * (t1 + t2 + rea)
-    t45 = atanxy((t26 * t37 + rea + t30) * t4, -(t26 * t28 - t29 * t37 + ima) * t4)
-    return Complex{DoubleFloat{T}}(t34, t45)
+    return log((sqrt(1-square(x))+1)/x)
 end
 
 function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
