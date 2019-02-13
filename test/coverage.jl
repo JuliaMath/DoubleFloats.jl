@@ -193,6 +193,7 @@ end # compare
     @test prevfloat(fp2,3) < prevfloat(fp2,2)
 end
 
+#=
 @testset "random Double16" begin
     rng = Random.MersenneTwister()
     Random.seed!(rng, 1103)
@@ -205,3 +206,4 @@ end
     # a = rand(rng,DT,2^(precision(DT)+2))
     # @test_broken count(a .== zero(T)) > 0
 end
+=#
