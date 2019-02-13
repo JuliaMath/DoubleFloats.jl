@@ -42,3 +42,38 @@ d2h = Complex(Double64(2), Double64(0.5))
   @test isapprox(asech(f11), Complex{Float64}(asech(d11)))
   @test isapprox(acoth(f11), Complex{Float64}(acoth(d11)))
 end
+
+
+@testset "Complex Accuracy" begin
+  x = ComplexD64(sqrt(d64"2"), cbrt(d64"3"))
+  y = Complex{BigFloat}(x)
+  
+  @test abs(sin(y) - sin(x)) < 1.0e-31
+  @test abs(cos(y) - cos(x)) < 1.0e-31
+  @test abs(tan(y) - tan(x)) < 1.0e-31
+  @test abs(csc(y) - csc(x)) < 1.0e-31
+  @test abs(sec(y) - sec(x)) < 1.0e-31
+  @test abs(tan(y) - tan(x)) < 1.0e-31
+
+  @test abs(sinh(y) - sinh(x)) < 1.0e-31
+  @test abs(cosh(y) - cosh(x)) < 1.0e-31
+  @test abs(tanh(y) - tanh(x)) < 1.0e-31
+  @test abs(csch(y) - csch(x)) < 1.0e-31
+  @test abs(sech(y) - sech(x)) < 1.0e-31
+  @test abs(tanh(y) - tanh(x)) < 1.0e-31
+
+  @test abs(asin(y) - asin(x)) < 1.0e-31
+  @test abs(acos(y) - acos(x)) < 1.0e-31
+  @test abs(atan(y) - atan(x)) < 1.0e-31
+  @test abs(acsc(y) - acsc(x)) < 1.0e-31
+  @test abs(asec(y) - asec(x)) < 1.0e-31
+  @test abs(atan(y) - atan(x)) < 1.0e-31
+
+  @test abs(asinh(y) - asinh(x)) < 1.0e-31
+  @test abs(acosh(y) - acosh(x)) < 1.0e-31
+  @test abs(atanh(y) - atanh(x)) < 1.0e-31
+  @test abs(acsch(y) - acsch(x)) < 1.0e-31
+  @test abs(asech(y) - asech(x)) < 1.0e-31
+  @test abs(atanh(y) - atanh(x)) < 1.0e-31
+
+end
