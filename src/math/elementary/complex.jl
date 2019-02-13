@@ -25,9 +25,9 @@ end
 
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
-    rea = log(square(rea) + square(ima)) * 0.5
-    ima = atan(real(x), ima)
-    return Complex{DoubleFloat{T}}(rea, ima)
+    realpart = log(square(rea) + square(ima)) * 0.5
+    ima = atan(ima, rea)
+    return Complex{DoubleFloat{T}}(realpart, ima)
 end
 
 function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
