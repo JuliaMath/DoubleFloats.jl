@@ -25,6 +25,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#Extended-precision-float-and-complex-types-1",
+    "page": "Overview",
+    "title": "Extended precision float and complex types",
+    "category": "section",
+    "text": ""
+},
+
+{
     "location": "#Installation-1",
     "page": "Overview",
     "title": "Installation",
@@ -57,11 +65,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#Complex-functions-1",
+    "page": "Overview",
+    "title": "Complex functions",
+    "category": "section",
+    "text": "\njulia> x = ComplexD64(sqrt(d64\"2\"), cbrt(d64\"3\"))\n1.4142135623730951 + 1.4422495703074083im\n\njulia> y = acosh(x)\n1.402873733241199 + 0.8555178360714634im\n\njulia> x - cosh(y)\n7.395570986446986e-32 + 0.0im"
+},
+
+{
     "location": "#show,-string,-parse-1",
     "page": "Overview",
     "title": "show, string, parse",
     "category": "section",
-    "text": "julia> using DoubleFloats\n\njulia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> string(x)\n\"5.7735026918962576450914878050194151e-01\"\n\njulia> show(IOContext(Base.stdout,:compact=>false),x)\n5.7735026918962576450914878050194151e-01\n\njulia> showtyped(x)\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> showtyped(parse(Double64, stringtyped(x)))\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> Meta.parse(stringtyped(x))\n:(Double64(0.5773502691896257, 3.3450280739356326e-17))"
+    "text": "julia> using DoubleFloats\n\njulia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> string(x)\n\"5.7735026918962576450914878050194151e-01\"\n\njulia> show(IOContext(Base.stdout,:compact=>false),x)\n5.7735026918962576450914878050194151e-01\n\njulia> showtyped(x)\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> showtyped(parse(Double64, stringtyped(x)))\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> Meta.parse(stringtyped(x))\n:(Double64(0.5773502691896257, 3.3450280739356326e-17))\n\njulia> x = ComplexD32(sqrt(d32\"2\"), cbrt(d32\"3\"))\n1.4142135 + 1.4422495im\n\njulia> string(x)\n\"1.414213562373094 + 1.442249570307406im\"\n\njulia> stringtyped(x)\n\"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))\""
 },
 
 {
