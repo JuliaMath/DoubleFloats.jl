@@ -155,7 +155,7 @@ function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     ima2 = square(ima)
     rea2 = square(rea)
-    realpart = (atanxy(1 - ima, rea) - atanxy(1 + ima, -rea)) * 0.5 
+    realpart = 0.5*(atan(2*rea/(1-rea2-ima2)) + (pio2(DoubleFloat{T})*(sign(rea2+ima2-1)+1)) * sign(rea))
     imagpart = (log(square(ima + 1) + rea2) - log(rea2 + square(1 - ima))) * 0.25      
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
