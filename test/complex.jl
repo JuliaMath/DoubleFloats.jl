@@ -2,11 +2,13 @@ f0 = Complex(0.0, 0.0)
 f1 = Complex(1.0, 0.0)
 f1i = Complex(0.0, 1.0)
 f11 = Complex(1.0, 1.0)
+f2h = Complex(2.0, 0.5)
 
 d0 = Complex(Double64(0), Double64(0))
 d1 = Complex(Double64(1), Double64(0))
 d1i = Complex(Double64(0), Double64(1))
 d11 = Complex(Double64(1), Double64(1))
+d2h = Complex(Double64(2), Double64(0.5))
 
 @testset "Complex" begin
   @test isapprox(log(f11), Complex{Float64}(log(d11)))
@@ -28,10 +30,10 @@ d11 = Complex(Double64(1), Double64(1))
   
   @test isapprox(asin(f11), Complex{Float64}(asin(d11)))
   @test isapprox(acos(f11), Complex{Float64}(acos(d11)))
-  @test isapprox(atan(f11), Complex{Float64}(atan(d11)))
+  @test isapprox(atan(f2h), Complex{Float64}(atan(d2h)))
   @test isapprox(acsc(f11), Complex{Float64}(acsc(d11)))
   @test isapprox(asec(f11), Complex{Float64}(asec(d11)))
-  @test isapprox(acot(f11), Complex{Float64}(acot(d11)))
+  @test isapprox(acot(f2h), Complex{Float64}(acot(d2h)))
 
   @test isapprox(asinh(f11), Complex{Float64}(asinh(d11)))
   @test isapprox(acosh(f11), Complex{Float64}(acosh(d11)))
