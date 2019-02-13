@@ -151,32 +151,13 @@ function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
-# !!FIXME!!
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
-    return Complex{DoubleFloat{T}}(atan_real(rea, ima), atan_imag(rea, ima))
-end
-
-# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/01/
-#  (1/2)*(atan((2* x)/(1 - x^2 - y^2)) + (1/2)*(sign(x^2 + y^2 - 1) + 1)*pi*sign(x))
-function atan_real(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    x2 = square(x)
-    y2 = square(y)
-    a = 2*x / (1 - (x2 + y2))
-    b = pio2(DoubleFloat{T}) * (sign(x2 + y2 - 1) + 1) * sign(x)
-    result = (atan(a) + b) * 0.5
-    return result
-end
-
-# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/02/
-# (1/4)*log((x^2 + (y + 1)^2)/(x^2 + (1 - y)^2))
-function atan_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    x2 = square(x)
-    num = x2 + square(1 + y)
-    den = x2 + square(1 - y)
-    result = num / den
-    result = log(result) * 0.25
-    return result
+    ima2 = square(ima)
+    rea2 = square(rea)
+    realpart = (atanxy(1 - ima, rea) - atanxy(1 + ima, -rea)) * 0.5 
+    imagpart = (log(square(ima + 1) + rea2) - log(rea2 + square(1 - ima))) * 0.25      
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
 function acsc(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
@@ -187,36 +168,15 @@ function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return acos(inv(z))
 end
 
-# !!FIXME!!
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
-    return Complex{DoubleFloat{T}}(acot_real(rea, ima), acot_imag(rea, ima))
+    ima2 = square(ima)
+    rea2 = square(rea)
+    den = rea2 + ima2
+    realpart = (atanxy((1 + (ima/den)), (rea/den)) - atanxy((1 - (ima/den)), -(rea/den))) * 0.5 
+    imagpart = (log((square(ima - 1) + rea2)/den) - log((square(ima +1) + rea2)/den)) * 0.25      
+    return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
-
-# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/01/
-#  (1/2)*(atan((2* x)/(1 - x^2 - y^2)) + (1/2)*(sign(x^2 + y^2 - 1) + 1)*pi*sign(x))
-#  (1/2)*(atan((2* x)/(x^2 + y^2 - 1)) + (Pi/4) Sign[x] (1 - Sign[x^2 + y^2 - 1])
-function acot_real(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    x2 = square(x)
-    y2 = square(y)
-    a = 2*x / ((x2 + y2) - 1)
-    b = pio2(DoubleFloat{T}) * (1 - sign(x2 + y2 - 1)) * sign(x)
-    result = (atan(a) + b) * 0.5
-    return result
-end
-
-# http://functions.wolfram.com/ElementaryFunctions/ArcTan/19/02/
-# (1/4)*log((x^2 + (y + 1)^2)/(x^2 + (1 - y)^2))
-# (1/4)*log( (x^2 + (y+1)^2)/(x^2 + (y - 1)^2))
-function acot_imag(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    x2 = square(x)
-    num = x2 + square(1 + y)
-    den = x2 + square(y - 1)
-    result = num / den
-    result = log(result) * 0.25
-    return result
-end
-
 
 function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
