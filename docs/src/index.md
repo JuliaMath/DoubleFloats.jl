@@ -124,6 +124,7 @@ true
 | `MathConstants.golden`           | 1.61803_39887_49894_84820_45868+ |           0.0           |
 | `Float64(MathConstants.golden)`  | 1.61803_39887_49895              |         1.5e-16         |
 | `Double32(MathConstants.golden)` | 1.61803_39887_49894_90           |         5.2e-17         |
+| `Double64(MathConstants.golden)` | 1.61803_39887_49894_84820_45868_34365_6354 |         2.7e-33         |
 
 
 
