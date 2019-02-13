@@ -23,6 +23,11 @@ for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16
 end
 
 
-Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x))
-Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x))
-Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x))
+
+Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x, 250))
+Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x, 122))
+Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x,  60))
+
+Double64(x::Rational{S}) where {S} = Double64(BigFloat(x, 250))
+Double32(x::Rational{S}) where {S} = Double32(BigFloat(x, 122))
+Double16(x::Rational{S}) where {S} = Double16(BigFloat(x,  60))
