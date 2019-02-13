@@ -222,6 +222,10 @@ ComplexD64(c::C) where {C<:Complex} = ComplexD64(real(c), imag(c))
 ComplexD32(c::C) where {C<:Complex} = ComplexD32(real(c), imag(c))
 ComplexD16(c::C) where {C<:Complex} = ComplexD16(real(c), imag(c))
 
+ComplexD64(r::Real, i::Real) = ComplexD64(Double64(r), Double64(i))
+ComplexD32(r::Real, i::Real) = ComplexD32(Double32(r), Double32(i))
+ComplexD16(r::Real, i::Real) = ComplexD16(Double16(r), Double16(i))
+
 ComplexD64(r::R) where {R<:Real} = ComplexD64(Double64(r), zero(Double64))
 ComplexD32(r::R) where {R<:Real} = ComplexD32(Double32(r), zero(Double32))
 ComplexD16(r::R) where {R<:Real} = ComplexD16(Double16(r), zero(Double16))
