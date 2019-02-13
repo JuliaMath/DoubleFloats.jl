@@ -13,11 +13,18 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 ## Representation
 
 
-> `Double64` is a magnitude ordered, nonoverlapping pair of Float64s
+> `Double64` is a magnitude ordered, nonoverlapping pair of `Float64`
 >
-> `Double32` is a magnitude ordered, nonoverlapping pair of Float32s
+> `Double32` is a magnitude ordered, nonoverlapping pair of `Float32`
 >
-> `Double16` is a magnitude ordered, nonoverlapping pair of Float16s
+> `Double16` is a magnitude ordered, nonoverlapping pair of `Float16`
+
+> `ComplexD64` is a (real, imag) pair of `Double64`
+>
+> `ComplexD32` is a (real, imag) pair of `Double32`
+>
+> `ComplexD16` is a (real, imag) pair of `Double16`
+
 
 ----
 
