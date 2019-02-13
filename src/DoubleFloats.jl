@@ -4,6 +4,7 @@
 A package for extended precision floating point math.
 
 exported types: `Double64`, `Double32`, `Double16`
+                `ComplexD64`, `ComplexD32`, `ComplexD16`
 """
 module DoubleFloats
 
@@ -11,6 +12,7 @@ abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
        Double64, Double32, Double16,
+       ComplexD64, ComplexD32, ComplexD16,
        @d64_str, @d32_str, @d16_str,         # Deprecated
        @df64_str, @df32_str, @df16_str,      # Current Use
        MultipartFloat, HI, LO, HILO,
