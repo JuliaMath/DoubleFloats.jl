@@ -23,6 +23,7 @@ for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16
 end
 
 
+# constants for BigFloat precision are > 2*significandbits(DoubleT)
 
 Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x, 250))
 Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x, 122))
