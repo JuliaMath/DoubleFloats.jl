@@ -1,6 +1,7 @@
 # DoubleFloats.jl
 
 ### Math with 85+ accurate bits.
+#### Extended precision float and complex types
 
 ----
 
@@ -57,6 +58,19 @@ julia> Double64(2)/10
 julia> d64"0.2"
 1.9999999999999999999999999999999937e-01
 ```
+
+### Complex functions
+```julia
+
+julia> x = ComplexD64(sqrt(d64"2"), cbrt(d64"3"))
+1.4142135623730951 + 1.4422495703074083im
+
+julia> y = acosh(x)
+1.402873733241199 + 0.8555178360714634im
+
+julia> x - cosh(y)
+7.395570986446986e-32 + 0.0im
+```
 ### show, string, parse
 ```julia
 julia> using DoubleFloats
@@ -78,6 +92,15 @@ Double64(0.5773502691896257, 3.3450280739356326e-17)
 
 julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
+
+julia> x = ComplexD32(sqrt(d32"2"), cbrt(d32"3"))
+1.4142135 + 1.4422495im
+
+julia> string(x)
+"1.414213562373094 + 1.442249570307406im"
+
+julia> stringtyped(x)
+"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
 ```
 
 ### golden ratio
