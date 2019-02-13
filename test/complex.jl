@@ -28,10 +28,10 @@ d11 = Complex(Double64(1), Double64(1))
   
   @test isapprox(asin(f11), Complex{Float64}(asin(d11)))
   @test isapprox(acos(f11), Complex{Float64}(acos(d11)))
-#  @test isapprox(atan(f11), Complex{Float64}(atan(d11))) fix
+  @test isapprox(atan(f11), Complex{Float64}(atan(d11)))
   @test isapprox(acsc(f11), Complex{Float64}(acsc(d11)))
   @test isapprox(asec(f11), Complex{Float64}(asec(d11)))
-#  @test isapprox(acot(f11), Complex{Float64}(acot(d11))) fix
+  @test isapprox(acot(f11), Complex{Float64}(acot(d11)))
 
   @test isapprox(asinh(f11), Complex{Float64}(asinh(d11)))
   @test isapprox(acosh(f11), Complex{Float64}(acosh(d11)))
