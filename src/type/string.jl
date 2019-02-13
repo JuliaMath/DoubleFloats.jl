@@ -11,16 +11,19 @@ function stringtyped(x::Double16)
     return str
 end
 
-function stringtyped(x::ComplexD64)
-    str = string("ComplexD64(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+function stringtyped(x::Complex{DoubleFloats{Float64}})
+    rea, ima = reim(x)
+    str = string("ComplexD64(", stringtyped(rea), ", ", stringtyped(imag(x)), ")")
     return str
 end
-function stringtyped(x::ComplexD32)
-    str = string("ComplexD32(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+function stringtyped(x::Complex{DoubleFloats{Float32}})
+    rea, ima = reim(x)
+    str = string("ComplexD32(", stringtyped(rea), ", ", stringtyped(imag(x)), ")")
     return str
 end
-function stringtyped(x::ComplexD16)
-    str = string("ComplexD16(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+function stringtyped(x::Complex{DoubleFloats{Float16}})
+    rea, ima = reim(x)
+    str = string("ComplexD16(", stringtyped(rea), ", ", stringtyped(imag(x)), ")")
     return str
 end
 
