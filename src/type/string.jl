@@ -11,6 +11,19 @@ function stringtyped(x::Double16)
     return str
 end
 
+function stringtyped(x::ComplexD64)
+    str = string("ComplexD64(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+    return str
+end
+function stringtyped(x::ComplexD32)
+    str = string("ComplexD32(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+    return str
+end
+function stringtyped(x::ComplexD16)
+    str = string("ComplexD16(", stringtyped(real(x)), ", ", stringtyped(imag(x)), ")")
+    return str
+end
+
 """
     BigFloatBits(::IEEEType)
 
@@ -75,5 +88,12 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
        str = str[1:n]
     end
     setprecision(Base.BigFloat, prec)
+    return str
+end
+
+function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    rea, ima = reim(x)
+    s = signbit(ima) ? " - " : " + "
+    str = string(string(rea), s, string(abs(ima)),"im")
     return str
 end
