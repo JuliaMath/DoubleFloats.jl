@@ -209,3 +209,19 @@ const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
     hash(z.hi) ⊻ hash(z.lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)
+
+
+ComplexD64(rea::DoubleFloat{T}, ima::DoubleFloat{T}) where {T<:IEEEFloat} =
+    Complex(Double64(rea), Double64(ima))
+ComplexD32(rea::DoubleFloat{T}, ima::DoubleFloat{T}) where {T<:IEEEFloat} =
+    Complex(Double32(rea), Double32(ima))
+ComplexD16(rea::DoubleFloat{T}, ima::DoubleFloat{T}) where {T<:IEEEFloat} =
+    Complex(Double16(rea), Double16(ima))
+
+ComplexD64(c::C) where {C<:Complex} = ComplexD64(real(c), imag(c))
+ComplexD32(c::C) where {C<:Complex} = ComplexD32(real(c), imag(c))
+ComplexD16(c::C) where {C<:Complex} = ComplexD16(real(c), imag(c))
+
+ComplexD64(r::R) where {R<:Real} = ComplexD64(Double64(r), zero(Double64))
+ComplexD32(r::R) where {R<:Real} = ComplexD32(Double32(r), zero(Double32))
+ComplexD16(r::R) where {R<:Real} = ComplexD16(Double16(r), zero(Double16))
