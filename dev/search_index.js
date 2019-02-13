@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Representation",
     "category": "section",
-    "text": "Double64 is a magnitude ordered, nonoverlapping pair of Float64Double32 is a magnitude ordered, nonoverlapping pair of Float32Double16 is a magnitude ordered, nonoverlapping pair of Float16ComplexD64 is a (real, imag) pair of Double64ComplexD32 is a (real, imag) pair of Double32ComplexD16 is a (real, imag) pair of Double16arithmetic (+, -, *, /) is exact\nelementary functions are quite accurate\noften better than C \"double-double\" libraries"
+    "text": "Double64 is a magnitude ordered, nonoverlapping pair of Float64Double32 is a magnitude ordered, nonoverlapping pair of Float32Double16 is a magnitude ordered, nonoverlapping pair of Float16(+, -, *) are error-free, (/, sqrt) are least-error\nelementary functions are quite accurate\noften better than C \"double-double\" librariesComplexD64 is a (real, imag) pair of Double64ComplexD32 is a (real, imag) pair of Double32ComplexD16 is a (real, imag) pair of Double16elementary functions are quite accurate\nfunctions and their inverses round-trip well"
 },
 
 {
