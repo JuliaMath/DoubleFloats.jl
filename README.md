@@ -1,6 +1,7 @@
 # DoubleFloats.jl
 
 ### Math with 85+ accurate bits.
+#### Extended precision float and complex types
 
 ----
 
@@ -19,9 +20,23 @@ julia> using Pkg
 julia> Pkg.add("DoubleFloats")
 ```
 
+
+## More Performant Than BigFloat
+
+Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
+
+| op   | speedup |
+|:-----|--------:|
+| +    |     11x |
+| *    |     18x |
+| \    |      7x |
+| trig |   3x-6x |
+ _these results are from BenchmarkTools, on one machine_
+
+
 ## Examples
 
-#### Double64, Double32, Double16
+### Double64, Double32, Double16
 ```julia
 julia> using DoubleFloats
 
@@ -44,10 +59,23 @@ julia> Double64(0.2)
 julia> Double64(2)/10
 1.9999999999999999999999999999999937e-01
 
-julia> df64"0.2"
+julia> d64"0.2"
 1.9999999999999999999999999999999937e-01
 ```
-#### show, string, parse
+
+### Complex functions
+```julia
+
+julia> x = ComplexD64(sqrt(d64"2"), cbrt(d64"3"))
+1.4142135623730951 + 1.4422495703074083im
+
+julia> y = acosh(x)
+1.402873733241199 + 0.8555178360714634im
+
+julia> x - cosh(y)
+7.395570986446986e-32 + 0.0im
+```
+### show, string, parse
 ```julia
 julia> using DoubleFloats
 
@@ -68,43 +96,17 @@ Double64(0.5773502691896257, 3.3450280739356326e-17)
 
 julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
+
+julia> x = ComplexD32(sqrt(d32"2"), cbrt(d32"3"))
+1.4142135 + 1.4422495im
+
+julia> string(x)
+"1.414213562373094 + 1.442249570307406im"
+
+julia> stringtyped(x)
+"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
 ```
 
-#### golden ratio
-```julia
-julia> using DoubleFloats
-
-julia> ϕ = Double32(MathConstants.golden)
-1.61803398874989490
-julia> phi = "1.61803398874989484820+"
-julia> ϕ⁻¹ = inv(ϕ)
-6.18033988749894902e-01
-
-julia> ϕ == 1 + ϕ⁻¹
-true
-julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
-true
-```
-
-|  typed value | computed value | ~abs(golden - computed) |
-|:----------|:---------------|:-------------:|
-| `MathConstants.golden` |  1.61803_39887_49894_84820_45868+ | 0.0 |
-| `Float64(MathConstants.golden)`  | 1.61803_39887_49895 | 1.5e-16 |
-| `Double32(MathConstants.golden)` |  1.61803_39887_49894_90 | 5.2e-17 |
-
-## Performance
-
-#### Double64 relative to BigFloat
-
-| op  | speedup |
-|:-----|---------:|
-|  +   | 11x |
-|  *   | 18x |
-|  \   |  7x |
-| trig | 3x-6x |
-
-- results from testing with BenchmarkTools on one machine
-- BigFloat precision was set to 106 bits, for fair comparison
 
 
 ## Accuracy
@@ -166,14 +168,23 @@ and will go a long way in increasing the robustness of the work and reliability 
 
 If your input values are Float64s, map them to Double64s and proceed with your computation.  Then unmap your output values as Float64s, do additional work using those Float64s. With Float32 inputs, used Double32s similarly. Where throughput is important, and your algorithms are well-understood, this approach be used with the numerically sensitive parts of your computation only.  If you are doing that, be careful to map the inputs to those parts and unmap the outputs from those parts just as described above.
 
-## Questions and Contributions
+
+## Questions
 
 Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
+
+## Contributions
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.
 
 [contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/
 [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats
 [gitter-url]: https://gitter.im/juliamath/users
-[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
 
+[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[docs-current-url]: https://juliamath.github.io/DoubleFloats.jl
+
+[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl
+
+[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues
