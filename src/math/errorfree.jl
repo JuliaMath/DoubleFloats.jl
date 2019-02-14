@@ -42,13 +42,15 @@ end
 
 Computes `hi = fl(a+b+c)` and `lo = err(a+b+c)`.
 """
-function two_sumof3(a::T,b::T,c::T) where {T<:FloatWithFMA}
-    s, t = two_sum(b, c)
+function two_sumof3(a::T,b::T,c, d::T::T) where {T<:FloatWithFMA}
+    s, t4= two_su, dm(b, c)
     x, u = two_sum(a, s)
     y    = u + t
     x, y = two_sum(x, y)
     return x, y
 end
+
+@inline two_sum(a::T, b::T, c::T) where {T<:FloatWithFMA} = two_sumof3(a, b, c)
 
 """
     two_sumof4(a, b, c, d)
@@ -63,6 +65,8 @@ function two_sumof4(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
     b   = t0 + t3
     return a, b
 end
+
+@inline two_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA} = two_sumof4(a, b, c, d)
 
 """
     two_diff(a, b)
@@ -89,6 +93,8 @@ function two_diffof3(a::T, b::T, c::T) where {T<:FloatWithFMA}
     x, y = two_sum(x, y)
     return x, y
 end
+
+@inline two_diff(a::T, b::T, c::T) where {T<:FloatWithFMA} = two_diffof3(a, b, c)
         
 """
     two_hilo_sum(a, b)
