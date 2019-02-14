@@ -43,7 +43,7 @@ end
 Computes `hi = fl(a+b+c)` and `lo = err(a+b+c)`.
 """
 function two_sumof3(a::T, b::T, c::T) where {T<:FloatWithFMA}
-    s, t4= two_su, dm(b, c)
+    s, t4= two_sum(b, c)
     x, u = two_sum(a, s)
     y    = u + t
     x, y = two_sum(x, y)
