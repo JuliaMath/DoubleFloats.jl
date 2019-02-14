@@ -97,7 +97,7 @@ function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return mod2pi_neg(x)
     x < twopi_d64 && return x
     w1 = mul323(inv_pi_2o1_t64, HILO(x))
-    w2 = two_sumof3(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_2o1_t64, w2)
     z = Double64(y)
     return z
@@ -115,7 +115,7 @@ function modpi(x::DoubleFloat{Float64})
     signbit(x) && return modpi_neg(x)
     x < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o1_t64, w2)
     z = Double64(y)
     return z
@@ -131,7 +131,7 @@ modpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpi(DoubleFloat{Float64}
 function modpipm(x::DoubleFloat{Float64})
     abs(x) < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o1_t64, w2)
     z = Double64(y)
     return z
@@ -144,7 +144,7 @@ function modhalfpi(x::DoubleFloat{Float64})
     signbit(x) && return modhalfpi_neg(x)
     x < halfpi_d64 && return x
     w1 = mul323(inv_pi_1o2_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o2_t64, w2)
     z = Double64(y)
     return z
@@ -161,7 +161,7 @@ modhalfpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpi(DoubleFloat{
 function modhalfpipm(x::DoubleFloat{Float64})
     abs(x) < halfpi_d64 && return x
     w1 = mul323(inv_pi_1o2_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o2_t64, w2)
     z = Double64(y)
     return z
@@ -174,7 +174,7 @@ function modqrtrpi(x::DoubleFloat{Float64})
     signbit(x) && return modqrtrpi_neg(x)
     x < qrtrpi_d64 && return x
     w1 = mul323(inv_pi_1o4_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o4_t64, w2)
     z = Double64(y)
     return z
@@ -191,7 +191,7 @@ modqrtrpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpi(DoubleFloat{
 function modqrtrpipm(x::DoubleFloat{Float64})
     abs(x) < qrtrpi_d64 && return x
     w1 = mul323(inv_pi_1o4_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(Int,w1[1]), w1[2], w1[3])
+    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_1o4_t64, w2)
     z = Double64(y)
     return z
