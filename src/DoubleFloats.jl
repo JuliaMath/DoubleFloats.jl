@@ -93,6 +93,8 @@ include("math/arithmetic/normalize_hypot.jl")
 include("math/arithmetic/mixedarith.jl")
 include("math/ops.jl")
 
+include("math/arithmetic/complex/division.jl")
+
 include("math/elementary/sequences.jl")
 include("math/elementary/explog.jl")
 include("math/elementary/trig.jl")
