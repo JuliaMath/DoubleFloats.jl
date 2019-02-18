@@ -1,3 +1,23 @@
+function exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
+  if iszero(HI(a))
+    return one(DoubleFloat{T})
+  elseif isone(abs(HI(a))) && iszero(LO(a))
+    if HI(a) >= zero(T)
+        return DoubleFloat{T}(2.718281828459045, 1.4456468917292502e-16)
+    else # isone(-HI(a)) && iszero(LO(a))
+        return DoubleFloat{T}(0.36787944117144233, -1.2428753672788363e-17)
+    end
+  elseif abs(HI(a)) >= 709.0
+      if (HI(a) <= -709.0)
+         return zero(DoubleFloat{T})
+      else # HI(a) >=  709.0
+         return inf(DoubleFloat{T})
+      end
+  end
+
+  return calc_exp(a)
+end
+
 function exp_taylor(a::DoubleFloat{T}) where {T<:AbstractFloat}
   x = a
   x2 = x*x
@@ -113,26 +133,6 @@ function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:AbstractFloat}
    else
       return exp(n * log(r))
    end
-end
-
-function Base.Math.exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
-  if iszero(HI(a))
-    return one(DoubleFloat{T})
-  elseif isone(abs(HI(a))) && iszero(LO(a))
-    if HI(a) >= zero(T)
-        return DoubleFloat{T}(2.718281828459045, 1.4456468917292502e-16)
-    else # isone(-HI(a)) && iszero(LO(a))
-        return DoubleFloat{T}(0.36787944117144233, -1.2428753672788363e-17)
-    end
-  elseif abs(HI(a)) >= 709.0
-      if (HI(a) <= -709.0)
-         return zero(DoubleFloat{T})
-      else (HI(a) >=  709.0)
-         return inf(DoubleFloat{T})
-      end
-  end
-
-  return calc_exp(a)
 end
 
 function calc_exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
