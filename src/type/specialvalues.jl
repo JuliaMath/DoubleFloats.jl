@@ -18,8 +18,3 @@ floatmax(::Type{DoubleFloat{Float16}}) = Double16(ldexp(Float16(0.9995),16), lde
 maxintfloat(::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}(ldexp(0.5, 107), ldexp(0.5, 54))
 maxintfloat(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}(ldexp(0.5f0, 49), ldexp(0.5f0, 25))
 maxintfloat(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float16}(65519.0)
-
-isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
-isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x))
-isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x)) && !signbit(HI(x))
-isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x)) && signbit(HI(x))
