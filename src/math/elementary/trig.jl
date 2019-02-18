@@ -201,11 +201,13 @@ end
 end
 
 function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && throw(DomainError("cos(x) only defined for finite x"))
     return cos_kernel(x)
 end
 
 function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && throw(DomainError("sin(x) only defined for finite x"))
     return sin_kernel(x)
 end
@@ -213,6 +215,7 @@ end
 Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
 
 function tan(x::Double64)
+    isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
     abs(modpi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
@@ -278,16 +281,19 @@ end
 
 
 function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x 
     isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
     return inv(sin(x))
 end
 
 function sec(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && throw(DomainError("sec(x) only defined for finite x"))
     return inv(cos(x))
 end
 
 function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && throw(DomainError("cot(x) only defined for finite x"))
     abs(modpi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
     return inv(tan(x))
