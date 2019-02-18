@@ -9,6 +9,9 @@ d3 = Double64(3.0)
 b3 = BigFloat(3)
 r3 = 3//1
 
+small = Double64(0.25*eps(1.0))
+gt1 = one(Double64) + small
+lt1 = one(Double64) - small
 
 @testset "compare" begin
   @test d2 == d2
@@ -116,4 +119,11 @@ end
   @test HILO(d3) >= d2
   @test isless(HILO(d2), d3)
   @test isequal(HILO(d2), d2)  
+end
+
+@testset "compare issue 49" begin
+  @test gt1 > 1.0
+  @test !(gt1 < 1.0)
+  @test lt1 < 1.0
+  @test !(lt1 > 1.0)
 end
