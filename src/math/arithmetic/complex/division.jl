@@ -3,7 +3,6 @@
     by Michael Baudin, Robert L. Smith
 =#
 
-function Base.:(/)(x::Complex{DoubleFloat{T}},
 function cdiv(x::Complex{DoubleFloat{T}},
              y::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     a, b = reim(x)
