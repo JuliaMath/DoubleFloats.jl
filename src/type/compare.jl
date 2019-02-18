@@ -24,59 +24,6 @@ end
     return x < y
 end
 
-#=
-@inline function (==)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return iszero(LO(x)) && (HI(x) === y)
-end
-@inline function (==)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return iszero(LO(y)) && (HI(y) === x)
-end
-@inline function (!=)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return !iszero(LO(x)) || (HI(x) !== y)
-end
-@inline function (!=)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return !iszero(LO(y)) || (HI(y) !== x)
-end
-
-@inline function (<)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return (HI(x) < y) || ((HI(x) == y) && signbit(LO(x)))
-end
-@inline function (<)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (x < HI(y)) || ((x == HI(y)) && !signbit(LO(y)))
-end
-@inline function (>)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return (HI(x) > y) || ((HI(x) == y) && (LO(x) < zero(T)))
-end
-@inline function (>)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (x > HI(y)) || ((x == HI(y)) && signbit(LO(y)))
-end
-@inline function (<=)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return (HI(x) < y) || ((HI(x) == y) && (LO(x) <= zero(T)))
-end
-@inline function (<=)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (x < HI(y)) || ((x == HI(y)) && (LO(y) >= zero(T)))
-end
-@inline function (>=)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return (HI(x) > y) || ((HI(x) == y) && (LO(x) <= zero(T)))
-end
-@inline function (>=)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (x > HI(y)) || ((x == HI(y)) && (LO(y) >= zero(T)))
-end
-
-@inline function isequal(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return isequal(x, DoubleFloat{T}(y))
-end
-@inline function isequal(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return isequal(DoubleFloat{T}(x), y)
-end
-@inline function isless(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    return isless(x, DoubleFloat{T}(y))
-end
-@inline function isless(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return isless(DoubleFloat{T}(x), y)
-end
-=#
-
 
 @inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (==)(x, DoubleFloat{T}(y))
