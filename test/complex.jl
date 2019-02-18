@@ -77,3 +77,8 @@ end
   @test abs(atanh(y) - atanh(x)) < 1.0e-31
 
 end
+
+@testset "Complex exp(huge)" begin
+    x = Double64(-1.168869267851442e79) + Double64(4.140780141319954e87)*im
+    @test ComplexF64(exp(x)) == exp(ComplexF64(x))
+end
