@@ -97,6 +97,7 @@ end
 function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     s = signbit(ima) ? " - " : " + "
-    str = string(string(rea), s, string(abs(ima)),"im")
+    imstr = isfinitie(ima) ? "im" : "*im"
+    str = string(string(rea), s, string(abs(ima)), imstr)
     return str
 end
