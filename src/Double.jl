@@ -39,8 +39,8 @@ const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
-@inline LO(x::T) where {T<:IEEEFloat} = zero(F)
-@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(F)
+@inline LO(x::T) where {T<:IEEEFloat} = zero(x)
+@inline HILO(x::T) where {T<:IEEEFloat} = x, zero(x)
 
 @inline HI(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi
 @inline LO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.lo
