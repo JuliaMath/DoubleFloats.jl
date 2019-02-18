@@ -78,62 +78,57 @@ end
 =#
 
 
-@inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (==)(x, DoubleFloat{T}(y))
 end
-@inline function (==)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (==)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (==)(DoubleFloat{T}(x), y)
 end
-@inline function (!=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (!=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (!=)(x, DoubleFloat{T}(y))
 end
-@inline function (!=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (!=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (!=)(DoubleFloat{T}(x), y)
 end
 
-@inline function (<)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (<)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (<)(x, DoubleFloat{T}(y))
 end
-@inline function (<)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (<)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (<)(DoubleFloat{T}(x), y)
 end
-@inline function (>)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (>)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (>)(x, DoubleFloat{T}(y))
 end
-@inline function (>)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (>)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (>)(DoubleFloat{T}(x), y)
 end
-@inline function (<=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (<=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
         return (<=)(x, DoubleFloat{T}(y))
 end
-@inline function (<=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (<=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (<=)(DoubleFloat{T}(x), y)
 end
-@inline function (>=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (>=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
         return (>=)(x, DoubleFloat{T}(y))
 end
-@inline function (>=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function (>=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return (>=)(DoubleFloat{T}(x), y)
 end
 
-@inline function isequal(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function isequal(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return isequal(x, DoubleFloat{T}(y))
 end
-
-@inline function isequal(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function isequal(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return isequal(DoubleFloat{T}(x), y)
 end
 
-@inline function isless(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function isless(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return isless(x, DoubleFloat{T}(y))
 end
-
-@inline function isless(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,, F<:AbstractFloat}
+@inline function isless(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
     return isless(DoubleFloat{T}(x), y)
 end
-
-
-
 
 
 @inline function (==)(x::DoubleFloat{T}, y::Integer) where {T<:IEEEFloat}
