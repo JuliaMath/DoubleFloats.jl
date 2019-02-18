@@ -96,6 +96,7 @@ end
 function mod2pi(x::DoubleFloat{Float64})
     signbit(x) && return mod2pi_neg(x)
     x < twopi_d64 && return x
+    HI(x) > 4.503599627370496e15 && return DoubleFloat{Float64}(mod2pi(HI(x))) # 4.5_e15 = inv(eps(1.0))
     w1 = mul323(inv_pi_2o1_t64, HILO(x))
     w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
     y = mul322(pi_2o1_t64, w2)
