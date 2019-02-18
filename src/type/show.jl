@@ -9,11 +9,13 @@ function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    re, im = reim(x)
+    imstr = isfinite(im) ? "im" : "*im"
     compact = get(io, :compact, true)
     if compact
-        str = string(x.re.hi, (signbit(x.im.hi) ? " - " : " + "), abs(x.im.hi), "im")
+        str = string(HI(re), (signbit(x.im.hi) ? " - " : " + "), abs(HI(im)), imstr)
     else
-        str = string(x.re, (signbit(x.im.hi) ? " - " : " + "), abs(x.im), "im")
+        str = string(re, (signbit(HI(im)) ? " - " : " + "), abs(im), imstr)
     end
     print(io, str)
 end
