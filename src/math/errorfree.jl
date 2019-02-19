@@ -124,6 +124,20 @@ function three_hilo_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
 end
 
 """
+    two_hilo_sumof3(a, b, c)
+    
+*unchecked* requirement `|a| ≥ |b| ≥ |c|`
+Computes `s = fl(a+b+c)` and `e1 = err(a+b+c)`.
+"""
+function two_hilo_sumof3(a::T,b::T,c::T) where {T<:FloatWithFMA}
+    s, t = two_hilo_sum(b, c)
+    x, u = two_hilo_sum(a, s)
+    y    = u + t
+    x, y = two_hilo_sum(x, y)
+    return x, y
+end
+
+"""
     four_hilo_sum(a, b, c, d)
     
 *unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
@@ -137,6 +151,38 @@ function four_hilo_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
     hm, t2 = two_hilo_sum(t0, t3) # here, t0 >= t3
     ml, lo = two_hilo_sum(t1, t2)
     return hi, hm, ml, lo
+end
+
+"""
+    three_hilo_sumof4(a, b, c, d)
+    
+*unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
+Computes `s = fl(a+b+c+d)` and `e1 = err(a+b+c+d), e2 = err(e1)`.
+"""
+function three_hilo_sumof4(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_hilo_sum(a ,  b)
+    t0, t2 = two_hilo_sum(t0,  c)
+    hi, t3 = two_hilo_sum(t0,  d)
+    t0, t1 = two_hilo_sum(t1, t2)
+    md, t2 = two_hilo_sum(t0, t3) # here, t0 >= t3
+    lo     = t1 + t2
+    return hi, md, lo
+end
+
+
+"""
+    two_hilo_sumof4(a, b, c, d)
+    
+*unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
+Computes `s = fl(a+b+c+d)` and `e1 = err(a+b+c+d)`.
+"""
+function two_hilo_sumof4(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_hilo_sum(a ,  b)
+    t0, t2 = two_hilo_sum(t0,  c)
+    hi, t3 = two_hilo_sum(t0,  d)
+    t0     = t1 + t2
+    lo     = t0 + t3
+    return hi, lo
 end
 
 
