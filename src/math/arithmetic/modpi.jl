@@ -148,15 +148,6 @@ end
 mod2pi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod2pi(DoubleFloat{Float64}(x)))
 mod2pi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod2pi(DoubleFloat{Float64}(x)))
 
-function modpi(x::DoubleFloat{Float64})
-    signbit(x) && return modpi_neg(x)
-    x < onepi_d64 && return x
-    w1 = mul323(inv_pi_1o1_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o1_t64, w2)
-    z = Double64(y)
-    return z
-end
 
 function modpi_neg(x::DoubleFloat{Float64})
     m = modpi(-x)
