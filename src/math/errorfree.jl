@@ -38,6 +38,23 @@ end
 
 
 """
+    four_sum(a, b, c, d)
+    
+Computes `hi = fl(a+b+c+d)` and `hm = err(a+b+c+d), ml = err(hm), lo = err(ml)`.
+"""
+function four_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a ,  b)
+    t0, t2 = two_sum(t0,  c)
+    hi, t3 = two_sum(t0,  d)
+    t0, t1 = two_sum(t1, t2)
+    hm, t2 = two_sum(t0, t3) # here, t0 >= t3
+    ml, lo = two_sum(t1, t2)
+    return hi, hm, ml, lo
+end
+
+
+
+"""
     two_sumof3(a, b, c)
 
 Computes `hi = fl(a+b+c)` and `lo = err(a+b+c)`.
