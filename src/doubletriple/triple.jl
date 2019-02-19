@@ -494,8 +494,8 @@ function mul333(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
     t18 = t16 + t17
 
     t19, t20 = two_hilo_sum(t14, t18)
-    t21, t22 = two_hilo_sum(t2, t3, t4, t5)
-    md,  lo  = two_hilo_sum(t21, t22, t19, t20)
+    t21, t22 = two_hilo_sumof4(t2, t3, t4, t5)
+    md,  lo  = two_hilo_sumof4(t21, t22, t19, t20)
 
     return hi, md, lo
 end
