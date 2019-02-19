@@ -1,7 +1,7 @@
 function mod2pi(x::Double64)
     s = signbit(x)
 	if s
-	    x = -x
+		x = -x
 	end
 	himdlo = mul323(inv_pi_2o1_t64, HILO(x))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
