@@ -16,6 +16,24 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	return Double64(himdlo[1], himdlo[2])
 end
 
+function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    s = signbit(x)
+	if s
+		x = -x
+	end
+	himdlo = mul323(inv_pi_1o1_t64, HILO(x))
+	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	himdlo = three_sumof4(-1.0, hi, md, lo)
+	himdlo = mul333(himdlo, pi_1o1_t64)
+	if himdlo[1] < 0.0
+	   himdlo = add333(himdlo, pi_1o1_t64)
+	end
+	if s
+	   himdlo = sub333(pi_1o1_t64, himdlo)
+	end
+	return Double64(himdlo[1], himdlo[2])
+end
+
 
 #=
     x / 2pi
