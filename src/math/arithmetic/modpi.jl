@@ -3,6 +3,7 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	if s
 		x = -x
 	end
+	HI(x) > 4.503599627370496e15 && return DoubleFloat(mod2pi(HI(x)), mod2pi(LO(x))) # 4.5_e15 = inv(eps(1.0))
 	himdlo = mul323(inv_pi_2o1_t64, HILO(x))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	himdlo = three_sumof4(-1.0, hi, md, lo)
@@ -21,6 +22,7 @@ function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	if s
 		x = -x
 	end
+	HI(x) > 4.503599627370496e15 && return DoubleFloat(mod(mod2pi(HI(x)),pi), mod(mod2pi(LO(x)),pi)) # 4.5_e15 = inv(eps(1.0))
 	himdlo = mul323(inv_pi_1o1_t64, HILO(x))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	himdlo = three_sumof4(-1.0, hi, md, lo)
