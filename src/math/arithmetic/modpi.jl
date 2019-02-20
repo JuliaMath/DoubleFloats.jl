@@ -21,7 +21,6 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return z
 end
 
-
 function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     s = signbit(x)
 	if s
@@ -40,6 +39,52 @@ function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	end	
 	if s
 	   himdlo = sub333(pi_1o1_t64, himdlo)
+	end
+    z = DoubleFloat{T}(himdlo[1],himdlo[2])
+    return z
+end
+
+function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    s = signbit(x)
+	if s
+	    x = -x
+	end
+    x < twopi_d64 && return x
+    himdlo = mul323(inv_pi_1o2_t64, HILO(x))
+    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	   hi = hi - 1.0
+	   hi, md, lo = three_sum(hi, md, lo)
+	end
+    himdlo = mul333(pi_1o2_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_1o2_t64, himdlo)
+	end	
+	if s
+	   himdlo = sub333(pi_1o2_t64, himdlo)
+	end
+    z = DoubleFloat{T}(himdlo[1],himdlo[2])
+    return z
+end
+
+function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    s = signbit(x)
+	if s
+	    x = -x
+	end
+    x < twopi_d64 && return x
+    himdlo = mul323(inv_pi_1o4_t64, HILO(x))
+    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	   hi = hi - 1.0
+	   hi, md, lo = three_sum(hi, md, lo)
+	end
+    himdlo = mul333(pi_1o4_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_1o4_t64, himdlo)
+	end	
+	if s
+	   himdlo = sub333(pi_1o4_t64, himdlo)
 	end
     z = DoubleFloat{T}(himdlo[1],himdlo[2])
     return z
@@ -140,39 +185,6 @@ function value_minus_qrtrpi(x::DoubleFloat{Float64})
     return DoubleFloat{Float64}(hi, lo)
 end
 
-
-function mod2pi(x1::DoubleFloat{Float64}, x2::DoubleFloat{Float64})
-    w1 = mul323(inv_pi_2o1_t64, HILO(x1))
-    w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_2o1_t64, w2)
-    z1 = Double64(y)
-    w1 = mul323(inv_pi_2o1_t64, HILO(x2))
-    w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_2o1_t64, w2)
-    z2 = Double64(y)
-    x3 = z1 + z2
-    w1 = mul323(inv_pi_2o1_t64, HILO(x3))
-    w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_2o1_t64, w2)
-    return Double64(y)
-end
-
-function mod2pi_neg(x::DoubleFloat{Float64})
-    m = mod2pi(-x)
-    return Double64(sub322(pi_2o1_t64, HILO(m)))
-end
-
-mod2pi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod2pi(DoubleFloat{Float64}(x)))
-mod2pi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod2pi(DoubleFloat{Float64}(x)))
-
-
-function modpi_neg(x::DoubleFloat{Float64})
-    m = modpi(-x)
-    return Double64(sub322(pi_1o1_t64, HILO(m)))
-end
-modpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpi(DoubleFloat{Float64}(x)))
-modpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpi(DoubleFloat{Float64}(x)))
-
 function modpipm(x::DoubleFloat{Float64})
     abs(x) < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
@@ -185,24 +197,6 @@ end
 modpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpipm(DoubleFloat{Float64}(x)))
 modpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpipm(DoubleFloat{Float64}(x)))
 
-function modhalfpi(x::DoubleFloat{Float64})
-    signbit(x) && return modhalfpi_neg(x)
-    x < halfpi_d64 && return x
-    w1 = mul323(inv_pi_1o2_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o2_t64, w2)
-    z = Double64(y)
-    return z
-end
-
-function modhalfpi_neg(x::DoubleFloat{Float64})
-    m = modhalfpi(-x)
-    return Double64(sub322(pi_1o2_t64, HILO(m)))
-end
-
-modhalfpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpi(DoubleFloat{Float64}(x)))
-modhalfpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpi(DoubleFloat{Float64}(x)))
-
 function modhalfpipm(x::DoubleFloat{Float64})
     abs(x) < halfpi_d64 && return x
     w1 = mul323(inv_pi_1o2_t64, HILO(x))
@@ -214,24 +208,6 @@ end
 
 modhalfpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpipm(DoubleFloat{Float64}(x)))
 modhalfpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpipm(DoubleFloat{Float64}(x)))
-
-function modqrtrpi(x::DoubleFloat{Float64})
-    signbit(x) && return modqrtrpi_neg(x)
-    x < qrtrpi_d64 && return x
-    w1 = mul323(inv_pi_1o4_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o4_t64, w2)
-    z = Double64(y)
-    return z
-end
-
-function modqrtrpi_neg(x::DoubleFloat{Float64})
-    m = modqrtrpi(-x)
-    return Double64(sub322(pi_1o4_t64, HILO(m)))
-end
-
-modqrtrpi(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpi(DoubleFloat{Float64}(x)))
-modqrtrpi(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpi(DoubleFloat{Float64}(x)))
 
 function modqrtrpipm(x::DoubleFloat{Float64})
     abs(x) < qrtrpi_d64 && return x
