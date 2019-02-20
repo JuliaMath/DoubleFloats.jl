@@ -1,4 +1,4 @@
-function mod2pi(x::Double64)
+function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     s = signbit(x)
 	if s
 		x = -x
@@ -111,18 +111,6 @@ function value_minus_qrtrpi(x::DoubleFloat{Float64})
     return DoubleFloat{Float64}(hi, lo)
 end
 
-
-function mod2pi(x::DoubleFloat{Float64})
-    signbit(x) && return mod2pi_neg(x)
-    x < twopi_d64 && return x
-    hi = mod2pi(HI(x))
-    lo = mod2pi(LO(x))
-    y = Double64(two_sum(hi, lo))
-    w1 = mul323(inv_pi_2o1_t64, HILO(y))
-    w2 = two_sumof3(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    z = mul322(pi_2o1_t64, w2)
-    return Double64(z)
-end
 
 function mod2pi(x1::DoubleFloat{Float64}, x2::DoubleFloat{Float64})
     w1 = mul323(inv_pi_2o1_t64, HILO(x1))
