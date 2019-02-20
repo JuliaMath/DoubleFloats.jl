@@ -85,6 +85,18 @@ end
 
 @inline two_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA} = two_sumof4(a, b, c, d)
 
+function three_sumof4(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a ,  b)
+    t0, t2 = two_sum(t0,  c)
+    hi, t3 = two_sum(t0,  d)
+    t0, t1 = two_sum(t1, t2)
+    hm, t2 = two_sum(t0, t3) # here, t0 >= t3
+    ml     = t1 + t2
+    return hi, hm, ml
+end
+
+@inline three_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA} = thre_sumof4(a, b, c, d)
+
 """
     two_diff(a, b)
 
