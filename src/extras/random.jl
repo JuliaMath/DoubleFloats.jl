@@ -3,8 +3,11 @@ import Random.rand
 
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
     hi, lo  = rand(rng, T, 2)
-    while hi == zero(T) # fairly common with Float16 or Float32
-        hi = rand(rng, T)
+    if hi === zero(T)
+        if lo === zero(T)
+            return zero(DoubleFloat(T))
+        end
+        hi, lo = lo, hi
     end
     frlo, xplo  = frexp(lo)
     xplo = Base.exponent(hi) - min(1, fld(xplo,4)) - abs(Base.exponent(eps(hi)))
