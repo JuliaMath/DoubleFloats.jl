@@ -7,15 +7,15 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     himdlo = mul323(inv_pi_2o1_t64, HILO(x))
     hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
-	   hi = hi - 1.0
-	   hi, md, lo = three_sum(hi, md, lo)
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
 	end
     himdlo = mul333(pi_2o1_t64, (hi, md, lo))
 	if signbit(himdlo[1])
 	    himdlo = add333(pi_2o1_t64, himdlo)
 	end	
 	if s
-	   himdlo = sub333(pi_2o1_t64, himdlo)
+	    himdlo = sub333(pi_2o1_t64, himdlo)
 	end
     z = DoubleFloat{T}(himdlo[1],himdlo[2])
     return z
@@ -30,15 +30,15 @@ function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     himdlo = mul323(inv_pi_1o1_t64, HILO(x))
     hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
-	   hi = hi - 1.0
-	   hi, md, lo = three_sum(hi, md, lo)
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
 	end
     himdlo = mul333(pi_1o1_t64, (hi, md, lo))
 	if signbit(himdlo[1])
 	    himdlo = add333(pi_1o1_t64, himdlo)
 	end	
 	if s
-	   himdlo = sub333(pi_1o1_t64, himdlo)
+	    himdlo = sub333(pi_1o1_t64, himdlo)
 	end
     z = DoubleFloat{T}(himdlo[1],himdlo[2])
     return z
@@ -53,8 +53,8 @@ function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     himdlo = mul323(inv_pi_1o2_t64, HILO(x))
     hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
-	   hi = hi - 1.0
-	   hi, md, lo = three_sum(hi, md, lo)
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
 	end
     himdlo = mul333(pi_1o2_t64, (hi, md, lo))
 	if signbit(himdlo[1])
@@ -76,49 +76,41 @@ function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     himdlo = mul323(inv_pi_1o4_t64, HILO(x))
     hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
-	   hi = hi - 1.0
-	   hi, md, lo = three_sum(hi, md, lo)
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
 	end
     himdlo = mul333(pi_1o4_t64, (hi, md, lo))
 	if signbit(himdlo[1])
 	    himdlo = add333(pi_1o4_t64, himdlo)
 	end	
 	if s
-	   himdlo = sub333(pi_1o4_t64, himdlo)
+	    himdlo = sub333(pi_1o4_t64, himdlo)
 	end
     z = DoubleFloat{T}(himdlo[1],himdlo[2])
     return z
 end
 
-
-#=
-    x / 2pi
-            x * tripleprecision(inv(2pi))
-            intpart, fracpart
-=#
-function rem2pi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    hi, md, lo = mul233(HILO(x), inv_pi_2o1_t64)
-
-    intfrac_hi = modf(hi)
-    intfrac_md = modf(md)
-    intfrac_lo = modf(lo)
-    fracparts = intfrac_hi[1], intfrac_md[1], intfrac_lo[1]
-    # fracpart is the signed (directed) portion of a circle
-    hi, md, lo = mul333(fracparts, pi_2o1_t64)
-    return T(hi, md)
+function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    m = mod2pi(x)
+    return HI(x) < 0 ? -m : m
 end
 
-function rem1pi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    hi, md, lo = mul233(HILO(x), inv_pi_1o1_t64)
-
-    intfrac_hi = modf(hi)
-    intfrac_md = modf(md)
-    intfrac_lo = modf(lo)
-    fracparts = intfrac_hi[1], intfrac_md[1], intfrac_lo[1]
-    # fracpart is the signed (directed) portion of a circle
-    hi, md, lo = mul333(fracparts, pi_1o1_t64)
-    return T(hi, md)
+function rempi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    m = modpi(x)
+    return HI(x) < 0 ? -m : m
 end
+
+function remhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    m = modhalfpi(x)
+    return HI(x) < 0 ? -m : m
+end
+
+function remqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    m = modqrtrpi(x)
+    return HI(x) < 0 ? -m : m
+end
+
+
 
 """
     negpi_pospi(x)
