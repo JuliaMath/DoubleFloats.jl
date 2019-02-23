@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Questions",
     "category": "section",
-    "text": "Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\")."
+    "text": "Usage questions can be posted on the Julia Discourse forum.  Use the topic Numerics (a \"Discipline\") and a put the package name, DoubleFloats, in your question (\"topic\")."
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Contributions",
     "category": "section",
-    "text": "Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems. The [contributing page][contrib-url] has a few guidelines that should be followed when opening pull requests.[contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/ [discourse-tag-url]: https://discourse.julialang.org/tags/doublefloats [gitter-url]: https://gitter.im/juliamath/users[docs-current-img]: https://img.shields.io/badge/docs-latest-blue.svg [docs-current-url]: https://juliamath.github.io/DoubleFloats.jl[codecov-img]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg [codecov-url]: https://codecov.io/gh/JuliaMath/DoubleFloats.jl[issues-url]: https://github.com/JuliaMath/DoubleFloats.jl/issues"
+    "text": "Contributions are very welcome, as are feature requests and suggestions. Please open an issue if you encounter any problems. The contributing page has a few guidelines that should be followed when opening pull requests."
 },
 
 {
