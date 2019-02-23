@@ -20,8 +20,8 @@
    @test Double16(one(Float16)) === one(Double16)
 
    @test DoubleFloat(one(Double64)) === one(Double64)
-   @test DoubleFloat(one(Double32)) === one(Double64)
-   @test DoubleFloat(one(Double16)) === one(Double64)
+   @test DoubleFloat(one(Double32)) === one(Double32)
+   @test DoubleFloat(one(Double16)) === one(Double16)
    
    @test DoubleFloat(1.0) === one(Double64)
    @test DoubleFloat(1.0f0) === one(Double32)
