@@ -30,7 +30,7 @@
    @test ComplexD64(1, 1) === ComplexD64(1.0, 1.0)
    @test ComplexD32(1, 1) === ComplexD32(1.0f0, 1.0f0)
    @test ComplexD16(1, 1) === ComplexD16(Float16(1.0), Float16(1.0))  
-   @test ComplexD64(1//1, 1//1) === ComplexD64(1.0, 1.0)
-   @test ComplexD32(1//1, 1//1) === ComplexD32(1.0f0, 1.0f0)
-   @test ComplexD16(1//1, 1//1) === ComplexD16(Float16(1.0), Float16(1.0))  
+   @test ComplexD64(1//1, -1//1) === ComplexD64(1.0, -1.0)
+   @test ComplexD32(1//1, -1//1) === ComplexD32(1.0f0, -1.0f0)
+   @test ComplexD16(1//1, -1//1) === ComplexD16(Float16(1.0), -Float16(1.0))  
 end
