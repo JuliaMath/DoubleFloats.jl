@@ -4,9 +4,9 @@
   @test string(Double32(pi)) == "3.141592653589796"
   @test string(Double16(pi)) == "3.1415925"
 
-  @test string(Double64("1.0e-2")) == "0.0100000000000000000000000000000000"
-  @test string(Double32("1.0e-4")) == "0.000100000000000"
-  @test string(Double16("1.0e-4")) == "0.0001000"
+  @test string(Double64("1.0e-2")) == "1.0000000000000000000000000000000007e-02"
+  @test string(Double32("1.0e-4")) == "1.000000000000000e-04"
+  @test string(Double16("1.0e-4")) == "1.0001659e-04"
   
   @test string(ComplexD64(1.0,1.0)) == "1.0 + 1.0im"
   @test string(ComplexD32(1.0,1.0)) == "1.0 + 1.0im"
