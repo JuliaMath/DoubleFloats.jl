@@ -117,10 +117,10 @@ end
 
     x --> [-pi..+pi)
 """
-function negpi_pospi(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
-    result = rem2pi(x)
-    if result >= T(pi)
-        result = -rem2pi(-x)
+function negpi_pospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    result = mod2pi(x)
+    if result >= DoubleFloat{T}(pi)
+        result = result - 2*DoubleFloat{T}(pi)
     end
     return result
 end
@@ -131,11 +131,12 @@ end
 # determine nearest multiple of pi/2
 # within (pi/2) quadrant determine nearest multiple of pi/16
 
-function whichquadrant(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}}
+function whichquadrant(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    x = negpi_pospi(x)	
     if signbit(x) # quadrant -2 or -1
-        quadrant = -x < T(pi)/2 ? -2 : -1
+        quadrant = -x < DoubleFloat{T}(pi)/2 ? -2 : -1
     else          # quadrant  1 or  2
-        quadrant =  x < T(pi)/2 ? 1 :  2
+        quadrant =  x < DoubleFloat{T{(pi)/2 ? 1 :  2
     end
     return quadrant
 end
