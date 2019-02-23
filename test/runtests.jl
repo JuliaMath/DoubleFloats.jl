@@ -5,6 +5,7 @@ using Random
 phi = Base.MathConstants.golden
 
 include("specialvalues.jl")
+include("construct.jl")
 include("compare.jl")
 include("promote.jl")
 
