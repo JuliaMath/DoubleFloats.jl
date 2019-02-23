@@ -157,7 +157,6 @@ function which64th(x::DoubleFloat{Float16}, quadrant::Int)
     return z
 end
 
-
 # ========================================== ^^^^^ =========================================
 
 const pi_1o1_t64_hi = pi_1o1_t64[1]
