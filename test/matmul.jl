@@ -55,15 +55,4 @@
     @test DA3FB3 isa Array{Double64,2}
     @test FA3DB3 isa Array{Double64,2}
 
-    # Test with complex (thanks yikait2)
-    C1 = [1.0+2*im 3 4*im; 5 6 7-im]
-    C2 = [im; 0; 5-7*im]
-    C1C2 = C1*C2
-    DC1DC2 = ComplexD64.(C1) * ComplexD64.(C2)
-    DC1FC2 = ComplexD64.(C1) * C2
-    FC1DC2 = C1 * ComplexD64.(C2)
-
-    @test DC1DC2 == ComplexD64.(C1C2)
-    @test DC1FC2 == ComplexD64.(C1C2)
-    @test FC1DC2 == ComplexD64.(C1C2)
 end
