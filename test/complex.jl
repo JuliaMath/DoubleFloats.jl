@@ -82,3 +82,11 @@ end
     x = Double64(-1.168869267851442e79) + Double64(4.140780141319954e87)*im
     @test ComplexF64(exp(x)) == exp(ComplexF64(x))
 end
+
+@testset "Complex Division Test" begin
+    C1 = ComplexD64(rand(),rand())
+    C2 = ComplexD64(rand(),rand())
+    C1oC2=cdiv(C1,C2)
+    @test C1oC2  ≈ C1/C2
+    @test C2*C1oC2 ≈ C1
+end
