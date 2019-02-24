@@ -67,8 +67,9 @@
     @test DC1DC2 == ComplexD64.(C1C2)
     @test DC1FC2 == ComplexD64.(C1C2)
     @test FC1DC2 == ComplexD64.(C1C2)
-    @test DC1DC2 isa Array{ComplexD64,2}
-    @test DC1FC2 isa Array{ComplexD64,2}
-    @test FC1DC2 isa Array{ComplexD64,2}
+    # ComplexD64 is not a type, it is a constructor function
+    @test DC1DC2 isa Array{Complex{DoubleFloat{Float64}},2}
+    @test DC1FC2 isa Array{Complex{DoubleFloat{Float64}},2}
+    @test FC1DC2 isa Array{Complex{DoubleFloat{Float64}},2}
 
 end
