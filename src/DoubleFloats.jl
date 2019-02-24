@@ -26,7 +26,7 @@ export DoubleFloat,
        add2, sub2, mul2, div2,
        ⊕, ⊖, ⊗, ⊘,
        spread, sld, tld,
-       signs
+       signs, cdiv
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
