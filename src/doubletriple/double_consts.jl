@@ -37,6 +37,12 @@ const inv_pi_1o64_d64  = ( 20.37183271576260400, -1.2594353072116790e-15)
 const inv_pi_1o128_d64 = ( 40.74366543152521000, -2.5188706144233580e-15)
 const inv_pi_1o256_d64 = ( 81.48733086305042000, -5.0377412288467160e-15)
 
+const pi_4o1_d32 = HILO(Double32(pi)*4)
+const pi_4o1_d16 = HILO(Double16(pi)*4)
+
+const pi_2o1_d32 = HILO(Double32(pi)*2)
+const pi_2o1_d16 = HILO(Double16(pi)*2)
+
 const pi_1o1_d32 = HILO(Double32(pi))
 const pi_1o1_d16 = HILO(Double16(pi))
 
@@ -46,17 +52,25 @@ const pi_1o2_d16 = (Float16(1.57), Float16(0.0004838))
 const pi_1o4_d32 = (0.7853982f0, -2.1855694f-8)
 const pi_1o4_d16 = (Float16(0.785), Float16(0.0002419))
 
-pio1(::Type{Double64}) = Double64(pi_1o1_d64)
-pio1(::Type{Double32}) = Double32(pi_1o1_d32)
-pio1(::Type{Double16}) = Double16(pi_1o1_d16)
+pi4o1(::Type{Double64}) = Double64(pi_4o1_d64)
+pi4o1(::Type{Double32}) = Double32(pi_4o1_d32)
+pi4o1(::Type{Double16}) = Double16(pi_4o1_d16)
 
-pio2(::Type{Double64}) = Double64(pi_1o2_d64)
-pio2(::Type{Double32}) = Double32(pi_1o2_d32)
-pio2(::Type{Double16}) = Double16(pi_1o2_d16)
+pi2o1(::Type{Double64}) = Double64(pi_2o1_d64)
+pi2o1(::Type{Double32}) = Double32(pi_2o1_d32)
+pi2o1(::Type{Double16}) = Double16(pi_2o1_d16)
 
-pio4(::Type{Double64}) = Double64(pi_1o4_d64)
-pio4(::Type{Double32}) = Double32(pi_1o4_d32)
-pio4(::Type{Double16}) = Double16(pi_1o4_d16)
+pi1o1(::Type{Double64}) = Double64(pi_1o1_d64)
+pi1o1(::Type{Double32}) = Double32(pi_1o1_d32)
+pi1o1(::Type{Double16}) = Double16(pi_1o1_d16)
+
+pi1o2(::Type{Double64}) = Double64(pi_1o2_d64)
+pi1o2(::Type{Double32}) = Double32(pi_1o2_d32)
+pi1o2(::Type{Double16}) = Double16(pi_1o2_d16)
+
+pi1o4(::Type{Double64}) = Double64(pi_1o4_d64)
+pi1o4(::Type{Double32}) = Double32(pi_1o4_d32)
+pi1o4(::Type{Double16}) = Double16(pi_1o4_d16)
 
 # below is to be removed
 const twopi_d64  = (6.283185307179586, 2.4492935982947064e-16)
