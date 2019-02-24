@@ -38,6 +38,10 @@ const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
 
+const ComplexD64 = Complex{DoubleFloat{Float64}}
+const ComplexD32 = Complex{DoubleFloat{Float32}}
+const ComplexD16 = Complex{DoubleFloat{Float16}}
+
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(x)
 @inline HILO(x::T) where {T<:IEEEFloat} = x, zero(x)
@@ -210,7 +214,7 @@ const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)
 
-
+#=
 ComplexD64(rea::DoubleFloat{T}, ima::DoubleFloat{T}) where {T<:IEEEFloat} =
     Complex(Double64(rea), Double64(ima))
 ComplexD32(rea::DoubleFloat{T}, ima::DoubleFloat{T}) where {T<:IEEEFloat} =
@@ -229,3 +233,4 @@ ComplexD16(r::Real, i::Real) = ComplexD16(Double16(r), Double16(i))
 ComplexD64(r::R) where {R<:Real} = ComplexD64(Double64(r), zero(Double64))
 ComplexD32(r::R) where {R<:Real} = ComplexD32(Double32(r), zero(Double32))
 ComplexD16(r::R) where {R<:Real} = ComplexD16(Double16(r), zero(Double16))
+#=
