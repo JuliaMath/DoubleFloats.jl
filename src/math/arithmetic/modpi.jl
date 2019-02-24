@@ -137,7 +137,7 @@ function whichquadrant(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if signbit(x) # quadrant -2 or -1
         quadrant = -x < DoubleFloat{T}(pi)/2 ? -2 : -1
     else          # quadrant  1 or  2
-        quadrant =  x < DoubleFloat{T{(pi)/2 ? 1 :  2
+        quadrant =  x < DoubleFloat{T}(pi)/2 ? 1 :  2
     end
     return quadrant
 end
