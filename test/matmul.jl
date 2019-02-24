@@ -77,4 +77,9 @@
     @test DC1FC2  isa Array{Complex{DoubleFloat{Float64}},1}
     @test FC1DC2  isa Array{Complex{DoubleFloat{Float64}},1}
 
+    #Test of issquare
+    @test issquare([1 2;3 4]) == true
+    @test issquare([1 2]) == false
+    @test issquare([1]) == true
+
 end
