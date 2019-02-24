@@ -84,12 +84,13 @@ function cot_taylor(a::Double64)
 
 
 function index_npio32(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    x < npio32[1] && return 1
     x >= npio32[end] && return length(npio32)
     result = 1
     while x >= npio32[result]
         result += 1
     end
-    return min(1, result-1)
+    return result-1
 end
 
 
