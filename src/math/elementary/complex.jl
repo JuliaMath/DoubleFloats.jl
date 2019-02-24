@@ -155,7 +155,7 @@ function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     ima2 = square(ima)
     rea2 = square(rea)
-    realpart = 0.5*(atan(2*rea/(1-rea2-ima2)) + (pio2(DoubleFloat{T})*(sign(rea2+ima2-1)+1)) * sign(rea))
+    realpart = 0.5*(atan(2*rea/(1-rea2-ima2)) + (pi1o2(DoubleFloat{T})*(sign(rea2+ima2-1)+1)) * sign(rea))
     imagpart = (log(square(ima + 1) + rea2) - log(rea2 + square(1 - ima))) * 0.25      
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
@@ -192,7 +192,7 @@ function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     t15 = sqrt((t5 + t10) ^ 2 / 4 - 1)
     t17 = log(t5 / 2 + t10 / 2 + t15)
     t19 = acos(-t10 / 2 + t5 / 2)
-    t19 = pio1(DoubleFloat{T}) - t19
+    t19 = pi1o1(DoubleFloat{T}) - t19
     return Complex{DoubleFloat{T}}(t17, t19)
 end
 
@@ -201,7 +201,7 @@ function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     ima2 = square(ima)
     rea2 = square(rea)
     realpart = (log(square(rea + 1) + ima2) - log(square(rea) - 2*rea + ima2 + 1)) * 0.25 
-    imagpart = 0.5*(atan(2*ima/(1-rea2-ima2)) + (pio2(DoubleFloat{T})*(sign(rea2+ima2-1)+1)) * sign(ima))
+    imagpart = 0.5*(atan(2*ima/(1-rea2-ima2)) + (pi1o2(DoubleFloat{T})*(sign(rea2+ima2-1)+1)) * sign(ima))
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 

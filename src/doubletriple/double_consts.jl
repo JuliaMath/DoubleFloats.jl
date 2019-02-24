@@ -37,14 +37,14 @@ const inv_pi_1o64_d64  = ( 20.37183271576260400, -1.2594353072116790e-15)
 const inv_pi_1o128_d64 = ( 40.74366543152521000, -2.5188706144233580e-15)
 const inv_pi_1o256_d64 = ( 81.48733086305042000, -5.0377412288467160e-15)
 
-const pi_4o1_d32 = HILO(Double32(pi)*4)
-const pi_4o1_d16 = HILO(Double16(pi)*4)
+const pi_4o1_d32 = (12.566371f0, -3.496911f-7)
+const pi_4o1_d16 = (Float16(12.56), Float16(0.00387))
 
-const pi_2o1_d32 = HILO(Double32(pi)*2)
-const pi_2o1_d16 = HILO(Double16(pi)*2)
+const pi_2o1_d32 = (6.2831855f0, -1.7484555f-7)
+const pi_2o1_d16 = (Float16(6.28), Float16(0.001935))
 
-const pi_1o1_d32 = HILO(Double32(pi))
-const pi_1o1_d16 = HILO(Double16(pi))
+const pi_1o1_d32 = (3.1415927f0, -8.742278f-8)
+const pi_1o1_d16 = (Float16(3.14), Float16(0.0009675))
 
 const pi_1o2_d32 = (Float32(1.5707964), Float32(-4.371139e-8))
 const pi_1o2_d16 = (Float16(1.57), Float16(0.0004838))
