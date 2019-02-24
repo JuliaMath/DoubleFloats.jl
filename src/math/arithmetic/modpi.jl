@@ -1,95 +1,94 @@
 function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    s = signbit(x)
-    if s
-        x = -x
-    end
-    x < twopi_d64 && return x
-    himdlo = mul323(inv_pi_2o1_t64, HILO(x))
-    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
-    if hi >= 1.0
-        hi = hi - 1.0
-        hi, md, lo = three_sum(hi, md, lo)
-    end
-    himdlo = mul333(pi_2o1_t64, (hi, md, lo))
-    if signbit(himdlo[1])
-        himdlo = add333(pi_2o1_t64, himdlo)
-    end
-    if s
-        himdlo = sub333(pi_2o1_t64, himdlo)
-    end
-    z = DoubleFloat{T}(himdlo[1],himdlo[2])
-    return z
+	s = signbit(x)
+	if s
+		x = -x
+	end
+	x < pi2o1(DoubleFloat{T}) && return x
+	x < pi4o1(DoubleFloat{T}) && return mod2pi(x - pi2o1(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_2o1_t64, HILO(x))
+	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
+	end
+	himdlo = mul333(pi_2o1_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_2o1_t64, himdlo)
+	end
+	if s
+	    himdlo = sub333(pi_2o1_t64, himdlo)
+	end
+	return DoubleFloat{T}(himdlo[1],himdlo[2])
 end
 
 function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    s = signbit(x)
-    if s
-        x = -x
-    end
-    x < onepi_d64 && return x
-    himdlo = mul323(inv_pi_1o1_t64, HILO(x))
-    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
-    if hi >= 1.0
-        hi = hi - 1.0
-        hi, md, lo = three_sum(hi, md, lo)
-    end
-    himdlo = mul333(pi_1o1_t64, (hi, md, lo))
-    if signbit(himdlo[1])
-        himdlo = add333(pi_1o1_t64, himdlo)
-    end
-    if s
-        himdlo = sub333(pi_1o1_t64, himdlo)
-    end
-    z = DoubleFloat{T}(himdlo[1],himdlo[2])
-    return z
+	s = signbit(x)
+	if s
+		x = -x
+	end
+	x < pi1o1(DoubleFloat{T}) && return x
+	x < pi2o1(DoubleFloat{T}) && return modpi(x - pi1o1(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o1_t64, HILO(x))
+	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
+	end
+	himdlo = mul333(pi_1o1_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_1o1_t64, himdlo)
+	end
+	if s
+	    himdlo = sub333(pi_1o1_t64, himdlo)
+	end
+	return DoubleFloat{T}(himdlo[1],himdlo[2])
 end
 
 function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    s = signbit(x)
-    if s
-        x = -x
-    end
-    x < twopi_d64 && return x
-    himdlo = mul323(inv_pi_1o2_t64, HILO(x))
-    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
-    if hi >= 1.0
-        hi = hi - 1.0
-        hi, md, lo = three_sum(hi, md, lo)
-    end
-    himdlo = mul333(pi_1o2_t64, (hi, md, lo))
-    if signbit(himdlo[1])
-        himdlo = add333(pi_1o2_t64, himdlo)
-    end
-    if s
-       himdlo = sub333(pi_1o2_t64, himdlo)
-    end
-    z = DoubleFloat{T}(himdlo[1],himdlo[2])
-    return z
+	s = signbit(x)
+	if s
+		x = -x
+	end
+	x < pi1o2(DoubleFloat{T}) && return x
+	x < pi1o1(DoubleFloat{T}) && return modhalfpi(x - pi1o2(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o2_t64, HILO(x))
+	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
+	end
+	himdlo = mul333(pi_1o2_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_1o2_t64, himdlo)
+	end
+	if s
+	    himdlo = sub333(pi_1o2_t64, himdlo)
+	end
+	return DoubleFloat{T}(himdlo[1],himdlo[2])
 end
 
 function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    s = signbit(x)
-    if s
-        x = -x
-    end
-    x < twopi_d64 && return x
-    himdlo = mul323(inv_pi_1o4_t64, HILO(x))
-    hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
-    if hi >= 1.0
-        hi = hi - 1.0
-        hi, md, lo = three_sum(hi, md, lo)
-    end
-    himdlo = mul333(pi_1o4_t64, (hi, md, lo))
-    if signbit(himdlo[1])
-        himdlo = add333(pi_1o4_t64, himdlo)
-    end
-    if s
-        himdlo = sub333(pi_1o4_t64, himdlo)
-    end
-    z = DoubleFloat{T}(himdlo[1],himdlo[2])
-    return z
+	s = signbit(x)
+	if s
+		x = -x
+	end
+	x < pi1o4(DoubleFloat{T}) && return x
+	x < pi1o2(DoubleFloat{T}) && return modqrtrpi(x - pi1o4(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o4_t64, HILO(x))
+	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
+	if hi >= 1.0
+	    hi = hi - 1.0
+	    hi, md, lo = three_sum(hi, md, lo)
+	end
+	himdlo = mul333(pi_1o4_t64, (hi, md, lo))
+	if signbit(himdlo[1])
+	    himdlo = add333(pi_1o4_t64, himdlo)
+	end
+	if s
+	    himdlo = sub333(pi_1o4_t64, himdlo)
+	end
+	return DoubleFloat{T}(himdlo[1],himdlo[2])
 end
-
 
 function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     m = mod2pi(x)
