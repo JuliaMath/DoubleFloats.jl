@@ -12,3 +12,5 @@ function agm(x::T, y::T) where {T<:Real}
 
     return a
 end
+
+agm1(x::T) where {T<:Real} = agm(x, one(T))
