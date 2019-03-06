@@ -221,7 +221,7 @@ function add223(ahi::T, amd::T, bhi::T, bmd::T) where {T<:AbstractFloat}
 end
 
 @inline function add223(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
-    return add223(a[1], a[2]f, b[1], b[2])
+    return add223(a[1], a[2], b[1], b[2])
 end
 
 
