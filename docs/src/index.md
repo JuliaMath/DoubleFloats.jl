@@ -62,7 +62,7 @@ julia> df64"0.2"
 ### Complex functions
 ```julia
 
-julia> x = ComplexD64(sqrt(d64"2"), cbrt(d64"3"))
+julia> x = ComplexD64(sqrt(df64"2"), cbrt(df64"3"))
 1.4142135623730951 + 1.4422495703074083im
 
 julia> y = acosh(x)
