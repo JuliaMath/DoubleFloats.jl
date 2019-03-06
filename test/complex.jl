@@ -45,7 +45,7 @@ end
 
 
 @testset "Complex Accuracy" begin
-  x = ComplexD64(sqrt(df64"2"), cbrt(df64"3"))
+  x = ComplexDF64(sqrt(df64"2"), cbrt(df64"3"))
   y = Complex{BigFloat}(x)
   
   @test abs(sin(y) - sin(x)) < 1.0e-31
@@ -80,5 +80,5 @@ end
 
 @testset "Complex exp(huge)" begin
     x = Double64(-1.168869267851442e79) + Double64(4.140780141319954e87)*im
-    @test ComplexF64(exp(x)) == exp(ComplexF64(x))
+    @test ComplexDF64(exp(x)) == exp(ComplexDF64(x))
 end
