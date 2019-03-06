@@ -38,9 +38,19 @@ const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
 const Double16 = DoubleFloat{Float16}
 
+const ComplexDF64 = Complex{DoubleFloat{Float64}}
+const ComplexDF32 = Complex{DoubleFloat{Float32}}
+const ComplexDF16 = Complex{DoubleFloat{Float16}}
+
+ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
+ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
+ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
+
+# deprecated
 const ComplexD64 = Complex{DoubleFloat{Float64}}
 const ComplexD32 = Complex{DoubleFloat{Float32}}
 const ComplexD16 = Complex{DoubleFloat{Float16}}
+
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(x)
