@@ -9,6 +9,7 @@ include("construct.jl")
 include("compare.jl")
 include("promote.jl")
 
+include("prearith.jl")
 include("arithmetic.jl")
 include("functions.jl")
 include("matmul.jl")
