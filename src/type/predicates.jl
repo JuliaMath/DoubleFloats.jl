@@ -133,3 +133,6 @@ iseven(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     else
        false
     end
+
+iseven(x::T) where {T<:IEEEFloat} = isinteger(x) && iseven(BigInt(x))
+isodd(x::T) where {T<:IEEEFloat} = isinteger(x) && isodd(BigInt(x))
