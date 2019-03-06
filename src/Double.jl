@@ -46,9 +46,9 @@ ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
 ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
 
-ComplexDF64(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF64(promote(x,y)...)
-ComplexDF32(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF32(promote(x,y)...)
-ComplexDF16(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF16(promote(x,y)...)
+#ComplexDF64(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF64(promote(x,y)...)
+#ComplexDF32(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF32(promote(x,y)...)
+#ComplexDF16(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF16(promote(x,y)...)
 
 # deprecated
 #const ComplexD64 = Complex{DoubleFloat{Float64}}
