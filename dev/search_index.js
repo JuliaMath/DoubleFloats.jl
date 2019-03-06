@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Double64, Double32, Double16",
     "category": "section",
-    "text": "julia> using DoubleFloats\n\njulia> dbl64 = sqrt(Double64(2)); 1 - dbl64 * inv(dbl64)\n0.0\njulia> dbl32 = sqrt(Double32(2)); 1 - dbl32 * inv(dbl32)\n0.0\njulia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)\n0.0\n\njulia> typeof(ans) === Double16\ntruenote: floating-point constants must be used with care, they are evaluated as Float64 values before additional processingjulia> Double64(0.2)\n2.0000000000000001110223024625156540e-01\n\njulia> Double64(2)/10\n1.9999999999999999999999999999999937e-01\n\njulia> d64\"0.2\"\n1.9999999999999999999999999999999937e-01"
+    "text": "julia> using DoubleFloats\n\njulia> dbl64 = sqrt(Double64(2)); 1 - dbl64 * inv(dbl64)\n0.0\njulia> dbl32 = sqrt(Double32(2)); 1 - dbl32 * inv(dbl32)\n0.0\njulia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)\n0.0\n\njulia> typeof(ans) === Double16\ntruenote: floating-point constants must be used with care, they are evaluated as Float64 values before additional processingjulia> Double64(0.2)\n2.0000000000000001110223024625156540e-01\n\njulia> Double64(2)/10\n1.9999999999999999999999999999999937e-01\n\njulia> df64\"0.2\"\n1.9999999999999999999999999999999937e-01"
 },
 
 {
