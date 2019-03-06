@@ -46,10 +46,41 @@ ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
 ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
 
+ComplexDF64(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF64(promote(x,y)...)
+ComplexDF32(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF32(promote(x,y)...)
+ComplexDF16(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF16(promote(x,y)...)
+
 # deprecated
 const ComplexD64 = Complex{DoubleFloat{Float64}}
 const ComplexD32 = Complex{DoubleFloat{Float32}}
 const ComplexD16 = Complex{DoubleFloat{Float16}}
+
+function ComplexD64(x::T) where {T<:Real}
+    @warn("`ComplexD64` is deprecated.  Use `ComplexDF64`.")
+    ComplexDF64(x)
+end
+function ComplexD32(x::T) where {T<:Real}
+    @warn("`ComplexD32` is deprecated.  Use `ComplexDF32`.")
+    ComplexDF64(x)
+end
+function ComplexD16(x::T) where {T<:Real}
+    @warn("`ComplexD16` is deprecated.  Use `ComplexDF16`.")
+    ComplexDF16(x)
+end
+function ComplexD64(x::T1, y::T2) where {T1<:Real, T2<:Real}
+    @warn("`ComplexD64` is deprecated.  Use `ComplexDF64`.")
+    ComplexDF64(x,y)
+end
+function ComplexD32(x::T1, y::T2) where {T1<:Real, T2<:Real}
+    @warn("`ComplexD32` is deprecated.  Use `ComplexDF32`.")
+    ComplexDF64(x,y)
+end
+function ComplexD16(x::T1, y::T2) where {T1<:Real, T2<:Real}
+    @warn("`ComplexD16` is deprecated.  Use `ComplexDF16`.")
+    ComplexDF16(x,y)
+end
+
+
 
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
