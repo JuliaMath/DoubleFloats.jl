@@ -2,7 +2,9 @@ using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
 using Test
 
 using Random
-phi = Base.MathConstants.golden
+
+const phi = Base.MathConstants.golden
+const gamma = Base.MathConstants.eulergamma
 
 include("specialvalues.jl")
 include("construct.jl")
