@@ -90,7 +90,7 @@ function index_npio32(x::DoubleFloat{T}) where {T<:IEEEFloat}
     while x >= npio32[result]
         result += 1
     end
-    return result-1
+    return max(1,result-1)
 end
 
 
