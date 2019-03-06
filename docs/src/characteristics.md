@@ -25,11 +25,11 @@ This package provides extended precision versions of `Float64`, `Float32`, `Floa
 
 ----
 
-> `ComplexD64` is a (real, imag) pair of `Double64`
+> `ComplexDF64` is a (real, imag) pair of `Double64`
 >
-> `ComplexD32` is a (real, imag) pair of `Double32`
+> `ComplexDF32` is a (real, imag) pair of `Double32`
 >
-> `ComplexD16` is a (real, imag) pair of `Double16`
+> `ComplexDF16` is a (real, imag) pair of `Double16`
 
 - elementary functions are quite accurate
     - functions and their inverses round-trip well
