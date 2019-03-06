@@ -66,7 +66,7 @@ julia> df64"0.2"
 ### Complex functions
 ```julia
 
-julia> x = ComplexD64(sqrt(df64"2"), cbrt(df64"3"))
+julia> x = ComplexDF64(sqrt(df64"2"), cbrt(df64"3"))
 1.4142135623730951 + 1.4422495703074083im
 
 julia> y = acosh(x)
@@ -97,7 +97,7 @@ Double64(0.5773502691896257, 3.3450280739356326e-17)
 julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
 
-julia> x = ComplexD32(sqrt(df32"2"), cbrt(df32"3"))
+julia> x = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
 1.4142135 + 1.4422495im
 
 julia> string(x)
