@@ -62,7 +62,7 @@ julia> df64"0.2"
 ### Complex functions
 ```julia
 
-julia> x = ComplexD64(sqrt(df64"2"), cbrt(df64"3"))
+julia> x = ComplexDF64(sqrt(df64"2"), cbrt(df64"3"))
 1.4142135623730951 + 1.4422495703074083im
 
 julia> y = acosh(x)
@@ -93,14 +93,14 @@ Double64(0.5773502691896257, 3.3450280739356326e-17)
 julia> Meta.parse(stringtyped(x))
 :(Double64(0.5773502691896257, 3.3450280739356326e-17))
 
-julia> x = ComplexD32(sqrt(d32"2"), cbrt(d32"3"))
+julia> x = ComplexDF32(sqrt(d32"2"), cbrt(d32"3"))
 1.4142135 + 1.4422495im
 
 julia> string(x)
 "1.414213562373094 + 1.442249570307406im"
 
 julia> stringtyped(x)
-"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
+"ComplexDF32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
 ```
 
 ### golden ratio
