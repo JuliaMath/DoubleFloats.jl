@@ -37,14 +37,17 @@ end
 # DEPRECATED
 
 macro d64_str(val::AbstractString)
+  @warn("@d64 is deprecated, use @df64")
   :(Double64($val))
 end
 
 macro d32_str(val::AbstractString)
+  @warn("@d32 is deprecated, use @df32")
   :(Double32($val))
 end
 
 macro d16_str(val::AbstractString)
+  @warn("@d16 is deprecated, use @df16")
   :(Double16($val))
 end
 
