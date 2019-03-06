@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Complex functions",
     "category": "section",
-    "text": "\njulia> x = ComplexD64(sqrt(df64\"2\"), cbrt(df64\"3\"))\n1.4142135623730951 + 1.4422495703074083im\n\njulia> y = acosh(x)\n1.402873733241199 + 0.8555178360714634im\n\njulia> x - cosh(y)\n7.395570986446986e-32 + 0.0im"
+    "text": "\njulia> x = ComplexDF64(sqrt(df64\"2\"), cbrt(df64\"3\"))\n1.4142135623730951 + 1.4422495703074083im\n\njulia> y = acosh(x)\n1.402873733241199 + 0.8555178360714634im\n\njulia> x - cosh(y)\n7.395570986446986e-32 + 0.0im"
 },
 
 {
@@ -77,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "show, string, parse",
     "category": "section",
-    "text": "julia> using DoubleFloats\n\njulia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> string(x)\n\"5.7735026918962576450914878050194151e-01\"\n\njulia> show(IOContext(Base.stdout,:compact=>false),x)\n5.7735026918962576450914878050194151e-01\n\njulia> showtyped(x)\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> showtyped(parse(Double64, stringtyped(x)))\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> Meta.parse(stringtyped(x))\n:(Double64(0.5773502691896257, 3.3450280739356326e-17))\n\njulia> x = ComplexD32(sqrt(d32\"2\"), cbrt(d32\"3\"))\n1.4142135 + 1.4422495im\n\njulia> string(x)\n\"1.414213562373094 + 1.442249570307406im\"\n\njulia> stringtyped(x)\n\"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))\""
+    "text": "julia> using DoubleFloats\n\njulia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> string(x)\n\"5.7735026918962576450914878050194151e-01\"\n\njulia> show(IOContext(Base.stdout,:compact=>false),x)\n5.7735026918962576450914878050194151e-01\n\njulia> showtyped(x)\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> showtyped(parse(Double64, stringtyped(x)))\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> Meta.parse(stringtyped(x))\n:(Double64(0.5773502691896257, 3.3450280739356326e-17))\n\njulia> x = ComplexDF32(sqrt(d32\"2\"), cbrt(d32\"3\"))\n1.4142135 + 1.4422495im\n\njulia> string(x)\n\"1.414213562373094 + 1.442249570307406im\"\n\njulia> stringtyped(x)\n\"ComplexDF32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))\""
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Representation",
     "category": "section",
-    "text": "Double64 is a magnitude ordered, nonoverlapping pair of Float64Double32 is a magnitude ordered, nonoverlapping pair of Float32Double16 is a magnitude ordered, nonoverlapping pair of Float16(+, -, *) are error-free, (/, sqrt) are least-error\nelementary functions are quite accurate\noften better than C \"double-double\" librariesComplexD64 is a (real, imag) pair of Double64ComplexD32 is a (real, imag) pair of Double32ComplexD16 is a (real, imag) pair of Double16elementary functions are quite accurate\nfunctions and their inverses round-trip well"
+    "text": "Double64 is a magnitude ordered, nonoverlapping pair of Float64Double32 is a magnitude ordered, nonoverlapping pair of Float32Double16 is a magnitude ordered, nonoverlapping pair of Float16(+, -, *) are error-free, (/, sqrt) are least-error\nelementary functions are quite accurate\noften better than C \"double-double\" librariesComplexDF64 is a (real, imag) pair of Double64ComplexDF32 is a (real, imag) pair of Double32ComplexDF16 is a (real, imag) pair of Double16elementary functions are quite accurate\nfunctions and their inverses round-trip well"
 },
 
 {
