@@ -12,8 +12,8 @@
   @test stringtyped(Double32(pi)) == "Double32(3.1415927, -8.742278e-8)"
   @test stringtyped(Double16(pi)) == "Double16(3.14, 0.0009675)"
 
-  @test stringtyped(ComplexDF64(1.0,1.0)) == "ComplexD64(Double64(1.0, 0.0), Double64(1.0, 0.0))"
-  @test stringtyped(ComplexDF32(1.0,1.0)) == "ComplexD32(Double32(1.0, 0.0), Double32(1.0, 0.0))"
-  @test stringtyped(ComplexDF16(1.0,1.0)) == "ComplexD16(Double16(1.0, 0.0), Double16(1.0, 0.0))"
+  @test stringtyped(ComplexDF64(1.0,1.0)) == "ComplexDF64(Double64(1.0, 0.0), Double64(1.0, 0.0))"
+  @test stringtyped(ComplexDF32(1.0,1.0)) == "ComplexDF32(Double32(1.0, 0.0), Double32(1.0, 0.0))"
+  @test stringtyped(ComplexDF16(1.0,1.0)) == "ComplexDF16(Double16(1.0, 0.0), Double16(1.0, 0.0))"
   
 end
