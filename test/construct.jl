@@ -27,10 +27,10 @@
    @test DoubleFloat(1.0f0) === one(Double32)
    @test DoubleFloat(Float16(1.0)) === one(Double16)
    
-   @test ComplexD64(1, 1) === ComplexD64(1.0, 1.0)
-   @test ComplexD32(1, 1) === ComplexD32(1.0f0, 1.0f0)
-   @test ComplexD16(1, 1) === ComplexD16(Float16(1.0), Float16(1.0))  
-   @test ComplexD64(1//1, -1//1) === ComplexD64(1.0, -1.0)
-   @test ComplexD32(1//1, -1//1) === ComplexD32(1.0f0, -1.0f0)
-   @test ComplexD16(1//1, -1//1) === ComplexD16(Float16(1.0), -Float16(1.0))  
+   @test ComplexDF64(1, 1) === ComplexDF64(1.0, 1.0)
+   @test ComplexDF32(1, 1) === ComplexDF32(1.0f0, 1.0f0)
+   @test ComplexDF16(1, 1) === ComplexDF16(Float16(1.0), Float16(1.0))  
+   @test ComplexDF64(1//1, -1//1) === ComplexDF64(1.0, -1.0)
+   @test ComplexDF32(1//1, -1//1) === ComplexDF32(1.0f0, -1.0f0)
+   @test ComplexDF16(1//1, -1//1) === ComplexDF16(Float16(1.0), -Float16(1.0))  
 end
