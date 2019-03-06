@@ -35,21 +35,21 @@ macro df16_str(val::AbstractString)
 end
 
 # DEPRECATED
-used_d64 = false
-used_d32 = false
+used_d64 = Ref(false)
+const used_d32 = Ref(false)
 used_d16 = false
 
 macro d64_str(val::AbstractString)
-  if !DoubleFloats.used_d64
-    DoubleFloats.used_d64 = true
+  if !used_d64[]
+    used_d64[] = true
     @warn("d64\"x\" is deprecated, use df64\"x\"")
   end 
   :(Double64($val))
 end
 
 macro d32_str(val::AbstractString)
-  if !DoubleFloats.used_d32
-    DoubleFloats.used_d32 = true
+  if !used_d32[]
+    used_d32[] = true
     @warn("d32\"x\" is deprecated, use df32\"x\"")
   end
   :(Double32($val))
