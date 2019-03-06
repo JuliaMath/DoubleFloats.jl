@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Complex functions",
     "category": "section",
-    "text": "\njulia> x = ComplexD64(sqrt(d64\"2\"), cbrt(d64\"3\"))\n1.4142135623730951 + 1.4422495703074083im\n\njulia> y = acosh(x)\n1.402873733241199 + 0.8555178360714634im\n\njulia> x - cosh(y)\n7.395570986446986e-32 + 0.0im"
+    "text": "\njulia> x = ComplexD64(sqrt(df64\"2\"), cbrt(df64\"3\"))\n1.4142135623730951 + 1.4422495703074083im\n\njulia> y = acosh(x)\n1.402873733241199 + 0.8555178360714634im\n\njulia> x - cosh(y)\n7.395570986446986e-32 + 0.0im"
 },
 
 {
