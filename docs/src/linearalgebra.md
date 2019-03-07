@@ -18,9 +18,10 @@ matrix = reshape(rand(Double64,n*n),n,n)
 
 ## Operations
 
-- det, tr, inv
 - `+`, `-`, `*`, `/`
-- svdvals, eigvals
+- `rank`, `cond`, `norm`, `opnorm`, `det`, `tr`, `inv`, `pinv`
+- `transpose`, `adjoint`
+- `eigvals`, `eigvals!`, `svdvals`, `svdvals!`, `svd`
 
 ## Matrix Predicates
 
