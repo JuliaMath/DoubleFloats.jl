@@ -27,7 +27,8 @@ export DoubleFloat,
        add2, sub2, mul2, div2,
        ⊕, ⊖, ⊗, ⊘,
        spread, sld, tld,
-       signs
+       signs,
+       elliptick
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
@@ -94,7 +95,9 @@ include("math/arithmetic/normalize_hypot.jl")
 include("math/arithmetic/mixedarith.jl")
 include("math/ops.jl")
 
-include("math/arithmetic/complex/division.jl")
+#include("math/arithmetic/complex/division.jl")
+include("math/special/agm.jl")
+include("math/special/elliptic.jl")
 
 include("math/elementary/sequences.jl")
 include("math/elementary/explog.jl")
