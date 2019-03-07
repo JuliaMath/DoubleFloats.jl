@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Operations",
     "category": "section",
-    "text": "det, tr, inv\n+, -, *, /\nsvdvals, eigvals"
+    "text": "+, -, *, /\nrank, cond, norm, opnorm, det, tr, inv, pinv\ntranspose, adjoint\neigvals, eigvals!, svdvals, svdvals!, svd"
 },
 
 {
