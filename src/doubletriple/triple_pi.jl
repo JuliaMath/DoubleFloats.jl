@@ -1,3 +1,35 @@
+"""
+    twopi_minus(x) is 2π - x
+""" twopi_minus
+
+"""
+    pi_minus(x) is π - x
+""" pi_minus
+
+"""
+    halfpi_minus(x) is π/2 - x
+""" halfpi_minus
+
+"""
+    qrtrpi_minus(x) is π/4 - x
+""" qrtrpi_minus
+
+"""
+    minus_twopi(x) is x - 2π
+""" minus_twopi
+
+"""
+    minus_pi(x) is x - π
+""" minus_pi
+
+"""
+    minus_halfpi(x) is x - π/2
+""" minus_halfpi
+
+"""
+    minus_qrtrpi(x) is x - π/4
+""" minus_qrtrpi
+
 
 twopi_minus(x::DoubleFloat{Float64}) = twopi_minus(HI(x), LO(x))
 pi_minus(x::DoubleFloat{Float64}) = pi_minus(HI(x), LO(x))
@@ -8,7 +40,6 @@ minus_twopi(x::DoubleFloat{Float64}) = minus_twopi(HI(x), LO(x))
 minus_pi(x::DoubleFloat{Float64}) = minus_pi(HI(x), LO(x))
 minus_halfpi(x::DoubleFloat{Float64}) = minus_halfpi(HI(x), LO(x))
 minus_qrtrpi(x::DoubleFloat{Float64}) = minus_qrtrpi(HI(x), LO(x))
-
 
 function twopi_minus(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(6.28318530717958600, hi)
