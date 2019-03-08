@@ -1,47 +1,47 @@
 """
-    twopi_minus(x) is 2π - x
-""" twopi_minus
+    twopi_minus_x(x) is 2π - x
+""" twopi_minus_x
 
 """
-    pi_minus(x) is π - x
-""" pi_minus
+    onepi_minus_x(x) is π - x
+""" onepi_minus_x
 
 """
-    halfpi_minus(x) is π/2 - x
-""" halfpi_minus
+    halfpi_minus_x(x) is π/2 - x
+""" halfpi_minus_x
 
 """
-    qrtrpi_minus(x) is π/4 - x
-""" qrtrpi_minus
+    qrtrpi_minus_x(x) is π/4 - x
+""" qrtrpi_minus_x
 
 """
-    minus_twopi(x) is x - 2π
-""" minus_twopi
+    x_minus_twopi(x) is x - 2π
+""" x_minus_twopi
 
 """
-    minus_pi(x) is x - π
-""" minus_pi
+    x_minus_pi(x) is x - π
+""" x_minus_pi
 
 """
-    minus_halfpi(x) is x - π/2
-""" minus_halfpi
+    x_minus_halfpi(x) is x - π/2
+""" x_minus_halfpi
 
 """
-    minus_qrtrpi(x) is x - π/4
-""" minus_qrtrpi
+    x_minus_qrtrpi(x) is x - π/4
+""" x_minus_qrtrpi
 
 
-twopi_minus(x::DoubleFloat{Float64}) = twopi_minus(HI(x), LO(x))
-pi_minus(x::DoubleFloat{Float64}) = pi_minus(HI(x), LO(x))
-halfpi_minus(x::DoubleFloat{Float64}) = halfpi_minus(HI(x), LO(x))
-qrtrpi_minus(x::DoubleFloat{Float64}) = qrtrpi_minus(HI(x), LO(x))
+twopi_minus_x(x::DoubleFloat{Float64}) = twopi_minus_x(HI(x), LO(x))
+onepi_minus_x(x::DoubleFloat{Float64}) = onepi_minus_x(HI(x), LO(x))
+halfpi_minus_x(x::DoubleFloat{Float64}) = halfpi_minus_x(HI(x), LO(x))
+qrtrpi_minus_x(x::DoubleFloat{Float64}) = qrtrpi_minus_x(HI(x), LO(x))
 
-minus_twopi(x::DoubleFloat{Float64}) = minus_twopi(HI(x), LO(x))
-minus_pi(x::DoubleFloat{Float64}) = minus_pi(HI(x), LO(x))
-minus_halfpi(x::DoubleFloat{Float64}) = minus_halfpi(HI(x), LO(x))
-minus_qrtrpi(x::DoubleFloat{Float64}) = minus_qrtrpi(HI(x), LO(x))
+x_minus_twopi(x::DoubleFloat{Float64}) = x_minus_twopi(HI(x), LO(x))
+x_minus_onepi(x::DoubleFloat{Float64}) = x_minus_onepi(HI(x), LO(x))
+x_minus_halfpi(x::DoubleFloat{Float64}) = x_minus_halfpi(HI(x), LO(x))
+x_minus_qrtrpi(x::DoubleFloat{Float64}) = x_minus_qrtrpi(HI(x), LO(x))
 
-function twopi_minus(hi::T, lo::T) where {T<:Float64}
+function twopi_minus_x(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(6.28318530717958600, hi)
     t2, t3 = two_diff(2.4492935982947064e-16, lo)
     t7, t4 = two_sum(t1, t2)
@@ -51,7 +51,7 @@ function twopi_minus(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(zhi, zlo)
 end
 
-function pi_minus(hi::T, lo::T) where {T<:Float64}
+function onepi_minus_x(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(3.14159265358979300, hi)
     t2, t3 = two_diff(1.2246467991473532e-16, lo)
     t7, t4 = two_sum(t1, t2)
@@ -61,7 +61,7 @@ function pi_minus(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(zhi, zlo)
 end
 
-function halfpi_minus(hi::T, lo::T) where {T<:Float64}
+function halfpi_minus_x(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(1.57079632679489660, hi)
     t2, t3 = two_diff(6.1232339957367660e-17, lo)
     t7, t4 = two_sum(t1, t2)
@@ -71,7 +71,7 @@ function halfpi_minus(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(zhi, zlo)
 end
 
-function qrtrpi_minus(hi::T, lo::T) where {T<:Float64}
+function qrtrpi_minus_x(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(0.78539816339744830, hi)
     t2, t3 = two_diff(3.0616169978683830e-17, lo)
     t7, t4 = two_sum(t1, t2)
@@ -82,8 +82,7 @@ function qrtrpi_minus(hi::T, lo::T) where {T<:Float64}
 end
 
 
-
-function minus_twopi(hi::T, lo::T) where {T<:Float64}
+function x_minus_twopi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(6.28318530717958600, hi)
     t2, t3 = two_diff(2.4492935982947064e-16, lo)
     t7, t4 = two_sum(t1, t2)
@@ -93,7 +92,7 @@ function minus_twopi(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(-zhi, -zlo)
 end
 
-function minus_pi(hi::T, lo::T) where {T<:Float64}
+function x_minus_onepi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(3.14159265358979300, hi)
     t2, t3 = two_diff(1.2246467991473532e-16, lo)
     t7, t4 = two_sum(t1, t2)
@@ -103,7 +102,7 @@ function minus_pi(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(-zhi, -zlo)
 end
 
-function minus_halfpi(hi::T, lo::T) where {T<:Float64}
+function x_minus_halfpi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(1.57079632679489660, hi)
     t2, t3 = two_diff(6.1232339957367660e-17, lo)
     t7, t4 = two_sum(t1, t2)
@@ -113,7 +112,7 @@ function minus_halfpi(hi::T, lo::T) where {T<:Float64}
     return DoubleFloat{Float64}(-zhi, -zlo)
 end
 
-function minus_qrtrpi(hi::T, lo::T) where {T<:Float64}
+function x_minus_qrtrpi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(0.78539816339744830, hi)
     t2, t3 = two_diff(3.0616169978683830e-17, lo)
     t7, t4 = two_sum(t1, t2)
