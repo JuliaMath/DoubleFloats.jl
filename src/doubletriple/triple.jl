@@ -1,5 +1,3 @@
-using Base: IEEEFloat
-
 function triple(::Type{T}, x::BigFloat) where {T<:IEEEFloat}
     prec = precision(BigFloat)
     setprecision(BigFloat, 768)
