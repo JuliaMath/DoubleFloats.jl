@@ -1,6 +1,3 @@
-using Random
-import Random.rand
-
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
     hi, lo  = rand(rng, T, 2)
     if hi === zero(T)
