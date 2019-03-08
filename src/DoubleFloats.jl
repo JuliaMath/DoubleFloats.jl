@@ -32,8 +32,11 @@ export DoubleFloat,
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
-using GenericLinearAlgebra, LinearAlgebra
+using Random
+import Random: rand
+
 using Polynomials
+using GenericLinearAlgebra, LinearAlgebra
 
 # using LinearAlgebra
 import Base: hash, promote_type, promote_rule, convert,
