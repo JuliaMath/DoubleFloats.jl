@@ -19,7 +19,10 @@ end
 end
 
 @inline function dvi_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
-    yinv = inv_fp_dd(y)
-    zhi, zlo = mul_dddd_dd(x, yinv)
-    return zhi, zlo
+    xhi, xlo = x    
+    hi = xhi / y
+    uh, ul = two_prod(hi, y)
+    lo = ((((xhi - uh) - ul) + xlo))/y
+    hi,lo = two_hilo_sum(hi, lo)
+    return hi, lo
 end
