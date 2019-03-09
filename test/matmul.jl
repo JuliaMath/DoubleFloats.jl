@@ -21,7 +21,6 @@
     # Incompatible Dimension
     @test_throws DimensionMismatch Double64.(B1)*Double64.(A1)
 
-
     #Test with zero inner dimension (zero result)
     A2 = Array{Float64,2}(undef, 2, 0)
     B2 = Array{Float64,2}(undef, 0, 3)
@@ -54,7 +53,6 @@
     @test DA3DB3 isa Array{Double64,2}
     @test DA3FB3 isa Array{Double64,2}
     @test FA3DB3 isa Array{Double64,2}
-
 
     #Test multiplications with ComplexD64
     C1  = [1.0+2*im 3 4*im; 5 6 7-im]
