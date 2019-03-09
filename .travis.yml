@@ -11,8 +11,8 @@ notifications:
 git:
   depth: 99999999
 matrix:
-  allow_failures:
-    - julia: nightly
+  # allow_failures:
+  #  - julia: nightly
   fast_finish: true
 after_success:
   - julia -e 'cd(Pkg.dir("DoubleFloats")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
