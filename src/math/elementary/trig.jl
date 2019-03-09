@@ -218,13 +218,13 @@ Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
-    abs(modpi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
+    abs(modonepi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
     signbit(x) && return -tan(-x)
     HI(x) <= 2.0e-12 && return x
 
-    y = modpi(x)                        # 0 <= y < pi
+    y = modonepi(x)                        # 0 <= y < pi
     if y >= halfpi
         y = x_minus_onepi(y)                # -pi/2 < y < 0
         return tan(y)
@@ -296,6 +296,6 @@ end
 function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cot(x) only defined for finite x"))
-    abs(modpi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
+    abs(modonepi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
     return inv(tan(x))
 end
