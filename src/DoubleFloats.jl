@@ -28,7 +28,7 @@ export DoubleFloat,
        ⊕, ⊖, ⊗, ⊘,
        spread, sld, tld,
        signs,
-       elliptick
+       agm, agm1, elliptick
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
@@ -58,7 +58,6 @@ import Base: hash, promote_type, promote_rule, convert,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth,
-             agm, agm1, elliptick,
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
