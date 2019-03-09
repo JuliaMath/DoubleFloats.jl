@@ -1,5 +1,5 @@
 function elliptick(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    !(0.0 <= x <= 1.0) && throw(DomainError("$x not in 0..1"))
+    !(-0.0 <= x <= 1.0) && throw(DomainError("$x not in 0..1"))
     x === one(T) && return DoubleFloat{T}(Inf)
 
     df_one    = one(DoubleFloat{T})
