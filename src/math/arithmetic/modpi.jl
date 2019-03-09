@@ -37,7 +37,7 @@ function modpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	himdlo = mul333(pi_1o1_t64, (hi, md, lo))
 	if signbit(himdlo[1])
 	    himdlo = add333(pi_1o1_t64, himdlo)
-	end
+    end
 	if s
 	    himdlo = sub333(pi_1o1_t64, himdlo)
 	end
