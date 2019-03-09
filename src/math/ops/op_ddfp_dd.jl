@@ -13,7 +13,7 @@ end
 @inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
     hi, lo = x
     hihi, hilo = two_prod(y, hi)
-    lohi, lolo = two_prod(y, lo)v
+    lohi, lolo = two_prod(y, lo)
     hi, lo = two_sumof4(hihi, hilo, lohi, lolo)
     return hi, lo
 end
