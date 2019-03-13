@@ -86,7 +86,7 @@ Base.Math.eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(pos
 ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
 
 
-function nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.Math.nextfloat(x::DoubleFloat{T}) where {athT<:IEEEFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
@@ -95,7 +95,7 @@ function nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     end
 end
 
-function prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + prevfloat(LO(x))
@@ -104,7 +104,7 @@ function prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     end
 end
 
-function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
+function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
         x + n*ulp(LO(x))
@@ -113,7 +113,7 @@ function nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     end
 end
 
-function prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
+function Base.Math.prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
         x - n*ulp(LO(x))
