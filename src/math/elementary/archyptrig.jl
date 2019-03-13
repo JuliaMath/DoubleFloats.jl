@@ -1,4 +1,5 @@
 function asinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isinf(x) && return x
     result = abs(x)
     result = result + sqrt(square(result) + 1.0)
     result = log(result)
@@ -6,16 +7,17 @@ function asinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function acosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    x < 1.0 && throw(DomainError("$x"))
-    !isfinite(x) && return nan(typeof(x))
+    isnan(x) && return x
+    isinf(x) && !signbit(x) && return x
+    (x < 1.0 || isinf(x)) && throw(DomainError("$x"))
     result = x + sqrt(square(x) - 1.0)
     result = log(result)
     return result
 end
 
 function atanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    abs(x) > 1.0 && throw(DomainError("$x"))
-    !isfinite(x) && return nan(typeof(x))
+    isnan(x) && return x
+    (abs(x) > 1.0 || isinf(x)) && throw(DomainError("$x"))
     twox = DoubleFloat{T}(x.hi+x.hi, x.lo+x.lo)
     result = 1.0 + twox / (1.0 - x)
     result = log(result)
@@ -24,8 +26,8 @@ function atanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function acsch(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && return zero(DoubleFloat{T})
-    isnan(x) && return nan(typeof(x))
     iszero(x) && return signbit(x) ? -DoubleFloat{T}(Inf) : DoubleFloat{T}(Inf)
     invx = inv(x)
     invx2 = inv(x*x)
@@ -34,20 +36,21 @@ function acsch(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function asech(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    (x < 0.0 || x > 1.0 || isinf(x)) && throw(DomainError("$x"))
     iszero(x) && return inf(DoubleFloat{T})
     isone(x) && return zero(DoubleFloat{T})
-    !isfinite(x) && return nan(typeof(x))
-    (x < 0.0 || x > 1.0) && throw(DomainError("$x"))
     invx = inv(x)
     result = fma(sqrt(invx + 1), sqrt(invx - 1), invx)
     return log(result)
 end
 
 function acoth(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && return copysign(zero(DoubleFloat{T}), x)
     isone(x) && return inf(DoubleFloat{T})
     isone(-x) && return -inf(DoubleFloat{T})
     (-1.0 < x < 1.0) && throw(DomainError("$x"))
-    !isfinite(x) && return nan(typeof(x))
     invx = inv(x)
     result = (log(1+invx) - log(1-invx))/2
     return result
