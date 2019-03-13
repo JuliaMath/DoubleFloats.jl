@@ -86,7 +86,7 @@ Base.Math.eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(pos
 ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
 
 
-function Base.Math.nextfloat(x::DoubleFloat{T}) where {athT<:IEEEFloat}
+function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     !isfinite(x) && return(x)
     if !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
