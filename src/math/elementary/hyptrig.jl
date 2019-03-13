@@ -37,7 +37,7 @@ end
 =#
 
 function csch(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isinf(x) && return zero(DoubleFloat{T})    
+    isinf(x) && return copysign(zero(DoubleFloat{T}), x)
     return inv(sinh(x))
 end
 
