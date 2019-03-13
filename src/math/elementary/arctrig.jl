@@ -3,7 +3,7 @@ const k_pio2 = Double64(1.5707963267948966, 6.123233995736766e-17)
 
 function atan(x::DoubleFloat{T}) where {T<:IEEEFloat}
    signbit(x) && return -atan(abs(x))
-   isinf(x) && return DoubleFloat{T}(pi)/2
+   isinf(x) && return copysign(DoubleFloat{T}(pi)/2, x)
    iszero(x) && return x
    y = DoubleFloat{T}(atan(x.hi))
    s, c = sin(y), cos(y)
@@ -39,7 +39,7 @@ function atan(y::DoubleFloat{T}, x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function asin(x::DoubleFloat{T}) where {T<:IEEEFloat}
-   abs(x) > 1.0 && throw(DomainError("$x"))
+   (abs(x) > 1.0 || isinf(x)) && throw(DomainError("$x"))
    signbit(x) && return -asin(abs(x))
    y = x
    y = y / (1.0 + sqrt(1.0 - square(y)))
@@ -48,7 +48,7 @@ function asin(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function acos(x::DoubleFloat{T}) where {T<:IEEEFloat}
-   abs(x) > 1.0 && throw(DomainError("$x"))
+   (abs(x) > 1.0 || isinf(x)) && throw(DomainError("$x"))
    signbit(x) && return DoubleFloat{T}(onepi - acos(abs(x)))
    y = x
    y = sqrt(1.0 - square(y)) / (1.0 + y)
