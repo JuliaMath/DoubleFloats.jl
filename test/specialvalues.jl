@@ -32,3 +32,7 @@ end
     @test isnan(LO(T(Inf)))
     @test isnan(LO(T(NaN)))
 end
+
+@testset "NaNs" begin
+    @test isnan(exp(Double64(NaN)))
+end
