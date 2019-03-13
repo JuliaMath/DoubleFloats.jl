@@ -52,7 +52,7 @@ import Base: hash, promote_type, promote_rule, convert,
              floor, ceil, trunc, round, div, fld, cld,
              rem, mod, rem2pi, mod2pi, divrem, fldmod
              prevfloat, nextfloat, eps, fma, muladd,
-             modf, frexp, ldexp, sqrt, cbrt, hypot,
+             frexp, ldexp, sqrt, cbrt, hypot,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
@@ -61,6 +61,8 @@ import Base: hash, promote_type, promote_rule, convert,
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
+
+import Base.Math: modf
 
 import LinearAlgebra: mul!
 
