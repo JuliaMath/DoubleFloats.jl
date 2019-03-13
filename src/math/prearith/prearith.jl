@@ -74,7 +74,7 @@ ulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 posulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 negulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 
-function eps(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.Math.eps(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return LO(x) !== zero(T) ? eps(LO(x)) : eps(posulp(HI(x)))
 end
 
@@ -82,7 +82,7 @@ function ulp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return LO(x) !== zero(T) ? posulp(LO(x)) : posulp(posulp(HI(x)))
 end
 
-eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
+Base.Math.eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
 ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
 
 
