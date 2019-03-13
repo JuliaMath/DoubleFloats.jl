@@ -1,6 +1,6 @@
 function exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
     isnan(a) && return a
-    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
 
     if iszero(HI(a))
     return one(DoubleFloat{T})
@@ -182,8 +182,8 @@ function calc_exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
-    isnan(x) && return x
-    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    isnan(a) && return a
+    isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
     u = exp(a)
     if (u == one(DoubleFloat{T}))
         x
@@ -195,14 +195,14 @@ function expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function exp2(a::DoubleFloat{T}) where {T<:AbstractFloat}
-    isnan(x) && return x
-    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    isnan(a) && return a
+    isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
     return DoubleFloat{T}(2)^a
 end
 
 function exp10(a::DoubleFloat{T}) where {T<:AbstractFloat}
-    isnan(x) && return x
-    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    isnan(a) && return a
+    isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
     return DoubleFloat{T}(10)^a
 end
 
