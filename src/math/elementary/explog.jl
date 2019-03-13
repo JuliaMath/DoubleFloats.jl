@@ -1,47 +1,49 @@
 function exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
-  isnan(a) && return a
-  if iszero(HI(a))
+    isnan(a) && return a
+    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+
+    if iszero(HI(a))
     return one(DoubleFloat{T})
-  elseif isone(abs(HI(a))) && iszero(LO(a))
+    elseif isone(abs(HI(a))) && iszero(LO(a))
     if HI(a) >= zero(T)
         return DoubleFloat{T}(2.718281828459045, 1.4456468917292502e-16)
     else # isone(-HI(a)) && iszero(LO(a))
         return DoubleFloat{T}(0.36787944117144233, -1.2428753672788363e-17)
     end
-  elseif abs(HI(a)) >= 709.0
+    elseif abs(HI(a)) >= 709.0
       if (HI(a) <= -709.0)
          return zero(DoubleFloat{T})
       else # HI(a) >=  709.0
          return inf(DoubleFloat{T})
       end
-  end
+    end
 
-  return calc_exp(a)
+    return calc_exp(a)
 end
 
 function exp_taylor(a::DoubleFloat{T}) where {T<:AbstractFloat}
-  x = a
-  x2 = x*x
-  x3 = x*x2
-  x4 = x2*x2
-  x5 = x2*x3
-  x10 = x5*x5
-  x15 = x5*x10
-  x20 = x10*x10
-  x25 = x10*x15
+    x = a
+    x2 = x*x
+    x3 = x*x2
+    x4 = x2*x2
+    x5 = x2*x3
+    x10 = x5*x5
+    x15 = x5*x10
+    x20 = x10*x10
+    x25 = x10*x15
 
-  z = x + inv_fact[2]*x2 + inv_fact[3]*x3 + inv_fact[4]*x4
-  z2 = x5 * (inv_fact[5] + x*inv_fact[6] + x2*inv_fact[7] +
-       x3*inv_fact[8] + x4*inv_fact[9])
-  z3 = x10 * (inv_fact[10] + x*inv_fact[11] + x2*inv_fact[12] +
-       x3*inv_fact[13] + x4*inv_fact[14])
-  z4 = x15 * (inv_fact[15] + x*inv_fact[16] + x2*inv_fact[17] +
-       x3*inv_fact[18] + x4*inv_fact[19])
-  z5 = x20 * (inv_fact[20] + x*inv_fact[21] + x2*inv_fact[22] +
-       x3*inv_fact[23] + x4*inv_fact[24])
-  z6 = x25 * (inv_fact[25] + x*inv_fact[26] + x2*inv_fact[27])
+    z = x + inv_fact[2]*x2 + inv_fact[3]*x3 + inv_fact[4]*x4
+    z2 = x5 * (inv_fact[5] + x*inv_fact[6] + x2*inv_fact[7] +
+         x3*inv_fact[8] + x4*inv_fact[9])
+    z3 = x10 * (inv_fact[10] + x*inv_fact[11] + x2*inv_fact[12] +
+         x3*inv_fact[13] + x4*inv_fact[14])
+    z4 = x15 * (inv_fact[15] + x*inv_fact[16] + x2*inv_fact[17] +
+         x3*inv_fact[18] + x4*inv_fact[19])
+    z5 = x20 * (inv_fact[20] + x*inv_fact[21] + x2*inv_fact[22] +
+         x3*inv_fact[23] + x4*inv_fact[24])
+    z6 = x25 * (inv_fact[25] + x*inv_fact[26] + x2*inv_fact[27])
 
-  ((((z6+z5)+z4)+z3)+z2)+z + one(DoubleFloat{T})
+    ((((z6+z5)+z4)+z3)+z2)+z + one(DoubleFloat{T})
 end
 
 
@@ -137,46 +139,71 @@ function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 function calc_exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
-  is_neg = signbit(HI(a))
-  xabs = is_neg ? -a : a
-  xintpart = modf(xabs)[2]
-  xintpart = xintpart.hi + xintpart.lo
-  xint = Int64(xintpart)
-  xfrac = xabs - T(xint)
+    is_neg = signbit(HI(a))
+    xabs = is_neg ? -a : a
+    xintpart = modf(xabs)[2]
+    xintpart = xintpart.hi + xintpart.lo
+    xint = Int64(xintpart)
+    xfrac = xabs - T(xint)
 
-  if 0 < xint <= 64
-     zint = exp_int[xint]
-  elseif xint === zero(Int64)
-     zint = zero(DoubleFloat{T})
-  else
-     dv, rm = divrem(xint, 64)
-     zint = exp_int[64]^dv
-     if rm > 0
-         zint = zint * exp_int[rm]
-     end
-  end
+    if 0 < xint <= 64
+        zint = exp_int[xint]
+    elseif xint === zero(Int64)
+        zint = zero(DoubleFloat{T})
+    else
+        dv, rm = divrem(xint, 64)
+        zint = exp_int[64]^dv
+        if rm > 0
+            zint = zint * exp_int[rm]
+        end
+    end
 
-  # exp(xfrac)
-  if HI(xfrac) < 0.5
-      zfrac = exp_zero_half(xfrac)
-  elseif HI(xfrac) > 0.5
-      zfrac = exp_half_one(xfrac)
-  else
-      if LO(xfrac) == 0.0
-          zfrac = DoubleFloat{T}(1.6487212707001282, -4.731568479435833e-17)
-      elseif signbit(LO(xfrac))
-          zfrac = exp_zero_half(xfrac)
-      else
-          zfrac = exp_half_one(xfrac)
-      end
-  end
+    # exp(xfrac)
+    if HI(xfrac) < 0.5
+        zfrac = exp_zero_half(xfrac)
+    elseif HI(xfrac) > 0.5
+        zfrac = exp_half_one(xfrac)
+    else
+        if LO(xfrac) == 0.0
+            zfrac = DoubleFloat{T}(1.6487212707001282, -4.731568479435833e-17)
+        elseif signbit(LO(xfrac))
+            zfrac = exp_zero_half(xfrac)
+        else
+            zfrac = exp_half_one(xfrac)
+        end
+    end
 
-  z = HI(zint) == zero(T) ? zfrac : zint * zfrac
-  if is_neg
-      z = inv(z)
-  end
+    z = HI(zint) == zero(T) ? zfrac : zint * zfrac
+    if is_neg
+        z = inv(z)
+    end
 
-  return z
+    return z
+end
+
+function expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    u = exp(a)
+    if (u == one(DoubleFloat{T}))
+        x
+    elseif (u-1.0 == -one(DoubleFloat{T}))
+        -one(DoubleFloat{T})
+    else
+        a*(u-1.0) / log(u)
+    end
+end
+
+function exp2(a::DoubleFloat{T}) where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    return DoubleFloat{T}(2)^a
+end
+
+function exp10(a::DoubleFloat{T}) where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    return DoubleFloat{T}(10)^a
 end
 
 #=
@@ -196,26 +223,21 @@ function calc_exp_frac(x::DoubleFloat{T}) where {T<:AbstractFloat}
                    588107520.0)*x + 12350257920.0)*x -
                    201132771840.0)*x + 2514159648000.0)*x -
                    23465490048000.0)*x + 154872234316800.0)*x -
-                   647647525324800.0)*x + 1295295050649600.0
+
+function exp2(a::DoubleFloat{T}) where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && return(signbit(x) ? zero(DoubleFloat{T}) : x)
+    return 2^a
+end
+647647525324800.0)*x + 1295295050649600.0
   u = u/v
   return u
 end
 =#
 
-
-
-function Base.Math.expm1(a::DoubleFloat{T}) where {T<:AbstractFloat}
-   u = exp(a)
-   if (u == one(DoubleFloat{T}))
-       x
-   elseif (u-1.0 == -one(DoubleFloat{T}))
-       -one(DoubleFloat{T})
-   else
-       a*(u-1.0) / log(u)
-   end
-end
-
-function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
+function log(x::DoubleFloat{T}) where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && !signbit(x) && return x
     x === zero(DoubleFloat{T}) && return neginf(DoubleFloat{T})
     y = DoubleFloat(log(HI(x)), zero(T))
     z = exp(y)
@@ -226,7 +248,9 @@ function Base.Math.log(x::DoubleFloat{T}) where {T<:AbstractFloat}
 end
 
 
-function Base.Math.log1p(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function log1p(x::DoubleFloat{T})  where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && !signbit(x) && return 
     u = 1.0 + x
     if u == one(DoubleFloat{T})
         x
@@ -245,10 +269,14 @@ logten(::Type{Float32}) = Double32(2.3025851, -3.1975436e-8)
 logtwo(::Type{Float16}) = Double16(0.6934, -0.0002122)
 logten(::Type{Float16}) = Double16(2.303, -0.0001493)
 
-function Base.Math.log2(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function log2(x::DoubleFloat{T})  where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && !signbit(x) && return x
     log(x) / logtwo(T)
 end
 
-function Base.Math.log10(x::DoubleFloat{T})  where {T<:AbstractFloat}
+function log10(x::DoubleFloat{T})  where {T<:AbstractFloat}
+    isnan(x) && return x
+    isinf(x) && !signbit(x) && return x
     log(x) / logten(T)
 end
