@@ -28,21 +28,21 @@ end
 flipsign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
 copysign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
 
-function frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, exphi = frexp(HI(x))
     frlo, explo = frexp(LO(x))
     return (frhi, exphi), (frlo, explo)
 end
 
-function ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat, I<:Integer}
+function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat, I<:Integer}
     return DoubleFloat(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
+function Base.Math.ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
     return DoubleFloat(ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
-function ldexp(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:Integer}
+function Base.Math.ldexp(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:Integer}
     return ldexp(dhilo[1], dhilo[2])
 end
 
