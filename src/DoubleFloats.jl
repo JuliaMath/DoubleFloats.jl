@@ -51,17 +51,19 @@ import Base: hash, promote_type, promote_rule, convert,
              min, max, minmax, minimum, maximum,
              floor, ceil, trunc, round, div, fld, cld,
              rem, mod, rem2pi, mod2pi, divrem, fldmod
-             sqrt, cbrt, hypot,
-             log, log1p, log2, log10, exp, expm1, exp2, exp10,
-             sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
-             asin, acos, atan, acsc, asec, acot,
-             sinh, cosh, tanh, csch, sech, coth,
-             asinh, acosh, atanh, acsch, asech, acoth,
+             sqrt, cbrt,
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
 
-import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd
+import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
+             hypot,
+             log, log1p, log2, log10, exp, expm1, exp2, exp10,
+             sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
+             asin, acos, atan, acsc, asec, acot,
+             sinh, cosh, tanh, csch, sech, coth,
+             asinh, acosh, atanh, acsch, asech, acoth
+
 
 import LinearAlgebra: mul!
 
