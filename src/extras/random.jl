@@ -14,3 +14,9 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Doubl
     DoubleFloat(hi, lo)
 end
 
+function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Complex{DoubleFloat{T}}}}) where {T<:IEEEFloat}
+    re = rand(DoubleFloat{T})
+    im = rand(DoubleFloat{T})
+    return Complex{DoubleFloat{T}}(re, im)
+end
+
