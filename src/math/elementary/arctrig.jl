@@ -56,10 +56,18 @@ function acos(x::DoubleFloat{T}) where {T<:IEEEFloat}
    return DoubleFloat{T}(z.hi+z.hi, z.lo+z.lo)
 end
 
-acsc(x::DoubleFloat{T}) where {T<:IEEEFloat} = asin(inv(x))
-asec(x::DoubleFloat{T}) where {T<:IEEEFloat} = acos(inv(x))
+function acsc(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isinf(x) && return copysign(zero(DoubleFloat{T}), x)
+    return asin(inv(x))
+end
+
+function asec(x::DoubleFloat{T}) where {T<:IEEEFloat}
+   isinf(x) && return DoubleFloat{T}(halfpi)
+   return acos(inv(x))
+end
 
 function acot(x::DoubleFloat{T}) where {T<:IEEEFloat}
+   isinf(x) && return copysign(zero(DoubleFloat{T}), x)
    signbit(x) && return DoubleFloat{T}(onepi - acot(abs(x)))
    iszero(x) && return k_pio2
    z = k_pio2 - atan(abs(x))
