@@ -1,4 +1,5 @@
 function exp(a::DoubleFloat{T}) where {T<:AbstractFloat}
+  isnan(a) && return a
   if iszero(HI(a))
     return one(DoubleFloat{T})
   elseif isone(abs(HI(a))) && iszero(LO(a))
