@@ -9,6 +9,6 @@
     @test flipsign(T(1), 1) == T(1)
     
     @test ldexp(frexp(val)...,) == val
-    @test ldexp(significand(val), exponent(val)) == val
+   # @test ldexp(significand(val), exponent(val)) == val
     @test signs(val) = sign(HI(val)), sign(LO(val))
 end
