@@ -1,5 +1,11 @@
 @inline function reim(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-     return x.re, x.im
+    return x.re, x.im
+end
+
+@inline function csgn(r,i)
+    HI(r) > 0 && return  1
+    HI(r) < 0 && return -1
+    return HI(i) > 0 ? 1 : -1
 end
 
 square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
@@ -178,9 +184,22 @@ function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
-function asinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    return log( x + sqrt(square(x) + 1) )
+
+function asinh(x::Complex{DoubleFloat{T}}) where {T}
+    r, i = real(x), imag(x)
+    r2 = r*r
+    ip1sqr = (i + 1)^2
+    sqrta  = sqrt(r2 + ip1sqr)
+    im1sqr = (i - 1)^2
+    sqrtb  = sqrt(r2 + im1sqr)
+    t1 = sqrt((sqrta + sqrtb)^2 / 4 - 1)
+    t2 = log(sqrta / 2 + sqrtb / 2 + t1)
+    r = t2 * csgn(real(r + 1im * i), imag(r+1im * i))
+    t3 = asin(-sqrta / 2 + sqrtb / 2)
+    i  = - t3
+    return Complex{DoubleFloat{T}}(r, i)
 end
+
 
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
