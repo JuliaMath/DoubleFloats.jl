@@ -12,6 +12,21 @@ square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
 
 # development from functions.wolfram.com
 
+#=
+Julia(evalc(Re(sqrt(r+i*sqrt(-1)))), optimize = true);
+t1 = i ^ 2
+t2 = r ^ 2
+t4 = sqrt(t1 + t2)
+t7 = sqrt(2) * sqrt(t4 + r) / 2
+Julia(evalc(Im(sqrt(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t3 = csgn(-1im * r + i)
+t4 = i ^ 2
+t5 = r ^ 2
+t7 = sqrt(t4 + t5)
+t11 = sqrt(2) * sqrt(t7 - r) * t3 / 2
+=#
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     fourthroot = sqrt(hypot(rea, ima))
@@ -21,6 +36,16 @@ function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(exp(r+i*sqrt(-1)))), optimize = true);
+t1 = exp(r)
+t2 = cos(i)
+t3 = t2 * t1
+Julia(evalc(Im(exp(r+i*sqrt(-1)))), optimize = true);
+t1 = exp(r)
+t2 = sin(i)
+t3 = t2 * t1
+=#
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     erea = exp(rea)
@@ -29,6 +54,16 @@ function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
+#=
+
+Julia(evalc(Re(log(r+i*sqrt(-1)))), optimize = true);
+t1 = i ^ 2
+t2 = r ^ 2
+t4 = log(t1 + t2)
+t5 = t4 / 2
+Julia(evalc(Im(log(r+i*sqrt(-1)))), optimize = true);
+t1 = atan2(i, r)
+=#
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     realpart = log(square(rea) + square(ima)) * 0.5
@@ -36,18 +71,54 @@ function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
+#=
+Julia(evalc(Re(sin(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = cosh(i)
+t3 = t2 * t1
+Julia(evalc(Im(sin(r+i*sqrt(-1)))), optimize = true);
+t1 = cos(r)
+t2 = sinh(i)
+t3 = t2 * t1
+=#
 function sin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea, ima = sin(rea) * cosh(ima), cos(rea) * sinh(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(cos(r+i*sqrt(-1)))), optimize = true);
+t1 = cos(r)
+t2 = cosh(i)
+t3 = t2 * t1
+Julia(evalc(Im(cos(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = sinh(i)
+t4 = -t2 * t1
+=#
 function cos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea, ima = cos(rea) * cosh(ima), -sin(rea) * sinh(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(tan(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = cos(r)
+t4 = t2 ^ 2
+t5 = sinh(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(tan(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(i)
+t2 = cosh(i)
+t4 = cos(r)
+t5 = t4 ^ 2
+t6 = t1 ^ 2
+t9 = 0.1e1 / (t5 + t6) * t2 * t1
+=#
 function tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = 2*real(x), 2*imag(x)
     den = cos(rea) + cosh(ima)
@@ -56,6 +127,22 @@ function tan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(csc(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = cosh(i)
+t4 = t1 ^ 2
+t5 = sinh(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(csc(r+i*sqrt(-1)))), optimize = true);
+t1 = cos(r)
+t2 = sinh(i)
+t4 = sin(r)
+t5 = t4 ^ 2
+t6 = t2 ^ 2
+t10 = -0.1e1 / (t5 + t6) * t2 * t1
+=#
 function csc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     den = cos(2*rea) - cosh(2*ima)
@@ -65,6 +152,22 @@ function csc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(sec(r+i*sqrt(-1)))), optimize = true);
+t1 = cos(r)
+t2 = cosh(i)
+t4 = t1 ^ 2
+t5 = sinh(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(sec(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = sinh(i)
+t4 = cos(r)
+t5 = t4 ^ 2
+t6 = t2 ^ 2
+t9 = 0.1e1 / (t5 + t6) * t2 * t1
+=#
 function sec(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     den = cos(2*rea) + cosh(2*ima)
@@ -74,6 +177,22 @@ function sec(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(cot(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(r)
+t2 = cos(r)
+t4 = t1 ^ 2
+t5 = sinh(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(cot(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(i)
+t2 = cosh(i)
+t4 = sin(r)
+t5 = t4 ^ 2
+t6 = t1 ^ 2
+t10 = -0.1e1 / (t5 + t6) * t2 * t1
+=#
 function cot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = 2*real(x), 2*imag(x)
     den = cos(rea) - cosh(ima)
@@ -83,19 +202,54 @@ function cot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
 end
 
 
-
+#=
+Julia(evalc(Re(sinh(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(r)
+t2 = cos(i)
+t3 = t2 * t1
+Julia(evalc(Im(sinh(r+i*sqrt(-1)))), optimize = true);
+t1 = cosh(r)
+t2 = sin(i)
+t3 = t2 * t1
+=#
 function sinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea, ima = sinh(rea) * cos(ima), cosh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(cosh(r+i*sqrt(-1)))), optimize = true);
+t1 = cosh(r)
+t2 = cos(i)
+t3 = t2 * t1
+Julia(evalc(Im(cosh(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(r)
+t2 = sin(i)
+t3 = t2 * t1
+=#
 function cosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea, ima = cosh(rea) * cos(ima), sinh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(tanh(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(r)
+t2 = cosh(r)
+t4 = t1 ^ 2
+t5 = cos(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(tanh(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(i)
+t2 = cos(i)
+t4 = sinh(r)
+t5 = t4 ^ 2
+t6 = t2 ^ 2
+t9 = 0.1e1 / (t5 + t6) * t2 * t1
+=#
 function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = 2*real(x), 2*imag(x)
     den = cosh(rea) + cos(ima)
@@ -104,6 +258,21 @@ function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(csch(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(r)
+t2 = cos(i)
+t4 = t1 ^ 2
+t5 = sin(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(csch(r+i*sqrt(-1)))), optimize = true);
+t1 = cosh(r)
+t2 = sin(i)
+t4 = sinh(r)
+t5 = t4 ^ 2
+t6 = t2 ^ 2
+=#
 function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     den = cos(2*ima) - cosh(2*rea)
@@ -113,6 +282,22 @@ function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(sech(r+i*sqrt(-1)))), optimize = true);
+t1 = cos(i)
+t2 = cosh(r)
+t4 = sinh(r)
+t5 = t4 ^ 2
+t6 = t1 ^ 2
+t9 = 0.1e1 / (t5 + t6) * t2 * t1
+Julia(evalc(Im(sech(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(i)
+t2 = sinh(r)
+t4 = t2 ^ 2
+t5 = cos(i)
+t6 = t5 ^ 2
+t10 = -0.1e1 / (t4 + t6) * t2 * t1
+=#
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     den = cos(2*ima) + cosh(2*rea)
@@ -122,6 +307,22 @@ function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(rea, ima)
 end
 
+#=
+Julia(evalc(Re(coth(r+i*sqrt(-1)))), optimize = true);
+t1 = sinh(r)
+t2 = cosh(r)
+t4 = t1 ^ 2
+t5 = sin(i)
+t6 = t5 ^ 2
+t9 = 0.1e1 / (t4 + t6) * t2 * t1
+Julia(evalc(Im(coth(r+i*sqrt(-1)))), optimize = true);
+t1 = sin(i)
+t2 = cos(i)
+t4 = sinh(r)
+t5 = t4 ^ 2
+t6 = t1 ^ 2
+t10 = -0.1e1 / (t5 + t6) * t2 * t1
+=#
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = 2*real(x), 2*imag(x)
     den = cos(ima) - cosh(rea)
