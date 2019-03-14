@@ -1,5 +1,7 @@
 function asinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
     isinf(x) && return x
+    signbit(x) && return - asinh(-x)
     result = abs(x)
     result = result + sqrt(square(result) + 1.0)
     result = log(result)
