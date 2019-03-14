@@ -215,6 +215,19 @@ function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t17, t19)
 end
 
+#=
+Julia(evalc(Re(arctanh(r+i*sqrt(-1)))), optimize = true);
+t2 = (r + 1) ^ 2
+t3 = i ^ 2
+t6 = (r - 1) ^ 2
+t10 = log(1 / (t6 + t3) * (t2 + t3))
+t11 = t10 / 4
+Julia(evalc(Im(arctanh(r+i*sqrt(-1)))), optimize = true);
+t2 = atan2(i, r + 1)
+t4 = atan2(-i, 1 - r)
+t6 = t2 / 2 - t4 / 2
+=#
+
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     ima2 = square(ima)
