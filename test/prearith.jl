@@ -1,12 +1,13 @@
 @testset "prearith $T" for T in (Double16, Double32, Double64)
   
     val = T(17)/3
+    negval = -val
   
-    @test -T(1) == T(-1)
-    @test abs(T(-1)) == T(1)
-    @test abs(T(1)) == T(1)
-    @test flipsign(T(1), -1) == T(-1)
-    @test flipsign(T(1), 1) == T(1)
+    @test -val == negval
+    @test abs(val) == val
+    @test abs(negval) == val
+    @test flipsign(val, -1) == negval
+    @test flipsign(negval, 1) == negval
     
     @test ldexp(frexp(val)...,) == val
    # @test ldexp(significand(val), exponent(val)) == val
