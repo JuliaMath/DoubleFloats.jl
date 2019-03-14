@@ -34,3 +34,33 @@
    @test ComplexDF32(1//1, -1//1) === ComplexDF32(1.0f0, -1.0f0)
    @test ComplexDF16(1//1, -1//1) === ComplexDF16(Float16(1.0), -Float16(1.0))  
 end
+
+@testset "intraconstruct" begin
+   @test Double64(Double32(1)) === Double64(1)
+   @test Double64(Double16(1)) === Double64(1)
+   @test Double32(Double16(1)) === Double32(1)
+
+   @test Double64(1.0) === Double64(1)
+   @test Double64(1.0f0) === Double64(1)
+   @test Double64(Float16(1.0)) === Double64(1)
+
+   @test Double32(1.0) === Double32(1)
+   @test Double32(1.0f0) === Double32(1)
+   @test Double32(Float16(1.0)) === Double32(1)
+
+   @test Double16(1.0) == Double16(1)
+   @test Double16(1.0f0) == Double16(1)
+   @test Double16(Float16(1.0)) == Double16(1)
+
+   @test Double64(Int64(1)) === Double64(1.0)
+   @test Double32(Int64(1)) === Double32(1.0)
+   @test Double16(Int64(1)) === Double16(1.0)
+   
+   @test Double64(Int32(1)) === Double64(1.0)
+   @test Double32(Int32(1)) === Double32(1.0)
+   @test Double16(Int32(1)) === Double16(1.0)
+
+   @test Double64(Int16(1)) === Double64(1.0)
+   @test Double32(Int16(1)) === Double32(1.0)
+   @test Double16(Int16(1)) === Double16(1.0)
+end
