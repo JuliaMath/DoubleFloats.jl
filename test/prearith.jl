@@ -10,5 +10,5 @@
     
     @test ldexp(frexp(val)...,) == val
    # @test ldexp(significand(val), exponent(val)) == val
-    @test signs(val) = sign(HI(val)), sign(LO(val))
+    @test signs(val) == sign(HI(val)), sign(LO(val))
 end
