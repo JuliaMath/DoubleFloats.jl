@@ -541,6 +541,7 @@ t12 = -t11
 
 function asinh(x::Complex{DoubleFloat{T}}) where {T}
     r, i = real(x), imag(x)
+    signbit(r) && return - asinh(-x)
     r2 = r*r
     ip1sqr = (i + 1)^2
     sqrta  = sqrt(r2 + ip1sqr)
