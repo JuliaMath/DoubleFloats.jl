@@ -108,9 +108,9 @@ Julia(evalc(Re(tan(r+i*sqrt(-1)))), optimize = true);
 t1 = sin(r)
 t2 = cos(r)
 t4 = t2 ^ 2
-t5 = sinh(i)
-t6 = t5 ^ 2
-t9 = 0.1e1 / (t4 + t6) * t2 * t1
+t5 = sinh(i)                        # real(x), t5=0
+t6 = t5 ^ 2                         # real(x), t6=0
+t9 = 0.1e1 / (t4 + t6) * t2 * t1    # real(x), 1 / t4 * t2 * t1 = t2*t1/t4
 Julia(evalc(Im(tan(r+i*sqrt(-1)))), optimize = true);
 t1 = sinh(i)
 t2 = cosh(i)
