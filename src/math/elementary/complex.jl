@@ -174,6 +174,18 @@ function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return acos(inv(z))
 end
 
+#=
+Julia(evalc(Re(arccoth(r+i*sqrt(-1)))), optimize = true);
+t2 = (r + 1) ^ 2
+t3 = i ^ 2
+t6 = (r - 1) ^ 2
+t10 = log(1 / (t6 + t3) * (t2 + t3))
+t11 = t10 / 4
+Julia(evalc(Im(arccoth(r+i*sqrt(-1)))), optimize = true);
+t2 = atan2(i, r + 1)
+t4 = atan2(i, r - 1)
+t6 = t2 / 2 - t4 / 2
+=#
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     ima2 = square(ima)
@@ -184,6 +196,28 @@ function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
+#=
+Julia(evalc(Re(arcsinh(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t2 = csgn(r + 1im * i)
+t3 = r ^ 2
+t5 = (i + 1) ^ 2
+t7 = sqrt(t3 + t5)
+t10 = (i - 1) ^ 2
+t12 = sqrt(t3 + t10)
+t17 = sqrt((t7 + t12) ^ 2 / 4 - 1)
+t19 = log(t7 / 2 + t12 / 2 + t17)
+t20 = t19 * t2
+Julia(evalc(Im(arcsinh(r+i*sqrt(-1)))), optimize = true);
+t1 = r ^ 2
+t3 = (i + 1) ^ 2
+t5 = sqrt(t1 + t3)
+t7 = (i - 1) ^ 2
+t9 = sqrt(t1 + t7)
+t11 = asin(-t5 / 2 + t9 / 2)
+t12 = -t11
+=#
 
 function asinh(x::Complex{DoubleFloat{T}}) where {T}
     r, i = real(x), imag(x)
@@ -200,7 +234,34 @@ function asinh(x::Complex{DoubleFloat{T}}) where {T}
     return Complex{DoubleFloat{T}}(r, i)
 end
 
+#=
 
+Julia(evalc(Re(arccosh(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t1 = -1im * r
+t3 = csgn(t1 + 1im + i)
+t5 = csgn(t1 + i)
+t8 = (r + 1) ^ 2
+t9 = i ^ 2
+t11 = sqrt(t8 + t9)
+t14 = (r - 1) ^ 2
+t16 = sqrt(t14 + t9)
+t21 = sqrt((t11 + t16) ^ 2 / 4 - 1)
+t23 = log(t11 / 2 + t16 / 2 + t21)
+t24 = t23 * t5 * t3
+Julia(evalc(Im(arccosh(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t3 = csgn(-1im * r + 1im + i)
+t5 = (r + 1) ^ 2
+t6 = i ^ 2
+t8 = sqrt(t5 + t6)
+t10 = (r - 1) ^ 2
+t12 = sqrt(t10 + t6)
+t14 = acos(-t8 / 2 + t12 / 2)
+t16 = (pi - t14) * t3
+=#
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     t2 = (rea - 1) ^ 2
@@ -237,6 +298,39 @@ function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
 
+#=
+
+Julia(evalc(Re(arccsch(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t2 = csgn(1im * i - r)
+t3 = r ^ 2
+t4 = i ^ 2
+t5 = t4 + t3
+t6 = t5 ^ 2
+t8 = 0.1e1 / t6 * t3
+t10 = 0.1e1 / t5 * i
+t12 = (-t10 + 1) ^ 2
+t14 = sqrt(t8 + t12)
+t17 = (-t10 - 1) ^ 2
+t19 = sqrt(t8 + t17)
+t24 = sqrt((t14 + t19) ^ 2 / 4 - 1)
+t26 = log(t14 / 2 + t19 / 2 + t24)
+t28 = -t26 * t2
+Julia(evalc(Im(arccsch(r+i*sqrt(-1)))), optimize = true);
+t1 = r ^ 2
+t2 = i ^ 2
+t3 = t2 + t1
+t4 = t3 ^ 2
+t6 = 0.1e1 / t4 * t1
+t8 = 0.1e1 / t3 * i
+t10 = (-t8 + 1) ^ 2
+t12 = sqrt(t10 + t6)
+t14 = (-t8 - 1) ^ 2
+t16 = sqrt(t6 + t14)
+t18 = asin(-t12 / 2 + t16 / 2)
+t19 = -t18
+=#
 function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(z)
     t1 = square(ima)
@@ -261,10 +355,59 @@ function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return Complex{DoubleFloat{T}}(t35, t44)
 end
 
+#=
+
+Julia(evalc(Re(arcsech(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t1 = i ^ 2
+t2 = r ^ 2
+t5 = csgn(1im * t1 + 1im * t2 + -1im * r - i)
+t7 = csgn(1im * r + i)
+t9 = t1 + t2
+t11 = 0.1e1 / t9 * r
+t13 = (t11 + 1) ^ 2
+t14 = t9 ^ 2
+t16 = 0.1e1 / t14 * t1
+t18 = sqrt(t13 + t16)
+t21 = (t11 - 1) ^ 2
+t23 = sqrt(t21 + t16)
+t28 = sqrt((t18 + t23) ^ 2 / 4 - 1)
+t30 = log(t18 / 2 + t23 / 2 + t28)
+t32 = -t30 * t7 * t5
+Julia(evalc(Im(arcsech(r+i*sqrt(-1)))), optimize = true);
+Warning, type signature [complex] for function sqrt is not recognized
+Warning, the function names {csgn} are not recognized in the target language
+t1 = i ^ 2
+t2 = r ^ 2
+t5 = csgn(1im * t1 + 1im * t2 + -1im * r - i)
+t6 = t1 + t2
+t8 = 0.1e1 / t6 * r
+t10 = (t8 + 1) ^ 2
+t11 = t6 ^ 2
+t13 = 0.1e1 / t11 * t1
+t15 = sqrt(t10 + t13)
+t17 = (t8 - 1) ^ 2
+t19 = sqrt(t17 + t13)
+t21 = acos(-t15 / 2 + t19 / 2)
+t23 = (pi - t21) * t5
+=#
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     return log((sqrt(1-square(x))+1)/x)
 end
 
+#=
+Julia(evalc(Re(arccoth(r+i*sqrt(-1)))), optimize = true);
+t2 = (r + 1) ^ 2
+t3 = i ^ 2
+t6 = (r - 1) ^ 2
+t10 = log(1 / (t6 + t3) * (t2 + t3))
+t11 = t10 / 4
+Julia(evalc(Im(arccoth(r+i*sqrt(-1)))), optimize = true);
+t2 = atan2(i, r + 1)
+t4 = atan2(i, r - 1)
+t6 = t2 / 2 - t4 / 2
+=#
 function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     rea2 = square(rea)
