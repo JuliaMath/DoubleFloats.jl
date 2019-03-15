@@ -21,7 +21,7 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	return DoubleFloat{T}(himdlo[1],himdlo[2])
 end
 
-function modonepi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function mod1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	s = signbit(x)
 	if s
 		x = -x
