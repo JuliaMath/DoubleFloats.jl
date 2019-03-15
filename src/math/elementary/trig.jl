@@ -219,7 +219,7 @@ Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
 function tangent(x::T) where {T}
     signbit(x) && return -tangent(abs(x))
     x > halfpi(T) && return tangent(DoubleFloats.modhalfpi(x))
-    x > qrtrpi(T) && return inv(tangent(x-qrtrpi(T)))
+    x > qrtrpi(T) && return inv(tangent(halfpi(T)-x))
     return tangent_0_qrtrpi(x)
 end
 tangent_0_qrtrpi(x) = sin(x)/cos(x)
