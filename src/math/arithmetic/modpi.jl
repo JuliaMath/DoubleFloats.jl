@@ -242,7 +242,7 @@ rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod1pi(x)
 rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem1pi(-x, RoundDown)
 rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modhalfpipm(x)
 rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
-    signbit(x) ? rempi(x, RoundUp) : rempi(x, RoundDown)
+    signbit(x) ? rem1pi(x, RoundUp) : rem1pi(x, RoundDown)
 
 rem1pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(rem1pi(DoubleFloat{Float64}(x), rounding))
