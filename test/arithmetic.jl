@@ -39,6 +39,7 @@ end
     @test rem(da, db) == rem(a, b) 
     @test mod(da, db) == mod(a, b) 
     @test divrem(da, db) == divrem(a, b) 
+    
     @test fldmod(da, db) == fldmod(a, b) 
 end
 
@@ -53,3 +54,27 @@ end
     @test df64"123" - df64"123" * df64"0.1" * df64"10.0" == 0.0
     @test df64"123" - 123 * df64"0.1" * df64"10.0" == 0.0
 end
+
+@testset "modpi" begin
+    @test iszero(DoubleFloats.mod1pi(Double64(pi)))
+    @test iszero(DoubleFloats.mod2pi(2*Double64(pi)))
+    @test iszero(DoubleFloats.modhalfpi(0.5*Double64(pi)))
+    @test iszero(DoubleFloats.modqrtrpi(0.25*Double64(pi)))
+
+    @test iszero(DoubleFloats.mod1pi(Double32(pi)))
+    @test iszero(DoubleFloats.mod2pi(2*Double32(pi)))
+    @test iszero(DoubleFloats.modhalfpi(0.5*Double32(pi)))
+    @test iszero(DoubleFloats.modqrtrpi(0.25*Double32(pi)))
+end
+
+@testset "rempi" begin
+    @test iszero(DoubleFloats.rem1pi(Double64(pi)))
+    @test iszero(DoubleFloats.rem2pi(2*Double64(pi)))
+    @test iszero(DoubleFloats.remhalfpi(0.5*Double64(pi)))
+    @test iszero(DoubleFloats.remqrtrpi(0.25*Double64(pi)))
+
+    @test iszero(DoubleFloats.rem1pi(Double32(pi)))
+    @test iszero(DoubleFloats.rem2pi(2*Double32(pi)))
+    @test iszero(DoubleFloats.remhalfpi(0.5*Double32(pi)))
+    @test iszero(DoubleFloats.remqrtrpi(0.25*Double32(pi)))
+end    
