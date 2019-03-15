@@ -27,7 +27,7 @@ function mod1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 		x = -x
 	end
 	x < pi1o1(DoubleFloat{T}) && return x
-	x < pi2o1(DoubleFloat{T}) && return modpi(x - pi1o1(DoubleFloat{T}))
+	x < pi2o1(DoubleFloat{T}) && return mod1pi(x - pi1o1(DoubleFloat{T}))
 	himdlo = mul323(inv_pi_1o1_t64, HILO(x))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
@@ -96,7 +96,7 @@ function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function rempi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    m = modpi(x)
+    m = mod1pi(x)
     return HI(x) < 0 ? -m : m
 end
 
