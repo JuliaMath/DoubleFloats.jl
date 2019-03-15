@@ -87,4 +87,9 @@ end
     @test iszero(DoubleFloats.rem2pi(2*Double32(pi)))
     @test iszero(DoubleFloats.remhalfpi(0.5*Double32(pi)))
     @test iszero(DoubleFloats.remqrtrpi(0.25*Double32(pi)))
-end    
+end
+
+@testset "hypot" begin
+    @test DoubleFloats.hypot(Double64(1), Double64(1))^2 == 2
+    @test sum(DoubleFloats.normalize(Double64(1), Double64(1)))^2 == 2
+end
