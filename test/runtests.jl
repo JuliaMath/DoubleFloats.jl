@@ -18,6 +18,8 @@ include("functions.jl")
 include("matmul.jl")
 include("complex.jl")
 
+include("linearalgebra.jl")
+
 include("concrete_accuracy.jl")
 include("function_accuracy.jl")
 
