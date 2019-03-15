@@ -427,7 +427,7 @@ function mul323(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
 end
 
 mul323(a::Tuple{Float64, Float64, Float64}, b::Tuple{Float32, Float32}) =
-    mul323(a, (Float64(b[1]), Float64(b[2])))
+    mul323(a, (Float64(b[1]), Float64(b[2])) )
 mul323(a::Tuple{Float32, Float32, Float32}, b::Tuple{Float64, Float64}) =
     mul323((Float64(a[1]), Float64(a[2]), Float64(a[3])), b)
 
@@ -466,7 +466,7 @@ function mul322(a::Tuple{T,T,T}, b::Tuple{T,T}) where {T<:AbstractFloat}
 end
 
 mul322(a::Tuple{Float64, Float64, Float64}, b::Tuple{Float32, Float32}) =
-    mul322(a, (Float64(b[1]), Float64(b[2])))
+    mul322(a, (Float64(b[1]), Float64(b[2])) )
 mul322(a::Tuple{Float32, Float32, Float32}, b::Tuple{Float64, Float64}) =
     mul322((Float64(a[1]), Float64(a[2]), Float64(a[3])), b)
 
@@ -509,7 +509,7 @@ end
 
 
 mul333(a::Tuple{Float64, Float64, Float64}, b::Tuple{Float32, Float32, Float32}) =
-    mul333(a, (Float64(b[1]), Float64(b[2]), Float64(b[3]))
+    mul333(a, (Float64(b[1]), Float64(b[2]), Float64(b[3])) )
 mul333(a::Tuple{Float32, Float32, Float32}, b::Tuple{Float64, Float64, Float64}) =
     mul333((Float64(a[1]), Float64(a[2]), Float64(a[3])), b)
 
@@ -542,7 +542,7 @@ function mul332(a::Tuple{T,T,T}, b::Tuple{T,T,T}) where {T<:AbstractFloat}
 end
 
 mul332(a::Tuple{Float64, Float64, Float64}, b::Tuple{Float32, Float32, Float32}) =
-    mul332(a, (Float64(b[1]), Float64(b[2]), Float64(b[3]))
+    mul332(a, (Float64(b[1]), Float64(b[2]), Float64(b[3])) )
 mul332(a::Tuple{Float32, Float32, Float32}, b::Tuple{Float64, Float64, Float64}) =
     mul332((Float64(a[1]), Float64(a[2]), Float64(a[3])), b)
 
