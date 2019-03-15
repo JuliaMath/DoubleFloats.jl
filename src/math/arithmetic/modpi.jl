@@ -177,7 +177,7 @@ function value_minus_qrtrpi(x::DoubleFloat{Float64})
     return DoubleFloat{Float64}(hi, lo)
 end
 
-function modpipm(x::DoubleFloat{Float64})
+function mod1pipm(x::DoubleFloat{Float64})
     abs(x) < onepi_d64 && return x
     w1 = mul323(inv_pi_1o1_t64, HILO(x))
     w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
@@ -186,8 +186,8 @@ function modpipm(x::DoubleFloat{Float64})
     return z
 end
 
-modpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modpipm(DoubleFloat{Float64}(x)))
-modpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modpipm(DoubleFloat{Float64}(x)))
+mod1pipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod1pipm(DoubleFloat{Float64}(x)))
+mod1pipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod1pipm(DoubleFloat{Float64}(x)))
 
 function modhalfpipm(x::DoubleFloat{Float64})
     abs(x) < halfpi_d64 && return x
@@ -228,7 +228,7 @@ modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFl
 
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod2pi(x)
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem2pi(-x, RoundDown)
-rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modpipm(x)
+rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = mod1pipm(x)
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
     signbit(x) ? rem2pi(x, RoundUp) : rem2pi(x, RoundDown)
 
@@ -238,7 +238,7 @@ rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
     DoubleFloat{Float16}(rem2pi(DoubleFloat{Float64}(x), rounding))
 
 
-rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = modpi(x)
+rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod1pi(x)
 rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rempi(-x, RoundDown)
 rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modhalfpipm(x)
 rempi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
