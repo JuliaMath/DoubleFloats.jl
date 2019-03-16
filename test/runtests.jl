@@ -1,6 +1,7 @@
 using DoubleFloats, GenericLinearAlgebra, LinearAlgebra
 using Test
 
+using Base: IEEEFloats
 using Random
 
 const phi = Base.MathConstants.golden
