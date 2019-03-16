@@ -24,9 +24,7 @@ function isapprox(a::T, b::T) where {T<:IEEEFloat}
     isapprox(a, b, atol=eps(T)^2, rtol = eps(T)))
 end
     
-  
-end
-fisapprox(lo,eps(one(Float64)),atol=eps(one(Float64)))
+# isapprox(lo,eps(one(Float64)),atol=eps(one(Float64)))
 
 # to cover functions that are not exported
 
