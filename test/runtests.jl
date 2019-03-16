@@ -8,8 +8,8 @@ const gamma = Base.MathConstants.eulergamma
 
 const phi_df64   = Double64(phi)
 const phi_df32   = Double32(phi)
-const gamma_df64 = Double64(phi)
-const gamma_df32 = Double32(phi)
+const gamma_df64 = Double64(gamma)
+const gamma_df32 = Double32(gamma)
 
 const phi_df64hi = HI(phi_df64); const phi_df64lo = LO(phi_df64)
 const phi_df32hi = HI(phi_df32); const phi_df32lo = LO(phi_df32)
