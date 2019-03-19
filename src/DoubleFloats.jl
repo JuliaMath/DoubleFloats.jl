@@ -41,7 +41,7 @@ using GenericLinearAlgebra, LinearAlgebra
 
 # using LinearAlgebra
 import Base: hash, promote_type, promote_rule, convert,
-             string, show, parse, eltype,
+             string, show, parse, tryparse, eltype,
              signbit, sign, abs, flipsign, copysign,
              significand, exponent, precision, widen,
              (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
