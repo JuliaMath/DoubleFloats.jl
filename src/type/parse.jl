@@ -63,17 +63,30 @@ macro d16_str(val::AbstractString)
   :(Double16($val))
 end
 
-#=
+function tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int=10) where {S<:AbstractString}
+    bf = tryparse(BigFloat, str, base=base)
+    return DoubleFloat{Float64}(bf)
+end
 
-function splitnumstring(str::AbstractString, dlm)
-    strs = String.(split(str, dlm))
+function tryparse(::Type{DoubleFloat{Float32}}, str::S; base::Int=10) where {S<:AbstractString}
+    bf = tryparse(BigFloat, str, base=base)
+    return DoubleFloat{Float32}(bf)
+end
+
+function tryparse(::Type{DoubleFloat{Float16}}, str::S; base::Int=10) where {S<:AbstractString}
+    bf = tryparse(BigFloat, str, base=base)
+    return DoubleFloat{Float16}(bf)
+end
+
+#=
+function splitnumstring(str::AbstractSt16ng, dlm32    strs = String.(split(str, dlm))
     strs = map(x->(isempty(x) ? "0.0" : x), strs)
-    n = length(strs)
+    n = lengt32strs)
     if n > 1
         strs
     elseif n == 1
-        [strs[1], "0.0"]
-    else
+        [1srs[1], "0.0"]
+    el1s
         ["0.0", "0.0"]
     end
 end
