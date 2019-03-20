@@ -64,16 +64,16 @@ macro d16_str(val::AbstractString)
 end
 
 function tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int=10) where {S<:AbstractString}
-    bf = tryparse(BigFloat, str, base=base)
-    return DoubleFloat{Float64}(bf)
+    x = tryparse(BigFloat, str, base=base)
+    return ifelse(isnothing(x), nothing, DoubleFloat{Float64}(x))
 end
 
 function tryparse(::Type{DoubleFloat{Float32}}, str::S; base::Int=10) where {S<:AbstractString}
-    bf = tryparse(BigFloat, str, base=base)
-    return DoubleFloat{Float32}(bf)
+    x = tryparse(BigFloat, str, base=base)
+    return ifelse(isnothing(x), nothing, DoubleFloat{Float32}(x))
 end
 
 function tryparse(::Type{DoubleFloat{Float16}}, str::S; base::Int=10) where {S<:AbstractString}
-    bf = tryparse(BigFloat, str, base=base)
-    return DoubleFloat{Float16}(bf)
+    x = tryparse(BigFloat, str, base=base)
+    return ifelse(isnothing(x), nothing, DoubleFloat{Float16}(x))
 end
