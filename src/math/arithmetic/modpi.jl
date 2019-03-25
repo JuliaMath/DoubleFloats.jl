@@ -250,6 +250,7 @@ rem1pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
     DoubleFloat{Float16}(rem1pi(DoubleFloat{Float64}(x), rounding))
 
 
+#=
 remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = modhalfpi(x)
 remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -remhalfpi(-x, RoundDown)
 remhalfpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modqrtrpipm(x)
@@ -267,7 +268,8 @@ remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -remqrtrpi(-x,
 remqrtrpi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
     signbit(x) ? remqrtrpi(x, RoundUp) : remqrtrpi(x, RoundDown)
 
-remqrtepi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+remqrtrpi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(remqrtpi(DoubleFloat{Float64}(x), rounding))
 remqrtrpi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
 DoubleFloat{Float16}(remqrtrpi(DoubleFloat{Float64}(x), rounding))
+=#
