@@ -9,6 +9,7 @@ makedocs(
         "Construction" => "construction.md",
         "Characteristics" => "characteristics.md",
         "Capabilities" => "capabilities.md",
+        "Additional Capabilities" => "special.md",
         "Linear Algebra" => "linearalgebra.md",
         "Appropriate Uses" => "appropriate.md",
         "References" => "references.md"
