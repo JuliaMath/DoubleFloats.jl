@@ -233,6 +233,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "special/#",
+    "page": "Additional Capabilities",
+    "title": "Additional Capabilities",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "special/#Random-1",
+    "page": "Additional Capabilities",
+    "title": "Random",
+    "category": "section",
+    "text": "julia> rand(Double64)\n0.2654749880242928\n\njulia> rand(Double32, 4)\n4-element Array{DoubleFloat{Float32},1}:\n 0.62278694\n 0.14700651\n 0.42059994\n 0.8824145 \n\njulia> randpm(Double32)\n-0.78260666\n\njulia> randpm(Double64, 4)\n4-element Array{DoubleFloat{Float64},1}:\n  0.8066283194653339\n  0.3846875811169719\n -0.8318619362182055\n -0.1718555031982676\n\njulia> rand(ComplexDF32)\n0.7863289 + 0.9202755im\n\njulia> randpm(ComplexDF32,5)\n5-element Array{Complex{DoubleFloat{Float32}},1}:\n -0.22268367 + 0.94761634im\n   0.9173372 - 0.51481026im\n  0.22448015 + 0.20910525im\n -0.25364602 + 0.4772849im \n -0.52076036 - 0.40857565im"
+},
+
+{
     "location": "linearalgebra/#",
     "page": "Linear Algebra",
     "title": "Linear Algebra",
