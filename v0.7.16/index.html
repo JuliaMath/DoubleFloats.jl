@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Overview · DoubleFloats.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DoubleFloats.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href>Overview</a><ul class="internal"><li><a class="toctext" href="#Installation-1">Installation</a></li><li><a class="toctext" href="#More-Performant-Than-BigFloat-1">More Performant Than BigFloat</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li><li><a class="toctext" href="#Questions-1">Questions</a></li><li><a class="toctext" href="#Contributions-1">Contributions</a></li></ul></li><li><a class="toctext" href="construction/">Construction</a></li><li><a class="toctext" href="characteristics/">Characteristics</a></li><li><a class="toctext" href="capabilities/">Capabilities</a></li><li><a class="toctext" href="special/">Additional Capabilities</a></li><li><a class="toctext" href="linearalgebra/">Linear Algebra</a></li><li><a class="toctext" href="appropriate/">Appropriate Uses</a></li><li><a class="toctext" href="references/">References</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Overview</a></li></ul><a class="edit-page" href="https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Overview</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="DoubleFloats.jl-1" href="#DoubleFloats.jl-1">DoubleFloats.jl</a></h1><h3><a class="nav-anchor" id="Math-with-85-accurate-bits.-1" href="#Math-with-85-accurate-bits.-1">Math with 85+ accurate bits.</a></h3><h4><a class="nav-anchor" id="Extended-precision-float-and-complex-types-1" href="#Extended-precision-float-and-complex-types-1">Extended precision float and complex types</a></h4><hr/><h2><a class="nav-anchor" id="Installation-1" href="#Installation-1">Installation</a></h2><pre><code class="language-julia">pkg&gt; add DoubleFloats</code></pre><p>or</p><pre><code class="language-julia">julia&gt; using Pkg
+julia&gt; Pkg.add(&quot;DoubleFloats&quot;)</code></pre><h2><a class="nav-anchor" id="More-Performant-Than-BigFloat-1" href="#More-Performant-Than-BigFloat-1">More Performant Than BigFloat</a></h2><p>Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.</p><table><tr><th>op</th><th>speedup</th></tr><tr><td>+</td><td>11x</td></tr><tr><td>*</td><td>18x</td></tr><tr><td>\</td><td>7x</td></tr><tr><td>trig</td><td>3x-6x</td></tr></table><p><em>these results are from BenchmarkTools, on one machine</em></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><h3><a class="nav-anchor" id="Double64,-Double32,-Double16-1" href="#Double64,-Double32,-Double16-1">Double64, Double32, Double16</a></h3><pre><code class="language-julia">julia&gt; using DoubleFloats
+
+julia&gt; dbl64 = sqrt(Double64(2)); 1 - dbl64 * inv(dbl64)
+0.0
+julia&gt; dbl32 = sqrt(Double32(2)); 1 - dbl32 * inv(dbl32)
+0.0
+julia&gt; dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)
+0.0
+
+julia&gt; typeof(ans) === Double16
+true</code></pre><p>note: floating-point constants must be used with care, they are evaluated as Float64 values before additional processing</p><pre><code class="language-julia">julia&gt; Double64(0.2)
+2.0000000000000001110223024625156540e-01
+
+julia&gt; Double64(2)/10
+1.9999999999999999999999999999999937e-01
+
+julia&gt; df64&quot;0.2&quot;
+1.9999999999999999999999999999999937e-01</code></pre><h3><a class="nav-anchor" id="Complex-functions-1" href="#Complex-functions-1">Complex functions</a></h3><pre><code class="language-julia">
+julia&gt; x = ComplexDF64(sqrt(df64&quot;2&quot;), cbrt(df64&quot;3&quot;))
+1.4142135623730951 + 1.4422495703074083im
+
+julia&gt; y = acosh(x)
+1.402873733241199 + 0.8555178360714634im
+
+julia&gt; x - cosh(y)
+7.395570986446986e-32 + 0.0im</code></pre><h3><a class="nav-anchor" id="show,-string,-parse-1" href="#show,-string,-parse-1">show, string, parse</a></h3><pre><code class="language-julia">julia&gt; using DoubleFloats
+
+julia&gt; x = sqrt(Double64(2)) / sqrt(Double64(6))
+0.5773502691896257
+
+julia&gt; string(x)
+&quot;5.7735026918962576450914878050194151e-01&quot;
+
+julia&gt; show(IOContext(Base.stdout,:compact=&gt;false),x)
+5.7735026918962576450914878050194151e-01
+
+julia&gt; showtyped(x)
+Double64(0.5773502691896257, 3.3450280739356326e-17)
+
+julia&gt; showtyped(parse(Double64, stringtyped(x)))
+Double64(0.5773502691896257, 3.3450280739356326e-17)
+
+julia&gt; Meta.parse(stringtyped(x))
+:(Double64(0.5773502691896257, 3.3450280739356326e-17))
+
+julia&gt; x = ComplexDF32(sqrt(d32&quot;2&quot;), cbrt(d32&quot;3&quot;))
+1.4142135 + 1.4422495im
+
+julia&gt; string(x)
+&quot;1.414213562373094 + 1.442249570307406im&quot;
+
+julia&gt; stringtyped(x)
+&quot;ComplexDF32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))&quot;</code></pre><h3><a class="nav-anchor" id="golden-ratio-1" href="#golden-ratio-1">golden ratio</a></h3><pre><code class="language-julia">julia&gt; using DoubleFloats
+
+julia&gt; ϕ = Double32(MathConstants.golden)
+1.61803398874989490
+julia&gt; phi = &quot;1.61803398874989484820+&quot;
+julia&gt; ϕ⁻¹ = inv(ϕ)
+6.18033988749894902e-01
+
+julia&gt; ϕ == 1 + ϕ⁻¹
+true
+julia&gt; ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
+true</code></pre><table><tr><th>typed value</th><th>computed value</th><th>~abs(golden - computed)</th></tr><tr><td><code>MathConstants.golden</code></td><td>1.61803<em>39887</em>49894<em>84820</em>45868+</td><td>0.0</td></tr><tr><td><code>Float64(MathConstants.golden)</code></td><td>1.61803<em>39887</em>49895</td><td>1.5e-16</td></tr><tr><td><code>Double32(MathConstants.golden)</code></td><td>1.61803<em>39887</em>49894_90</td><td>5.2e-17</td></tr><tr><td><code>Double64(MathConstants.golden)</code></td><td>1.61803<em>39887</em>49894<em>84820</em>45868<em>34365</em>6354</td><td>2.7e-33</td></tr></table><h2><a class="nav-anchor" id="Questions-1" href="#Questions-1">Questions</a></h2><p>Usage questions can be posted on the <a href="https://discourse.julialang.org/tags/doublefloats">Julia Discourse forum</a>.  Use the topic <code>Numerics</code> (a &quot;Discipline&quot;) and a put the package name, DoubleFloats, in your question (&quot;topic&quot;).</p><h2><a class="nav-anchor" id="Contributions-1" href="#Contributions-1">Contributions</a></h2><p>Contributions are very welcome, as are feature requests and suggestions. Please open an <a href="https://github.com/JuliaMath/DoubleFloats.jl/issues">issue</a> if you encounter any problems. The <a href="https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/">contributing page</a> has a few guidelines that should be followed when opening pull requests.</p><footer><hr/><a class="next" href="construction/"><span class="direction">Next</span><span class="title">Construction</span></a></footer></article></body></html>
