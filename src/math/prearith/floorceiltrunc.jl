@@ -157,7 +157,15 @@ sld(x::T, y::T) where {T<:IEEEFloat} = spread(x/y)
 
 for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
+        function $F(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+            z = x / y
+            return $G(z)
+        end
         function $F(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
+            z = x / y
+            return $G(z)
+        end
+        function $F(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
             z = x / y
             return $G(z)
         end
