@@ -50,10 +50,10 @@ end
 end
 
 @testset "sld $T" begin
-    @test 7.0 == @eval sld(Double64(pi), 0.5)
+    @test 7.0 == sld(Double64(pi), 0.5)
 end
 
 @testset "tld $T" begin
-    @test 6.0 == @eval tld(Double64(pi), 0.5)
+    @test 6.0 == tld(Double64(pi), 0.5)
 end
 
