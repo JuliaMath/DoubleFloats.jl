@@ -1,4 +1,3 @@
-
 function floor(x::DoubleFloat{T}) where {T<:IEEEFloat}
     (isinteger(x) || !isfinite(x)) && return x
     # !isinteger(LO(x)), LO(x) is mixed or fractional
