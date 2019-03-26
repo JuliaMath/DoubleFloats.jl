@@ -34,3 +34,7 @@ end
 showtyped(x::DoubleFloat{T}) where {T<:IEEEFloat} = showtyped(Base.stdout, x)
 
 showtyped(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = showtyped(Base.stdout, x)
+
+showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
+
+showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
