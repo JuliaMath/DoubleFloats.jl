@@ -169,6 +169,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "stringshowparse/#",
+    "page": "Show, String, Parse",
+    "title": "Show, String, Parse",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "stringshowparse/#Show,-String,-Parse-1",
+    "page": "Show, String, Parse",
+    "title": "Show, String, Parse",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "stringshowparse/#Show-1",
+    "page": "Show, String, Parse",
+    "title": "Show",
+    "category": "section",
+    "text": "julia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> show(IOContext(Base.stdout,:compact=>false),x)\n5.7735026918962576450914878050194151e-01\n\njulia> showall(x)\n0.5773502691896257645091487805019415\n\njulia> showtyped(x)\nDouble64(0.5773502691896257, 3.3450280739356326e-17)\n\njulia> c = ComplexDF32(sqrt(df32\"2\"), cbrt(df32\"3\"))\n1.4142135 + 1.4422495im\n\njulia> showall(c)\n1.414213562373095 + 1.442249570307406im\n\njulia> showtyped(c)\nComplexDF32(Double32(1.4142135, 2.4203235e-8), Double32(1.4422495, 3.3793125e-8))"
+},
+
+{
+    "location": "stringshowparse/#String-1",
+    "page": "Show, String, Parse",
+    "title": "String",
+    "category": "section",
+    "text": "julia> using DoubleFloats\n\njulia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> string(x)\n\"5.7735026918962576450914878050194151e-01\"\n\njulia> c = ComplexDF32(sqrt(df32\"2\"), cbrt(df32\"3\"))\n1.4142135 + 1.4422495im\n\njulia> string(c)\n\"1.414213562373094 + 1.442249570307406im\"\n\njulia> stringtyped(c)\n\"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))\""
+},
+
+{
+    "location": "stringshowparse/#Parse-1",
+    "page": "Show, String, Parse",
+    "title": "Parse",
+    "category": "section",
+    "text": "julia> x = sqrt(Double64(2)) / sqrt(Double64(6))\n0.5773502691896257\n\njulia> Meta.parse(stringtyped(x)\n:(Double64(0.5773502691896257, 3.3450280739356326e-17))"
+},
+
+{
     "location": "capabilities/#",
     "page": "Capabilities",
     "title": "Capabilities",
