@@ -161,6 +161,11 @@ for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
             z = x / y
             return $G(z)
         end
+    end
+end
+
+for (F,G) in ((:tld, :trunc), (:sld, :spread))
+    @eval begin
         function $F(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
             z = x / y
             return $G(z)
