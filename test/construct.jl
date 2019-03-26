@@ -64,3 +64,17 @@ end
    @test Double32(Int16(1)) === Double32(1.0)
    @test Double16(Int16(1)) === Double16(1.0)
 end
+
+@testset "tuple construct" begin
+   tup = (1.0e3, 1.0e-2)
+   @test Double64(tup) == DoubleFloat(Float64(HI(tup)), Float64(LO(tup)))
+   @test Double32(tup) == DoubleFloat(Float32(HI(tup)), Float32(LO(tup)))
+   @test Double16(tup) == DoubleFloat(Float16(HI(tup)), Float16(LO(tup)))
+end
+
+@testset "tuple deconstruct" begin
+   tup = (1.0e3, 1.0e-2)
+   @test HI(tup) == tup[1]
+   @test LO(tup) == tup[2]
+   @test HILO(tup) == tup
+end  
