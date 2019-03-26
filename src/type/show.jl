@@ -31,6 +31,11 @@ function showtyped(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     print(io, str)
 end
 
+function showtyped(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    str = stringtyped(x)
+    print(io, str)
+end
+
 showtyped(x::DoubleFloat{T}) where {T<:IEEEFloat} = showtyped(Base.stdout, x)
 
 showtyped(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = showtyped(Base.stdout, x)
