@@ -49,11 +49,11 @@ end
     @test 4 == @eval spread($T(pi))
 end
 
-@testset "sld $T" begin
+@testset "sld" begin
     @test 7.0 == sld(Double64(pi), 0.5)
 end
 
-@testset "tld $T" begin
+@testset "tld" begin
     @test 6.0 == tld(Double64(pi), 0.5)
 end
 
