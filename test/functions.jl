@@ -26,7 +26,13 @@ d64b = sqrt(Double64(2.0))/2
 
 @testset "log exp functions" begin
    @test isapprox(log(f64a), log(d64a))
+   @test isapprox(log2(f64a), log2(d64a))
+   @test isapprox(log10(f64a), log10(d64a))
+   @test isapprox(log1p(f64a), log1p(d64a))
    @test isapprox(exp(f64a), exp(d64a))
+   @test isapprox(exp2(f64a), exp2(d64a))
+   @test isapprox(exp10(f64a), exp10(d64a))
+   @test isapprox(expm1(f64a), expm1(d64a))    
 end
 
 @testset "trig functions" begin
