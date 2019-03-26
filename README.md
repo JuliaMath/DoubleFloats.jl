@@ -88,6 +88,9 @@ julia> string(x)
 julia> show(IOContext(Base.stdout,:compact=>false),x)
 5.7735026918962576450914878050194151e-01
 
+julia> showall(x)
+0.5773502691896257645091487805019415
+
 julia> showtyped(x)
 Double64(0.5773502691896257, 3.3450280739356326e-17)
 
