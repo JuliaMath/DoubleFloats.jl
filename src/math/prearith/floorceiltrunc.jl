@@ -154,7 +154,7 @@ Spread the result of x/y.
 """ sld
 sld(x::T, y::T) where {T<:IEEEFloat} = spread(x/y)
 
-for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
+for (F,G) in ((:tld, :trunc), (:sld, :spread))
     @eval begin
         function $F(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
             z = x / y
@@ -163,7 +163,7 @@ for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     end
 end
 
-for (F,G) in ((:tld, :trunc), (:sld, :spread))
+for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
         function $F(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
             z = x / y
