@@ -17,7 +17,7 @@ export DoubleFloat,
        @d64_str, @d32_str, @d16_str,         # Deprecated
        @df64_str, @df32_str, @df16_str,      # Current Use
        MultipartFloat, HI, LO, HILO,
-       stringtyped, showtyped,
+       stringtyped, showtyped, showall,
        isnonzero, ispositive, isnegative, isnonpositive, isnonnegative,
        isposinf, isneginf, isfractional, isnormal, issquare,
        nan, inf, posinf, neginf,
