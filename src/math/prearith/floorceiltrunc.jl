@@ -165,11 +165,11 @@ end
 
 for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
-        function $F(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
+        function $F(x::DoubleFloat{T}, y::T1) where {T<:IEEEFloat, T1<:IEEEFloat}
             z = x / y
             return $G(z)
         end
-        function $F(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
+        function $F(x::T1, y::DoubleFloat{T}) where {T<:IEEEFloat, T1<:IEEEFloat}
             z = x / y
             return $G(z)
         end
