@@ -49,11 +49,11 @@ end
     @test 4 == @eval spread($T(pi))
 end
 
-@testset "sld" begin
-    @test 7.0 == sld(Double64(pi), 0.5)
+@testset "sld $T" for T in (Double16, Double32, Double64)
+    @test 7.0 == @eval sld($T(pi), 0.5)
 end
 
-@testset "tld" begin
-    @test 6.0 == tld(Double64(pi), 0.5)
+@testset "tld $T" for T in (Double16, Double32, Double64)
+    @test 6.0 == @eval tld($T(pi), 0.5)
 end
 
