@@ -8,6 +8,8 @@
     @test abs(negval) == val
     @test flipsign(val, -1) == negval
     @test flipsign(negval, 1) == negval
+    @test copysign(val, -1) == negval
+    @test copysign(negval, 1) == val
     
     @test ldexp(frexp(val)...,) == val
    # @test ldexp(significand(val), exponent(val)) == val
