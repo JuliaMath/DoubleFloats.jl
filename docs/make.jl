@@ -8,6 +8,7 @@ makedocs(
         "Overview" => "index.md",
         "Construction" => "construction.md",
         "Characteristics" => "characteristics.md",
+        "String, Show, Parse" => "stringshowparse.md",
         "Capabilities" => "capabilities.md",
         "Additional Capabilities" => "special.md",
         "Linear Algebra" => "linearalgebra.md",
