@@ -1,24 +1,4 @@
-# String, Show, Parse
-
-## String
-```julia
-julia> using DoubleFloats
-
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-0.5773502691896257
-
-julia> string(x)
-"5.7735026918962576450914878050194151e-01"
-
-julia> c = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
-1.4142135 + 1.4422495im
-
-julia> string(c)
-"1.414213562373094 + 1.442249570307406im"
-
-julia> stringtyped(c)
-"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
-```
+# Show, String, Parse
 
 ## Show
 ```julia
@@ -39,6 +19,29 @@ julia> c = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
 
 julia> showall(c)
 1.414213562373095 + 1.442249570307406im
+
+julia> showtyped(c)
+ComplexDF32(Double32(1.4142135, 2.4203235e-8), Double32(1.4422495, 3.3793125e-8))
+```
+
+## String
+```julia
+julia> using DoubleFloats
+
+julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
+0.5773502691896257
+
+julia> string(x)
+"5.7735026918962576450914878050194151e-01"
+
+julia> c = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
+1.4142135 + 1.4422495im
+
+julia> string(c)
+"1.414213562373094 + 1.442249570307406im"
+
+julia> stringtyped(c)
+"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
 ```
 
 ## Parse
