@@ -37,7 +37,7 @@ using Random
 import Random.rand
 
 using Polynomials
-using GenericLinearAlgebra, LinearAlgebra
+using GenericSVD, LinearAlgebra
 
 # using LinearAlgebra
 import Base: hash, promote_type, promote_rule, convert,
