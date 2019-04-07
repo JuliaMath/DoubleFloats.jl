@@ -313,3 +313,34 @@ function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(mod1pi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
     return inv(tan(x))
 end
+
+function sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("sinpi(x) only defined for finite x"))
+    y = Double64(x) 
+    hi,lo = mul322(pi_1o1_t64, HILO(y))
+    y = Double64(hi, lo)
+    z = sin(y)
+    return DoubleFloat{T}(z)
+end
+
+function cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("cospi(x) only defined for finite x"))
+    y = Double64(x) 
+    hi,lo = mul322(pi_1o1_t64, HILO(y))
+    y = Double64(hi, lo)
+    z = cos(y)
+    return DoubleFloat{T}(z)
+end
+
+function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("tanpi(x) only defined for finite x"))
+    y = Double64(x) 
+    hi,lo = mul322(pi_1o1_t64, HILO(y))
+    y = Double64(hi, lo)
+    z = tan(y)
+    return DoubleFloat{T}(z)
+end
+
