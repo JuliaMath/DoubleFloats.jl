@@ -253,7 +253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Capabilities",
     "title": "elementary mathematical functions",
     "category": "section",
-    "text": "log, exp\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth"
+    "text": "log, exp\nsin, cos, tan, csc, sec, cot\nsinpi, cospi, tanpi\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth"
 },
 
 {
