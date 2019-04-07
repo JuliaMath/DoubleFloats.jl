@@ -42,6 +42,7 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
 #### elementary mathematical functions
  - `log`, `exp`
  - `sin`, `cos`, `tan`, `csc`, `sec`, `cot`
+ - `sinpi`, `cospi`, `tanpi`
  - `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
  - `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
  - `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
