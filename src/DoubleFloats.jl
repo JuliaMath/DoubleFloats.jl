@@ -29,6 +29,7 @@ export DoubleFloat,
        spread, sld, tld,
        signs,
        randpm,
+       tanpi,
        agm, agm1, elliptick
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
