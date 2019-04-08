@@ -259,8 +259,13 @@ DoubleFloat(x::Float16) = Double16(x, zero(Float16))
 
 precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
-eltype(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = T
-eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
+eltype(::Type{Double64}) = Double64
+eltype(::Type{Double32}) = Double32
+eltype(::Type{Double16}) = Double16
+eltype(x::Double64) = Double64
+eltype(x::Double32) = Double32
+eltype(x::Double16) = Double16
+
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
