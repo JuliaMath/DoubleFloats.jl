@@ -28,10 +28,11 @@ end
 DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
 DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
 
-function DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    hi,lo = HILO(x)
-    hi,lo = two_sum(hi, lo)
-    return DoubleFloat{T}(hi, lo)
+DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
+DoubleFloat{T}(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
+function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat, T2<:IEEEFloat}
+    hi,lo = two_sum(T1(HI(x)), T1(LO(x)))
+    return DoubleFloat{T1}(hi, lo)
 end
 
 const Double64 = DoubleFloat{Float64}
