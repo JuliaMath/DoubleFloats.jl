@@ -32,3 +32,7 @@ Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x,  60))
 Double64(x::Rational{S}) where {S} = Double64(BigFloat(x, 250))
 Double32(x::Rational{S}) where {S} = Double32(BigFloat(x, 122))
 Double16(x::Rational{S}) where {S} = Double16(BigFloat(x,  60))
+
+Complex{Double64}(x::T) where {T<:AbstractIrrational} = Complex(Double64(x))
+Complex{Double32}(x::T) where {T<:AbstractIrrational} = Complex(Double32(x))
+Complex{Double16}(x::T) where {T<:AbstractIrrational} = Complex(Double16(x))
