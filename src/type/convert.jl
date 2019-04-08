@@ -30,3 +30,6 @@ convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::T) where {T<:IEEEFloat} = Double
 
 convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1],x[2])
  
+convert(::Type{Complex{Double64}}, x::T) where {T<:AbstractIrrational} = Complex(Double64(x))
+convert(::Type{Complex{Double32}}, x::T) where {T<:AbstractIrrational} = Complex(Double32(x))
+convert(::Type{Complex{Double16}}, x::T) where {T<:AbstractIrrational} = Complex(Double16(x))
