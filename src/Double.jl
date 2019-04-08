@@ -25,6 +25,16 @@ struct DoubleFloat{T} <: MultipartFloat
 
 end
 
+
+const Double64 = DoubleFloat{Float64}
+const Double32 = DoubleFloat{Float32}
+const Double16 = DoubleFloat{Float16}
+
+const ComplexDF64 = Complex{DoubleFloat{Float64}}
+const ComplexDF32 = Complex{DoubleFloat{Float32}}
+const ComplexDF16 = Complex{DoubleFloat{Float16}}
+
+
 DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
 DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
 
@@ -34,14 +44,6 @@ function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat, T2<:IEEEFloat
     hi,lo = two_sum(T1(HI(x)), T1(LO(x)))
     return DoubleFloat{T1}(hi, lo)
 end
-
-const Double64 = DoubleFloat{Float64}
-const Double32 = DoubleFloat{Float32}
-const Double16 = DoubleFloat{Float16}
-
-const ComplexDF64 = Complex{DoubleFloat{Float64}}
-const ComplexDF32 = Complex{DoubleFloat{Float32}}
-const ComplexDF16 = Complex{DoubleFloat{Float16}}
 
 ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
@@ -233,6 +235,9 @@ end
 DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y))
 DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
 
+Double64(x::Double64) = x
+Double32(x::Double32) = x
+Double16(x::Double16) = x
 
 """
     Double64(x::Double32)
