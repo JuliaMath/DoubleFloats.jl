@@ -256,6 +256,11 @@ Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x
 DoubleFloat(x::Float64) = Double64(x, 0.0)
 DoubleFloat(x::Float32) = Double32(x, 0.0f0)
 DoubleFloat(x::Float16) = Double16(x, zero(Float16))
+# more coverage
+DoubleFloat(x::Int64) = Double64(x, zero(Int64))
+DoubleFloat(x::Int32) = Double32(x, zero(Int32))
+DoubleFloat(x::Int16) = Double16(x, zero(Int16))
+
 
 precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
