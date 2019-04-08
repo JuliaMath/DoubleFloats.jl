@@ -120,6 +120,7 @@ include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
 
 include("extras/random.jl")
+include("extras/misc.jl")
 
 
 end # module DoubleFloats
