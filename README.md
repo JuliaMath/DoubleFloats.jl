@@ -54,12 +54,18 @@ note: floating-point constants must be used with care,
 they are evaluated as Float64 values before additional processing
 ```julia
 julia> Double64(0.2)
+0.2
+julia> showall(ans)
 2.0000000000000001110223024625156540e-01
 
 julia> Double64(2)/10
+0.2
+julia> showall(ans)
 1.9999999999999999999999999999999937e-01
 
 julia> df64"0.2"
+0.2
+julia> showall(ans)
 1.9999999999999999999999999999999937e-01
 ```
 
@@ -68,6 +74,8 @@ julia> df64"0.2"
 
 julia> x = ComplexDF64(sqrt(df64"2"), cbrt(df64"3"))
 1.4142135623730951 + 1.4422495703074083im
+julia> showall(x)
+1.4142135623730950488016887242096816 + 1.4422495703074083823216383107800998im
 
 julia> y = acosh(x)
 1.402873733241199 + 0.8555178360714634im
