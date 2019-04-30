@@ -44,3 +44,22 @@ function Base.:(^)(m::Matrix{DoubleFloat{T}}, p::Union{IEEEFloat, DoubleFloat{T}
     result = exp(res)
     return result
 end
+function Base.:(^)(m::Matrix{Complex{DoubleFloat{T}}}, p::Union{IEEEFloat, DoubleFloat{T}}) where {T<:IEEEFloat}
+    pw = DoubleFloat{T}(p)
+    res = pw * log(m)
+    result = exp(res)
+    return result
+end
+
+function Base.:(^)(m::Matrix{DoubleFloat{T}}, p::Union{Complex{T}, Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
+    pw = Complex{DoubleFloat{T}}(p)
+    res = pw * log(m)
+    result = exp(res)
+    return result
+end
+function Base.:(^)(m::Matrix{Complex{DoubleFloat{T}}}, p::Union{Complex{T}, Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
+    pw = Complex{DoubleFloat{T}}(p)
+    res = pw * log(m)
+    result = exp(res)
+    return result
+end
