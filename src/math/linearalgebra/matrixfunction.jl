@@ -6,7 +6,7 @@ function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEF
     evecs = eigvecs(m)
     invevecs = inv(evecs)
     diagevals = Diagonal(fnevals)
-    result = evects * diagevals * invevects
+    result = evecs * diagevals * invevecs
     return result
 end
 
