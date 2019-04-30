@@ -357,7 +357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "uses eigvecs(m) * fn(Diagonal(eigvals(m))) * inv(eigvecs(m))",
     "category": "section",
-    "text": "sqrt, cbrt, matrix^power\nexp, log\nsin, cos, tan\nasin, acos, atan\nsinh, cosh, tanh\nasinh, acosh, atanh\nmatrixfunction(function, matrix)"
+    "text": "sqrt, cbrt, matrix^power\nexp, log\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth\nmatrixfunction(function, matrix)"
 },
 
 {
