@@ -38,13 +38,13 @@ matrix = reshape(rand(Double64,n*n),n,n)
 
 ## Functions of Matrices (diagonalizable & square only)
 
-- sqrt, cbrt
+- `sqrt`, `cbrt`
 - matrix^power
-- exp, log
-- sin, cos, tan, csc, sec, cot
-- asin, acos, atan, acsc, asec, acot
-- sinh, cosh, tanh, csch, sech, coth
-- asinh, acosh, atanh, acsch, asech, acoth
+- `exp`, `log`
+- `sin`, `cos`, `tan`, `csc`, `sec`, `cot`
+- `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
+- `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
+- `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
 - matrixfunction(function, matrix)
 
 
