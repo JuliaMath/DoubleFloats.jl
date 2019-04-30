@@ -1,3 +1,4 @@
 julia 1.0
 Polynomials 0.5
-GenericSVD v0.2
+GenericSVD 0.2
+GenericSchur 0.2
