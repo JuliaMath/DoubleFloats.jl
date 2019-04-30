@@ -3,7 +3,7 @@
 ## Using
 
 ```julia
-using DoubleFloats, GenericSVD, LinearAlgebra
+using DoubleFloats, GenericSVD, GenericSchur, LinearAlgebra
 ```
 
 ## Vectors and Matrices
@@ -35,3 +35,17 @@ matrix = reshape(rand(Double64,n*n),n,n)
 - general: `lu`, `lu!`, `qr`, `qr!`
 - square: `schur`, `schur!`, `hessenberg`, `hessenberg!`
 - square+symmetric, Hermitian: `cholesky`, `cholesky!`
+
+## Functions of Matrices (diagonalizable & square only)
+#### uses eigvecs(m) * fn(Diagonal(eigvals(m))) * inv(eigvecs(m))
+
+- sqrt, cbrt, matrix^power
+- exp, log
+- sin, cos, tan
+- asin, acos, atan
+- sinh, cosh, tanh
+- asinh, acosh, atanh
+
+- matrixfunction(function, matrix)
+
+
