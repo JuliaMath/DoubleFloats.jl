@@ -41,10 +41,10 @@ matrix = reshape(rand(Double64,n*n),n,n)
 
 - sqrt, cbrt, matrix^power
 - exp, log
-- sin, cos, tan
-- asin, acos, atan
-- sinh, cosh, tanh
-- asinh, acosh, atanh
+- sin, cos, tan, csc, sec, cot
+- asin, acos, atan, acsc, asec, acot
+- sinh, cosh, tanh, csch, sech, coth
+- asinh, acosh, atanh, acsch, asech, acoth
 
 - matrixfunction(function, matrix)
 
