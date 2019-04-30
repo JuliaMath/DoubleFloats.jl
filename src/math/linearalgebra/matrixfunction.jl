@@ -10,8 +10,11 @@ function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEF
     return result
 end
 
-for F in (:sqrt, :cbrt, :log, :exp, :sin, :cos, :tan, :csc, :sec, :cot, :asin, :acos, :atan, :acsc, :asec, :acot,
-          :sinh, :cosh, :tanh, :csch, :sech, :coth, :asin, :acos, :atanh, :acsch, :asech, :acoth)
+for F in (:sqrt, :cbrt, :log, :exp,
+          :sin, :cos, :tan, :csc, :sec, :cot,
+          :asin, :acos, :atan, :acsc, :asec, :acot,
+          :sinh, :cosh, :tanh, :csch, :sech, :coth,
+          :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
     function $F(m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
         return matrixfunction($F, m)
