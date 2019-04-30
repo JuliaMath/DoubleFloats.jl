@@ -13,7 +13,7 @@ end
 for F in (:log, :exp, :sin, :cos, :tan, :csc, :sec, :cot, :asin, :acos, :atan, :acsc, :asec, :acot,
           :sinh, :cosh, :tanh, :csch, :sech, :coth, :asin, :acos, :atanh, :acsch, :asech, :acoth)
   @eval begin
-    function $F(m::Matrix{DoubleFloat{T}) where {T<:IEEEFloat}
+    function $F(m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
         return matrixfunction($F, m)
     end
   end
