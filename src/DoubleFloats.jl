@@ -119,7 +119,7 @@ include("math/elementary/complex.jl")
 
 include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
-include("extras/matrixfunction.jl")
+include("math/linearalgebra/matrixfunction.jl")
 
 include("extras/random.jl")
 include("extras/misc.jl")
