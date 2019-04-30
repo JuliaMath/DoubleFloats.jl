@@ -18,3 +18,11 @@ for F in (:log, :exp, :sin, :cos, :tan, :csc, :sec, :cot, :asin, :acos, :atan, :
     end
   end
 end
+
+
+function Base.:(^)(m::Matrix{DoubleFloat{T}}, p::Union{IEEEFloat, DoubleFloat{T}}) where {T<:IEEEFloat}
+    pw = DoubleFloat{T}(p)
+    res = pw * log(m)
+    result = exp(res)
+    return result
+end
