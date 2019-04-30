@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Matrix Predicates",
     "category": "section",
-    "text": "iszero, isone, isdiag, \nissquare, issymmetric, ishermitian, \nisposdef, isposdef!\nistril, istriu"
+    "text": "iszero, isone, isdiag \nissquare, issymmetric, ishermitian \nisposdef, isposdef!\nistril, istriu"
 },
 
 {
@@ -349,15 +349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Functions of Matrices (diagonalizable & square only)",
     "category": "section",
-    "text": ""
-},
-
-{
-    "location": "linearalgebra/#uses-eigvecs(m)-*-fn(Diagonal(eigvals(m)))-*-inv(eigvecs(m))-1",
-    "page": "Linear Algebra",
-    "title": "uses eigvecs(m) * fn(Diagonal(eigvals(m))) * inv(eigvecs(m))",
-    "category": "section",
-    "text": "sqrt, cbrt, matrix^power\nexp, log\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth\nmatrixfunction(function, matrix)"
+    "text": "sqrt, cbrt\nmatrix^power\nexp, log\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth\nmatrixfunction(function, matrix)"
 },
 
 {
