@@ -25,8 +25,8 @@ matrix = reshape(rand(Double64,n*n),n,n)
 
 ## Matrix Predicates
 
-- `iszero`, `isone`, `isdiag`, 
-- `issquare`, `issymmetric`, `ishermitian`, 
+- `iszero`, `isone`, `isdiag` 
+- `issquare`, `issymmetric`, `ishermitian` 
 - `isposdef`, `isposdef!`
 - `istril`, `istriu`
 
@@ -37,15 +37,14 @@ matrix = reshape(rand(Double64,n*n),n,n)
 - square+symmetric, Hermitian: `cholesky`, `cholesky!`
 
 ## Functions of Matrices (diagonalizable & square only)
-#### uses eigvecs(m) * fn(Diagonal(eigvals(m))) * inv(eigvecs(m))
 
-- sqrt, cbrt, matrix^power
+- sqrt, cbrt
+- matrix^power
 - exp, log
 - sin, cos, tan, csc, sec, cot
 - asin, acos, atan, acsc, asec, acot
 - sinh, cosh, tanh, csch, sech, coth
 - asinh, acosh, atanh, acsch, asech, acoth
-
 - matrixfunction(function, matrix)
 
 
