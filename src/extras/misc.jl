@@ -4,7 +4,7 @@ function Base.lerpi(j::Integer, d::Integer, a::DoubleFloat{T}, b::DoubleFloat{T}
     return fma(t, b, a)
 end
 
-# for compatibility with outside linalg functions of zeroed matrices
+# for compatibility with old or unrevised outside linalg functions
 function Base.:(+)(v::Vector{DoubleFloat{T}}, x::T) where {T}
     return v .+ x
 end
