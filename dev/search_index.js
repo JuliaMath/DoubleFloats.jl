@@ -309,7 +309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Using",
     "category": "section",
-    "text": "using DoubleFloats, GenericSVD, LinearAlgebra"
+    "text": "using DoubleFloats, GenericSVD, GenericSchur, LinearAlgebra"
 },
 
 {
@@ -342,6 +342,22 @@ var documenterSearchIndex = {"docs": [
     "title": "Matrix Factorizations",
     "category": "section",
     "text": "general: lu, lu!, qr, qr!\nsquare: schur, schur!, hessenberg, hessenberg!\nsquare+symmetric, Hermitian: cholesky, cholesky!"
+},
+
+{
+    "location": "linearalgebra/#Functions-of-Matrices-(diagonalizable-and-square-only)-1",
+    "page": "Linear Algebra",
+    "title": "Functions of Matrices (diagonalizable & square only)",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "linearalgebra/#uses-eigvecs(m)-*-fn(Diagonal(eigvals(m)))-*-inv(eigvecs(m))-1",
+    "page": "Linear Algebra",
+    "title": "uses eigvecs(m) * fn(Diagonal(eigvals(m))) * inv(eigvecs(m))",
+    "category": "section",
+    "text": "sqrt, cbrt, matrix^power\nexp, log\nsin, cos, tan\nasin, acos, atan\nsinh, cosh, tanh\nasinh, acosh, atanh\nmatrixfunction(function, matrix)"
 },
 
 {
