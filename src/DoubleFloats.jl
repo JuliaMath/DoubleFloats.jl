@@ -30,7 +30,8 @@ export DoubleFloat,
        signs,
        randpm,
        tanpi,
-       agm, agm1, elliptick
+       agm, agm1, elliptick,
+       matrixfunction
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
@@ -118,6 +119,7 @@ include("math/elementary/complex.jl")
 
 include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
+include("extras/matrixfunction.jl")
 
 include("extras/random.jl")
 include("extras/misc.jl")
