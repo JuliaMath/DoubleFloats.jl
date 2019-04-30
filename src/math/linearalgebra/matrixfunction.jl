@@ -10,6 +10,18 @@ function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEF
     return result
 end
 
+function matrixfunction(fn::Function, m::Matrix{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
+    issquare(m) || throw(ErrorException("matrix must be square"))
+    rank(m) == size(m)[1] || throw(ErrorException("matrix is not diagonizable"))
+    evals = eigvals(m)
+    fnevals = fn.(evals)
+    evecs = eigvecs(m)
+    invevecs = inv(evecs)
+    diagevals = Diagonal(fnevals)
+    result = evecs * diagevals * invevecs
+    return result
+end
+
 for F in (:sqrt, :cbrt, :log, :exp,
           :sin, :cos, :tan, :csc, :sec, :cot,
           :asin, :acos, :atan, :acsc, :asec, :acot,
@@ -17,6 +29,9 @@ for F in (:sqrt, :cbrt, :log, :exp,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
     function $F(m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
+        return matrixfunction($F, m)
+    end
+    function $F(m::Matrix{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
         return matrixfunction($F, m)
     end
   end
