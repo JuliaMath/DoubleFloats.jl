@@ -1,8 +1,8 @@
 using DoubleFloats, GenericSVD, LinearAlgebra
 using Test
 
-using  Base: IEEEFloat, isapprox
-# import Base: isapprox
+using  Base: IEEEFloat
+import Base: isapprox
 
 using Random
 
