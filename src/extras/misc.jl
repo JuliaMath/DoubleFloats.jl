@@ -1,8 +1,8 @@
 function Base.isapprox(x::DoubleFloat{T}, y::T; atol::Real=0, rtol::Real=atol>0 ? 0 : eps(T)^(5/8), nans::Bool=false, norm::Function=LinearAlgebra.norm) where {T<:IEEEFloat}
-    return isapprox(x, DoubleFloat{T}(y), rtol=rtol, atol=atol, nans=nans, norm=norm)
+    return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
 function Base.isapprox(x::T, y::DoubleFloat{T}; atol::Real=0, rtol::Real=atol>0 ? 0 : eps(T)^(5/8), nans::Bool=false, norm::Function=LinearAlgebra.norm) where {T<:IEEEFloat}
-    return isapprox(x, DoubleFloat{T}(y), rtol=rtol, atol=atol, nans=nans, norm=norm)
+    return isapprox(DoubleFloat{T}(x), y, atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
 function Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{T}; atol::Real=0, rtol::Real=atol>0 ? 0 : eps(T)^(5/8), nans::Bool=false, norm::Function=LinearAlgebra.norm) where {T<:IEEEFloat}
     x == y || (isfinite(x) && isfinite(y) && abs(x-y) <= max(atol, rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
