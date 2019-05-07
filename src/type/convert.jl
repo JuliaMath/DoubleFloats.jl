@@ -34,4 +34,4 @@ convert(::Type{Complex{Double64}}, x::T) where {T<:AbstractIrrational} = Complex
 convert(::Type{Complex{Double32}}, x::T) where {T<:AbstractIrrational} = Complex(Double32(x))
 convert(::Type{Complex{Double16}}, x::T) where {T<:AbstractIrrational} = Complex(Double16(x))
 
-convert(::Type{DoubleFloat{T}}, x::R) where {T<:IEEEFloat, R<:Real} = DoubleFloat{T}(BigFloat(x))
+convert(::Type{DoubleFloat{T}}, x::Real) where {T<:IEEEFloat} = DoubleFloat{T}(BigFloat(x))
