@@ -4,7 +4,7 @@ name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 license = "MIT"
-version = "0.7.21"
+version = "0.7.22"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
