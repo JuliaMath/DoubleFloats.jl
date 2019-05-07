@@ -28,7 +28,7 @@ promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float16}}) = DoubleF
 promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}
 promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}
 
-promote_rule(::Type{DoubleFloat{T}}, ::Type{R}) where {T<:Base.IEEEFloat,R<:Real} = DoubleFloat{T}
+promote_rule(::Type{DoubleFloat{T}}, ::Type{R}) where {T<:IEEEFloat,R<:Real} = DoubleFloat{T}
 
 widen(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float32}
 widen(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float64}
