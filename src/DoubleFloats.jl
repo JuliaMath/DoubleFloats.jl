@@ -36,12 +36,14 @@ export DoubleFloat,
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
 using Random
-import Random.rand
+import Random: rand
 
 using Polynomials
-using GenericSVD, GenericSchur, LinearAlgebra
 
-# using LinearAlgebra
+using GenericSVD, GenericSchur
+using LinearAlgebra
+import LinearAlgebra: norm, mul!
+
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, tryparse, eltype,
              signbit, sign, abs, flipsign, copysign,
@@ -67,10 +69,6 @@ import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-
-import LinearAlgebra: mul!
-
-using Random
 
 include("Double.jl")   # Double64, Double32, Double16
 
