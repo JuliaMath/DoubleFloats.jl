@@ -1,4 +1,4 @@
-using DoubleFloats, GenericSVD, LinearAlgebra
+using DoubleFloats, LinearAlgebra
 using Test
 
 using  Base: IEEEFloat
