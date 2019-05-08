@@ -22,7 +22,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 test = ["LinearAlgebra", "GenericSVD", "Test"]
 
 [compat]
-GenericSVD = "≥ 0.2.0"
-GenericSchur = "≥ 0.2.0"
-Polynomials = "≥ 0.5.0"
-julia = "≥ 1.0.0"
+GenericSVD = "≥ 0.2"
+GenericSchur = "≥ 0.2"
+Polynomials = "≥ 0.5"
+julia = "≥ 1.0"
