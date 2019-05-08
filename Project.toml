@@ -4,7 +4,7 @@ name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 license = "MIT"
-version = "0.7.23"
+version = "0.7.24"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
@@ -14,17 +14,10 @@ GenericSchur = "c145ed77-6b09-5dd9-b285-bf645a82121e"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 
 [extras]
-Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-GenericSVD = "01680d73-4ee2-5a08-a1aa-533608c188bb"
-GenericSchur = "c145ed77-6b09-5dd9-b285-bf645a82121e"
-BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
-Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["LinearAlgebra", "GenericSVD", "GenericSchur", "Test"]
+test = ["GenericSVD", "GenericSchur", "Test"]
 
 [compat]
 GenericSVD = "0"
