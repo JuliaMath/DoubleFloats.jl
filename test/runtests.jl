@@ -1,4 +1,4 @@
-using DoubleFloats
+using DoubleFloats, LinearAlgebra
 using Test
 
 using  Base: IEEEFloat
