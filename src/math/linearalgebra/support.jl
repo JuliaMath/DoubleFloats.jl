@@ -13,7 +13,7 @@ function norm(v::Array{DoubleFloat{T},N}) where {N, T<:IEEEFloat}
     return sqrt(sum(v))
 end
 
-function norm(v::Array{DoubleFloat{T},N}, p) where {N, T<:IEEEFloat}
+function norm(v::Array{DoubleFloat{T},N}, p::R) where {N, T<:IEEEFloat, R<:Real}
     v = v .* v
     r = inv(DoubleFloat{T}(p))
     return (sum(v))^r
