@@ -1,5 +1,10 @@
-convert(::Type{DoubleFloat{T}}, x::T) where {T<:IEEEFloat} = DoubleFloat{T}(x)
-convert(::Type{T}, x::DoubleFloat{T}) where {T<:IEEEFloat} = HI(x)
+convert(::Type{Double64}, x::Double64) = x
+convert(::Type{Double32}, x::Double32) = x
+convert(::Type{Double16}, x::Double16) = x
+
+convert(::Type{Float64}, x::Double64) = HI(x)
+convert(::Type{Float32}, x::Double32) = HI(x)
+convert(::Type{Float16}, x::Double16) = HI(x)
 
 convert(::Type{DoubleFloat{T}}, x::I) where {T<:IEEEFloat, I<:Integer} = DoubleFloat{T}(T(x))
 convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat, I<:Integer} = I(round(BigInt, BigFloat(HI(x))+ BigFloat(LO(x))))
