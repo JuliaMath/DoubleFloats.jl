@@ -89,7 +89,7 @@ include("type/specialvalues.jl")
 include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
-
+include("type/quadmath.jl")
 
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
