@@ -204,16 +204,16 @@ end
 function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cos(x) only defined for finite x"))
-    return cos_kernel(x)
+    return abs(x.hi) < 12.0 ? cos_kernel(x) : DoubleFloat{T}(cos(Quadmath.Float128(x)))
 end
 
 function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sin(x) only defined for finite x"))
-    return sin_kernel(x)
+    return abs(x.hi) < 12.0 ? sin_kernel(x) : DoubleFloat{T}(sin(Quadmath.Float128(x)))
 end
 
-Base.sincos(x::DoubleFloat) = (sin_kernel(x), cos_kernel(x))
+Base.sincos(x::DoubleFloat) = (sin(x), cos(x))
 
 #=
 function tangent(x::T) where {T}
@@ -232,6 +232,8 @@ end
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
+    abs(HI(x)) > 6.0 && return Double64(tan(Float128(x)))
+     
     abs(mod1pi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -317,30 +319,39 @@ end
 function sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sinpi(x) only defined for finite x"))
+    return DoubleFloat{T}(sinpi(Quadmath.Float128(x)))
+    #= 
     y = Double64(x) 
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = sin(y)
     return DoubleFloat{T}(z)
+    =#
 end
 
 function cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cospi(x) only defined for finite x"))
-    y = Double64(x) 
+    return DoubleFloat{T}(cospi(Quadmath.Float128(x)))
+    #= 
+     y = Double64(x) 
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = cos(y)
     return DoubleFloat{T}(z)
+    =#
 end
 
 function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("tanpi(x) only defined for finite x"))
+    return sinpi(x)/cospi(x)
+    #=
     y = Double64(x) 
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = tan(y)
     return DoubleFloat{T}(z)
+    =#
 end
 

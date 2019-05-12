@@ -67,6 +67,7 @@ import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
+import Quadmath
 
 include("Double.jl")   # Double64, Double32, Double16
 
@@ -88,7 +89,7 @@ include("type/specialvalues.jl")
 include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
-
+include("type/quadmath.jl")
 
 include("math/prearith/prearith.jl")
 include("math/prearith/floorceiltrunc.jl")
