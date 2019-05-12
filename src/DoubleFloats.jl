@@ -67,6 +67,7 @@ import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
+import Quadmath
 
 include("Double.jl")   # Double64, Double32, Double16
 
