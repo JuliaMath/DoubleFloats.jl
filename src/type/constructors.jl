@@ -1,10 +1,3 @@
-Double64(x::Double64) = x
-Double32(x::Double32) = x
-Double16(x::Double16) = x
-ComplexDF64(x::ComplexDF64) = x
-ComplexDF32(x::ComplexDF32) = x
-ComplexDF16(x::ComplexDF16) = x
-
 @inline Base.Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
 @inline Base.Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 @inline Base.Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
