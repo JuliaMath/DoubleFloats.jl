@@ -2,6 +2,10 @@ convert(::Type{Double64}, x::Double64) = x
 convert(::Type{Double32}, x::Double32) = x
 convert(::Type{Double16}, x::Double16) = x
 
+convert(::Type{ComplexDF64}, x::ComplexDF64) = x
+convert(::Type{ComplexDF32}, x::ComplexDF32) = x
+convert(::Type{ComplexDF16}, x::ComplexDF16) = x
+
 convert(::Type{Float64}, x::Double64) = HI(x)
 convert(::Type{Float32}, x::Double32) = HI(x)
 convert(::Type{Float16}, x::Double16) = HI(x)
