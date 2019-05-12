@@ -49,64 +49,6 @@ ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
 ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
 
-#ComplexDF64(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF64(promote(x,y)...)
-#ComplexDF32(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF32(promote(x,y)...)
-#ComplexDF16(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF16(promote(x,y)...)
-
-# deprecated
-#const ComplexD64 = Complex{DoubleFloat{Float64}}
-#const ComplexD32 = Complex{DoubleFloat{Float32}}
-#const ComplexD16 = Complex{DoubleFloat{Float16}}
-
-used_ComplexD64 = Ref(false)
-used_ComplexD32 = Ref(false)
-used_ComplexD16 = Ref(false)
-
-function ComplexD64(x::T) where {T<:Real}
-    if !used_ComplexD64[]
-        println("Warning: `ComplexD64` is deprecated.  Use `ComplexDF64`.")
-        used_ComplexD64[] = true
-    end
-    ComplexDF64(x)
-end
-function ComplexD32(x::T) where {T<:Real}
-    if !used_ComplexD32[]
-        println("Warning: `ComplexD32` is deprecated.  Use `ComplexDF32`.")
-        used_Complex32[] = true
-    end
-    ComplexDF64(x)
-end
-function ComplexD16(x::T) where {T<:Real}
-    if !used_ComplexD16[]
-        println("Warning: `ComplexD16` is deprecated.  Use `ComplexDF16`.")
-        used_ComplexD16[] = true
-    end
-    ComplexDF16(x)
-end
-function ComplexD64(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD64[]
-        println("Warning: `ComplexD64` is deprecated.  Use `ComplexDF64`.")
-        used_ComplexD64[] = true
-    end
-    ComplexDF64(x,y)
-end
-function ComplexD32(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD32[]
-        println("Warning: `ComplexD32` is deprecated.  Use `ComplexDF32`.")
-        used_Complex32[] = true
-    end
-    ComplexDF64(x,y)
-end
-function ComplexD16(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD16[]
-        println("Warning: `ComplexD16` is deprecated.  Use `ComplexDF16`.")
-        used_ComplexD16[] = true
-    end
-    ComplexDF16(x,y)
-end
-
-
-
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(x)
