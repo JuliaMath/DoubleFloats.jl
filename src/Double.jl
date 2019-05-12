@@ -181,6 +181,10 @@ Double64(x::Double64) = x
 Double32(x::Double32) = x
 Double16(x::Double16) = x
 
+ComplexDF64(x::ComplexDF64) = x
+ComplexDF32(x::ComplexDF32) = x
+ComplexDF16(x::ComplexDF16) = x
+
 """
     Double64(x::Double32)
 
