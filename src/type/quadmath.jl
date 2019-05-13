@@ -24,9 +24,9 @@ convert(::Type{Quadmath.Float128}, x::Double64) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double32) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double16) = Quadmath.Float128(x)
 
-convert(::Type{Double64), x::Quadmath.Float128) = Double64(x)
-convert(::Type{Double32), x::Quadmath.Float128) = Double32(x)
-convert(::Type{Double16), x::Quadmath.Float128) = Double16(x)
+convert(::Type{Double64}, x::Quadmath.Float128) = Double64(x)
+convert(::Type{Double32}, x::Quadmath.Float128) = Double32(x)
+convert(::Type{Double16}, x::Quadmath.Float128) = Double16(x)
 
 promote_rule(::Type{Double64}, ::Type{Quadmath.Float128}) = Double64
 promote_rule(::Type{Double32}, ::Type{Quadmath.Float128}) = Double32
@@ -54,9 +54,9 @@ convert(::Type{Quadmath.ComplexF128}, x::ComplexDF64) = Quadmath.ComplexF128(x)
 convert(::Type{Quadmath.ComplexF128}, x::ComplexDF32) = Quadmath.ComplexF128(x)
 convert(::Type{Quadmath.ComplexF128}, x::ComplexDF16) = Quadmath.ComplexF128(x)
 
-convert(::Type{ComplexDF64), x::Quadmath.Complex128) = ComplexDF64(x)
-convert(::Type{ComplexDF32), x::Quadmath.Complex128) = ComplexDF32(x)
-convert(::Type{ComplexDF16), x::Quadmath.Complex128) = ComplexDF16(x)
+convert(::Type{ComplexDF64}, x::Quadmath.Complex128) = ComplexDF64(x)
+convert(::Type{ComplexDF32}, x::Quadmath.Complex128) = ComplexDF32(x)
+convert(::Type{ComplexDF16}, x::Quadmath.Complex128) = ComplexDF16(x)
 
 promote_rule(::Type{ComplexDF64}, ::Type{Quadmath.ComplexF128}) = ComplexDF64
 promote_rule(::Type{ComplexDF32}, ::Type{Quadmath.ComplexF128}) = ComplexDF32
