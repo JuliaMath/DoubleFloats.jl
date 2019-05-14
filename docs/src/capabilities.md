@@ -55,5 +55,6 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
  - `factorize`, `lu`, `lufact`, `qr`, `qrfact`
  
 #### also
- - random values in [0,1)
+ - `rand` for uniform variates in [0,1)
+ - `randn` for canonical normal variates
  
