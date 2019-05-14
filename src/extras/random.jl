@@ -77,3 +77,22 @@ function randpm(rng::MersenneTwister, ::Type{Complex{DoubleFloat{T}}}, n::Int) w
     ims = ims .* isgns
     return map((re,im)->Complex{DoubleFloat{T}}(re,im), res, ims)
 end
+
+# normal variates
+
+function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
+    urand1, urand2 = rand(DoubleFloat{T}, 2)
+    urand1 = urand1 + urand1 - 1
+    urand2 = urand2 + urand2 - 1
+    s = urand1*urand1 + urand2*urand2
+    
+    while s >= 1 || s === 0
+        urand1, urand2 = rand(DoubleFloat{T}, 2)
+        urand1 = urand1 + urand1 - 1
+        urand2 = urand2 + urand2 - 1
+        s = urand1*urand1 + urand2*urand2
+    end
+    
+    s = sqrt( -log(s) / s )
+    return (urand1 + urand2) * s
+end
