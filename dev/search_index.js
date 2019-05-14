@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Capabilities",
     "title": "also",
     "category": "section",
-    "text": "random values in [0,1)"
+    "text": "rand for uniform variates in [0,1)\nrandn for canonical normal variates"
 },
 
 {
