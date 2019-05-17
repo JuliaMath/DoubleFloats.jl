@@ -21,17 +21,20 @@ julia> Pkg.add("DoubleFloats")
 ```
 
 
-## More Performant Than BigFloat
+## More Performant Than Float128, BigFloat
 
-Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
+_these results are from BenchmarkTools, on one machine_
 
-| op   | speedup |
-|:-----|--------:|
-| +    |     11x |
-| *    |     18x |
-| \    |      7x |
-| trig |   3x-6x |
- _these results are from BenchmarkTools, on one machine_
+There is another package, Quadmath.jl, which exports Float128 from GNU’s libquadmath. Float128s have 6 more significant bits than Double64s, and a much wider exponent range (Double64s exponents have the same range as Float64s). Big128 is BigFloat after setprecision(BigFloat, 128).
+
+benchmarking: vectors (`v`) of 1000 values and 50x50 matrices (`m`).
+Relative performance: smaller is faster, the larger number takes proportionately longer.
+
+|            | Double64  | Float128 |  Big128  |            | Double64 | Float128  |  Big128 |
+|:---------:|:----------:|:--------:|:--------:|:----------:|:--------:|:---------:|:-------:|
+|`dot(v,v)` |  1         |  3       |   7      | `exp.(m)`  |  1       |  2        |  6      |
+|`v .+ v`   |  1         |  7       |  16      | `m * m`    |  1       |  3        |  9      |
+|`v .* v`   |  1         | 12       |  25      | `det(m)`   |  1       |  5        | 11      |
 
 
 ## Examples
