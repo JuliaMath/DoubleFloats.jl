@@ -31,7 +31,7 @@ benchmarking: vectors (`v`) of 1000 values and 50x50 matrices (`m`).
 Relative performance: smaller is faster, the larger number takes proportionately longer.
 
 |            | Double64  | Float128 |  Big128  |            | Double64 | Float128  |  Big128 |
-|:---------:|:----------:|:--------:|:--------:|:----------:|:--------:|:---------:|:-------:|
+|:----------|:----------:|:--------:|:--------:|:-----------|:--------:|:---------:|:-------:|
 |`dot(v,v)` |  1         |  3       |   7      | `exp.(m)`  |  1       |  2        |  6      |
 |`v .+ v`   |  1         |  7       |  16      | `m * m`    |  1       |  3        |  9      |
 |`v .* v`   |  1         | 12       |  25      | `det(m)`   |  1       |  5        | 11      |
