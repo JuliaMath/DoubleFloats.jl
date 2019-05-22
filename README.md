@@ -27,7 +27,7 @@ _these results are from BenchmarkTools, on one machine_
 
 There is another package, Quadmath.jl, which exports Float128 from GNU’s libquadmath. Float128s have 6 more significant bits than Double64s, and a much wider exponent range (Double64s exponents have the same range as Float64s). Big128 is BigFloat after setprecision(BigFloat, 128).
 
-benchmarking: vectors (`v`) of 1000 values and 50x50 matrices (`m`).
+Benchmarking: vectors (`v`) of 1000 values and 50x50 matrices (`m`).    
 Relative performance: smaller is faster, the larger number takes proportionately longer.
 
 |            | Double64  | Float128 |  Big128  |            | Double64 | Float128  |  Big128 |
