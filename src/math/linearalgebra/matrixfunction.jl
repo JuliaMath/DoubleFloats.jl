@@ -1,7 +1,7 @@
 function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     rank(m) == size(m)[1] || throw(ErrorException("matrix is not diagonizable"))
-    evals = eigvals(m)
+    evals = eigenvals(m)
     fnevals = fn.(evals)
     evecs = eigvecs(m)
     invevecs = inv(evecs)
@@ -13,7 +13,7 @@ end
 function matrixfunction(fn::Function, m::Matrix{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     rank(m) == size(m)[1] || throw(ErrorException("matrix is not diagonizable"))
-    evals = eigvals(m)
+    evals = eigenvals(m)
     fnevals = fn.(evals)
     evecs = eigvecs(m)
     invevecs = inv(evecs)
@@ -62,4 +62,20 @@ function Base.:(^)(m::Matrix{Complex{DoubleFloat{T}}}, p::Union{Complex{T}, Comp
     res = pw * log(m)
     result = exp(res)
     return result
+end
+
+# sort to match usual output for `eigvals`
+
+@inline lt_for_sort(a::DoubleFloat{T}, b::DoubleFloat{T}) where {T<:IEEEFloat} = a < b
+@inline lt_for_sort(a::Complex{DoubleFloat{T}},b::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} =
+    (real(a) < real(b)) || (real(a)==real(b) && imag(a)<imag(b))
+
+function eigenvals(m::Array{DoubleFloat{T},2}) where {T<:IEEEFloat}
+    evals = eigvals(m)
+    return sort(evals, lt=lt_for_sort)
+end
+
+function eigenvals(m::Array{Complex{DoubleFloat{T}},2}) where {T<:IEEEFloat}
+    evals = eigvals(m)
+    return sort(evals, lt=lt_for_sort)
 end
