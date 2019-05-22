@@ -36,7 +36,9 @@ Benchmarking: vectors (`v`) of 1000 values and 50x50 matrices (`m`).
 |`v .+ v`   |  1         |  7       |  16      | `m * m`    |  1       |  3        |  9      |
 |`v .* v`   |  1         | 12       |  25      | `det(m)`   |  1       |  5        | 11      |
 
-Relative performance: smaller is faster, the larger number takes proportionately longer.
+relative performance: smaller is faster, the larger number takes proportionately longer.
+
+----
 
 ## Examples
 
