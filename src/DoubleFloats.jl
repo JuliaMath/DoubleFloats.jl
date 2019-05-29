@@ -120,6 +120,7 @@ include("math/linearalgebra/matrixfunction.jl")
 
 include("extras/random.jl")
 include("extras/misc.jl")
+include("extras/macros.jl")
 
 
 end # module DoubleFloats
