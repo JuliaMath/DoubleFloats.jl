@@ -317,15 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Linear Algebra",
     "title": "Vectors and Matrices",
     "category": "section",
-    "text": "using DoubleFloats, GenericSchur, GenericSVD, LinearAlgebra\n\nn = 25\nvector = rand(Double64, n)\nmatrix = reshape(rand(Double64,n*n),n,n)"
-},
-
-{
-    "location": "linearalgebra/#Operations-1",
-    "page": "Linear Algebra",
-    "title": "Operations",
-    "category": "section",
-    "text": "+, -, *, /\nrank, cond, norm, opnorm, det, tr, inv, pinv\ntranspose, adjoint\neigvals, eigvals!, svdvals, svdvals!, svd"
+    "text": "```julia using DoubleFloats, GenericSchur, GenericSVD, LinearAlgebran = 25 vector = rand(Double64, n) matrix = reshape(rand(Double64,n*n),n,n)"
 },
 
 {
@@ -334,6 +326,22 @@ var documenterSearchIndex = {"docs": [
     "title": "Matrix Predicates",
     "category": "section",
     "text": "iszero, isone, isdiag \nissquare, issymmetric, ishermitian \nisposdef, isposdef!\nistril, istriu"
+},
+
+{
+    "location": "linearalgebra/#Matrix-Operations-1",
+    "page": "Linear Algebra",
+    "title": "Matrix Operations",
+    "category": "section",
+    "text": "+, -, *, /\nrank, cond, norm, opnorm\ndiagind, diag\ntranspose, adjoint\ninv, pinv"
+},
+
+{
+    "location": "linearalgebra/#Matrix-Functions-1",
+    "page": "Linear Algebra",
+    "title": "Matrix Functions",
+    "category": "section",
+    "text": "det, logdet, logabsdet, tr\neigvals, eigvals!, eigvecs, eigen\nsvdvals, svdvals!, svd"
 },
 
 {
