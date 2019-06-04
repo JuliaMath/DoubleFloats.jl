@@ -1,8 +1,9 @@
+#   :asin, :acos, :atan, :acsc, :asec, :acot, in arctrig.jl
+
 for F in (# :mod2pi, :square, :cube, :sqrt,
           :cbrt,
           :exp, :expm1, :log, :log1p, :log2, :log10,
           :sin, :cos, :tan, :csc, :sec, :cot,
-          :asin, :acos, :atan, :acsc, :asec, :acot,
           :sinh, :cosh, :tanh, :csch, :sech, :coth,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
@@ -13,6 +14,7 @@ for F in (# :mod2pi, :square, :cube, :sqrt,
   end
 end
 
+#=
 """
     DomainGuard{T}
 
@@ -52,3 +54,4 @@ struct DomainGuard{T}
     okzero::Bool
 
 end
+=#
