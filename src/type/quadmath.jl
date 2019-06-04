@@ -72,17 +72,10 @@ promote_rule(::Type{Double16}, ::Type{Quadmath.Float128}) = Double16
 @inline Quadmath.ComplexF128(x::Double32) = Quadmath.ComplexF128(Quadmath.Float128(x))
 @inline Quadmath.ComplexF128(x::Double16) = Quadmath.ComplexF128(Quadmath.Float128(x))
 
-@inline Quadmath.ComplexF128(x::ComplexDF64) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
-@inline Quadmath.ComplexF128(x::ComplexDF32) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
-@inline Quadmath.ComplexF128(x::ComplexDF16) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
-
 @inline Double64(x::Quadmath.ComplexF128) = Double64(real(x))
 @inline Double32(x::Quadmath.ComplexF128) = Double32(real(x))
 @inline Double16(x::Quadmath.ComplexF128) = Double16(real(x))
 
-@inline ComplexDF64(x::Quadmath.ComplexF128) = ComplexDF64(Double64(real(x)), Double64(imag(x)))
-@inline ComplexDF32(x::Quadmath.ComplexF128) = ComplexDF32(Double32(real(x)), Double32(imag(x)))
-@inline ComplexDF16(x::Quadmath.ComplexF128) = ComplexDF16(Double16(real(x)), Double16(imag(x)))
 
 convert(::Type{Quadmath.ComplexF128}, x::ComplexDF64) = Quadmath.ComplexF128(x)
 convert(::Type{Quadmath.ComplexF128}, x::ComplexDF32) = Quadmath.ComplexF128(x)
