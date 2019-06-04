@@ -30,6 +30,8 @@ export DoubleFloat,
        randpm,
        tanpi,
        agm, agm1, elliptick,
+       besselj0, besselj1, besselj, bessely0, bessely1, bessely,
+       gamma, lgamma, erf, erfc,
        matrixfunction
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
@@ -102,10 +104,6 @@ include("math/arithmetic/normalize_hypot.jl")
 include("math/arithmetic/mixedarith.jl")
 include("math/ops.jl")
 
-#include("math/arithmetic/complex/division.jl")
-include("math/special/agm.jl")
-include("math/special/elliptic.jl")
-
 include("math/elementary/sequences.jl")
 include("math/elementary/explog.jl")
 include("math/elementary/trig.jl")
@@ -118,6 +116,12 @@ include("math/elementary/complex.jl")
 include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")
+
+#include("math/arithmetic/complex/division.jl")
+include("math/special/agm.jl")
+include("math/special/elliptic.jl")
+include("math/special/bessel.jl")
+include("math/special/gamma_erf.jl")
 
 include("extras/random.jl")
 include("extras/misc.jl")
