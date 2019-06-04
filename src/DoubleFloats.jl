@@ -45,6 +45,8 @@ using GenericSVD, GenericSchur
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
+using Quadmath
+
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, tryparse, eltype,
              signbit, sign, abs, flipsign, copysign,
