@@ -1,8 +1,8 @@
 # Quadmath conversions
 
-@inline Quadmath.Float128(x::Double64) = Quadmath.Float128(x.hi) + Quadmath.Float128(x.lo)
-@inline Quadmath.Float128(x::Double32) = Quadmath.Float128(x.hi) + Quadmath.Float128(x.lo)
-@inline Quadmath.Float128(x::Double16) = Quadmath.Float128(x.hi) + Quadmath.Float128(x.lo)
+@inline Quadmath.Float128(x::Double64) = Quadmath.Float128(x.hi) + x.lo
+@inline Quadmath.Float128(x::Double32) = Quadmath.Float128(x.hi) + x.lo
+@inline Quadmath.Float128(x::Double16) = Quadmath.Float128(x.hi) + x.lo%Float32
 
 @inline function Double64(x::Quadmath.Float128)
     hi = Float64(x)
@@ -20,6 +20,15 @@ end
     return Double16(hi,lo)
 end
 
+@inline Double64Float128(fn::F, x::Double64) where {F<:Function} =
+    Double64(fn(Quadmath.Float128(x)))
+
+@inline Double32Float128(fn::F, x::Double64) where {F<:Function} =
+    Double32(fn(Quadmath.Float128(x)))
+
+@inline Double16Float128(fn::F, x::Double64) where {F<:Function} =
+    Double16(fn(Quadmath.Float128(x)))
+        
 convert(::Type{Quadmath.Float128}, x::Double64) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double32) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double16) = Quadmath.Float128(x)
