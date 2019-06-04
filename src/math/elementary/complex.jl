@@ -10,6 +10,9 @@ end
 
 square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
 
+
+sqrt(x::ComplexDF64) = ComplexDF64ComplexF128(sqrt, x)
+
 # development from functions.wolfram.com
 
 #=
@@ -27,6 +30,7 @@ t5 = r ^ 2
 t7 = sqrt(t4 + t5)
 t11 = sqrt(2) * sqrt(t7 - r) * t3 / 2
 =#
+#=
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     fourthroot = sqrt(hypot(rea, ima))
@@ -35,6 +39,7 @@ function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     ima = fourthroot * sin(halfatan)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
+=#
 
 #=
 Julia(evalc(Re(exp(r+i*sqrt(-1)))), optimize = true);
