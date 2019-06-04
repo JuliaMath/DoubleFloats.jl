@@ -4,6 +4,10 @@
 @inline Quadmath.Float128(x::Double32) = Quadmath.Float128(x.hi) + x.lo
 @inline Quadmath.Float128(x::Double16) = Quadmath.Float128(x.hi) + x.lo%Float32
 
+@inline Quadmath.ComplexF128(x::ComplexDF64) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
+@inline Quadmath.ComplexF128(x::ComplexDF32) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
+@inline Quadmath.ComplexF128(x::ComplexDF16) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
+
 @inline function Double64(x::Quadmath.Float128)
     hi = Float64(x)
     lo = Float64(x - hi)
@@ -20,6 +24,16 @@ end
     return Double16(hi,lo)
 end
 
+@inline ComplexDF64(x::Quadmath.ComplexF128) =
+    ComplexDF64(Double64(real(x)), Double64(imag(x)))
+
+@inline ComplexDF32(x::Quadmath.ComplexF128) =
+    ComplexDF32(Double32(real(x)), Double32(imag(x)))
+
+@inline ComplexDF16(x::Quadmath.ComplexF128) =
+    ComplexDF16(Double16(real(x)), Double16(imag(x)))
+
+
 @inline Double64Float128(fn::F, x::Double64) where {F<:Function} =
     Double64(fn(Quadmath.Float128(x)))
 
@@ -28,7 +42,18 @@ end
 
 @inline Double16Float128(fn::F, x::Double64) where {F<:Function} =
     Double16(fn(Quadmath.Float128(x)))
-        
+
+
+@inline ComplexDF64ComplexF128(fn::F, x::ComplexDF64) where {F<:Function} =
+    ComplexDF64(fn(Quadmath.ComplexF128(x)))
+
+@inline ComplexDF32ComplexF128(fn::F, x::ComplexDF32) where {F<:Function} =
+    ComplexDF32(fn(Quadmath.ComplexF128(x)))
+
+@inline ComplexDF16ComplexF128(fn::F, x::ComplexDF32) where {F<:Function} =
+    ComplexDF16(fn(Quadmath.ComplexF128(x)))
+
+
 convert(::Type{Quadmath.Float128}, x::Double64) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double32) = Quadmath.Float128(x)
 convert(::Type{Quadmath.Float128}, x::Double16) = Quadmath.Float128(x)
