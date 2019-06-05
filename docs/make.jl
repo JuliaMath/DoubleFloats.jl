@@ -10,8 +10,9 @@ makedocs(
         "Characteristics" => "characteristics.md",
         "Show, String, Parse" => "stringshowparse.md",
         "Capabilities" => "capabilities.md",
-        "Additional Capabilities" => "special.md",
+        "Special Functions" => "special.md",
         "Linear Algebra" => "linearalgebra.md",
+        "Random Numbers" => "random.md",
         "Appropriate Uses" => "appropriate.md",
         "References" => "references.md"
     ]
