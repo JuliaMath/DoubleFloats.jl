@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Contributions",
     "category": "section",
-    "text": "Contributions are very welcome, as are feature requests and suggestions. Please open an issue if you encounter any problems. The contributing page has a few guidelines that should be followed when opening pull requests.<a name=\"involvement\">β</a>: If you want to get involved with moving Double32 performance forward, great. I would provide guidance."
+    "text": "Contributions are very welcome, as are feature requests and suggestions. Please open an issue if you encounter any problems. The contributing page has a few guidelines that should be followed when opening pull requests.<a name=\"involvement\">β</a>: If you want to get involved with moving Double32 performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using Float64 than Double32 (Float64 has more significant bits, wider exponent range, and is much faster)."
 },
 
 {
