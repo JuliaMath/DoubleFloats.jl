@@ -1,4 +1,4 @@
-besselj0(x::Float128) = Quadmath.besselj0(x)
+besselj0(x::Float128) = SpecialFunctions.besselj0(x)
 
 besselj0(x::Double64) = Double64Float128(besselj0, x)
 besselj1(x::Double64) = Double64Float128(besselj1, x)
