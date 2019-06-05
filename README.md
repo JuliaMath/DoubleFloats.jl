@@ -3,7 +3,7 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
-- N.B. `Double64`, `ComplexDF64` are the most performant types <sup>[β](#involvement)</sup>
+- N.B. `Double64`,is the most performant type <sup>[β](#involvement)</sup>
 
 
 
