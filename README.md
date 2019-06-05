@@ -3,7 +3,9 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
-- N.B. `Double64`, `ComplexDF64` are the most performant typesᵝ 
+- N.B. `Double64`, `ComplexDF64` are the most performant types<sup>[β](#myfootnote1)</sup>
+
+
 
 ----
 
@@ -194,7 +196,7 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 ----
 
-ᵝ if you want to get involved with moving `Double32` performance forward, great
+<a name="myfootnote1">β</a>: if you want to get involved with moving `Double32` performance forward, great
 
 ----
 [contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/
