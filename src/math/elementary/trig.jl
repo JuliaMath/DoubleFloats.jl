@@ -232,7 +232,7 @@ end
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
-    abs(HI(x)) > 6.0 && return Double64(tan(Float128(x)))
+    abs(HI(x)) >= 0.36815538909255385 && return Double64(tan(Float128(x)))  # (15/128 * pi)
      
     abs(mod1pi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
