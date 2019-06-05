@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Accuracy",
     "category": "section",
-    "text": "For Double64 arguments within 0.0..2.0expect the abserr of elementary functions to be 1e-30 or better\nexpect the relerr of elementary functions to be 1e-28 or betterFor tan or cot as they approach ±Infexpect the relerr of atan(tan(x)), acot(cot(x)) to be 1e-26 or betterWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonably sized values, the relerr could approach 100,000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.should you encounter a situation where either error grows    strongly in one direction, please submit an issue"
+    "text": "For Double64 arguments within 0.0..2.0expect the abserr of elementary functions to be 1e-30 or better\nexpect the relerr of elementary functions to be 1e-28 or betterWhen used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂² to the cumulative relative error (𝘂 is the relative rounding unit, usually 𝘂 = eps(x)/2). Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonably sized values, the relerr could approach 100,000 * 10⋅𝘂². In practice these functions are considerably more resiliant: our algorithms come frome seminal papers and extensive numeric investigation."
 },
 
 {
@@ -173,15 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Characteristics",
     "title": "Absolute and Relative Error",
     "category": "section",
-    "text": ""
-},
-
-{
-    "location": "characteristics/#Accuracy-2",
-    "page": "Characteristics",
-    "title": "Accuracy",
-    "category": "section",
-    "text": "results for f(x), x in 0..1function abserr relerr\nexp 1.0e-31 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-31\ntan 1.0e-31 1.0e-31\n  \nasin 1.0e-31 1.0e-31\nacos 1.0e-31 1.0e-31\natan 1.0e-31 1.0e-31\n  \n  \nsinh 1.0e-31 1.0e-29\ncosh 1.0e-31 1.0e-31\ntanh 1.0e-31 1.0e-29\n  \nasinh 1.0e-31 1.0e-29\natanh 1.0e-31 1.0e-30results for f(x), x in 1..2function abserr relerr\nexp 1.0e-30 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-28\ntan 1.0e-30 1.0e-30\n  \natan 1.0e-31 1.0e-31\n  \n  \nsinh 1.0e-30 1.0e-31\ncosh 1.0e-30 1.0e-31\ntanh 1.0e-31 1.0e-31\n  \nasinh 1.0e-31 1.0e-31"
+    "text": "results for f(x), x in 0..1function abserr relerr\nexp 1.0e-31 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-31\ntan 1.0e-31 1.0e-31\n  \nasin 1.0e-31 1.0e-31\nacos 1.0e-31 1.0e-31\natan 1.0e-31 1.0e-31\n  \nsinh 1.0e-31 1.0e-29\ncosh 1.0e-31 1.0e-31\ntanh 1.0e-31 1.0e-29\n  \nasinh 1.0e-31 1.0e-29\natanh 1.0e-31 1.0e-30results for f(x), x in 1..2function abserr relerr\nexp 1.0e-30 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-28\ntan 1.0e-30 1.0e-30\n  \natan 1.0e-31 1.0e-31\n  \nsinh 1.0e-30 1.0e-31\ncosh 1.0e-30 1.0e-31\ntanh 1.0e-31 1.0e-31\n  \nasinh 1.0e-31 1.0e-31"
 },
 
 {
