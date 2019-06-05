@@ -75,6 +75,8 @@ julia> showall(ans)
 1.9999999999999999999999999999999937e-01
 ```
 
+#### Double64 is optimized, Double32 and Double16 are not as performant (PRs welcome)
+
 ### Complex functions
 ```julia
 
