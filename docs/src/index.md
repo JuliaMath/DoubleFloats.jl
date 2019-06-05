@@ -140,7 +140,7 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 ----
 
-<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance.
+<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
 
 ----
 
