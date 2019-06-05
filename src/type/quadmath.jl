@@ -2,7 +2,7 @@
 
 @inline Quadmath.Float128(x::Double64) = Quadmath.Float128(x.hi) + x.lo
 @inline Quadmath.Float128(x::Double32) = Quadmath.Float128(x.hi) + x.lo
-@inline Quadmath.Float128(x::Double16) = Quadmath.Float128(x.hi) + x.lo%Float32
+@inline Quadmath.Float128(x::Double16) = Quadmath.Float128(x.hi) + Float32(x.lo)
 
 @inline Quadmath.ComplexF128(x::ComplexDF64) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
 @inline Quadmath.ComplexF128(x::ComplexDF32) = Quadmath.ComplexF128(Quadmath.Float128(real(x)), Quadmath.Float128(imag(x)))
