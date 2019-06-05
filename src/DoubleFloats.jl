@@ -31,7 +31,7 @@ export DoubleFloat,
        tanpi,
        agm, agm1, elliptick,
        besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-       gamma, lgamma, erf, erfc,
+       gamma, loggamma, lgamma, erf, erfc,
        matrixfunction
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
