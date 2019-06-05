@@ -38,4 +38,5 @@ _`x` below is any of `Double64`, `Double32`, `Double16`_
 ## Elliptic Integrals
 
 - `elliptick(x)`
+
     - Complete Elliptic Integral of the First Kind
