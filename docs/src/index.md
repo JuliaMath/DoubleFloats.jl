@@ -129,11 +129,6 @@ true
 | `Double64(MathConstants.golden)` | 1.61803_39887_49894_84820_45868_34365_6354 |         2.7e-33         |
 
 
-----
-
-<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance.
-
-----
 
 ## Questions
 
@@ -142,5 +137,11 @@ Usage questions can be posted on the [Julia Discourse forum](https://discourse.j
 ## Contributions
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/) has a few guidelines that should be followed when opening pull requests.
+
+----
+
+<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance.
+
+----
 
 
