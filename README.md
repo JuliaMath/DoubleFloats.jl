@@ -3,6 +3,10 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
+- N.B. `Double64`, `ComplexDF64` are the most performant types
+
+    - if you want to get involved with moving `Double32` performance forward, great
+
 ----
 
 [![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)&nbsp;&nbsp;&nbsp;[![codecov](https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/DoubleFloats.jl)
@@ -74,8 +78,6 @@ julia> df64"0.2"
 julia> showall(ans)
 1.9999999999999999999999999999999937e-01
 ```
-
-#### Double64 is optimized, Double32 and Double16 are not as performant (PRs welcome)
 
 ### Complex functions
 ```julia
