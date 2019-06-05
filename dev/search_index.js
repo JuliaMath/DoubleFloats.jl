@@ -169,6 +169,22 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "characteristics/#Absolute-and-Relative-Error-1",
+    "page": "Characteristics",
+    "title": "Absolute and Relative Error",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "characteristics/#Accuracy-2",
+    "page": "Characteristics",
+    "title": "Accuracy",
+    "category": "section",
+    "text": "results for f(x), x in 0..1function abserr relerr\nexp 1.0e-31 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-31\ntan 1.0e-31 1.0e-31\n  \nasin 1.0e-31 1.0e-31\nacos 1.0e-31 1.0e-31\natan 1.0e-31 1.0e-31\n  \n  \nsinh 1.0e-31 1.0e-29\ncosh 1.0e-31 1.0e-31\ntanh 1.0e-31 1.0e-29\n  \nasinh 1.0e-31 1.0e-29\natanh 1.0e-31 1.0e-30results for f(x), x in 1..2function abserr relerr\nexp 1.0e-30 1.0e-31\nlog 1.0e-31 1.0e-31\n  \nsin 1.0e-31 1.0e-31\ncos 1.0e-31 1.0e-28\ntan 1.0e-30 1.0e-30\n  \natan 1.0e-31 1.0e-31\n  \n  \nsinh 1.0e-30 1.0e-31\ncosh 1.0e-30 1.0e-31\ntanh 1.0e-31 1.0e-31\n  \nasinh 1.0e-31 1.0e-31"
+},
+
+{
     "location": "stringshowparse/#",
     "page": "Show, String, Parse",
     "title": "Show, String, Parse",
