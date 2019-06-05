@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "Extended precision float and complex types",
     "category": "section",
-    "text": ""
+    "text": "N.B. Double64,is the most performant type <sup>β</sup>"
 },
 
 {
@@ -85,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Overview",
     "title": "golden ratio",
     "category": "section",
-    "text": "julia> using DoubleFloats\n\njulia> ϕ = Double32(MathConstants.golden)\n1.61803398874989490\njulia> phi = \"1.61803398874989484820+\"\njulia> ϕ⁻¹ = inv(ϕ)\n6.18033988749894902e-01\n\njulia> ϕ == 1 + ϕ⁻¹\ntrue\njulia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹\ntruetyped value computed value ~abs(golden - computed)\nMathConstants.golden 1.6180339887498948482045868+ 0.0\nFloat64(MathConstants.golden) 1.618033988749895 1.5e-16\nDouble32(MathConstants.golden) 1.618033988749894_90 5.2e-17\nDouble64(MathConstants.golden) 1.6180339887498948482045868343656354 2.7e-33"
+    "text": "julia> using DoubleFloats\n\njulia> ϕ = Double32(MathConstants.golden)\n1.61803398874989490\njulia> phi = \"1.61803398874989484820+\"\njulia> ϕ⁻¹ = inv(ϕ)\n6.18033988749894902e-01\n\njulia> ϕ == 1 + ϕ⁻¹\ntrue\njulia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹\ntruetyped value computed value ~abs(golden - computed)\nMathConstants.golden 1.6180339887498948482045868+ 0.0\nFloat64(MathConstants.golden) 1.618033988749895 1.5e-16\nDouble32(MathConstants.golden) 1.618033988749894_90 5.2e-17\nDouble64(MathConstants.golden) 1.6180339887498948482045868343656354 2.7e-33<a name=\"involvement\">β</a>: If you want to get involved with moving Double32 performance forward, great. I would provide guidance."
 },
 
 {
