@@ -42,11 +42,6 @@ For `Double64` arguments within 0.0..2.0
 - expect the `abserr` of elementary functions to be 1e-30 or better
 - expect the `relerr` of elementary functions to be 1e-28 or better
 
-For `tan` or `cot` as they approach ±Inf
-
-- expect the `relerr` of `atan(tan(x))`, `acot(cot(x))` to be 1e-26 or better
- 
-
 ----
 
 When used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂²
@@ -57,13 +52,8 @@ more resiliant: our algorithms come frome seminal papers and extensive numeric i
 
 ----
 
-_should you encounter a situation where either error grows
-   strongly in one direction, please submit an issue_
+### Absolute and Relative Error
 
-## Absolute and Relative Error
-
-
-## Accuracy
 
 
 results for f(x), x in 0..1
