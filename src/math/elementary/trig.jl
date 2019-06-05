@@ -204,13 +204,13 @@ end
 function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cos(x) only defined for finite x"))
-    return abs(x.hi) < 12.0 ? cos_kernel(x) : DoubleFloat{T}(cos(Quadmath.Float128(x)))
+    return abs(x.hi) < 6.28125 ? cos_kernel(x) : DoubleFloat{T}(cos(Quadmath.Float128(x)))
 end
 
 function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sin(x) only defined for finite x"))
-    return abs(x.hi) < 12.0 ? sin_kernel(x) : DoubleFloat{T}(sin(Quadmath.Float128(x)))
+    return abs(x.hi) < 6.28125 ? sin_kernel(x) : DoubleFloat{T}(sin(Quadmath.Float128(x)))
 end
 
 Base.sincos(x::DoubleFloat) = (sin(x), cos(x))
