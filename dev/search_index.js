@@ -274,18 +274,50 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "special/#",
-    "page": "Additional Capabilities",
-    "title": "Additional Capabilities",
+    "page": "Special Functions",
+    "title": "Special Functions",
     "category": "page",
     "text": ""
 },
 
 {
-    "location": "special/#Random-1",
-    "page": "Additional Capabilities",
-    "title": "Random",
+    "location": "special/#Special-Functions-1",
+    "page": "Special Functions",
+    "title": "Special Functions",
     "category": "section",
-    "text": "julia> rand(Double64)\n0.2654749880242928\n\njulia> rand(Double32, 4)\n4-element Array{DoubleFloat{Float32},1}:\n 0.62278694\n 0.14700651\n 0.42059994\n 0.8824145 \n\njulia> randpm(Double32)\n-0.78260666\n\njulia> randpm(Double64, 4)\n4-element Array{DoubleFloat{Float64},1}:\n  0.8066283194653339\n  0.3846875811169719\n -0.8318619362182055\n -0.1718555031982676\n\njulia> rand(ComplexDF32)\n0.7863289 + 0.9202755im\n\njulia> randpm(ComplexDF32,5)\n5-element Array{Complex{DoubleFloat{Float32}},1}:\n -0.22268367 + 0.94761634im\n   0.9173372 - 0.51481026im\n  0.22448015 + 0.20910525im\n -0.25364602 + 0.4772849im \n -0.52076036 - 0.40857565im"
+    "text": "DoubleFloats supports some special functions of real values.x below is any of Double64, Double32, Double16"
+},
+
+{
+    "location": "special/#Bessel-Functions-1",
+    "page": "Special Functions",
+    "title": "Bessel Functions",
+    "category": "section",
+    "text": "besselj0(x), besselj1(x)`\nbesselj(0, x), besselj(1, x)\nbessely0(x), bessely1(x)\nbessely(0, x), bessely(1, x)\nbesselj(nu::Int, x)\nBessel function of the first kind\nbessely(nu::Int, x)\nBessel function of the second kind"
+},
+
+{
+    "location": "special/#Gamma-Functions-1",
+    "page": "Special Functions",
+    "title": "Gamma Functions",
+    "category": "section",
+    "text": "gamma(x)\ngamma function\nloggamma(x), lgamma(x)\nlog gamma function"
+},
+
+{
+    "location": "special/#Error-Functions-1",
+    "page": "Special Functions",
+    "title": "Error Functions",
+    "category": "section",
+    "text": "erf(x)\nerror function\nerfc(x)\ncomplementary error function (1-erf(x))"
+},
+
+{
+    "location": "special/#Elliptic-Integrals-1",
+    "page": "Special Functions",
+    "title": "Elliptic Integrals",
+    "category": "section",
+    "text": "elliptick(x)\nComplete Elliptic Integral of the First Kind"
 },
 
 {
@@ -358,6 +390,22 @@ var documenterSearchIndex = {"docs": [
     "title": "Functions of Matrices (diagonalizable & square only)",
     "category": "section",
     "text": "sqrt, cbrt\nmatrix^power\nexp, log\nsin, cos, tan, csc, sec, cot\nasin, acos, atan, acsc, asec, acot\nsinh, cosh, tanh, csch, sech, coth\nasinh, acosh, atanh, acsch, asech, acoth\nmatrixfunction(function, matrix)"
+},
+
+{
+    "location": "random/#",
+    "page": "Random Numbers",
+    "title": "Random Numbers",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "random/#Random-1",
+    "page": "Random Numbers",
+    "title": "Random",
+    "category": "section",
+    "text": "julia> rand(Double64)\n0.2654749880242928\n\njulia> rand(Double32, 4)\n4-element Array{DoubleFloat{Float32},1}:\n 0.62278694\n 0.14700651\n 0.42059994\n 0.8824145 \n\njulia> randpm(Double32)\n-0.78260666\n\njulia> randpm(Double64, 4)\n4-element Array{DoubleFloat{Float64},1}:\n  0.8066283194653339\n  0.3846875811169719\n -0.8318619362182055\n -0.1718555031982676\n\njulia> rand(ComplexDF32)\n0.7863289 + 0.9202755im\n\njulia> randpm(ComplexDF32,5)\n5-element Array{Complex{DoubleFloat{Float32}},1}:\n -0.22268367 + 0.94761634im\n   0.9173372 - 0.51481026im\n  0.22448015 + 0.20910525im\n -0.25364602 + 0.4772849im \n -0.52076036 - 0.40857565im"
 },
 
 {
