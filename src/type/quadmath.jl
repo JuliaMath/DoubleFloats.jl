@@ -37,10 +37,10 @@ end
 @inline Double64Float128(fn::F, x::Double64) where {F<:Function} =
     Double64(fn(Quadmath.Float128(x)))
 
-@inline Double32Float128(fn::F, x::Double64) where {F<:Function} =
+@inline Double32Float128(fn::F, x::Double32) where {F<:Function} =
     Double32(fn(Quadmath.Float128(x)))
 
-@inline Double16Float128(fn::F, x::Double64) where {F<:Function} =
+@inline Double16Float128(fn::F, x::Double16) where {F<:Function} =
     Double16(fn(Quadmath.Float128(x)))
 
 
