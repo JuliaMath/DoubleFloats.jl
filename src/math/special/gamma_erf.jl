@@ -1,3 +1,8 @@
+erf(x::Float128) = SpecialFunctions.erf(x)
+erfc(x::Float128) = SpecialFunctions.erfc(x)
+gamma(x::Float128) = SpecialFunctions.gamma(x)
+lgamma(x::Float128) = SpecialFunctions.lgamma(x)
+  
 erf(x::Double64) = Double64Float128(erf, x)
 erfc(x::Double64) = Double64Float128(erfc, x)
 gamma(x::Double64) = Double64Float128(gamma, x)
