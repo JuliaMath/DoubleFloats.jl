@@ -3,6 +3,8 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
+- N.B. `Double64`,is the most performant type <sup>[β](#involvement)</sup>
+
 ----
 
 ## Installation
@@ -127,6 +129,11 @@ true
 | `Double64(MathConstants.golden)` | 1.61803_39887_49894_84820_45868_34365_6354 |         2.7e-33         |
 
 
+----
+
+<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance.
+
+----
 
 ## Questions
 
