@@ -196,7 +196,7 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 ----
 
-<a name="involvement">β</a>: if you want to get involved with moving `Double32` performance forward, great
+<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance.
 
 ----
 [contrib-url]: https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/
