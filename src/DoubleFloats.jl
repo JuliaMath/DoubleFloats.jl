@@ -29,7 +29,7 @@ export DoubleFloat,
        signs,
        randpm,
        tanpi,
-       agm, agm1, elliptick,
+       agm, agm1, ellipk,
        besselj0, besselj1, besselj, bessely0, bessely1, bessely,
        gamma, loggamma, lgamma, erf, erfc,
        matrixfunction
@@ -122,11 +122,7 @@ include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")
 
-#include("math/arithmetic/complex/division.jl")
-include("math/special/agm.jl")
-include("math/special/elliptic.jl")
-include("math/special/bessel.jl")
-include("math/special/gamma_erf.jl")
+include("math/special/specialfunctions.jl")
 
 include("extras/random.jl")
 include("extras/misc.jl")
