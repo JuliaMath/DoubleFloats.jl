@@ -45,10 +45,9 @@ using GenericSVD, GenericSchur
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
-import SpecialFunctions
-using Quadmath
-#import Quadmath: sqrt, besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-#                 gamma, lgamma, erf, erfc
+import Quadmath
+import Quadmath: sqrt, besselj0, besselj1, besselj, bessely0, bessely1, bessely,
+                 gamma, lgamma, erf, erfc
 
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, tryparse, eltype,
