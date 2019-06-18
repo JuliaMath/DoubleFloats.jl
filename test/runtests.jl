@@ -1,4 +1,5 @@
 using DoubleFloats, LinearAlgebra
+using Quadmath
 using Test
 
 using  Base: IEEEFloat
@@ -25,7 +26,9 @@ function isapprox(a::T, b::T) where {T<:IEEEFloat}
     iszero(b) && (0 < abs(a) < eps(T)^2) ||
     isapprox(a, b, atol=eps(T)^2, rtol = eps(T)))
 end
-    
+
+
+
 # isapprox(lo,eps(one(Float64)),atol=eps(one(Float64)))
 
 # to cover functions that are not exported
@@ -61,6 +64,7 @@ include("matmul.jl")
 include("complex.jl")
 
 include("linearalgebra.jl")
+include("special_functions.jl")
 
 include("concrete_accuracy.jl")
 include("function_accuracy.jl")
