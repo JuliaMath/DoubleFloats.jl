@@ -46,8 +46,6 @@ using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
 import Quadmath
-import Quadmath: sqrt, besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-                 gamma, lgamma, erf, erfc
 
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, tryparse, eltype,
@@ -74,7 +72,10 @@ import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth
 
-import Quadmath
+import Quadmath: Float128
+
+# for conditional SpecialFunctions
+using Requires
 
 include("Double.jl")   # Double64, Double32, Double16
 
@@ -121,7 +122,11 @@ include("math/linearalgebra/matmul.jl")
 include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")
 
-include("math/special/specialfunctions.jl")
+function __init__()
+    @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
+        include("math/special/specialfunctions.jl")
+    end
+end
 
 include("extras/random.jl")
 include("extras/misc.jl")
