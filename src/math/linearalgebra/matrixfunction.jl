@@ -1,9 +1,9 @@
 function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
-    rank(m) == size(m)[1] || throw(ErrorException("matrix is not diagonizable"))
+    evecs = eigvecs(m)
+    rank(evecs) == size(m)[1] || throw(ErrorException("matrix is not diagonalizable"))
     evals = eigenvals(m)
     fnevals = fn.(evals)
-    evecs = eigvecs(m)
     invevecs = inv(evecs)
     diagevals = Diagonal(fnevals)
     result = evecs * diagevals * invevecs
@@ -12,10 +12,10 @@ end
 
 function matrixfunction(fn::Function, m::Matrix{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
-    rank(m) == size(m)[1] || throw(ErrorException("matrix is not diagonizable"))
+    evecs = eigvecs(m)
+    rank(evecs) == size(m)[1] || throw(ErrorException("matrix is not diagonalizable"))
     evals = eigenvals(m)
     fnevals = fn.(evals)
-    evecs = eigvecs(m)
     invevecs = inv(evecs)
     diagevals = Diagonal(fnevals)
     result = evecs * diagevals * invevecs
