@@ -177,6 +177,9 @@ results for f(x), x in 1..2
 |          |            |            |
 |  asinh   |  1.0e-31   |   1.0e-31  |
 
+### isapprox
+
+- `isapprox` uses this default `rtol=eps(1.0)^(37/64)`.
 
 ## Good Ways To Use This
 
