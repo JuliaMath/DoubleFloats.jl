@@ -57,4 +57,4 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
 #### also
  - `rand` for uniform variates in [0,1)
  - `randn` for canonical normal variates
- 
+ - `isapprox` (default `rtol=eps(1.0)^(37/64)`)
