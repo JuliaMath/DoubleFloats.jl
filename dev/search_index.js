@@ -277,7 +277,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Capabilities",
     "title": "also",
     "category": "section",
-    "text": "rand for uniform variates in [0,1)\nrandn for canonical normal variates"
+    "text": "rand for uniform variates in [0,1)\nrandn for canonical normal variates\nisapprox (default rtol=eps(1.0)^(37/64))"
 },
 
 {
