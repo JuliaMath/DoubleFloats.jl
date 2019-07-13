@@ -8,10 +8,10 @@ function Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{T}; atol::Real=0.0, rto
     x == y || (isfinite(x) && isfinite(y) && abs(x-y) <= max(atol, rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
 end
 
-Base.isapprox(x::DoubleFloat{T}, y::F; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {F<:Real} =
+Base.isapprox(x::DoubleFloat{T}, y::F; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat, F<:Real} =
     isapprox(promote(x, y)..., atol=atol, rtol=rtol, nans=nans, norm=norm)
 
-Base.isapprox(x::F, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {F<:Real} =
+Base.isapprox(x::F, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat, F<:Real} =
     isapprox(promote(x, y)..., atol=atol, rtol=rtol, nans=nans, norm=norm)
 
 
