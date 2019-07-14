@@ -60,12 +60,12 @@ import Base: hash, promote_type, promote_rule, convert,
              floor, ceil, trunc, round, div, fld, cld,
              rem, mod, rem2pi, mod2pi, divrem, fldmod
              sqrt, cbrt,
+             abs2, clamp, cmp, decompose, deg2rad, rad2deg, eps, hypot, nextfloat, prevfloat, eps,  frexp, ldexp, # implement
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
 
-import Base.Math: frexp, ldexp, eps, nextfloat, prevfloat, modf, fma, muladd,
-             hypot,
+import Base.Math: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
