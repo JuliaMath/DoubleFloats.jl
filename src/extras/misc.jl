@@ -5,7 +5,7 @@ function Base.isapprox(x::T, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>
     return isapprox(DoubleFloat{T}(x), y, atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
 function Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0 ? 0 : eps(DoubleFloat{T})^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
-    x == y || (isfinite(x) && isfinite(y) && abs(x-y) <= max(max(1.0e-38, atol), rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
+    x == y || (isfinite(x) && isfinite(y) && abs(x-y) <= max(max(1.0e-32, atol), rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
 end
 
 Base.isapprox(x::DoubleFloat{T}, y::F; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat, F<:Real} =
