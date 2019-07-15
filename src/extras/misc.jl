@@ -5,13 +5,15 @@
                                                                                                   (32.5 sig bits must match)
 
 =#
-releps(::Type{Float64})) = ldexp(0.5, -31)
-releps(::Type{Float32}}) = ldexp(inv(sqrt(2.0f0)), -17)
+releps(::Type{Float64}) = ldexp(0.5, -31)
+releps(::Type{Float32}) = ldexp(inv(sqrt(2.0f0)), -17)
+releps(::Type{Double64}) = ldexp(0.5, -62)
+releps(::Type{Double32}) = ldexp(inv(sqrt(2.0f0)), -34)
 
-function Base.isapprox(x::DoubleFloat{T}, y::T; atol::Real=0.0, rtol::Real=atol>0 ? 0 : eps(T)^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
+function Base.isapprox(x::DoubleFloat{T}, y::T; atol::Real=0.0, rtol::Real=atol>0 ? 0 : releps(T), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
     return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
-function Base.isapprox(x::T, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0 ? 0 : eps(T)^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
+function Base.isapprox(x::T, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0 ? 0 : releps(T), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
     return isapprox(DoubleFloat{T}(x), y, atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
 function Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0 ? 0 : eps(DoubleFloat{T})^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
