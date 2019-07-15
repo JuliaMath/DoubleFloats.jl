@@ -58,13 +58,13 @@ import Base: hash, promote_type, promote_rule, convert,
              typemax, typemin, floatmax, floatmin, maxintfloat,
              min, max, minmax, minimum, maximum,
              floor, ceil, trunc, round, div, fld, cld,
-             rem, mod, rem2pi, mod2pi, divrem, fldmod
+             rem, mod, rem2pi, mod2pi, divrem, fldmod,
              sqrt, cbrt,
-             abs2, clamp, cmp, deg2rad, rad2deg, eps, hypot, nextfloat, prevfloat, eps,  frexp, ldexp, # implement
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
 
+import Base: abs2, clamp, cmp, deg2rad, rad2deg, eps, hypot, nextfloat, prevfloat, eps,  frexp, ldexp # confirm implement
             
 import Base.Math: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
