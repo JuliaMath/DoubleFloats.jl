@@ -239,3 +239,9 @@ const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)
 
+function Base.decompose(x::Double64)
+    return decompose(BigFloat(x))
+end
+function Base.decompose(x::D) where {D<:Union{Double32,Double16}}
+    return decompose(Double64(x))
+end
