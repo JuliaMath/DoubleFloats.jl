@@ -37,6 +37,10 @@ function Base.clamp(x::T, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
      return lo
 end
 
+abs2(x::DoubleFloat{T}) where {T} =
+    let absx = abs(x)
+        absx * absx
+    end
 
 # for compatibility with old or unrevised outside linalg functions
 function Base.:(+)(v::Vector{DoubleFloat{T}}, x::T) where {T}
