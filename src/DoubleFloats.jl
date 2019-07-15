@@ -64,7 +64,7 @@ import Base: hash, promote_type, promote_rule, convert,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
 
-import Base: abs2, clamp, cmp, deg2rad, rad2deg, eps, hypot, nextfloat, prevfloat, eps,  frexp, ldexp # confirm implement
+# import Base: cmp, deg2rad, rad2deg, eps, nextfloat, prevfloat,  frexp, ldexp # confirm implement
             
 import Base.Math: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
