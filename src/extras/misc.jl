@@ -1,3 +1,13 @@
+#=
+     sqrt(eps(Float64)) == ldexp(0.5, -25) ~ 1.5e-8 
+     isapprox here uses ldexp(0.5, -30) ~ 1.0e-9 ,   so the system default (sqrt(eps(T))) is ~32x less sensitive 5bits
+                        ldexp(0.5, -31) ~ 2.3e-10,                                           ~64x less sensitive 6bits 
+                                                                                                  (32.5 sig bits must match)
+
+=#
+releps(::Type{Float64})) = ldexp(0.5, -31)
+releps(::Type{Float32}}) = ldexp(inv(sqrt(2.0f0)), -17)
+
 function Base.isapprox(x::DoubleFloat{T}, y::T; atol::Real=0.0, rtol::Real=atol>0 ? 0 : eps(T)^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
     return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
