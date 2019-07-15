@@ -21,6 +21,23 @@ function Base.lerpi(j::Integer, d::Integer, a::DoubleFloat{T}, b::DoubleFloat{T}
     return fma(t, b, a)
 end
 
+function Base.clamp(x::DoubleFloat{T}, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
+     lo <= x <= hi && return x
+     lo <= x && return hi
+     return lo
+end
+function Base.clamp(x::DoubleFloat{T}, lo::T, hi::T) where {T}
+     lo <= x <= hi && return x
+     lo <= x && return hi
+     return lo
+end
+function Base.clamp(x::T, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
+     lo <= x <= hi && return x
+     lo <= x && return hi
+     return lo
+end
+
+
 # for compatibility with old or unrevised outside linalg functions
 function Base.:(+)(v::Vector{DoubleFloat{T}}, x::T) where {T}
     return v .+ x
