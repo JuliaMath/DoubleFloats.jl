@@ -1,4 +1,3 @@
-#=
 """
     *(a, b)
 
@@ -18,7 +17,7 @@ function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{DoubleFloat{T},2}) where
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = muladd(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds result[arow,bcol] = asum
         end
@@ -42,7 +41,7 @@ function Base.:(*)(a::Array{DoubleFloat{T},2}, b::Array{T,2}) where {T<:IEEEFloa
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = muladd(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds result[arow,bcol] = asum
         end
@@ -66,7 +65,7 @@ function Base.:(*)(a::Array{T,2}, b::Array{DoubleFloat{T},2}) where {T<:IEEEFloa
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = muladd(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds result[arow,bcol] = asum
         end
@@ -93,7 +92,7 @@ function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = muladd(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds c[arow,bcol] = asum
         end
@@ -117,7 +116,7 @@ function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{DoubleFloat{T},
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = mul(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds c[arow,bcol] = asum
         end
@@ -141,7 +140,7 @@ function LinearAlgebra.mul!(c::Array{DoubleFloat{T},2}, a::Array{T,2}, b::Array{
         for arow=1:arows
             asum = zero(DoubleFloat{T})
             for acol=1:acols
-                @inbounds asum = muladd(a[arow,acol], b[acol,bcol], asum)
+                @inbounds asum = fma(a[arow,acol], b[acol,bcol], asum)
             end
             @inbounds c[arow,bcol] = asum
         end
