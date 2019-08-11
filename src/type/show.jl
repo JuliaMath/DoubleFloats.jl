@@ -46,13 +46,13 @@ showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, st
 
 
 function Base.Printf.ini_dec(x::Double64, n::Int, digits)
-     return Base.Printf.ini_dec(Float128(x),n,digits)
+     return Base.Printf.ini_dec(Float64(x),n,digits)
 end
 
 function Base.Printf.ini_dec(x::Double32, n::Int, digits)
-     return Base.Printf.ini_dec(Float128(x),n,digits)
+     return Base.Printf.ini_dec(Float64(x),n,digits)
 end
 
 function Base.Printf.ini_dec(x::Double16, n::Int, digits)
-     return Base.Printf.ini_dec(Float64(x),n,digits)
+     return Base.Printf.ini_dec(Float32(x),n,digits)
 end
