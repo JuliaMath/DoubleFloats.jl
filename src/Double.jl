@@ -246,6 +246,6 @@ function Base.decompose(x::D) where {D<:Union{Double32,Double16}}
     return decompose(Double64(x))
 end
 
-function Base.ini_dec(x::DoubleFloat{T}, n::Int, digits) where {T>:IEEEFloat}
-     return Base.ini_dec(HI(x),n,digits)
+function Base.Printf.ini_dec(x::DoubleFloat{T}, n::Int, digits) where {T>:IEEEFloat}
+     return Base.Printf.ini_dec(HI(x),n,digits)
 end
