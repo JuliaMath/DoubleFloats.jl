@@ -245,15 +245,3 @@ end
 function Base.decompose(x::D) where {D<:Union{Double32,Double16}}
     return decompose(Double64(x))
 end
-
-function Base.Printf.ini_dec(x::Double64, n::Int, digits)
-     return Base.Printf.ini_dec(float(Float64(x)),n,digits)
-end
-
-function Base.Printf.ini_dec(x::Double32, n::Int, digits)
-     return Base.Printf.ini_dec(float(Float32H(x)),n,digits)
-end
-
-function Base.Printf.ini_dec(x::Double16, n::Int, digits)
-     return Base.Printf.ini_dec(float(Float16(x)),n,digits)
-end
