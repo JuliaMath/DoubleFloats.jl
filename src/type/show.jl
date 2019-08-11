@@ -43,24 +43,3 @@ showtyped(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = showtyped(Base.stdo
 showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
 showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
-
-
-
-Base.Printf.ini_dec(d::Double32, ndigits, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
-Base.Printf.ini_dec(d::Double64, ndigits, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
-Base.Printf.ini_dec(d::Double32, ndigits::Int32, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
-Base.Printf.ini_dec(d::Double64, ndigits::Int32, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
-Base.Printf.ini_dec(d::Double32, ndigits::Int64, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
-Base.Printf.ini_dec(d::Double64, ndigits::Int64, digits) =
-    Base.Printf.ini_dec(convert(BigFloat, d), ndigits, digits)
-
