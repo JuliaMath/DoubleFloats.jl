@@ -94,7 +94,6 @@ end
 
 function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     if (n == 0)
-        iszero(r) && throw(DomainError("0^0"))
         return one(DoubleFloat{T})
     end
 
