@@ -45,20 +45,18 @@ showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
 
-Base.Printf.fix_dec(x::Double64, n::Int, digits) =
-    Base.Printf.fix_dec(Float64(x),n,digits)
-
-Base.Printf.fix_dec(x::Double32, n::Int, digits) =
-    Base.Printf.fix_dec(Float64(x),n,digits)
-
-Base.Printf.fix_dec(x::Double16, n::Int, digits) =
-    Base.Printf.fix_dec(Float32(x),n,digits)
-
-Base.Printf.ini_dec(x::Double64, n::Int, digits) =
-    Base.Printf.ini_dec(Float64(x),n,digits)
-
-Base.Printf.ini_dec(x::Double32, n::Int, digits) =
-    Base.Printf.ini_dec(Float64(x),n,digits)
-
-Base.Printf.ini_dec(x::Double16, n::Int, digits) =
-    Base.Printf.ini_dec(Float32(x),n,digits)
+if VERSION < v"1.1"
+    Base.Printf.fix_dec(x::Double64, n::Int) = Base.Printf.fix_dec(Float64(x), n)
+    Base.Printf.fix_dec(x::Double32, n::Int) = Base.Printf.fix_dec(Float64(x), n)
+    Base.Printf.fix_dec(x::Double16, n::Int) = Base.Printf.fix_dec(Float32(x), n)
+    Base.Printf.ini_dec(x::Double64, n::Int) = Base.Printf.ini_dec(Float64(x), n)
+    Base.Printf.ini_dec(x::Double32, n::Int) = Base.Printf.ini_dec(Float64(x), n)
+    Base.Printf.ini_dec(x::Double16, n::Int) = Base.Printf.ini_dec(Float32(x), n)
+else   
+    Base.Printf.fix_dec(x::Double64, n::Int, digits) = Base.Printf.fix_dec(Float64(x), n, digits)
+    Base.Printf.fix_dec(x::Double32, n::Int, digits) = Base.Printf.fix_dec(Float64(x), n, digits)
+    Base.Printf.fix_dec(x::Double16, n::Int, digits) = Base.Printf.fix_dec(Float32(x), n, digits)
+    Base.Printf.ini_dec(x::Double64, n::Int, digits) = Base.Printf.ini_dec(Float64(x), n, digits)
+    Base.Printf.ini_dec(x::Double32, n::Int, digits) = Base.Printf.ini_dec(Float64(x), n, digits)
+    Base.Printf.ini_dec(x::Double16, n::Int, digits) = Base.Printf.ini_dec(Float32(x), n, digits)
+end
