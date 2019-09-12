@@ -36,32 +36,32 @@ end
 
 function tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base=base)
-    return ifelse(isnothing(x), nothing, DoubleFloat{Float64}(x))
+    return ifelse(x === nothing, nothing, DoubleFloat{Float64}(x))
 end
 
 function tryparse(::Type{DoubleFloat{Float32}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base=base)
-    return ifelse(isnothing(x), nothing, DoubleFloat{Float32}(x))
+    return ifelse(x === nothing, nothing, DoubleFloat{Float32}(x))
 end
 
 function tryparse(::Type{DoubleFloat{Float16}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base=base)
-    return ifelse(isnothing(x), nothing, DoubleFloat{Float16}(x))
+    return ifelse(x === nothing, nothing, DoubleFloat{Float16}(x))
 end
 
 function tryparse(::Type{Complex{DoubleFloat{Float64}}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
-    return ifelse(isnothing(x), nothing, Complex{DoubleFloat{Float64}}(x))
+    return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float64}}(x))
 end
 
 function tryparse(::Type{Complex{DoubleFloat{Float32}}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
-    return ifelse(isnothing(x), nothing, Complex{DoubleFloat{Float32}}(x))
+    return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float32}}(x))
 end
 
 function tryparse(::Type{Complex{DoubleFloat{Float16}}}, str::S; base::Int=10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
-    return ifelse(isnothing(x), nothing, Complex{DoubleFloat{Float16}}(x))
+    return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float16}}(x))
 end
 
 @inline function Complex{Double64}(str::S) where {S<:AbstractString}
