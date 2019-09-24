@@ -14,6 +14,10 @@ end
     return -a
 end
 
+@inline function negabs(a::DoubleFloat{T}) where {T<:IEEEFloat}
+    (signbit(a) || isnan(a)) && return a
+    return -a
+end
 
 @inline function flipsign(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:Union{AbstractFloat, Signed}}
     signbit(y) ? -x : x
