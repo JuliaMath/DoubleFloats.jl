@@ -1,6 +1,8 @@
-abs(x::DoubleFloat{T}) where {T<:IEEEFloat} = abs_db_db(x)
-(-)(x::DoubleFloat{T}) where {T<:IEEEFloat} = neg_db_db(x)
-negabs(x::DoubleFloat{T}) where {T<:IEEEFloat} = negabs_db_db(x)
+# see math/arith.jl for these
+#abs(x::DoubleFloat{T}) where {T<:IEEEFloat} = abs_db_db(x)
+#(-)(x::DoubleFloat{T}) where {T<:IEEEFloat} = neg_db_db(x)
+#negabs(x::DoubleFloat{T}) where {T<:IEEEFloat} = negabs_db_db(x)
+
 inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
 
 square(x::DoubleFloat{T}) where {T<:IEEEFloat} = square_db_db(x)
