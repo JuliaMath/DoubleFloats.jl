@@ -1,20 +1,17 @@
 @inline signbit(a::DoubleFloat{T}) where {T} = signbit(HI(a))
 @inline sign(a::DoubleFloat{T}) where {T} = sign(HI(a))
 
-@inline function (-)(a::DoubleFloat{T}) where {T}
+@inline function (-)(a::DoubleFloat{T}) where {T<:IEEEFloat}
     if iszero(LO(a)) || isnan(LO(a))
-        DoubleFloat(-HI(a), LO(a))
+        DoubleFloat{T}(-HI(a), LO(a))
     else
-        DoubleFloat(-HI(a), -LO(a))
+        DoubleFloat{T}(-HI(a), -LO(a))
     end
 end
 
-@inline function abs(a::DoubleFloat{T}) where {T}
-    if HI(a) >= 0.0
-        a
-    else # HI(a) < 0.0
-        -a
-    end
+@inline function abs(a::DoubleFloat{T}) where {T<:IEEEFloat}
+    (!signbit(a) || isnan(a)) && return a
+    return -a
 end
 
 
@@ -25,8 +22,8 @@ end
     signbit(y) ? -abs(x) : abs(x)
 end
 
-flipsign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
-copysign(x::DoubleFloat{T}, y::U) where {T<:AbstractFloat, U<:Unsigned} = +x
+flipsign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
+copysign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
 
 function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, exphi = frexp(HI(x))
@@ -35,7 +32,7 @@ function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat, I<:Integer}
-    return DoubleFloat(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
+    return DoubleFloat{T}(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
 function Base.Math.ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
@@ -139,13 +136,13 @@ end
 
 function intpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     ihi, ilo = intpart(HILO(x))
-    return DoubleFloat(ihi, ilo)
+    return DoubleFloat{T}(ihi, ilo)
 end
 
 
 function fracpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     fhi, flo = fracpart(HILO(x))
-    return DoubleFloat(fhi, flo)
+    return DoubleFloat{T}(fhi, flo)
 end
 
 function modf(x::DoubleFloat{T}) where {T<:IEEEFloat}
