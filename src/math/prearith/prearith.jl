@@ -2,7 +2,7 @@
 @inline sign(a::DoubleFloat{T}) where {T} = sign(HI(a))
 
 @inline function (-)(a::DoubleFloat{T}) where {T}
-    if iszero(LO(a))
+    if iszero(LO(a)) || isnan(LO(a))
         DoubleFloat(-HI(a), LO(a))
     else
         DoubleFloat(-HI(a), -LO(a))
