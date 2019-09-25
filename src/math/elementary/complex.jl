@@ -649,7 +649,7 @@ t16 = (pi - t14) * t3
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
-            Complex{DoubleFloat{T}}(real(x), DoubleFloat{T}(T(onepi))) :
+            Complex{DoubleFloat{T}}(-real(x), DoubleFloat{T}(T(onepi))) :
             Complex{DoubleFloat{T}}(real(x), zero(DoubleFloat{T}))
     end
     rea, ima = reim(x)
