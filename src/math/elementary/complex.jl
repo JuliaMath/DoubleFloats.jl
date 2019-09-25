@@ -53,7 +53,7 @@ t3 = t2 * t1
 =#
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? zero(Complex{DoubleFloat{T}}) : Complex{DoubleFloat{T}}(Inf, 0.0)
+        signbit(HI(x)) ? zero(Complex{DoubleFloat{T}}) : Complex{DoubleFloat{T}}(T(Inf), zero(T))
     else
        rea, ima = reim(x)
        erea = exp(rea)
@@ -247,7 +247,8 @@ t3 = t2 * t1
 =#
 function cosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? Complex{DoubleFloat{T}}(-HI(x), -zero(T)) : Complex{DoubleFloat{T}}(HI(x), zero(T))
+        signbit(HI(real(x))) ? 
+          Complex{DoubleFloat{T}}(DoubleFloat{T}(abs(real(x))), DoubleFloat{T}(-zero(T))) : x
     else
         rea, ima = reim(x)
         rea, ima = cosh(rea) * cos(ima), sinh(rea) * sin(ima)
@@ -273,7 +274,8 @@ t9 = 0.1e1 / (t5 + t6) * t2 * t1
 =#
 function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? Complex{DoubleFloat{T}}(-one(T), zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
+         signbit(HI(real(x))) ? 
+           Complex{DoubleFloat{T}}(-one(T), zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
     else
         rea, ima = 2*real(x), 2*imag(x)
         den = cosh(rea) + cos(ima)
@@ -300,7 +302,7 @@ t6 = t2 ^ 2
 =#
 function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? Complex{DoubleFloat{T}}(-zero(T), -zero(T)) : Complex{DoubleFloat{T}}(zero(T), zero(T))
+        signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-zero(T), -zero(T)) : Complex{DoubleFloat{T}}(zero(T), zero(T))
     else
         rea, ima = reim(x)
         den = cos(2*ima) - cosh(2*rea)
@@ -329,7 +331,7 @@ t10 = -0.1e1 / (t4 + t6) * t2 * t1
 =#
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        zero(Complex{DoubleFloat{T}})
+        signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(zero(T), -zero(T)) : zero(Complex{DoubleFloat{T}})
     else
         rea, ima = reim(x)
         den = cos(2*ima) + cosh(2*rea)
@@ -358,7 +360,7 @@ t10 = -0.1e1 / (t5 + t6) * t2 * t1
 =#
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? Complex{DoubleFloat{T}}(-one(T), -zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
+        signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-one(T), -zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
     else
         rea, ima = 2*real(x), 2*imag(x)
         den = cos(ima) - cosh(rea)
