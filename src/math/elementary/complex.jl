@@ -74,7 +74,7 @@ t1 = atan2(i, r)
 =#
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-      signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-HI(x), T(pi)) : Complex{DoubleFloat{T}}(HI(x), zero(T))
+      signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-real(x), T(pi)) : Complex{DoubleFloat{T}}(real(x), zero(T))
     else
       rea, ima = reim(x)
       realpart = log(square(rea) + square(ima)) * 0.5
