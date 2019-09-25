@@ -793,7 +793,7 @@ t23 = (pi - t21) * t5
 =#
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        return Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -(DoubleFloat{T}(T(halfpi)))
+        return Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -DoubleFloat{T}(T(halfpi)))
     end
     return log((sqrt(1-square(x))+1)/x)
 end
