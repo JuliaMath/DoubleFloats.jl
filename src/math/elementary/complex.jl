@@ -391,10 +391,7 @@ t20 = log(t8 / 2 + t13 / 2 + t18)
 t21 = t20 * t3
 =#
 function asin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    if !isfinite(x)
-        isnan(x) && return x
-        signbit(
-    end    
+
     rea, ima = reim(x)
     xp1sq = square(rea + 1)
     xm1sq = square(rea - 1)
