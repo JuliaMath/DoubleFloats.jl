@@ -725,13 +725,13 @@ t16 = sqrt(t6 + t14)
 t18 = asin(-t12 / 2 + t16 / 2)
 t19 = -t18
 =#
-function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+function acsch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
             Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
             Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -zero(DoubleFloat{T}))
     end
-    rea, ima = reim(z)
+    rea, ima = reim(x)
     t1 = square(ima)
     t2 = square(rea)
     t3 = t1 + t2
