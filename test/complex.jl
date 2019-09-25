@@ -84,6 +84,11 @@ end
 end
 
 @testset "Complex f(Inf)" begin
+   @test isapprox(exp(ComplexDF64(Inf)), exp(ComplexF64(Inf))) 
+   @test isapprox(exp(ComplexDF64(-Inf)), exp(ComplexF64(-Inf))) 
+   @test isapprox(log(ComplexDF64(Inf)), log(ComplexF64(Inf))) 
+   @test isapprox(log(ComplexDF64(-Inf)), log(ComplexF64(-Inf))) 
+
    @test isapprox(sinh(ComplexDF64(Inf)), sinh(ComplexF64(Inf))) 
    @test isapprox(sinh(ComplexDF64(-Inf)), sinh(ComplexF64(-Inf))) 
    @test isapprox(cosh(ComplexDF64(Inf)), cosh(ComplexF64(Inf))) 
