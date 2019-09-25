@@ -83,7 +83,7 @@ end
     @test ComplexDF64(exp(x)) == exp(ComplexDF64(x))
 end
 
-@testset "Complex f(Inf)"
+@testset "Complex f(Inf)" begin
    @test isapprox(sinh(ComplexDF64(Inf)), sinh(ComplexF64(Inf))) 
    @test isapprox(sinh(ComplexDF64(-Inf)), sinh(ComplexF64(-Inf))) 
    @test isapprox(cosh(ComplexDF64(Inf)), cosh(ComplexF64(Inf))) 
