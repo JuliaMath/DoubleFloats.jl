@@ -326,7 +326,7 @@ t10 = -0.1e1 / (t4 + t6) * t2 * t1
 =#
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        return signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(zero(T), -zero(T)) : zero(Complex{DoubleFloat{T}})
+        return zero(Complex{DoubleFloat{T}})
     end
     rea, ima = reim(x)
     den = cos(2*ima) + cosh(2*rea)
@@ -428,8 +428,8 @@ t22 = -t20 * t3
 function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
-            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), real(x)) :
-            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(onepi)), real(x))
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(onepi)), real(x)) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -real(x))
     end
     rea, ima = reim(x)
     xp1sq = square(rea + 1)
@@ -501,13 +501,13 @@ t24 = sqrt((t14 + t19) ^ 2 / 4 - 1)
 t26 = log(t14 / 2 + t19 / 2 + t24)
 t28 = -t26 * t2
 =#
-function acsc(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+function acsc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
-            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
-            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T}))
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
     end
-    return asin(inv(z))
+    return asin(inv(x))
 end
 
 #=
@@ -542,11 +542,13 @@ t24 = sqrt((t14 + t19) ^ 2 / 4 - 1)
 t26 = log(t14 / 2 + t19 / 2 + t24)
 t27 = t26 * t2
 =#
-function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+function asec(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        return Complex{DoubleFloat{T}}(DoubleFloat{T}(T(halfpi)), zero(DoubleFloat{T}))
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(halfpi), zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(halfpi), -zero(DoubleFloat{T}))
     end
-    return acos(inv(z))
+    return acos(inv(x))
 end
 
 #=
@@ -564,8 +566,8 @@ t12 = -t10 / 4
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
-            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
-            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T}))
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
     end
     rea, ima = reim(x)
     ima2 = square(ima)
