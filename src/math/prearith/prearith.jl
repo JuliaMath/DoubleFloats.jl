@@ -19,7 +19,7 @@ end
 end
 
 @inline function abs(a::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    Complex{DoubleFloat{T}}(abs(real(a)), abs(imag(a)))
+    hypot(reim(a)...)
 end
 
 @inline function negabs(a::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -28,7 +28,7 @@ end
 end
 
 @inline function negabs(a::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    Complex{DoubleFloat{T}}(negabs(real(a)), negabs(imag(a)))
+    -hypot(reim(a)...)
 end
 
 @inline function flipsign(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:Union{AbstractFloat, Signed}}
