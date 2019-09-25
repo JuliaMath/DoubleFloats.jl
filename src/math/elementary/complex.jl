@@ -10,7 +10,6 @@ end
 
 square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
 
-
 sqrt(x::ComplexDF64) = ComplexDF64ComplexF128(sqrt, x)
 
 # development from functions.wolfram.com
@@ -53,7 +52,7 @@ t3 = t2 * t1
 =#
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-        signbit(HI(x)) ? zero(Complex{DoubleFloat{T}}) : Complex{DoubleFloat{T}}(T(Inf), zero(T))
+        signbit(HI(real(x))) ? zero(Complex{DoubleFloat{T}}) : Complex{DoubleFloat{T}}(T(Inf), zero(T))
     else
        rea, ima = reim(x)
        erea = exp(rea)
@@ -75,7 +74,7 @@ t1 = atan2(i, r)
 =#
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
-      signbit(HI(x)) ? Complex{DoubleFloat{T}}(-HI(x), T(pi)) : Complex{DoubleFloat{T}}(HI(x), zero(T))
+      signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-HI(x), T(pi)) : Complex{DoubleFloat{T}}(HI(x), zero(T))
     else
       rea, ima = reim(x)
       realpart = log(square(rea) + square(ima)) * 0.5
