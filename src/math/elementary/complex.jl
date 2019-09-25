@@ -816,7 +816,7 @@ function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     if isinf(x)
         return signbit(HI(real(x))) ?
             Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
-            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -zero(DoubleFloat{T}))
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
     end
     rea, ima = reim(x)
     rea2 = square(rea)
