@@ -1,3 +1,5 @@
+import Printf: ini_dec, fix_dec, ini_hex, ini_HEX
+
 function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
     if compact
@@ -46,17 +48,44 @@ showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, st
 
 
 if VERSION < v"1.1"
-    Base.Printf.fix_dec(x::Double64, n::Int) = Base.Printf.fix_dec(Float64(x), n)
-    Base.Printf.fix_dec(x::Double32, n::Int) = Base.Printf.fix_dec(Float64(x), n)
-    Base.Printf.fix_dec(x::Double16, n::Int) = Base.Printf.fix_dec(Float32(x), n)
-    Base.Printf.ini_dec(x::Double64, n::Int) = Base.Printf.ini_dec(Float64(x), n)
-    Base.Printf.ini_dec(x::Double32, n::Int) = Base.Printf.ini_dec(Float64(x), n)
-    Base.Printf.ini_dec(x::Double16, n::Int) = Base.Printf.ini_dec(Float32(x), n)
+using Base.Grisu: DIGITSs
+    fix_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char) = 
+        fix_dec(out, Float64(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+    fix_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char) = 
+        fix_dec(out, Float32(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+    fix_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char) = 
+        fix_dec(out, Float16(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+    ini_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char) = 
+        ini_dec(out, Float64(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+    ini_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char) = 
+        ini_dec(out, Float32(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+    ini_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char) = 
+        ini_dec(out, Float16(d), flags, width, precision, c, DIGITSs[Threads.threadid()])
+        
+    fix_dec(x::Double64, n::Int) = fix_dec(Float64(x), n)
+    fix_dec(x::Double32, n::Int) = fix_dec(Float64(x), n)
+    fix_dec(x::Double16, n::Int) = fix_dec(Float32(x), n)
+    ini_dec(x::Double64, n::Int) = ini_dec(Float64(x), n)
+    ini_dec(x::Double32, n::Int) = ini_dec(Float64(x), n)
+    ini_dec(x::Double16, n::Int) = ini_dec(Float32(x), n)
 else   
-    Base.Printf.fix_dec(x::Double64, n::Int, digits) = Base.Printf.fix_dec(Float64(x), n, digits)
-    Base.Printf.fix_dec(x::Double32, n::Int, digits) = Base.Printf.fix_dec(Float64(x), n, digits)
-    Base.Printf.fix_dec(x::Double16, n::Int, digits) = Base.Printf.fix_dec(Float32(x), n, digits)
-    Base.Printf.ini_dec(x::Double64, n::Int, digits) = Base.Printf.ini_dec(Float64(x), n, digits)
-    Base.Printf.ini_dec(x::Double32, n::Int, digits) = Base.Printf.ini_dec(Float64(x), n, digits)
-    Base.Printf.ini_dec(x::Double16, n::Int, digits) = Base.Printf.ini_dec(Float32(x), n, digits)
+    fix_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        fix_dec(out, Float64(d), flags, width, precision, c, digits)
+    fix_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        fix_dec(out, Float32(d), flags, width, precision, c, digits)
+    fix_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        fix_dec(out, Float16(d), flags, width, precision, c, digits)
+    ini_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        ini_dec(out, Float64(d), flags, width, precision, c, digits)
+    ini_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        ini_dec(out, Float32(d), flags, width, precision, c, digits)
+    ini_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char, digits) = 
+        ini_dec(out, Float16(d), flags, width, precision, c, digits)
+
+    fix_dec(x::Double64, n::Int, digits) = fix_dec(Float64(x), n, digits)
+    fix_dec(x::Double32, n::Int, digits) = fix_dec(Float64(x), n, digits)
+    fix_dec(x::Double16, n::Int, digits) = fix_dec(Float32(x), n, digits)
+    ini_dec(x::Double64, n::Int, digits) = ini_dec(Float64(x), n, digits)
+    ini_dec(x::Double32, n::Int, digits) = ini_dec(Float64(x), n, digits)
+    ini_dec(x::Double16, n::Int, digits) = ini_dec(Float32(x), n, digits)
 end
