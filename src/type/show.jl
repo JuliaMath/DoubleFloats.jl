@@ -46,7 +46,7 @@ showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
 showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
-
+#=
 if VERSION < v"1.1"
 using Base.Grisu: DIGITSs
     fix_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char) = 
@@ -68,7 +68,8 @@ using Base.Grisu: DIGITSs
     ini_dec(x::Double64, n::Int) = ini_dec(Float64(x), n)
     ini_dec(x::Double32, n::Int) = ini_dec(Float64(x), n)
     ini_dec(x::Double16, n::Int) = ini_dec(Float32(x), n)
-else   
+=#
+if VERSION >= v"1.2"
     fix_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char, digits) = 
         fix_dec(out, Float64(d), flags, width, precision, c, digits)
     fix_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char, digits) = 
