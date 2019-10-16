@@ -74,3 +74,6 @@ include("op_.jl")
 
 include("string.jl")
 include("parse.jl")
+
+include("legacy.jl")
+
