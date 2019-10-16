@@ -46,20 +46,14 @@ showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
 showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
-if VERSION >= v"1.2"
-    fix_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        fix_dec(out, Float64(d), flags, width, precision, c, digits)
-    fix_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        fix_dec(out, Float32(d), flags, width, precision, c, digits)
-    fix_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        fix_dec(out, Float16(d), flags, width, precision, c, digits)
-    ini_dec(out, d::Double64, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        ini_dec(out, Float64(d), flags, width, precision, c, digits)
-    ini_dec(out, d::Double32, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        ini_dec(out, Float32(d), flags, width, precision, c, digits)
-    ini_dec(out, d::Double16, flags::String, width::Int, precision::Int, c::Char, digits) = 
-        ini_dec(out, Float16(d), flags, width, precision, c, digits)
-
+if VERSION < v"1.1"
+    fix_dec(x::Double64, n::Int) = fix_dec(Float64(x), n)
+    fix_dec(x::Double32, n::Int) = fix_dec(Float64(x), n)
+    fix_dec(x::Double16, n::Int) = fix_dec(Float32(x), n)
+    ini_dec(x::Double64, n::Int) = ini_dec(Float64(x), n)
+    ini_dec(x::Double32, n::Int) = ini_dec(Float64(x), n)
+    ini_dec(x::Double16, n::Int) = ini_dec(Float32(x), n)
+else
     fix_dec(x::Double64, n::Int, digits) = fix_dec(Float64(x), n, digits)
     fix_dec(x::Double32, n::Int, digits) = fix_dec(Float64(x), n, digits)
     fix_dec(x::Double16, n::Int, digits) = fix_dec(Float32(x), n, digits)
