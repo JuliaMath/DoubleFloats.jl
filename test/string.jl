@@ -17,3 +17,9 @@
   @test stringtyped(ComplexDF16(1.0,1.0)) == "ComplexDF16(Double16(1.0, 0.0), Double16(1.0, 0.0))"
   
 end
+
+@testset "sprintf" begin
+
+  @test @sprintf("%f", Double64(3)) == "3.000000"
+
+end
