@@ -13,4 +13,6 @@ else
     @test Base.Printf.ini_dec(Double64(-1234.567), 10, digits) == (10, 4, true)
 end
 
+@test @sprintf("%f", Double64(3)) == "3.000000"
+  
 end
