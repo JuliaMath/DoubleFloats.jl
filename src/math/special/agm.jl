@@ -1,3 +1,4 @@
+println("agm included")
 function agm(x::T, y::T) where {T<:Real}
     a, b = x, y
     epsilon = eps(min(a,b))
