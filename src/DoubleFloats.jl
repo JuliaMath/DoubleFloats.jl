@@ -129,10 +129,7 @@ include("math/linearalgebra/matrixfunction.jl")
 function __init__()
     @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
         include("math/special/specialfunctions.jl")
-    end    @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
-        include("math/special/specialfunctions.jl")
-    end
-
+    end 
 end
 
 include("extras/random.jl")
