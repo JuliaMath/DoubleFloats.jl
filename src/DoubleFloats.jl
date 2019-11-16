@@ -123,6 +123,7 @@ include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")
 
 if VERSION >= v"1.1.0"
+  using SpecialFunctions
   include("math/special/specialfunctions.jl")
 else
     function __init__()
