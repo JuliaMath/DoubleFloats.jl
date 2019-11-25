@@ -5,6 +5,7 @@ using Test
 using  Base: IEEEFloat
 import Base: isapprox
 
+using Printf
 using Random
 
 const phi = Base.MathConstants.golden
