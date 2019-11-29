@@ -128,7 +128,11 @@ julia> stringtyped(x)
 "ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
 ```
 
+----
 
+see https://juliamath.github.io/DoubleFloats.jl/stable/ for more information
+
+----
 
 ## Accuracy
 
