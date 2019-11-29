@@ -1,10 +1,3 @@
-besselj0(x::Float128) = SpecialFunctions.besselj0(x)
-besselj1(x::Float128) = SpecialFunctions.besselj0(x)
-besselj(n::Integer, x::Float128) = SpecialFunctions.besselj(n,x)
-bessely0(x::Float128) = SpecialFunctions.besselj0(x)
-bessely1(x::Float128) = SpecialFunctions.besselj0(x)
-bessely(n::Integer, x::Float128) = SpecialFunctions.bessely(n,x)
-
 besselj0(x::Double64) = Double64Float128(besselj0, x)
 besselj1(x::Double64) = Double64Float128(besselj1, x)
 bessely0(x::Double64) = Double64Float128(bessely0, x)
