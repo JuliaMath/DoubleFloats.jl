@@ -3,6 +3,8 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
+- N.B. `Double64` is the most performant type <sup>[β](#involvement)</sup>
+
 ----
 
 ## Installation
@@ -135,5 +137,11 @@ Usage questions can be posted on the [Julia Discourse forum](https://discourse.j
 ## Contributions
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/) has a few guidelines that should be followed when opening pull requests.
+
+----
+
+<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
+
+----
 
 

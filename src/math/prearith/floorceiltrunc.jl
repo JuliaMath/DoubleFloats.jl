@@ -1,5 +1,4 @@
 function floor(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     # !isinteger(LO(x)), LO(x) is mixed or fractional
     if isinteger(HI(x))
         if isfractional(LO(x))
@@ -23,7 +22,6 @@ floor(::Type{Int16}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(floor(x))
 floor(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(floor(x))
 
 function ceil(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     # !isinteger(LO(x)), LO(x) is mixed or fractional
     if isinteger(HI(x))
         if isfractional(LO(x))
@@ -47,12 +45,7 @@ ceil(::Type{Int16}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(ceil(x))
 ceil(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(ceil(x))
 
 function trunc(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
-    if isnegative(x)
-        ceil(x)
-    else
-        floor(x)
-    end
+    signbit(x) ? ceil(x) : floor(x)
 end
 
 trunc(::Type{Int128}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(trunc(x))
@@ -63,12 +56,7 @@ trunc(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(trunc(x))
 
 
 function round(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
-    if isnonnegative(x)
-        trunc(x + 0.5)
-    else
-        -trunc(-x + 0.5)
-    end
+    trunc(x + copysign(0.5, x))
 end
 
 round(::Type{Int128}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int128(round(x))
@@ -79,41 +67,34 @@ round(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(round(x))
 
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Up}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     return ceil(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Down}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     return floor(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:RoundToZero}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     return isnegative(x) ? ceil(x) : floor(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:RoundFromZero}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     return isnegative(x) ? floor(x) : ceil(x)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Nearest}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     isnegative(x) && return -round(-x, RoundNearest)
     a = trunc(x + 0.5)
     return iseven(a) ? a : trunc(x - 0.5)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesAway}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     isnegative(x) && return -round(-x, RoundNearestTiesAway)
     !isinteger(x - 0.5) && return round(x, RoundNearest)
     return round(x + 0.5, RoundNearest)
 end
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:NearestTiesUp}) where {T<:IEEEFloat}
-    (isinteger(x) || !isfinite(x)) && return x
     isnegative(x) && return -round(-x, RoundNearestTiesUp)
     !isinteger(x - 0.5) && return round(x, RoundUp)
     return round(x + 0.5, RoundNearest)

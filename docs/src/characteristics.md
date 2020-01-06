@@ -42,11 +42,6 @@ For `Double64` arguments within 0.0..2.0
 - expect the `abserr` of elementary functions to be 1e-30 or better
 - expect the `relerr` of elementary functions to be 1e-28 or better
 
-For `tan` or `cot` as they approach ±Inf
-
-- expect the `relerr` of `atan(tan(x))`, `acot(cot(x))` to be 1e-26 or better
- 
-
 ----
 
 When used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂²
@@ -57,5 +52,50 @@ more resiliant: our algorithms come frome seminal papers and extensive numeric i
 
 ----
 
-_should you encounter a situation where either error grows
-   strongly in one direction, please submit an issue_
+### Absolute and Relative Error
+
+
+
+results for f(x), x in 0..1
+ 
+
+| function |   abserr   |   relerr   |
+|:--------:|:----------:|:----------:|
+|   exp    |  1.0e-31   |   1.0e-31  |
+|   log    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sin    |  1.0e-31   |   1.0e-31  |
+|   cos    |  1.0e-31   |   1.0e-31  |
+|   tan    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|  asin    |  1.0e-31   |   1.0e-31  |
+|  acos    |  1.0e-31   |   1.0e-31  |
+|  atan    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sinh   |  1.0e-31   |   1.0e-29  |
+|   cosh   |  1.0e-31   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-29  |
+|          |            |            |
+|  asinh   |  1.0e-31   |   1.0e-29  |
+|  atanh   |  1.0e-31   |   1.0e-30  |
+
+
+results for f(x), x in 1..2
+ 
+
+| function |   abserr   |   relerr   |
+|:--------:|:----------:|:----------:|
+|   exp    |  1.0e-30   |   1.0e-31  |
+|   log    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sin    |  1.0e-31   |   1.0e-31  |
+|   cos    |  1.0e-31   |   1.0e-28  |
+|   tan    |  1.0e-30   |   1.0e-30  | 
+|          |            |            |
+|  atan    |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|   sinh   |  1.0e-30   |   1.0e-31  |
+|   cosh   |  1.0e-30   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-31  |
+|          |            |            |
+|  asinh   |  1.0e-31   |   1.0e-31  |

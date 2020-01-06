@@ -25,14 +25,6 @@ struct DoubleFloat{T} <: MultipartFloat
 
 end
 
-DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
-DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
-
-function DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    hi,lo = HILO(x)
-    hi,lo = two_sum(hi, lo)
-    return DoubleFloat{T}(hi, lo)
-end
 
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
@@ -42,67 +34,20 @@ const ComplexDF64 = Complex{DoubleFloat{Float64}}
 const ComplexDF32 = Complex{DoubleFloat{Float32}}
 const ComplexDF16 = Complex{DoubleFloat{Float16}}
 
+
+DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
+DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
+
+DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
+DoubleFloat{T}(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
+function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat, T2<:IEEEFloat}
+    hi,lo = two_sum(T1(HI(x)), T1(LO(x)))
+    return DoubleFloat{T1}(hi, lo)
+end
+
 ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
 ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
-
-#ComplexDF64(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF64(promote(x,y)...)
-#ComplexDF32(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF32(promote(x,y)...)
-#ComplexDF16(x::T1, y::T2) where {T1<:Real, T2<:Real} = ComplexDF16(promote(x,y)...)
-
-# deprecated
-#const ComplexD64 = Complex{DoubleFloat{Float64}}
-#const ComplexD32 = Complex{DoubleFloat{Float32}}
-#const ComplexD16 = Complex{DoubleFloat{Float16}}
-
-used_ComplexD64 = Ref(false)
-used_ComplexD32 = Ref(false)
-used_ComplexD16 = Ref(false)
-
-function ComplexD64(x::T) where {T<:Real}
-    if !used_ComplexD64[]
-        println("Warning: `ComplexD64` is deprecated.  Use `ComplexDF64`.")
-        used_ComplexD64[] = true
-    end
-    ComplexDF64(x)
-end
-function ComplexD32(x::T) where {T<:Real}
-    if !used_ComplexD32[]
-        println("Warning: `ComplexD32` is deprecated.  Use `ComplexDF32`.")
-        used_Complex32[] = true
-    end
-    ComplexDF64(x)
-end
-function ComplexD16(x::T) where {T<:Real}
-    if !used_ComplexD16[]
-        println("Warning: `ComplexD16` is deprecated.  Use `ComplexDF16`.")
-        used_ComplexD16[] = true
-    end
-    ComplexDF16(x)
-end
-function ComplexD64(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD64[]
-        println("Warning: `ComplexD64` is deprecated.  Use `ComplexDF64`.")
-        used_ComplexD64[] = true
-    end
-    ComplexDF64(x,y)
-end
-function ComplexD32(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD32[]
-        println("Warning: `ComplexD32` is deprecated.  Use `ComplexDF32`.")
-        used_Complex32[] = true
-    end
-    ComplexDF64(x,y)
-end
-function ComplexD16(x::T1, y::T2) where {T1<:Real, T2<:Real}
-    if !used_ComplexD16[]
-        println("Warning: `ComplexD16` is deprecated.  Use `ComplexDF16`.")
-        used_ComplexD16[] = true
-    end
-    ComplexDF16(x,y)
-end
-
-
 
 
 @inline HI(x::T) where {T<:IEEEFloat} = x
@@ -147,7 +92,7 @@ Convert a tuple `x` of `Float16`s to a `Double16`.
 @inline Double64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
 @inline Double32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
 @inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
-@inline DoubleFloat(x::Tuple{T,T}) where {T<:AbstractFloat} = DoubleFloat{T}(x[1], x[2])
+@inline DoubleFloat(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2])
 
 """
     Double64(::Real)
@@ -232,6 +177,13 @@ end
 DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y))
 DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
 
+Double64(x::Double64) = x
+Double32(x::Double32) = x
+Double16(x::Double16) = x
+
+ComplexDF64(x::ComplexDF64) = x
+ComplexDF32(x::ComplexDF32) = x
+ComplexDF16(x::ComplexDF16) = x
 
 """
     Double64(x::Double32)
@@ -256,11 +208,21 @@ Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x
 DoubleFloat(x::Float64) = Double64(x, 0.0)
 DoubleFloat(x::Float32) = Double32(x, 0.0f0)
 DoubleFloat(x::Float16) = Double16(x, zero(Float16))
+# more coverage
+DoubleFloat(x::Int64) = Double64(x, zero(Int64))
+DoubleFloat(x::Int32) = Double32(x, zero(Int32))
+DoubleFloat(x::Int16) = Double16(x, zero(Int16))
+
 
 precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*precision(T)
 
-eltype(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = T
-eltype(x::DoubleFloat{T}) where {T<:AbstractFloat} = T
+eltype(::Type{Double64}) = Double64
+eltype(::Type{Double32}) = Double32
+eltype(::Type{Double16}) = Double16
+eltype(x::Double64) = Double64
+eltype(x::Double32) = Double32
+eltype(x::Double16) = Double16
+
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
@@ -277,3 +239,9 @@ const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)
 
+function Base.decompose(x::Double64)
+    return decompose(BigFloat(x))
+end
+function Base.decompose(x::D) where {D<:Union{Double32,Double16}}
+    return decompose(Double64(x))
+end

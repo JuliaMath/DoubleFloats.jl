@@ -82,3 +82,49 @@ end
     x = Double64(-1.168869267851442e79) + Double64(4.140780141319954e87)*im
     @test ComplexDF64(exp(x)) == exp(ComplexDF64(x))
 end
+
+@testset "Complex f(Inf)" begin
+   @test isapprox(exp(ComplexDF64(Inf)), exp(ComplexF64(Inf))) 
+   @test isapprox(exp(ComplexDF64(-Inf)), exp(ComplexF64(-Inf))) 
+   @test isapprox(log(ComplexDF64(Inf)), log(ComplexF64(Inf))) 
+   @test isapprox(log(ComplexDF64(-Inf)), log(ComplexF64(-Inf))) 
+
+   @test isapprox(sinh(ComplexDF64(Inf)), sinh(ComplexF64(Inf))) 
+   @test isapprox(sinh(ComplexDF64(-Inf)), sinh(ComplexF64(-Inf))) 
+   @test isapprox(cosh(ComplexDF64(Inf)), cosh(ComplexF64(Inf))) 
+   @test isapprox(cosh(ComplexDF64(-Inf)), cosh(ComplexF64(-Inf))) 
+   @test isapprox(tanh(ComplexDF64(Inf)), tanh(ComplexF64(Inf))) 
+   @test isapprox(tanh(ComplexDF64(-Inf)), tanh(ComplexF64(-Inf))) 
+   @test isapprox(csch(ComplexDF64(Inf)), csch(ComplexF64(Inf))) 
+   @test isapprox(csch(ComplexDF64(-Inf)), csch(ComplexF64(-Inf))) 
+   @test isapprox(sech(ComplexDF64(Inf)), sech(ComplexF64(Inf))) 
+   @test isapprox(sech(ComplexDF64(-Inf)), sech(ComplexF64(-Inf))) 
+   @test isapprox(coth(ComplexDF64(Inf)), coth(ComplexF64(Inf))) 
+   @test isapprox(coth(ComplexDF64(-Inf)), coth(ComplexF64(-Inf))) 
+
+   @test isapprox(asin(ComplexDF64(Inf)), asin(ComplexF64(Inf))) 
+   @test isapprox(asin(ComplexDF64(-Inf)), asin(ComplexF64(-Inf))) 
+   @test isapprox(acos(ComplexDF64(Inf)), acos(ComplexF64(Inf))) 
+   @test isapprox(acos(ComplexDF64(-Inf)), acos(ComplexF64(-Inf))) 
+   @test isapprox(atan(ComplexDF64(Inf)), atan(ComplexF64(Inf))) 
+   @test isapprox(atan(ComplexDF64(-Inf)), atan(ComplexF64(-Inf))) 
+   @test isapprox(acsc(ComplexDF64(Inf)), acsc(ComplexF64(Inf))) 
+   @test isapprox(acsc(ComplexDF64(-Inf)), acsc(ComplexF64(-Inf))) 
+   @test isapprox(asec(ComplexDF64(Inf)), asec(ComplexF64(Inf))) 
+   @test isapprox(asec(ComplexDF64(-Inf)), asec(ComplexF64(-Inf))) 
+   @test isapprox(acot(ComplexDF64(Inf)), acot(ComplexF64(Inf))) 
+   @test isapprox(acot(ComplexDF64(-Inf)), acot(ComplexF64(-Inf))) 
+
+   @test isapprox(asinh(ComplexDF64(Inf)), asinh(ComplexF64(Inf))) 
+   @test isapprox(asinh(ComplexDF64(-Inf)), asinh(ComplexF64(-Inf))) 
+   @test isapprox(acosh(ComplexDF64(Inf)), acosh(ComplexF64(Inf))) 
+   @test isapprox(acosh(ComplexDF64(-Inf)), acosh(ComplexF64(-Inf))) 
+   @test isapprox(atanh(ComplexDF64(Inf)), atanh(ComplexF64(Inf))) 
+   @test isapprox(atanh(ComplexDF64(-Inf)), atanh(ComplexF64(-Inf))) 
+   @test isapprox(acsch(ComplexDF64(Inf)), acsch(ComplexF64(Inf))) 
+   @test isapprox(acsch(ComplexDF64(-Inf)), acsch(ComplexF64(-Inf))) 
+  # @test isapprox(asech(ComplexDF64(Inf)), asech(ComplexF64(Inf)))     needs fix in Julia v1
+  # @test isapprox(asech(ComplexDF64(-Inf)), asech(ComplexF64(-Inf))) 
+   @test isapprox(acoth(ComplexDF64(Inf)), acoth(ComplexF64(Inf))) 
+   @test isapprox(acoth(ComplexDF64(-Inf)), acoth(ComplexF64(-Inf))) 
+end

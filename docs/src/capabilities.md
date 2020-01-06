@@ -42,6 +42,7 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
 #### elementary mathematical functions
  - `log`, `exp`
  - `sin`, `cos`, `tan`, `csc`, `sec`, `cot`
+ - `sinpi`, `cospi`, `tanpi`
  - `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
  - `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
  - `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
@@ -54,5 +55,6 @@ There are arithmetic operations that take two Float64s or Float32s or Float16s a
  - `factorize`, `lu`, `lufact`, `qr`, `qrfact`
  
 #### also
- - random values in [0,1)
- 
+ - `rand` for uniform variates in [0,1)
+ - `randn` for canonical normal variates
+ - `isapprox` (default `rtol=eps(1.0)^(37/64)`)

@@ -10,6 +10,8 @@ end
 
 square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
 
+sqrt(x::ComplexDF64) = ComplexDF64ComplexF128(sqrt, x)
+
 # development from functions.wolfram.com
 
 #=
@@ -27,6 +29,7 @@ t5 = r ^ 2
 t7 = sqrt(t4 + t5)
 t11 = sqrt(2) * sqrt(t7 - r) * t3 / 2
 =#
+#=
 function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea, ima = reim(x)
     fourthroot = sqrt(hypot(rea, ima))
@@ -35,6 +38,7 @@ function sqrt(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     ima = fourthroot * sin(halfatan)
     return Complex{DoubleFloat{T}}(rea, ima)
 end
+=#
 
 #=
 Julia(evalc(Re(exp(r+i*sqrt(-1)))), optimize = true);
@@ -47,11 +51,15 @@ t2 = sin(i)
 t3 = t2 * t1
 =#
 function exp(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
-    erea = exp(rea)
-    realpart = erea * cos(ima)
-    imagpart = erea * sin(ima)
-    return Complex{DoubleFloat{T}}(realpart, imagpart)
+    if isinf(x)
+        signbit(HI(real(x))) ? zero(Complex{DoubleFloat{T}}) : Complex{DoubleFloat{T}}(T(Inf), zero(T))
+    else
+       rea, ima = reim(x)
+       erea = exp(rea)
+       realpart = erea * cos(ima)
+       imagpart = erea * sin(ima)
+       return Complex{DoubleFloat{T}}(realpart, imagpart)
+    end    
 end
 
 #=
@@ -65,10 +73,14 @@ Julia(evalc(Im(log(r+i*sqrt(-1)))), optimize = true);
 t1 = atan2(i, r)
 =#
 function log(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
-    realpart = log(square(rea) + square(ima)) * 0.5
-    imagpart = atan(ima, rea)
-    return Complex{DoubleFloat{T}}(realpart, imagpart)
+    if isinf(x)
+      signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-real(x), T(pi)) : Complex{DoubleFloat{T}}(real(x), zero(T))
+    else
+      rea, ima = reim(x)
+      realpart = log(square(rea) + square(ima)) * 0.5
+      imagpart = atan(ima, rea)
+      return Complex{DoubleFloat{T}}(realpart, imagpart)
+    end    
 end
 
 #=
@@ -213,6 +225,9 @@ t2 = sin(i)
 t3 = t2 * t1
 =#
 function sinh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return x
+    end
     rea, ima = reim(x)
     rea, ima = sinh(rea) * cos(ima), cosh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
@@ -229,6 +244,10 @@ t2 = sin(i)
 t3 = t2 * t1
 =#
 function cosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ? 
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(abs(real(x))), DoubleFloat{T}(-zero(T))) : x
+    end
     rea, ima = reim(x)
     rea, ima = cosh(rea) * cos(ima), sinh(rea) * sin(ima)
     return Complex{DoubleFloat{T}}(rea, ima)
@@ -251,11 +270,15 @@ t6 = t2 ^ 2
 t9 = 0.1e1 / (t5 + t6) * t2 * t1
 =#
 function tanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+         return signbit(HI(real(x))) ? 
+             Complex{DoubleFloat{T}}(-one(T), zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
+    end
     rea, ima = 2*real(x), 2*imag(x)
     den = cosh(rea) + cos(ima)
     rea = sinh(rea) / den
     ima = sin(ima) / den
-    return Complex{DoubleFloat{T}}(rea, ima)
+    return Complex{DoubleFloat{T}}(rea, ima) 
 end
 
 #=
@@ -274,6 +297,9 @@ t5 = t4 ^ 2
 t6 = t2 ^ 2
 =#
 function csch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-zero(T), -zero(T)) : Complex{DoubleFloat{T}}(zero(T), zero(T))
+    end
     rea, ima = reim(x)
     den = cos(2*ima) - cosh(2*rea)
     rea, ima = 2*(sinh(rea)*cos(ima)), 2*(cosh(rea)*sin(ima))
@@ -299,6 +325,9 @@ t6 = t5 ^ 2
 t10 = -0.1e1 / (t4 + t6) * t2 * t1
 =#
 function sech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return zero(Complex{DoubleFloat{T}})
+    end
     rea, ima = reim(x)
     den = cos(2*ima) + cosh(2*rea)
     rea, ima = 2*(cos(ima)*cosh(rea)), 2*(sin(ima)*sinh(rea))
@@ -324,6 +353,9 @@ t6 = t1 ^ 2
 t10 = -0.1e1 / (t5 + t6) * t2 * t1
 =#
 function coth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ? Complex{DoubleFloat{T}}(-one(T), -zero(T)) : Complex{DoubleFloat{T}}(one(T), zero(T))
+    end
     rea, ima = 2*real(x), 2*imag(x)
     den = cos(ima) - cosh(rea)
     rea = -sinh(rea) / den
@@ -354,6 +386,11 @@ t20 = log(t8 / 2 + t13 / 2 + t18)
 t21 = t20 * t3
 =#
 function asin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(-halfpi)), -real(x)) :
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(halfpi)), real(x))
+    end
     rea, ima = reim(x)
     xp1sq = square(rea + 1)
     xm1sq = square(rea - 1)
@@ -363,7 +400,7 @@ function asin(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea = asin((xp1py - xm1py) * 0.5)
     x = (xm1py + xp1py) * 0.5
     ima = sign(ima) * log(x + sqrt(square(x) - 1))
-   return Complex{DoubleFloat{T}}(rea, ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 #=
@@ -389,6 +426,11 @@ t20 = log(t8 / 2 + t13 / 2 + t18)
 t22 = -t20 * t3
 =#
 function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(onepi)), real(x)) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -real(x))
+    end
     rea, ima = reim(x)
     xp1sq = square(rea + 1)
     xm1sq = square(rea - 1)
@@ -398,7 +440,7 @@ function acos(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     rea = acos((xp1py - xm1py) * 0.5)
     x = (xm1py + xp1py) * 0.5
     ima = -sign(ima) * log(x + sqrt(square(x) - 1))
-   return Complex{DoubleFloat{T}}(rea, ima)
+    return Complex{DoubleFloat{T}}(rea, ima)
 end
 
 #=
@@ -414,6 +456,11 @@ t10 = log(1 / (t1 + t6) * (t1 + t3))
 t11 = t10 / 4
 =#
 function atan(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(-halfpi)), zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(T(halfpi)), zero(DoubleFloat{T}))
+    end
     rea, ima = reim(x)
     ima2 = square(ima)
     rea2 = square(rea)
@@ -454,8 +501,13 @@ t24 = sqrt((t14 + t19) ^ 2 / 4 - 1)
 t26 = log(t14 / 2 + t19 / 2 + t24)
 t28 = -t26 * t2
 =#
-function acsc(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    return asin(inv(z))
+function acsc(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
+    end
+    return asin(inv(x))
 end
 
 #=
@@ -490,8 +542,13 @@ t24 = sqrt((t14 + t19) ^ 2 / 4 - 1)
 t26 = log(t14 / 2 + t19 / 2 + t24)
 t27 = t26 * t2
 =#
-function asec(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    return acos(inv(z))
+function asec(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(halfpi), zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(DoubleFloat{T}(halfpi), -zero(DoubleFloat{T}))
+    end
+    return acos(inv(x))
 end
 
 #=
@@ -507,6 +564,11 @@ t10 = log(1 / (t1 + t6) * (t1 + t3))
 t12 = -t10 / 4
 =#
 function acot(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
+    end
     rea, ima = reim(x)
     ima2 = square(ima)
     rea2 = square(rea)
@@ -540,6 +602,9 @@ t12 = -t11
 =#
 
 function asinh(x::Complex{DoubleFloat{T}}) where {T}
+    if isinf(x)
+        return x
+    end    
     r, i = real(x), imag(x)
     signbit(r) && return - asinh(-x)
     r2 = r*r
@@ -584,6 +649,11 @@ t14 = acos(-t8 / 2 + t12 / 2)
 t16 = (pi - t14) * t3
 =#
 function acosh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-real(x), DoubleFloat{T}(T(onepi))) :
+            Complex{DoubleFloat{T}}(real(x), zero(DoubleFloat{T}))
+    end
     rea, ima = reim(x)
     t2 = (rea - 1) ^ 2
     t3 = ima ^ 2
@@ -611,6 +681,11 @@ t6 = t2 / 2 - t4 / 2
 =#
 
 function atanh(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), DoubleFloat{T}(T(halfpi))) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), DoubleFloat{T}(T(halfpi)))
+    end
     rea, ima = reim(x)
     ima2 = square(ima)
     rea2 = square(rea)
@@ -652,8 +727,13 @@ t16 = sqrt(t6 + t14)
 t18 = asin(-t12 / 2 + t16 / 2)
 t19 = -t18
 =#
-function acsch(z::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(z)
+function acsch(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
+    end
+    rea, ima = reim(x)
     t1 = square(ima)
     t2 = square(rea)
     t3 = t1 + t2
@@ -714,6 +794,11 @@ t21 = acos(-t15 / 2 + t19 / 2)
 t23 = (pi - t21) * t5
 =#
 function asech(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+         return signbit(HI(real(x))) ?
+             Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), DoubleFloat{T}(T(halfpi))) :
+             Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), -DoubleFloat{T}(T(halfpi)))
+    end
     return log((sqrt(1-square(x))+1)/x)
 end
 
@@ -730,6 +815,11 @@ t4 = atan2(i, r - 1)
 t6 = t2 / 2 - t4 / 2
 =#
 function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    if isinf(x)
+        return signbit(HI(real(x))) ?
+            Complex{DoubleFloat{T}}(-zero(DoubleFloat{T}), -zero(DoubleFloat{T})) :
+            Complex{DoubleFloat{T}}(zero(DoubleFloat{T}), zero(DoubleFloat{T}))
+    end
     rea, ima = reim(x)
     rea2 = square(rea)
     ima2 = square(ima)
@@ -743,4 +833,3 @@ function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     imagpart = (atanxy(num1 + 1, -num2) - atanxy(1 - num1, num2)) * 0.5
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
-

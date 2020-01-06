@@ -10,12 +10,12 @@ promote_rule(::Type{DoubleFloat{Float64}}, ::Type{T}) where {T<:Integer} = Doubl
 promote_rule(::Type{DoubleFloat{Float32}}, ::Type{T}) where {T<:Integer} = DoubleFloat{Float32}
 promote_rule(::Type{DoubleFloat{Float16}}, ::Type{T}) where {T<:Integer} = DoubleFloat{Float16}
 
-promote_rule(::Type{DoubleFloat{Float64}}, ::Type{BigInt}) = BigInt
-promote_rule(::Type{DoubleFloat{Float32}}, ::Type{BigInt}) = BigInt
-promote_rule(::Type{DoubleFloat{Float16}}, ::Type{BigInt}) = BigInt
-promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float64}}) = BigInt
-promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float32}}) = BigInt
-promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float16}}) = BigInt
+promote_rule(::Type{DoubleFloat{Float64}}, ::Type{BigInt}) = DoubleFloat{Float64}
+promote_rule(::Type{DoubleFloat{Float32}}, ::Type{BigInt}) = DoubleFloat{Float32}
+promote_rule(::Type{DoubleFloat{Float16}}, ::Type{BigInt}) = DoubleFloat{Float16}
+promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}
+promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}
+promote_rule(::Type{BigInt}, ::Type{DoubleFloat{Float16}}) = DoubleFloat{Float16}
 
 promote_rule(::Type{DoubleFloat{Float64}}, ::Type{BigFloat}) = BigFloat
 promote_rule(::Type{DoubleFloat{Float32}}, ::Type{BigFloat}) = BigFloat
@@ -27,6 +27,8 @@ promote_rule(::Type{BigFloat}, ::Type{DoubleFloat{Float16}}) = BigFloat
 promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float16}}) = DoubleFloat{Float16}
 promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float32}}) = DoubleFloat{Float32}
 promote_rule(::Type{AbstractIrrational}, ::Type{DoubleFloat{Float64}}) = DoubleFloat{Float64}
+
+promote_rule(::Type{DoubleFloat{T}}, ::Type{Real}) where {T<:IEEEFloat} = DoubleFloat{T}
 
 widen(::Type{DoubleFloat{Float16}}) = DoubleFloat{Float32}
 widen(::Type{DoubleFloat{Float32}}) = DoubleFloat{Float64}

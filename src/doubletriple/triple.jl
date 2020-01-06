@@ -368,7 +368,7 @@ function sub312(ahi::T, amd::T, alo::T, b::T) where {T<:AbstractFloat}
     return zhi, zlo
 end
 
-sub313(a::NTuple{3,T}, b::NTuple{T,1}) where {T<:AbstractFloat} =
+sub313(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =
     sub313(a[1], a[2], a[3], b)
 
 sub312(a::NTuple{3,T}, b::NTuple{1,T}) where {T<:AbstractFloat} =

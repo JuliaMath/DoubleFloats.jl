@@ -73,27 +73,20 @@ end
    return fma(x[1], x[2], y[1], y[2], z[1], z[2])
 end
 
-@inline muladd(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat} = fma(xhi, xlo, yhi, ylo, zhi, zlo)
+#@inline muladd(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat} = fma(xhi, xlo, yhi, ylo, zhi, zlo)
 
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
-   return muladd(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
+   return x*y + z
 end
 
-@inline function muladd(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
-   return fma(x,y,zhi,zlo)
-end
 @inline function muladd(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
-   return fma(x, y, z.hi, z.lo)
-end
-
-@inline function muladd(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:IEEEFloat}
-   return fma(xhi, xlo, yhi, ylo, z)
+   return DoubleFloat{T}(x)*y + z
 end
 
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
-   return muladd(x.hi, x.lo, y.hi, y.lo, z)
+   return x*y + z
 end
-
+#=
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::Tuple{T,T}) where {T<:IEEEFloat}
    return muladd(x.hi, x.lo, y.hi, y.lo, z[1], z[2])
 end
@@ -115,3 +108,4 @@ end
 @inline function muladd(x::Tuple{T,T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:IEEEFloat}
    return muladd(x[1], x[2], y[1], y[2], z[1], z[2])
 end
+=#

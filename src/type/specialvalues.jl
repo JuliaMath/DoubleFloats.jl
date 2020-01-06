@@ -1,5 +1,5 @@
-zero(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(zero(T), zero(T))
-one(::Type{DoubleFloat{T}}) where {T<:AbstractFloat} = DoubleFloat{T}(one(T), zero(T))
+zero(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(zero(T), zero(T))
+one(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(one(T), zero(T))
 
 nan(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(NaN), T(NaN))
 inf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(Inf), T(NaN))
