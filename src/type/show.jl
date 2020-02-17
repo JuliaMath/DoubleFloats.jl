@@ -1,5 +1,8 @@
 import Printf: ini_dec, fix_dec, ini_hex, ini_HEX
 
+Base.show(io::IO, ::Type{Double64}) = print(io, "Double64")
+Base.show(io::IO, ::Type{Double32}) = print(io, "Double32")
+
 function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, true)
     if compact
