@@ -1,7 +1,7 @@
 name: TagBot
 on:
   schedule:
-    - cron: 22 2/5 * * *
+    - cron: '22 2/5 * * *'
 jobs:
   TagBot:
     runs-on: ubuntu-latest
