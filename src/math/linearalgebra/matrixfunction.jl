@@ -22,8 +22,9 @@ function matrixfunction(fn::Function, m::Matrix{Complex{DoubleFloat{T}}}) where 
     return result
 end
 
-for F in (:sqrt, :cbrt, :log, :exp,
-          :sin, :cos, :tan, :csc, :sec, :cot,
+for F in (:sqrt, :cbrt,
+          :log, :log1p, :log2, :log10, :exp, :expm1, 
+          :sin, :sinpi, :cos, :cospi, :tan, :csc, :sec, :cot,
           :asin, :acos, :atan, :acsc, :asec, :acot,
           :sinh, :cosh, :tanh, :csch, :sech, :coth,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
