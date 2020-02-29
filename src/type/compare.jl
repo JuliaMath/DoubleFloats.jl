@@ -1,8 +1,15 @@
+@inline posnegzeros(x::Float64, y::Float64) = 
+    (reinterpret(UInt64, x) | reinterpret(UInt64, y))  === 0x8000_0000_0000_0000
+@inline posnegzeros(x::Float32, y::Float32) = 
+    (reinterpret(UInt32, x) | reinterpret(UInt32, y))  === 0x8000_0000
+@inline posnegzeros(x::Float16, y::Float16) = 
+    (reinterpret(UInt16, x) | reinterpret(UInt16, y))  === 0x8000
+
 @inline function (==)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (LO(x) === LO(y)) && (HI(x) === HI(y))
+    return (LO(x) === LO(y)) && (HI(x) === HI(y) || posnegzeros(HI(x),HI(y)))
 end
 @inline function (!=)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (LO(x) !== LO(y)) || (HI(x) !== HI(y))
+    return (LO(x) !== LO(y)) || (HI(x) !== HI(y) || posnegzeros(HI(x),HI(y)))
 end
 @inline function (<)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
