@@ -1,3 +1,15 @@
+isnotfinite(x::Float64) = reinterpret(UInt64,x) & 0x7ff0000000000000 === 0x7ff0000000000000
+isqnan(x::Float64) = reinterpret(UInt64,x) & 0x7ff8000000000000 === 0x7ff8000000000000
+isainf(x::Float64) = reinterpret(UInt64,x) & 0x7ff8000000000000 === 0x7ff0000000000000
+
+isnotfinite(x::Float32) = reinterpret(UInt64,x) & 0x7f800000 === 0x7f800000
+isqnan(x::Float32) = reinterpret(UInt64,x) & 0x7fc00000 === 0x7fc000000000000
+isainf(x::Float32) = reinterpret(UInt64,x) & 0x7fc000000000000 === 0x7f8000000000000
+
+isnotfinite(x::AbstractFloat) = !isfinite(x)
+isqnan(x::AbstractFloat) = isnan(x)
+isainf(x::AbstractFloat) = isinf(x)
+  
 include("ops/op_fp_dd.jl")
 include("ops/op_fpfp_dd.jl")
 include("ops/op_fpdd_dd.jl")
