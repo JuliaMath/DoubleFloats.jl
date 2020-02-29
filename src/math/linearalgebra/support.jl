@@ -14,7 +14,15 @@ function norm(v::Array{DoubleFloat{T},N}) where {N, T<:IEEEFloat}
 end
 
 function norm(v::Array{DoubleFloat{T},N}, p::R) where {N, T<:IEEEFloat, R<:Real}
-    v = v .* v
-    r = inv(DoubleFloat{T}(p))
-    return (sum(v))^r
+    if isinf(p)
+        if p > 0
+            return LinearAlgebra.normInf(v)
+        else
+            return LinearAlgebra.normNegInf(v)
+        end
+    else    
+        v = v .* v
+        r = inv(DoubleFloat{T}(p))
+        return (sum(v))^r
+    end    
 end
