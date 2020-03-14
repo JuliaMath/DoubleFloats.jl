@@ -8,20 +8,34 @@ end
     return r === c
 end
 
-function norm(v::Array{DoubleFloat{T},N}) where {N, T<:IEEEFloat}
-    return sqrt(sum(v .* v))
-end
-
-function norm(v::Array{DoubleFloat{T},N}, p::R) where {N, T<:IEEEFloat, R<:Real}
+function norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
     if isinf(p)
-        return signbit(p) ? minimum(v) : maximum(v)
-    else
+        return signbit(p) ? minimum(abs.(v)) : maximum(abs.(v))
+    elseif p==2
+        return vp = sqrt(sum(v .* v))
+    else    
         vp = sum((v).^(p))
         r = inv(DoubleFloat{T}(p))
         return vp^r
     end    
 end
 
-function LinearAlgebra.normalize(v::Array{DoubleFloat{T},N}, p::R=2.0) where {N, T<:IEEEFloat, R<:Real}
+function norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+    if isinf(p)
+        return signbit(p) ? minimum(abs.(real.(v))) : maximum(abs.(real.(v)))
+    elseif p==2
+        return vp = sqrt(sum(v .* v))
+    else    
+        vp = sum((v).^(p))
+        r = inv(DoubleFloat{T}(p))
+        return vp^r
+    end    
+end
+
+function LinearAlgebra.normalize(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+    return v ./ norm(v, p)
+end
+
+function LinearAlgebra.normalize(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
     return v ./ norm(v, p)
 end
