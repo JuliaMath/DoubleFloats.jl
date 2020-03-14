@@ -9,20 +9,19 @@ end
 end
 
 function norm(v::Array{DoubleFloat{T},N}) where {N, T<:IEEEFloat}
-    v = v .* v
-    return sqrt(sum(v))
+    return sqrt(sum(v .* v))
 end
 
 function norm(v::Array{DoubleFloat{T},N}, p::R) where {N, T<:IEEEFloat, R<:Real}
     if isinf(p)
-        if p > 0
-            return LinearAlgebra.normInf(v)
-        else
-            return LinearAlgebra.normNegInf(v)
-        end
-    else    
-        v = v .* v
+        return signbit(p) ? minimum(v) : maximum(v)
+    else
+        vp = sum((v).^(p))
         r = inv(DoubleFloat{T}(p))
-        return (sum(v))^r
+        return vp^r
     end    
+end
+
+function LinearAlgebra.normalize(v::Array{DoubleFloat{T},N}, p::R=2.0) where {N, T<:IEEEFloat, R<:Real}
+    return v ./ norm(v, p)
 end
