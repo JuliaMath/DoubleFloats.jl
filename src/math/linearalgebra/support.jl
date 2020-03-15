@@ -24,9 +24,9 @@ function norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEE
     if isinf(p)
         return signbit(p) ? minimum(abs.(real.(v))) : maximum(abs.(real.(v)))
     elseif p==2
-        return vp = sqrt(sum(v .* v))
+        return vp = sqrt(sum(conj.(v) .* v))
     else    
-        vp = sum((v).^(p))
+        vp = sum(abs.(v).^(p))
         r = inv(DoubleFloat{T}(p))
         return vp^r
     end    
