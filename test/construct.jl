@@ -35,6 +35,12 @@
    @test ComplexDF16(1//1, -1//1) === ComplexDF16(Float16(1.0), -Float16(1.0))  
 end
 
+@testset "Int128" begin
+   a = 3503844571120554610950
+   @test Int128(Double64(a)) == a
+   @test Int128(Double32(a)) == 3503844571120553426944
+end
+
 @testset "intraconstruct" begin
    @test Double64(Double32(1)) === Double64(1)
    @test Double64(Double16(1)) === Double64(1)
