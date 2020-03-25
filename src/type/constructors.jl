@@ -23,6 +23,8 @@ for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16
 end
 
 Double64(x::Int128) = Double64(BigInt(x))
+Double32(x::Int128) = Double32(BigInt(x))
+Double16(x::Int128) = Double16(BigInt(x))
 
 # constants for BigFloat precision are > 2*significandbits(DoubleT)
 
