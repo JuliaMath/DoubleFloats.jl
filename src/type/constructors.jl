@@ -22,7 +22,7 @@ for (F,D) in ((:Float64, :Double64), (:Float32, :Double32), (:Float16, :Double16
   end
 end
 
-DoubleFloat{T}(x::Int128) where {T<:IEEEFloat} = DoubleFloat{T}(BigInt(x))
+Double64(x::Int128) where {T<:IEEEFloat} = DoubleFloat{T}(BigInt(x))
 
 # constants for BigFloat precision are > 2*significandbits(DoubleT)
 
