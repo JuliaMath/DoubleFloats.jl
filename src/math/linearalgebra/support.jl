@@ -9,6 +9,8 @@ end
 end
 
 function norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+    isempty(v) && return zero(DoubleFloat{T})
+
     if isinf(p)
         return signbit(p) ? minimum(abs.(v)) : maximum(abs.(v))
     elseif p==2
@@ -21,6 +23,8 @@ function norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
 end
 
 function norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+    isempty(v) && return zero(DoubleFloat{T})
+
     if isinf(p)
         return signbit(p) ? minimum(abs.(real.(v))) : maximum(abs.(real.(v)))
     elseif p==2
