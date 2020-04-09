@@ -10,6 +10,11 @@ releps(::Type{Float32}) = ldexp(inv(sqrt(2.0f0)), -17)
 releps(::Type{Double64}) = ldexp(0.5, -62)
 releps(::Type{Double32}) = ldexp(inv(sqrt(2.0f0)), -34)
 
+#=
+function isapprox(x::Number, y::Number; atol::Real=0, rtol::Real=rtoldefault(x,y,atol), nans::Bool=false)
+    x == y || (isfinite(x) && isfinite(y) && abs(x-y) <= max(atol, rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
+end
+
 function Base.isapprox(x::DoubleFloat{T}, y::T; atol::Real=0.0, rtol::Real=atol>0 ? 0 : releps(T), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat}
     return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans, norm=norm)
 end
@@ -25,7 +30,7 @@ Base.isapprox(x::DoubleFloat{T}, y::F; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0
 
 Base.isapprox(x::F, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=atol>0.0 ? 0.0 : eps(max(abs(x), abs(y)))^(37/64), nans::Bool=false, norm::Function=norm) where {T<:IEEEFloat, F<:Real} =
     isapprox(promote(x, y)..., atol=atol, rtol=rtol, nans=nans, norm=norm)
-
+=#
 
 function Base.lerpi(j::Integer, d::Integer, a::DoubleFloat{T}, b::DoubleFloat{T}) where {T}
     t = DoubleFloat{T}(j)/d
