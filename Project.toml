@@ -1,10 +1,10 @@
 name = "DoubleFloats"
 uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
-keywords = ["floating-point", "doubledouble", "extended-precision", "accuracy", "precision"]
+keywords = ["math", "floating-point", "doubledouble", "extended-precision", "accuracy", "precision"]
 license = "MIT"
 desc = "extended precision floating point types using value pairs"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
-version = "1.1.8"
+version = "1.1.9"
 
 [deps]
 GenericSVD = "01680d73-4ee2-5a08-a1aa-533608c188bb"
