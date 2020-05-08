@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Show, String, Parse · DoubleFloats.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DoubleFloats.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Overview</a></li><li><a class="toctext" href="../construction/">Construction</a></li><li><a class="toctext" href="../characteristics/">Characteristics</a></li><li class="current"><a class="toctext" href>Show, String, Parse</a><ul class="internal"><li><a class="toctext" href="#Show-1">Show</a></li><li><a class="toctext" href="#String-1">String</a></li><li><a class="toctext" href="#Parse-1">Parse</a></li></ul></li><li><a class="toctext" href="../capabilities/">Capabilities</a></li><li><a class="toctext" href="../special/">Special Functions</a></li><li><a class="toctext" href="../linearalgebra/">Linear Algebra</a></li><li><a class="toctext" href="../random/">Random Numbers</a></li><li><a class="toctext" href="../appropriate/">Appropriate Uses</a></li><li><a class="toctext" href="../references/">References</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Show, String, Parse</a></li></ul><a class="edit-page" href="https://github.com/JuliaMath/DoubleFloats.jl/blob/master/docs/src/stringshowparse.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Show, String, Parse</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Show,-String,-Parse-1" href="#Show,-String,-Parse-1">Show, String, Parse</a></h1><h2><a class="nav-anchor" id="Show-1" href="#Show-1">Show</a></h2><pre><code class="language-julia">julia&gt; x = sqrt(Double64(2)) / sqrt(Double64(6))
+0.5773502691896257
+
+julia&gt; show(IOContext(Base.stdout,:compact=&gt;false),x)
+5.7735026918962576450914878050194151e-01
+
+julia&gt; showall(x)
+0.5773502691896257645091487805019415
+
+julia&gt; showtyped(x)
+Double64(0.5773502691896257, 3.3450280739356326e-17)
+
+julia&gt; c = ComplexDF32(sqrt(df32&quot;2&quot;), cbrt(df32&quot;3&quot;))
+1.4142135 + 1.4422495im
+
+julia&gt; showall(c)
+1.414213562373095 + 1.442249570307406im
+
+julia&gt; showtyped(c)
+ComplexDF32(Double32(1.4142135, 2.4203235e-8), Double32(1.4422495, 3.3793125e-8))</code></pre><h2><a class="nav-anchor" id="String-1" href="#String-1">String</a></h2><pre><code class="language-julia">julia&gt; using DoubleFloats
+
+julia&gt; x = sqrt(Double64(2)) / sqrt(Double64(6))
+0.5773502691896257
+
+julia&gt; string(x)
+&quot;5.7735026918962576450914878050194151e-01&quot;
+
+julia&gt; c = ComplexDF32(sqrt(df32&quot;2&quot;), cbrt(df32&quot;3&quot;))
+1.4142135 + 1.4422495im
+
+julia&gt; string(c)
+&quot;1.414213562373094 + 1.442249570307406im&quot;
+
+julia&gt; stringtyped(c)
+&quot;ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))&quot;</code></pre><h2><a class="nav-anchor" id="Parse-1" href="#Parse-1">Parse</a></h2><pre><code class="language-julia">julia&gt; x = sqrt(Double64(2)) / sqrt(Double64(6))
+0.5773502691896257
+
+julia&gt; Meta.parse(stringtyped(x)
+:(Double64(0.5773502691896257, 3.3450280739356326e-17))</code></pre><footer><hr/><a class="previous" href="../characteristics/"><span class="direction">Previous</span><span class="title">Characteristics</span></a><a class="next" href="../capabilities/"><span class="direction">Next</span><span class="title">Capabilities</span></a></footer></article></body></html>
