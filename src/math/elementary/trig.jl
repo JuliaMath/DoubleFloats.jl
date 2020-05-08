@@ -233,7 +233,7 @@ function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
     abs(HI(x)) >= 0.36815538909255385 && return Double64(tan(Float128(x)))  # (15/128 * pi)
-     
+
     abs(mod1pi(x-Double64(pi)/2)) <= eps(one(DoubleFloat{Float64})) && return DoubleFloat{Float64}(Inf)
     iszero(x) && return zero(typeof(x))
     !isfinite(x) && return nan(typeof(x))
@@ -287,8 +287,8 @@ const tan0qrtrpi_denomcoeffs = [
  Double64(1.5859442637424446e-9, 6.30689666197131e-26)
 ];
 
-const tan0qrtrpi_numerpoly = Poly(tan0qrtrpi_numercoeffs);
-const tan0qrtrpi_denompoly = Poly(tan0qrtrpi_denomcoeffs);
+const tan0qrtrpi_numerpoly = Polynomial(tan0qrtrpi_numercoeffs);
+const tan0qrtrpi_denompoly = Polynomial(tan0qrtrpi_denomcoeffs);
 
 function tan0qrtrpi(x::Double64)
      numer = polyval(tan0qrtrpi_numerpoly, x)
@@ -298,7 +298,7 @@ end
 
 
 function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnan(x) && return x 
+    isnan(x) && return x
     isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
     return inv(sin(x))
 end
@@ -320,8 +320,8 @@ function sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sinpi(x) only defined for finite x"))
     return DoubleFloat{T}(sinpi(Quadmath.Float128(x)))
-    #= 
-    y = Double64(x) 
+    #=
+    y = Double64(x)
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = sin(y)
@@ -333,8 +333,8 @@ function cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cospi(x) only defined for finite x"))
     return DoubleFloat{T}(cospi(Quadmath.Float128(x)))
-    #= 
-     y = Double64(x) 
+    #=
+     y = Double64(x)
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = cos(y)
@@ -347,11 +347,10 @@ function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("tanpi(x) only defined for finite x"))
     return sinpi(x)/cospi(x)
     #=
-    y = Double64(x) 
+    y = Double64(x)
     hi,lo = mul322(pi_1o1_t64, HILO(y))
     y = Double64(hi, lo)
     z = tan(y)
     return DoubleFloat{T}(z)
     =#
 end
-
