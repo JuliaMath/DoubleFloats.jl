@@ -27,14 +27,23 @@ Double32(x::Int128) = Double32(BigInt(x))
 Double16(x::Int128) = Double16(BigInt(x))
 
 # constants for BigFloat precision are > 2*significandbits(DoubleT)
+if VERSION >= v"1.1.0"
+    Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x; precision=250))
+    Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x; precision=122))
+    Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x; precision=60))
 
-Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x, 250))
-Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x, 122))
-Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x,  60))
+    Double64(x::Rational{S}) where {S} = Double64(BigFloat(x; precision=250))
+    Double32(x::Rational{S}) where {S} = Double32(BigFloat(x; precision=122))
+    Double16(x::Rational{S}) where {S} = Double16(BigFloat(x; precision=60))
+else
+    Double64(x::Irrational{S}) where {S} = Double64(BigFloat(x, 250))
+    Double32(x::Irrational{S}) where {S} = Double32(BigFloat(x, 122))
+    Double16(x::Irrational{S}) where {S} = Double16(BigFloat(x, 60))
 
-Double64(x::Rational{S}) where {S} = Double64(BigFloat(x, 250))
-Double32(x::Rational{S}) where {S} = Double32(BigFloat(x, 122))
-Double16(x::Rational{S}) where {S} = Double16(BigFloat(x,  60))
+    Double64(x::Rational{S}) where {S} = Double64(BigFloat(x, 250))
+    Double32(x::Rational{S}) where {S} = Double32(BigFloat(x, 122))
+    Double16(x::Rational{S}) where {S} = Double16(BigFloat(x, 60))
+end
 
 Complex{Double64}(x::T) where {T<:AbstractIrrational} = Complex(Double64(x))
 Complex{Double32}(x::T) where {T<:AbstractIrrational} = Complex(Double32(x))
