@@ -136,4 +136,18 @@ else
     end
 end
 
+function _precompile_()
+    ccall(:jl_generating_output, Cint, ()) == 1 || return nothing
+    # precompile(Tuple{Type{Float64},Normed{UInt8,8}})
+    precompile(Tuple{typeof(+),Double64,Double64})
+    precompile(Tuple{typeof(-),Double64,Double64})
+    precompile(Tuple{typeof(*),Double64,Double64})
+    precompile(Tuple{typeof(/),Double64,Double64})
+    precompile(Tuple{typeof(+),Double32,Double32})
+    precompile(Tuple{typeof(-),Double32,Double32})
+    precompile(Tuple{typeof(*),Double32,Double32})
+    precompile(Tuple{typeof(/),Double32,Double32})
+end
+_precompile_()
+
 end # module DoubleFloats
