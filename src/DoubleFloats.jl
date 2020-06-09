@@ -131,11 +131,9 @@ if VERSION >= v"1.1.0"
 else
     using Requires
     function __init__()
-        if VERSION < v"1.1.0"
-            @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
-                include("math/special/specialfunctions.jl")
-            end
-         end    
+        # @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
+        #    include("math/special/specialfunctions.jl")
+        # end
     end
 end
 
