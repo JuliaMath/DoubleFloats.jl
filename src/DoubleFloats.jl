@@ -36,6 +36,7 @@ export DoubleFloat,
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
+using Requires
 using Printf
 using Random
 import Random: rand, randn
@@ -124,7 +125,6 @@ include("extras/random.jl")
 include("extras/misc.jl")
 include("extras/macros.jl")
 
-VERSION < v"1.1.0" && using Requires
 if VERSION >= v"1.1.0"
   using SpecialFunctions
   include("math/special/specialfunctions.jl")
