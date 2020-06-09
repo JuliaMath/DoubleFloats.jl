@@ -74,9 +74,6 @@ import Base.Math: modf, fma, muladd,
 
 import Quadmath: Float128
 
-# for conditional SpecialFunctions
-using Requires
-
 include("Double.jl")   # Double64, Double32, Double16
 
 include("math/errorfree.jl")
@@ -127,6 +124,7 @@ if VERSION >= v"1.1.0"
   using SpecialFunctions
   include("math/special/specialfunctions.jl")
 else
+    using Requires
     function __init__()
         @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
             include("math/special/specialfunctions.jl")
