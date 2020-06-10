@@ -136,29 +136,4 @@ else
     end
 end
 
-function _precompile_()
-    ccall(:jl_generating_output, Cint, ()) == 1 || return nothing
-	precompile(Tuple{typeof(Quadmath.__init__)})
-	precompile(Tuple{getfield(Quadmath, Symbol("#7#10"))})
-	precompile(Tuple{getfield(Quadmath, Symbol("#8#11"))})
-	precompile(Tuple{typeof(Requires.err), Any, Module, String})
-	precompile(Tuple{getfield(Quadmath, Symbol("#9#12"))})
-	precompile(Tuple{typeof(Quadmath.include), String})
-	precompile(Tuple{getfield(Quadmath, Symbol("#@ccall")), LineNumberNode, Module, Any})
-	precompile(Tuple{getfield(Quadmath, Symbol("#@ccall")), LineNumberNode, Module, Any})
-	precompile(Tuple{Type{Base.Generator{I, F} where F where I}, getfield(Quadmath, Symbol("#1#4")), Array{Any, 1}})
-	precompile(Tuple{typeof(Base.all), Base.Generator{Array{Any, 1}, getfield(Quadmath, Symbol("#1#4"))}})
-	precompile(Tuple{Type{Base.Generator{I, F} where F where I}, getfield(Quadmath, Symbol("#2#5")), Array{Any, 1}})
-	precompile(Tuple{typeof(Base.collect), Base.Generator{Array{Any, 1}, getfield(Quadmath, Symbol("#2#5"))}})
-	precompile(Tuple{getfield(Quadmath, Symbol("#2#5")), Expr})
-	precompile(Tuple{Type{Base.Generator{I, F} where F where I}, getfield(Quadmath, Symbol("#3#6")), Array{Any, 1}})
-	precompile(Tuple{typeof(Base.collect), Base.Generator{Array{Any, 1}, getfield(Quadmath, Symbol("#3#6"))}})
-	precompile(Tuple{getfield(Quadmath, Symbol("#3#6")), Expr})
-	precompile(Tuple{typeof(Requires.listenpkg), Any, Base.PkgId})
-	precompile(Tuple{typeof(Requires.withnotifications), String, Vararg{Any, N} where N})
-    precompile(Tuple{typeof(Requires.__init__)})
-    precompile(Tuple{typeof(Requires.loadpkg), Base.PkgId})
-end
-_precompile_()
-
 end # module DoubleFloats
