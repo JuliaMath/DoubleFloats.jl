@@ -9,14 +9,14 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Doubl
     frlo, xplo  = frexp(lo)
     xplo = Base.exponent(hi) - min(1, fld(xplo,4)) - abs(Base.exponent(eps(hi)))
     lo = ldexp(frlo, xplo)
-    lo = rand(Bool) ? lo : -lo
+    lo = rand(rng, Bool) ? lo : -lo
 
     DoubleFloat(hi, lo)
 end
 
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Complex{DoubleFloat{T}}}}) where {T<:IEEEFloat}
-    re = rand(DoubleFloat{T})
-    im = rand(DoubleFloat{T})
+    re = rand(rng, DoubleFloat{T})
+    im = rand(rng, DoubleFloat{T})
     return Complex{DoubleFloat{T}}(re, im)
 end
 
@@ -28,7 +28,7 @@ end
 
 function randpm(rng::MersenneTwister, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     r = rand(rng, DoubleFloat{T})
-    r = rand(Bool) ? r : -r
+    r = rand(rng, Bool) ? r : -r
     return r
 end
 
@@ -81,18 +81,18 @@ end
 # normal variates
 
 function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
-    urand1, urand2 = rand(DoubleFloat{T}, 2)
+    urand1, urand2 = rand(rng, DoubleFloat{T}, 2)
     urand1 = urand1 + urand1 - 1
     urand2 = urand2 + urand2 - 1
     s = urand1*urand1 + urand2*urand2
-    
+
     while s >= 1 || s === 0
-        urand1, urand2 = rand(DoubleFloat{T}, 2)
+        urand1, urand2 = rand(rng, DoubleFloat{T}, 2)
         urand1 = urand1 + urand1 - 1
         urand2 = urand2 + urand2 - 1
         s = urand1*urand1 + urand2*urand2
     end
-    
+
     s = sqrt( -log(s) / s )
     return (urand1 + urand2) * s
 end
