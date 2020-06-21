@@ -4,7 +4,7 @@
  Nicolas Fabiano, Jean-Michel Muller, Joris Picot
 =#
 
-function vecsum3(x0::T, x1::T, x2::T) where {T}
+function vec_sum(x0::T, x1::T, x2::T) where {T}
     s1, e2 = two_sum(x1, x2)
     s0, e1 = two_sum(x0, s1)
     return s0,e1,e2
