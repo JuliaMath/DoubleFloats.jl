@@ -54,13 +54,13 @@ function tripleword(a::T, b::T, c::T) where {T}
     e0, e1 = two_sum(d0, s1)
     # s0, s1, s2 = vseb(e0, e1, e2)
     r0, e1 = two_sum(e0, e1)
-	if e1 != 0.0
-	  s0 = r0
-	else
-	  e1 = r0
-	end
-	s1, s2  = two_sum(e1, e2)
-	return (s0, s1, s2)
+    if e1 != 0.0
+	s0 = r0
+    else
+	e1 = r0
+    end
+    s1, s2  = two_sum(e1, e2)
+    return (s0, s1, s2)
 end
 
 using SetRounding
@@ -81,4 +81,70 @@ function Float64(x0::Float64, x1::Float64, x2::Float64)
         y = x0 + x1
     end
     return y
+end
+
+
+@inline max_min(x,y) = ifelse(abs(y) < abs(x), (x,y) , (y,x))
+
+function maxtomin(a::T, b::T, c::T) where {T}
+    b, c = max_min(b, c)
+    a, c = max_min(a, c)
+    a, b = max_min(a, b)
+    return a, b, c
+end
+
+function vec_sum(x1::T, x2::T, x3::T) where {T}
+    s3 = x3
+    s2, e3 = two_sum(x2, s3)
+    s1, e2 = two_sum(x1, s2)
+    return s1,e2,e3
+end
+
+function vecsum_errbranch(x::NTuple{3,T}) where {T}
+    y = r = e = zeros(T, 3)
+    j = 1
+    e[1] = x[1]
+    for i = 1:1
+        r[i], t = two_sum(e[i], x[i+1])
+        if t !== zero(T)
+            y[j] = r[i]
+            e[i+1] = t
+            j += 1
+        else    
+            e[i+1] = r[i]
+        end    
+    end
+    y[j], y[j+1] = two_sum(e[3], x[4])
+    return y
+end
+
+function fast_vecsum_errbranch(x1::T,x2::T,x3::T) where {T}
+    y = zeros(T, 3)
+    j = 1
+    # e[1] = x1
+    # i = 1
+    r, t = two_sum(x1, x2)
+    if t !== zero(T)
+       y[j] = r
+       e = t
+       j += 1
+    else
+       e = r
+    end
+
+    y[j], y[j+1] = two_sum(e, x3)
+    return y
+end
+
+function tripleword(x1::T, x2::T, x3::T) where {T}
+    a1, a2 = two_sum(x1, x2)
+    c1, c2 = two_sum(a1, x3)
+    e1to3 = vec_sum(c1,c2,a2)
+    y = vecsum_errbranch(e1to3)
+    return (y...,)
+end
+
+@inline function fast_tripleword(x1::T, x2::T, x3::T) where {T}
+    a,b,c,d = maxtomin(x1,x2,x3)
+    return fast_vecsum_errbranch(a,b,c)
 end
