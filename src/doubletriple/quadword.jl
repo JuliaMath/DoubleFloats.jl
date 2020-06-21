@@ -35,35 +35,3 @@ function quadword(x1::T, x2::T, x3::T, x4::T) where {T}
     y = vsum_errbranch(e1to4)
     return (y...,)
 end
-
-#=
-function vec_sum_errbranch(x0::T, x1::T, x2::T, x3::T) where {T}
-    # n = 4
-    j = zero(T)
-    e0 = x0
-    r0, et1 = two_sum(e0, x1)
-    if !iszero(e1)
-        y0 = r0
-        e1 = et1
-        j += 1
-    else
-        e1 = r0
-    end
-    r1, et2 = two_sum(e1, x2)
-    if !iszero(e2)
-        if iszero(j)
-            y0 = r1
-            y1 = zero(T)
-         else
-            y1 = r1
-         end   
-         e2 = et2
-         j += 1
-    else
-         e2 = r1
-    end
-    yj, yj+1 = two_sum(e2, e3)
-    yj+2,..y3 = zero(T)
-    return y0,y1,y2,y3
-end
-=#
