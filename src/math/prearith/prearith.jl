@@ -100,8 +100,10 @@ ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(on
 
 
 function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    !isfinite(x) && return(x)
-    if !iszero(LO(x))
+    if !isfinite(x)
+       isnan(x) && return x
+       signbit(x) ? floatmin(DoubleFloat{T}) : x
+    elseif !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
     else
         DoubleFloat{T}(HI(x), ulp(ulp(HI(x))))
@@ -109,8 +111,10 @@ function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    !isfinite(x) && return(x)
-    if !iszero(LO(x))
+    if !isfinite(x)
+        isnan(x) && return x
+        signbit(x) ? x : floatmax(DoubleFloat{T})
+    elseif !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + prevfloat(LO(x))
     else
         DoubleFloat{T}(HI(x), -ulp(ulp(HI(x))))
