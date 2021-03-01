@@ -8,7 +8,7 @@ end
     return r === c
 end
 
-function norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+function LinearAlgebra.norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
     isempty(v) && return zero(DoubleFloat{T})
 
     if isinf(p)
@@ -22,7 +22,7 @@ function norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
     end    
 end
 
-function norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
+function LinearAlgebra.norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
     isempty(v) && return zero(DoubleFloat{T})
 
     if isinf(p)
