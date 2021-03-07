@@ -1,11 +1,13 @@
+## Edited by Michael Kline, MIT License
+## This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internships Program (SULI) program at Oak Ridge National Laboratory, administered by the Oak Ridge Institute for Science and Education.
+
 function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	s = signbit(x)
-	if s
-		x = -x
-	end
-	x < pi2o1(DoubleFloat{T}) && return x
-	x < pi4o1(DoubleFloat{T}) && return mod2pi(x - pi2o1(DoubleFloat{T}))
-	himdlo = mul323(inv_pi_2o1_t64, HILO(x))
+	c = s ? -1 : 1
+    y = c * x
+	y < pi2o1(DoubleFloat{T}) && return s ? pi2o1(DoubleFloat{T}) - y : y
+	y < pi4o1(DoubleFloat{T}) && return mod2pi(x - c*pi2o1(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_2o1_t64, HILO(y))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
 	    hi = hi - 1.0
@@ -23,12 +25,11 @@ end
 
 function mod1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	s = signbit(x)
-	if s
-		x = -x
-	end
-	x < pi1o1(DoubleFloat{T}) && return x
-	x < pi2o1(DoubleFloat{T}) && return mod1pi(x - pi1o1(DoubleFloat{T}))
-	himdlo = mul323(inv_pi_1o1_t64, HILO(x))
+	c = s ? -1 : 1
+    y = c * x
+	x < pi1o1(DoubleFloat{T}) && return s ? pi1o1(DoubleFloat{T}) - y : y
+	x < pi2o1(DoubleFloat{T}) && return mod1pi(x - c*pi1o1(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o1_t64, HILO(y))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
 	    hi = hi - 1.0
@@ -46,12 +47,11 @@ end
 
 function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	s = signbit(x)
-	if s
-		x = -x
-	end
-	x < pi1o2(DoubleFloat{T}) && return x
-	x < pi1o1(DoubleFloat{T}) && return modhalfpi(x - pi1o2(DoubleFloat{T}))
-	himdlo = mul323(inv_pi_1o2_t64, HILO(x))
+	c = s ? -1 : 1
+    y = c * x
+	x < pi1o2(DoubleFloat{T}) && return s ? pi1o2(DoubleFloat{T}) - y : y
+	x < pi1o1(DoubleFloat{T}) && return modhalfpi(x - c*pi1o2(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o2_t64, HILO(y))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
 	    hi = hi - 1.0
@@ -69,12 +69,11 @@ end
 
 function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
 	s = signbit(x)
-	if s
-		x = -x
-	end
-	x < pi1o4(DoubleFloat{T}) && return x
-	x < pi1o2(DoubleFloat{T}) && return modqrtrpi(x - pi1o4(DoubleFloat{T}))
-	himdlo = mul323(inv_pi_1o4_t64, HILO(x))
+	c = s ? -1 : 1
+    y = c * x
+	x < pi1o4(DoubleFloat{T}) && return s ? pi1o4(DoubleFloat{T}) - y : y
+	x < pi1o2(DoubleFloat{T}) && return modqrtrpi(x - c*pi1o4(DoubleFloat{T}))
+	himdlo = mul323(inv_pi_1o4_t64, HILO(y))
 	hi, md, lo = three_sum([modf(x)[1] for x in himdlo]...,)
 	if hi >= 1.0
 	    hi = hi - 1.0
@@ -132,7 +131,7 @@ end
 # within (pi/2) quadrant determine nearest multiple of pi/16
 
 function whichquadrant(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    x = negpi_pospi(x)	
+    x = negpi_pospi(x)
     if signbit(x) # quadrant -2 or -1
         quadrant = -x < DoubleFloat{T}(pi)/2 ? -2 : -1
     else          # quadrant  1 or  2
