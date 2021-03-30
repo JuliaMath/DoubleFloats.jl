@@ -3,13 +3,13 @@
 ## Using
 
 ```julia
-using DoubleFloats, GenericSchur, GenericSVD, LinearAlgebra
+using DoubleFloats, LinearAlgebra
 ```
 
 ## Vectors and Matrices
 
 ```julia
-using DoubleFloats, GenericSchur, GenericSVD, LinearAlgebra
+using DoubleFloats, LinearAlgebra
 
 n = 25
 vector = rand(Double64, n)

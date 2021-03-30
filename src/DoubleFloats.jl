@@ -43,7 +43,6 @@ import Random: rand, randn
 
 using Polynomials
 
-using GenericSVD, GenericSchur
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
