@@ -1,4 +1,4 @@
-import Printf: ini_dec, fix_dec, ini_hex, ini_HEX
+import Printf: ini_dec, fix_dec
 
 show(io::IO, ::Type{Double64}) = print(io, "Double64")
 show(io::IO, ::Type{Double32}) = print(io, "Double32")
