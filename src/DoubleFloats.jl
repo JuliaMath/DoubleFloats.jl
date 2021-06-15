@@ -46,8 +46,8 @@ using Polynomials
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
-using GenericLinearAlgebra
 using GenericSchur
+using GenericLinearAlgebra
 
 import Quadmath
 
