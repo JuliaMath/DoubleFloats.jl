@@ -9,7 +9,6 @@ version = "1.1.23"
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 GenericLinearAlgebra = "14197337-ba66-59df-a3e3-ca00e7dcff7a"
-GenericSchur = "c145ed77-6b09-5dd9-b285-bf645a82121e"
 Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Quadmath = "be4d8f0f-7fa4-5f49-b795-2f01399ab2dd"
@@ -23,14 +22,12 @@ Quadmath = "0.4, 0.5, 0.6"
 Requires = "1"
 SpecialFunctions = "0.7, 0.8, 0.9, 0.10, 1.0, 1.1"
 GenericLinearAlgebra = "0.2.5, 0.3, 0.4, 0.5, 0.6"
-GenericSchur = "0.5, 0.6, 0.7"
 julia = "1"
 
 [extras]
 GenericLinearAlgebra = "14197337-ba66-59df-a3e3-ca00e7dcff7a"
-GenericSchur = "c145ed77-6b09-5dd9-b285-bf645a82121e"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "SpecialFunctions", "GenericLinearAlgebra", "GenericSchur"]
+test = ["Test", "SpecialFunctions", "GenericLinearAlgebra"]
