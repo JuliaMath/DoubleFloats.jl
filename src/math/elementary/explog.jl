@@ -183,8 +183,9 @@ function expm1(a::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(a) && return a
     isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
     u = exp(a)
-    if (u == one(DoubleFloat{T}))
-        x
+    # temp fix of if (u == one(DoubleFloat{T}))
+    if (isone(u.hi))
+        a
     elseif (u-1.0 == -one(DoubleFloat{T}))
         -one(DoubleFloat{T})
     else
