@@ -214,7 +214,7 @@ DoubleFloat(x::Int32) = Double32(x, zero(Int32))
 DoubleFloat(x::Int16) = Double16(x, zero(Int16))
 
 # overload Base._precision to support the base keyword in Julia 1.8
-let precision = isdefined(Base, :_precision) : :_precision : :precision
+let precision = isdefined(Base, :_precision) ? :_precision : :precision
     @eval Base.$precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*Base.$precision(T)
 end
 
