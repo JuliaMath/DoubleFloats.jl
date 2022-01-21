@@ -9,8 +9,7 @@ exp10(a::DoubleFloat{Float64}) = exp2(a*Double64(3.321928094887362, 1.6616175169
 function exp2(a::DoubleFloat{Float64})
     abshi = abs(HI(a))
     isnan(a) && return a
-    isinf(a) && return(signbit(a) ? zero(Double64) : a)
-    iszero(HI(a)) && return one(Double64)
+    iszero(abshi) && return one(Double64)
     if abshi > 1023.5
       return (HI(a) < 0) ? zero(Double64) : inf(Double64)
     end
