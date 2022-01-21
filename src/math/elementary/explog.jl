@@ -1,13 +1,13 @@
 for FT in (DoubleFloat{Float16}, DoubleFloat{Float32})
-    for func in (exp2, exp, exp10, expm1, log2, log, log10, log1p)
-        @eval func(a::$FT) = $FT(func(Float64(a)))
+    for func in (:exp2, :exp, :exp10, :expm1, :log2, :log, :log10, :log1p)
+        @eval ($func)(a::$FT) = $FT(($func)(Float64(a)))
     end
 end
 
-function exp(a::DoubleFloat{Float64}) = exp2(a/Double64(0.6931471805599453, 2.3190468138462996e-17))
-function exp10(a::DoubleFloat{Float64}) = exp2(a/Double64(2.302585092994046, -2.1707562233822494e-16))
+exp(a::DoubleFloat{Float64}) = exp2(a*Double64(1.4426950408889634, 2.0355273740931033e-17))
+exp10(a::DoubleFloat{Float64}) = exp2(a*Double64(3.321928094887362, 1.661617516973592e-16))
 function exp2(a::DoubleFloat{Float64})
-    abshi = abs(Hi(a))
+    abshi = abs(HI(a))
     isnan(a) && return a
     isinf(a) && return(signbit(a) ? zero(Double64) : a)
     iszero(HI(a)) && return one(Double64)
@@ -53,14 +53,14 @@ const T1 = _make_exp_table(16)
 const T2 = _make_exp_table(16, 16)
 
 function calc_exp2(a::Double64)
-    x = a.hi
+    x = HI(a)
     N = round(Int, 256*x)
     k = N>>8
     j1 = T1[(N&255)>>4 + 1]
     j2 = T2[N&15 + 1]
     r = fma((-1/256), N, x)
     poly = exp_kernel(r)
-    poly_lo = exp_kernel(a.lo)
+    poly_lo = exp_kernel(LO(a))
     e2k = exp2(k)
     lo_part = fma(poly, poly_lo, poly_lo) + poly
     ans = fma(j1*j2, lo_part, j1*j2)
