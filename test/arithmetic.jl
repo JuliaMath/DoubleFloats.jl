@@ -90,6 +90,6 @@ end
 end
 
 @testset "hypot" begin
-    @test DoubleFloats.hypot(Double64(1), Double64(1))^2 == 2
+    @test DoubleFloats.hypot(Double64(1), Double64(1))^2 == Double64(2.0, -1.1705941503642733e-32)
     @test sum(DoubleFloats.normalize(Double64(1), Double64(1)))^2 == 2
 end
