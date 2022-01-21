@@ -113,18 +113,14 @@ end
 
 function expm1(a::Double64)
     isnan(a) && return a
-    isinf(a) && return(signbit(a) ? zero(Double64) : a)
-    u = exp(a)
-    # temp fix of if (u == one(DoubleFloat{T}))
-    if (isone(u.hi))
-        a
-    elseif (u-1.0 == -one(Double64))
-        -one(Double64)
-    else
-        a*(u-1.0) / log(u)
+    abshi = abs(HI(a))
+    if abshi < .5
+        u = a*Double64(1.4426950408889634, 2.0355273740931033e-17)
+        a = exp_kernel(HI(u))
+        return fma(a, LO(u), a)
     end
+    return exp(a)-1
 end
-
 
 #=
 # ratio of polys from
