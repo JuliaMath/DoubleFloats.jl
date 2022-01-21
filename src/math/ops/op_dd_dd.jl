@@ -46,7 +46,7 @@ end
     ahi, alo = HILO(a)
     zhi = ahi * ahi
     zlo = fma(ahi, ahi, -zhi)
-    return zhi, muladd(alo, muladd(ahi, T(2), alo), zlo)
+    return zhi, muladd(alo, muladd(ahi, 2, alo), zlo)
 end
 @inline function cube_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
     zhi, zlo = square_dd_dd(a)
