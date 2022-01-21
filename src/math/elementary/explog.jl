@@ -1,6 +1,6 @@
-for T in (Float16, Float32)
+for FT in (DoubleFloat{Float16}, DoubleFloat{Float32})
     for func in (exp2, exp, exp10, expm1, log2, log, log10, log1p)
-        func(a::DoubleFloat{T}) = DoubleFloat{T}(func(Float64(a)))
+        @eval func(a::$FT) = $FT(func(Float64(a)))
     end
 end
 
