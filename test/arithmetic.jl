@@ -90,6 +90,6 @@ end
 end
 
 @testset "hypot" begin
-    @test DoubleFloats.hypot(Double64(1), Double64(1))^2 == 2
-    @test sum(DoubleFloats.normalize(Double64(1), Double64(1)))^2 == 2
+    @test abs(DoubleFloats.hypot(Double64(1), Double64(1))^2 - 2) <= eps(eps(2.0))
+    @test abs(sum(DoubleFloats.normalize(Double64(1), Double64(1)))^2 - 2) <= eps(eps(2.0))
 end
