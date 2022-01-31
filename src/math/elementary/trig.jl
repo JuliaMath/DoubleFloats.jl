@@ -373,7 +373,7 @@ function cis(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return cos(x) + im*sin(x)
 end
 
-function cispi::DoubleFloat{T}) where {T<:IEEEFloat}
+function cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
     return cospi(x) + im*sinpi(x)
