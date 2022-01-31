@@ -354,3 +354,28 @@ function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return DoubleFloat{T}(z)
     =#
 end
+
+function sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("sincos(x) only defined for finite x"))
+    return sin(x), cos(x)
+end                    
+
+function sincospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("sincospi(x) only defined for finite x"))
+    return sinpi(x), cospi(x)
+end                    
+
+function cis(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
+    return cos(x) + im*sin(x)
+end
+
+function cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    isnan(x) && return x
+    isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
+    return cospi(x) + im*sinpi(x)
+end
+               
