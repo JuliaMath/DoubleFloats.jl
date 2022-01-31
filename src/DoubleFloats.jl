@@ -72,7 +72,8 @@ import Base.Math: modf, fma, muladd,
              sin, cos, tan, csc, sec, cot, sincos, sinpi, cospi,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
-             asinh, acosh, atanh, acsch, asech, acoth
+             asinh, acosh, atanh, acsch, asech, acoth,
+             sincos, sincospi, cis, cispi
 
 import Quadmath: Float128
 
