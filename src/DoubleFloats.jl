@@ -36,6 +36,7 @@ export DoubleFloat,
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
 
+using Requires
 using Printf
 using Random
 import Random: rand, randn
