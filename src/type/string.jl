@@ -1,3 +1,21 @@
+function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    !isfinite(HI(x)) && return string(HI(x))
+    string(Float128(x))
+end                
+
+function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    xreal, ximag = reim(x)
+    sepstr = signbit(ximag) ? " - " : " + "
+    imstr = isfinite(xima) ? "im" : "*im"
+    string(xreal) * sepstr * string(ximag) * imstr
+end
+
+"""
+    stringtyped
+    
+a `full representation of a DoubleFloat as a string
+""" stringtyped
+
 function stringtyped(x::Double64)
     str = string("Double64(", HI(x), ", ", LO(x), ")")
     return str
@@ -27,6 +45,8 @@ function stringtyped(x::Complex{DoubleFloat{Float16}})
     return str
 end
 
+#= NOT NEEDED
+    
 """
     BigFloatBits(::IEEEType)
 
@@ -75,29 +95,4 @@ BigFloatDigits(::Type{Float16}) =  8 # bigfloatbits(Float16)
 @inline BigFloatDigits(::Type{Float16}) =  9
 =#
 
-function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    !isfinite(HI(x)) && return string(HI(x))
-    prec = precision(Base.BigFloat)
-    setprecision(Base.BigFloat, BigFloatBits(T))
-    bf = Base.BigFloat(x)
-    bf = round(bf, digits=BigFloatBits(T), base=2)
-    str = string(bf)
-    if occursin('e', str)
-       a, b = split(str, "e")
-       n = min(length(a), BigFloatDigits(T)+1)
-       str = string(a[1:n],"e",b)
-    else
-       n = min(length(str), BigFloatDigits(T)+1)
-       str = str[1:n]
-    end
-    setprecision(Base.BigFloat, prec)
-    return str
-end
-
-function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    rea, ima = reim(x)
-    s = signbit(ima) ? " - " : " + "
-    imstr = isfinite(ima) ? "im" : "*im"
-    str = string(string(rea), s, string(abs(ima)), imstr)
-    return str
-end
+=#
