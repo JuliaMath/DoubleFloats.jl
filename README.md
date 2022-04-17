@@ -178,9 +178,9 @@ results for f(x), x in 1..2
 |          |            |            |
 |   sinh   |  1.0e-30   |   1.0e-31  |
 |   cosh   |  1.0e-30   |   1.0e-31  |
-|   tanh   |  1.0e-31   |   1.0e-31  |
+|   tanh   |  1.0e-31   |   1.0e-28  |
 |          |            |            |
-|  asinh   |  1.0e-31   |   1.0e-31  |
+|  asinh   |  1.0e-31   |   1.0e-28  |
 
 ### isapprox
 
