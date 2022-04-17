@@ -1,6 +1,6 @@
 using DoubleFloats, LinearAlgebra
 using Quadmath
-using Test, Requires
+using Test
 
 using  Base: IEEEFloat
 import Base: isapprox
