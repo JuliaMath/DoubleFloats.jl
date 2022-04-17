@@ -1,4 +1,4 @@
-using Documenter, Requires, DoubleFloats
+using Documenter, Require, DoubleFloats
 
 makedocs(
     modules = [DoubleFloats],
