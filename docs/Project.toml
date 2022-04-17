@@ -1,7 +1,5 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 Documenter = "0.20"
-Requires = "1"
