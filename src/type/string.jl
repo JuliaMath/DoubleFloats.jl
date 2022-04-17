@@ -1,11 +1,26 @@
 function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    !isfinite(HI(x)) && return string(HI(x))
+    (!isfinite(HI(x)) || LO(x) === 0.0) && return string(HI(x))
+    str = string(Float128(x))
+    eat = findlast('e', str)
+    isnothing(eat) && return str
+    str[eat+2:end] === "00" && return(str[1:eat-1])
+    
+    zat = eat - 1
+    while str[zat] === '0'
+        zat -= 1
+    end
+    if (str[zat] === '.') zat += 1 end
+    str[1:zat] * str[eat:end]
+end
+
+function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    (!isfinite(HI(x)) || LO(x) === 0.0) && return string(HI(x))
     str = string(Float128(x))
     if endswith("e+00", str)
         str = str[1:end-4]
     end
     str
-end                
+end
 
 function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     xreal, ximag = reim(x)
