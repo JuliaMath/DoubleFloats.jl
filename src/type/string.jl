@@ -1,12 +1,16 @@
 function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     !isfinite(HI(x)) && return string(HI(x))
-    string(Float128(x))
+    str = string(Float128(x))
+    if endswith("e+00", str)
+        str = str[1:end-4]
+    end
+    str
 end                
 
 function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     xreal, ximag = reim(x)
     sepstr = signbit(ximag) ? " - " : " + "
-    imstr = isfinite(xima) ? "im" : "*im"
+    imstr = isfinite(ximag) ? "im" : "*im"
     string(xreal) * sepstr * string(ximag) * imstr
 end
 
