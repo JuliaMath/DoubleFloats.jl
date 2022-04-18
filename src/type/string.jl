@@ -13,15 +13,6 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     str[1:zat] * str[eat:end]
 end
 
-function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (!isfinite(HI(x)) || LO(x) === 0.0) && return string(HI(x))
-    str = string(Float128(x))
-    if endswith("e+00", str)
-        str = str[1:end-4]
-    end
-    str
-end
-
 function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     xreal, ximag = reim(x)
     sepstr = signbit(ximag) ? " - " : " + "
