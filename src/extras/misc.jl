@@ -62,3 +62,9 @@ end
 function Base.:(-)(m::Matrix{DoubleFloat{T}}, x::T) where {T}
     return m .- x
 end
+
+# for getting fast floatmin2, used in Givens rotations in LinearAlgebra
+# these values were computed with the existing code saved
+# floatmin2(::Type{T}) where {T} = (twopar = 2one(T); twopar^trunc(Integer,log(floatmin(T)/eps(T))/log(twopar)/twopar))
+LinearAlgebra.floatmin2(::Type{Double64}) = Double64(reinterpret(Float64, 0x2350000000000000), 0.0)
+LinearAlgebra.floatmin2(::Type{Double32}) = Double32(reinterpret(Float32, 0x2c000000), 0.0f0)
