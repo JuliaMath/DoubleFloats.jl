@@ -179,6 +179,11 @@ function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
     return z
 end
 
+#=
+this is inaccurate for e.g. x=1.0e-16
+the fix is to redesign it completely
+for the meanwhile --  we replace it
+
 function expm1(a::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(a) && return a
     isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
@@ -191,6 +196,12 @@ function expm1(a::DoubleFloat{T}) where {T<:IEEEFloat}
     else
         a*(u-1.0) / log(u)
     end
+end
+=#
+
+function expm1(a::DoubleFloat{T}) where {T<:IEEEFloat}
+    y = expm1( Float128(a) )
+    DoubleFloat{T}(y)
 end
 
 function exp2(a::DoubleFloat{T}) where {T<:IEEEFloat}
