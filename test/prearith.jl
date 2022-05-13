@@ -10,12 +10,22 @@
     @test flipsign(negval, 1) == negval
     @test copysign(val, -1) == negval
     @test copysign(negval, 1) == val
-    
-    @test ldexp(frexp(val)...,) == val
-   # @test ldexp(significand(val), exponent(val)) == val
-  
-    @test signs(val) == (sign(HI(val)), sign(LO(val)))
 
+    @test ldexp(frexp(val)...,) == val
+    fr, ex = frexp(val)
+    @test fr * T(2)^ex == val
+
+    @test fr ≈ frexp(Float64(val))[1]
+    @test ex == frexp(Float64(val))[2]
+
+    @test isnan(frexp(T(NaN))[1])
+    @test isinf(frexp(T(Inf))[1])
+    @test iszero(frexp(T(0))[1])
+
+    @test DoubleFloats.ldexps(DoubleFloats.frexps(val)...,) == val
+    # @test ldexp(significand(val), exponent(val)) == val
+
+    @test signs(val) == (sign(HI(val)), sign(LO(val)))
 end
 
 @testset "trunc $T" for T in (Double16, Double32, Double64)
