@@ -17,6 +17,9 @@ These are the predicates made available for use with DoubleFloats:
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
 """ predicates
 
+isnonfinite(x::Float64) = reinterpret(UInt64,x) & 0x7FFFFFFFFFFFFFFF >= 0x7FF0000000000000
+isfinite(x::Float64) = reinterpret(UInt64,x) & 0x7FFFFFFFFFFFFFFF < 0x7FF0000000000000
+
 """
     isnonzero(x)
 
