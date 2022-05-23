@@ -12,23 +12,23 @@ Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T
 
 
 @inline function add_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isnan(LO(x)) | isnan(LO(y))) && return add_dbdb_db_nonfinite(x,y)
-    return DoubleFloat{T}(add_dddd_dd(HILO(x), HILO(y)))
+    isfinite(HI(x) + HI(y)) && return DoubleFloat{T}(add_dddd_dd(HILO(x), HILO(y)))
+    add_dbdb_db_nonfinite(x, y)
 end
 
 @inline function sub_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isnan(LO(x)) | isnan(LO(y))) && return sub_dbdb_db_nonfinite(x,y)
-    return DoubleFloat{T}(sub_dddd_dd(HILO(x), HILO(y)))
+    isfinite(HI(x) - HI(y)) && return DoubleFloat{T}(sub_dddd_dd(HILO(x), HILO(y)))
+    sub_dbdb_db_nonfinite(x, y)
 end
 
 @inline function mul_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isnan(LO(x)) | isnan(LO(y))) && return mul_dbdb_db_nonfinite(x,y)
-    return DoubleFloat{T}(mul_dddd_dd(HILO(x), HILO(y)))
+    isfinite(HI(x) + HI(y)) && return DoubleFloat{T}(mul_dddd_dd(HILO(x), HILO(y)))
+    mul_dbdb_db_nonfinite(x, y)
 end
 
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    (iszero(HI(y)) | isnan(LO(x)) | isnan(LO(y))) && return dvi_dbdb_db_nonfinite(x,y)
-    return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
+    isfinite(HI(x) / HI(y)) && return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
+    dvi_dbdb_db_nonfinite(x, y)
 end
 
 @inline function add_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
