@@ -62,7 +62,7 @@ end
     @test isnan(acoth(T(NaN)))
 end
     
-@testset "floatmin2 $T" for T in (Double16, Double32, Double64)
+@testset "floatmin2 $T" for T in (Double32, Double64)
     trueval = (twopar = 2one(T); twopar^trunc(Integer,log(floatmin(T)/eps(T))/log(twopar)/twopar))
     @test LinearAlgebra.floatmin2(T) == trueval 
 end         
