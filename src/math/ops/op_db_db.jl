@@ -16,21 +16,21 @@ end
 end
 
 @inline function square_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(HI(y)^2) && return DoubleFloat{T}(square_dd_dd(HILO(x)))
+    isfinite(HI(x)^2) && return DoubleFloat{T}(square_dd_dd(HILO(x)))
     square_dd_dd_nonfinite(HILO(x))
 end
 
 @inline function cube_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(HI(y)^3) && return DoubleFloat{T}(cube_dd_dd(HILO(x)))
+    isfinite(HI(x)^3) && return DoubleFloat{T}(cube_dd_dd(HILO(x)))
     cube_dd_dd_nonfinite(HILO(x))
 end
 
 @inline function sqrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(sqrt(HI(y))) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
+    isfinite(sqrt(HI(x))) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
     sqrt_dd_dd_nonfinite(HILO(x))
 end
 
 @inline function cbrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(cbrt(HI(y))) && return DoubleFloat{T}(cbrt_dd_dd(HILO(x)))
+    isfinite(cbrt(HI(x))) && return DoubleFloat{T}(cbrt_dd_dd(HILO(x)))
     cbrt_dd_dd_nonfinite(HILO(x))
 end
