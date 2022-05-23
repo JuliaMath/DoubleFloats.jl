@@ -64,4 +64,10 @@ end
     @test isapprox(infd64 / zerod64, inff64 / zerof64)
     @test isapprox(zerod64 / infd64, zerof64 / inff64)
     
+    @test isapprox(infd64 + zerof64, inff64 + zerod64)
+    @test isapprox(infd64 - zerof64, inff64 - zerod64)
+    @test isapprox(zerod64 - inff64, zerof64 - infd64)
+    @test isapprox(infd64 * zerof64, inff64 * zerod64)
+    @test isapprox(infd64 / zerof64, inff64 / zerod64)
+    @test isapprox(zerod64 / infd64, zerof64 / infd64)
 end
