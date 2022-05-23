@@ -39,7 +39,7 @@ infd64 = Double64(Inf)
     @test isapprox(tinyd64 + hugef64, tinyf64 + huged64)
     @test isapprox(tinyd64 + tinyf64, tinyf64 + tinyd64)
 
-    @test isapprox(huged64 - hugef64, hugef64 - huged64)
+    @test isapprox(HI(huged64) - hugef64, hugef64 - HI(huged64))
     @test isapprox(huged64 - tinyf64, hugef64 - tinyd64)
     @test isapprox(tinyd64 - hugef64, tinyf64 - huged64)
     @test isapprox(tinyd64 - tinyf64, tinyf64 - tinyd64)
