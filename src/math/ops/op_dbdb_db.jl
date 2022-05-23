@@ -48,5 +48,6 @@ end
 
 @inline function dvi_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = HI(x) / HI(y)
-    return DoubleFloat{T}(z, T(NaN))
+    iszero(z) ? DoubleFloat{T}(z,z) :
+                DoubleFloat{T}(z, T(NaN))
 end

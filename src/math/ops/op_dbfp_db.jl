@@ -35,5 +35,6 @@ end
 
 @inline function dvi_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     z = HI(x) / y
-    return DoubleFloat{T}(z, T(NaN))
+    iszero(z) ? DoubleFloat{T}(z,z) :
+                DoubleFloat{T}(z, T(NaN))
 end
