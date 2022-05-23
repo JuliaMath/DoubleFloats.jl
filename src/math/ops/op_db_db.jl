@@ -44,19 +44,19 @@ end
     DoubleFloat{T}(z, T(NaN))
 end
 
-@inline function square_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function square_db_db_nonfinite(z::T) where {T<:IEEEFloat}
     DoubleFloat{T}(z, T(NaN))
 end
 
-@inline function cube_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function cube_db_db_nonfinite(z::T) where {T<:IEEEFloat}
     DoubleFloat{T}(z, T(NaN))
 end
 
-@inline function sqrt_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function sqrt_db_db_nonfinite(z::T) where {T<:IEEEFloat}
     DoubleFloat{T}(z, T(NaN))
 end
 
-@inline function cbrt_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function cbrt_db_db_nonfinite(z::T) where {T<:IEEEFloat}
     DoubleFloat{T}(z, T(NaN))
 end
 
