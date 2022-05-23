@@ -11,26 +11,53 @@ end
 end
 
 @inline function inv_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(1.0/HI(y)) && return DoubleFloat{T}(inv_dd_dd(HILO(x)))
-    add_dd_dd_nonfinite(HILO(x))
+    z = inv(HI(x))
+    isfinite(z) && return DoubleFloat{T}(inv_dd_dd(HILO(x)))
+    inv_db_db_nonfinite(z)
 end
 
 @inline function square_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(HI(x)^2) && return DoubleFloat{T}(square_dd_dd(HILO(x)))
-    square_dd_dd_nonfinite(HILO(x))
+    z = HI(x)^2
+    isfinite(z) && return DoubleFloat{T}(square_dd_dd(HILO(x)))
+    square_db_db_nonfinite(z)
 end
 
 @inline function cube_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(HI(x)^3) && return DoubleFloat{T}(cube_dd_dd(HILO(x)))
-    cube_dd_dd_nonfinite(HILO(x))
+    z = HI(x)^3
+    isfinite(z) && return DoubleFloat{T}(cube_dd_dd(HILO(x)))
+    cube_db_db_nonfinite(z)
 end
 
 @inline function sqrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(sqrt(HI(x))) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
-    sqrt_dd_dd_nonfinite(HILO(x))
+    z = sqrt(HI(x))
+    isfinite(z) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
+    sqrt_db_db_nonfinite(z)
 end
 
 @inline function cbrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isfinite(cbrt(HI(x))) && return DoubleFloat{T}(cbrt_dd_dd(HILO(x)))
-    cbrt_dd_dd_nonfinite(HILO(x))
+    z = cbrt(HI(x))
+    isfinite(z) && return DoubleFloat{T}(cbrt_dd_dd(HILO(x)))
+    cbrt_db_db_nonfinite(z)
 end
+
+@inline function inv_db_db_nonfinite(z::T) where {T<:IEEEFloat}
+    DoubleFloat{T}(z, T(NaN))
+end
+
+@inline function square_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    DoubleFloat{T}(z, T(NaN))
+end
+
+@inline function cube_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    DoubleFloat{T}(z, T(NaN))
+end
+
+@inline function sqrt_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    DoubleFloat{T}(z, T(NaN))
+end
+
+@inline function cbrt_db_db_nonfinite(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    DoubleFloat{T}(z, T(NaN))
+end
+
+
