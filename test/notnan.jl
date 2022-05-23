@@ -1,9 +1,9 @@
 # tests that NaN is not returned incorrectly
 
-hugef64 = floatmax(Float64) * (2/3)
-tinyf64 = inv(hugef64)
 huged64 = floatmax(Float64) * (Double64(2)/3)
 tinyd64 = inv(huged64)
+hugef64 = HI(huged64)
+tinyf64 = HI(tinyd64)
 
 zerof64 = 0.0
 zerod64 = zero(Double64)
