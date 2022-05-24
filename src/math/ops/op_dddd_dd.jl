@@ -60,7 +60,6 @@ end
 
 # reltime 40
 
-
 @inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
     xhi, xlo = x
     yhi, ylo = y

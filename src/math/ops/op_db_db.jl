@@ -29,8 +29,7 @@ end
 end
 
 @inline function sqrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    z = sqrt(HI(x))
-    isfinite(z) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
+    isfinite(HI(x)) && return DoubleFloat{T}(sqrt_dd_dd(HILO(x)))
     sqrt_db_db_nonfinite(z)
 end
 
