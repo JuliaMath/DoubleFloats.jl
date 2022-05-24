@@ -12,7 +12,7 @@ end
 
 @inline function inv_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     z = inv(HI(x))
-    isfinite(z) && return DoubleFloat{T}(inv_dd_dd(HILO(x)))
+    isfinite(z) && (z != zero(T)) && return DoubleFloat{T}(inv_dd_dd(HILO(x)))
     inv_db_db_nonfinite(z)
 end
 
