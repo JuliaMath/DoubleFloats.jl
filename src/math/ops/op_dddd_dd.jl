@@ -74,6 +74,10 @@ end
 @inline ldexp_dd(x::Tuple{T,T}, n::Integer) where {T<:IEEEFloat} =
     (ldexp(HI(x), n), ldexp(LO(x), n))
 
+#=
+    `sqrt` and `cbrt` are from KlausC (Klaus Crusius) 2022-05-24
+=#
+
 """
     roots_scaleexp(x::IEEEFloat)
 
