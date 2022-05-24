@@ -47,7 +47,7 @@ smallf = HI(small)
 end
 
 @testset "division corners" begin
-    @test isapprox(posinfinity / neginifinity, posinfinityf / neginifinityf)
+    @test isapprox(posinfinity / neginfinity, posinfinityf / neginfinityf)
     @test isapprox(posinfinity / poszero, posinfinityf / poszerof)
     @test isapprox(posinfinity / negzero, posinfinityf / negzerof)
     @test isapprox(poszero / posinfinity, poszerof / posinfinityf)
