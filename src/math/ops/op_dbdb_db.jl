@@ -27,7 +27,7 @@ end
 end
 
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    (isfinite(HI(x) * HI(y)) && isfinite(HI(x) * inv(HI(y)))) && return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
+    (isfinite(HI(x) * inv(HI(y)))) && return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
     dvi_dbdb_db_nonfinite(x, y)
 end
 
