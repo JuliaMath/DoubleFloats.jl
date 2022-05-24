@@ -2,9 +2,9 @@
 
 
 huge = floatmax(Float64) * (Double64(2)/3)
-tiny = inv(huged64)
+tiny = inv(huge)
 large = cbrt(cbrt(cbrt(huged64)))
-small = inv(larged64)
+small = inv(large)
 
 hugef = HI(huge)
 tinyf = HI(tiny)
