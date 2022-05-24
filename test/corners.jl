@@ -11,29 +11,24 @@ tinyf = HI(tiny)
 largef = HI(large)
 smallf = HI(small)
 
-add2 = DoubleFloats.add2
-sub2 = DoubleFloats.sub2
-mul2 = DoubleFloats.mul2
-div2 = DoubleFloats.div2
-
 @testset "corner arithmetic" begin
-    @test isapprox(add2(hugef, tinyf), hugef + tinyf)
-    @test isapprox(add2(tinyf, hugef), tinyf + hugef)
-    @test isapprox(add2(hugef, hugef), hugef + hugef)
-    @test isapprox(add2(tinyf, tinyf), tinyf + tiny)
+    @test isapprox(DoubleFloats.add2(hugef, tinyf), hugef + tinyf)
+    @test isapprox(DoubleFloats.add2(tinyf, hugef), tinyf + hugef)
+    @test isapprox(DoubleFloats.add2(hugef, hugef), hugef + hugef)
+    @test isapprox(DoubleFloats.add2(tinyf, tinyf), tinyf + tiny)
 
-    @test isapprox(sub2(hugef, tinyf), hugef - tinyf)
-    @test isapprox(sub2(tinyf, hugef), tinyf - hugef)
-    @test isapprox(sub2(hugef, hugef), hugef - hugef)
-    @test isapprox(sub2(tinyf, tinyf), tinyf - tiny)
+    @test isapprox(DoubleFloats.sub2(hugef, tinyf), hugef - tinyf)
+    @test isapprox(DoubleFloats.sub2(tinyf, hugef), tinyf - hugef)
+    @test isapprox(DoubleFloats.sub2(hugef, hugef), hugef - hugef)
+    @test isapprox(DoubleFloats.sub2(tinyf, tinyf), tinyf - tiny)
 
-    @test isapprox(mul2(hugef, tinyf), hugef * tinyf)
-    @test isapprox(mul2(tinyf, hugef), tinyf * hugef)
-    @test isapprox(mul2(hugef, hugef), hugef * hugef)
-    @test isapprox(mul2(tinyf, tinyf), tinyf * tinyf)
+    @test isapprox(DoubleFloats.mul2(hugef, tinyf), hugef * tinyf)
+    @test isapprox(DoubleFloats.mul2(tinyf, hugef), tinyf * hugef)
+    @test isapprox(DoubleFloats.mul2(hugef, hugef), hugef * hugef)
+    @test isapprox(DoubleFloats.mul2(tinyf, tinyf), tinyf * tinyf)
 
-    @test isapprox(div2(hugef, tinyf), hugef / tinyf)
-    @test isapprox(div2(tinyf, hugef), tinyf / hugef)
-    @test isapprox(div2(hugef, hugef), hugef / hugef)
-    @test isapprox(div2(tinyf, tinyf), tinyf / tinyf)
+    @test isapprox(DoubleFloats.div2(hugef, tinyf), hugef / tinyf)
+    @test isapprox(DoubleFloats.div2(tinyf, hugef), tinyf / hugef)
+    @test isapprox(DoubleFloats.div2(hugef, hugef), hugef / hugef)
+    @test isapprox(DoubleFloats.div2(tinyf, tinyf), tinyf / tinyf)
 end
