@@ -77,5 +77,7 @@ include("string.jl")
 include("parse.jl")
 
 include("notnan.jl")
+include("corners.jl")
+
 include("legacy.jl")
 
