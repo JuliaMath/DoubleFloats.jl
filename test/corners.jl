@@ -7,8 +7,8 @@ negzero = -poszero
 postwo = Double64(2)
 negtwo = -postwo
 
-posinfinityf = HI(posinifinity)
-neginfinityf = HI(neginifinity)
+posinfinityf = HI(posinfinity)
+neginfinityf = HI(neginfinity)
 poszerof = HI(poszero)
 negzerof = HI(negzero)
 postwof = HI(postwo)
