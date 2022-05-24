@@ -14,7 +14,8 @@ end
 end
 
 @inline function dvi_fpfp_db(x::T, y::T) where {T<:IEEEFloat}
-    isfinite(x * y) && isfinite(x * inv(y)) && return DoubleFloat{T}(add_fpfp_dd(x, y))
+    (isfinite(x * y) && isfinite(x * inv(y))) && 
+        return DoubleFloat{T}(dvi_fpfp_dd(x, y))
     dvi_fpfp_db_nonfinite(x, y)
 end
 
