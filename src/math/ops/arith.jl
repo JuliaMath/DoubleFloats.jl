@@ -8,8 +8,25 @@ inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
 square(x::DoubleFloat{T}) where {T<:IEEEFloat} = square_db_db(x)
 cube(x::DoubleFloat{T}) where {T<:IEEEFloat} = cube_db_db(x)
 
-sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = sqrt_db_db(x)
-cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = cbrt_db_db(x)
+function sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    if x > ldexp(1.0,300)
+        sqrt_db_db(x * inv(ldexp(1.0,300))) * ldexp(1.0, 150)
+    elseif x < ldexp(1.0, -300)
+        sqrt_db_db(x)
+    else
+        sqrt_db_db(x * ldexp(1.0, 300)) * ldexp(1.0, -150)
+    end
+end
+
+function cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    if x > ldexp(1.0, 511)
+        cbrt_db_db(x * inv(ldexp(1.0, 513))) * ldexp(1.0, 171)
+    elseif x > ldexp(1.0, -511)
+        cbrt_db_db(x)
+    else
+        cbrt_db_db(x * ldexp(1.0, 513)) * inv(ldepx(1.0, 171))
+    end
+end
 
 (+)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_fpdb_db(x, y)
 (+)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = add_dbfp_db(x, y)
