@@ -8,6 +8,9 @@ inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
 sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = sqrt_db_db(x)
 cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = cbrt_db_db(x)
 
+square(x::DoubleFloat{T}) where {T<:IEEEFloat} = square_db_db(x)
+cube(x::DoubleFloat{T}) where {T<:IEEEFloat} = cube_db_db(x)
+
 (+)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_fpdb_db(x, y)
 (+)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = add_dbfp_db(x, y)
 (+)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_dbdb_db(x, y)
