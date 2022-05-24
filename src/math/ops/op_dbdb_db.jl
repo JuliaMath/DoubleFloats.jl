@@ -27,7 +27,7 @@ end
 end
 
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    isinf(y) && return (signbit(x) !== signbit(y) ? -zero(DoubleFloat{T}) : zero(DoubleFloat{T}))
+    (isinf(y) && !isinf(x)) && return (signbit(x) !== signbit(y) ? -zero(DoubleFloat{T}) : zero(DoubleFloat{T}))
     (isfinite(HI(x) * inv(HI(y)))) && return DoubleFloat{T}(dvi_dddd_dd(HILO(x), HILO(y)))
     dvi_dbdb_db_nonfinite(x, y)
 end
