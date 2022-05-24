@@ -14,6 +14,7 @@ end
 end
 
 @inline function dvi_fpfp_db(x::T, y::T) where {T<:IEEEFloat}
+    isinf(y) && return (signbit(x) !== signbit(y) ? -zero(DoubleFloat{T}) : zero(DoubleFloat{T}))
     (isfinite(x * inv(y))) && 
         return DoubleFloat{T}(dvi_fpfp_dd(x, y))
     dvi_fpfp_db_nonfinite(x, y)
