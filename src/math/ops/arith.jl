@@ -24,7 +24,7 @@ function cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat}
     elseif x > ldexp(1.0, -511)
         cbrt_db_db(x)
     else
-        cbrt_db_db(x * ldexp(1.0, 513)) * inv(ldepx(1.0, 171))
+        cbrt_db_db(x * ldexp(1.0, 513)) * inv(ldexp(1.0, 171))
     end
 end
 
