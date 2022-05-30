@@ -26,16 +26,17 @@ end
 end
 
 # Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
-@inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+# modified to handle +/-Inf properly
+function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
     xhi, xlo = x
     yhi, ylo = y
-    hi, lo = two_prod(xhi, yhi)
+    hihi, hilo = two_prod(xhi, yhi)
     t = xlo * ylo
     t = fma(xhi, ylo, t)
     t = fma(xlo, yhi, t)
-    t = lo + t
-    hi, lo = two_hilo_sum(hi, t)
-    return hi, lo
+    t = hilo + t
+    hi, lo = two_hilo_sum(hihi, t)
+    isinf(hihi) ? (hihi, NaN) : (hi,lo)
 end
 
 #=
