@@ -24,7 +24,7 @@ cbrt2_dmax, cbrt2_fmax = cbrt_dmax^2, cbrt_fmax^2
 sqrt_dmin₊, sqrt_fmin₊ = sqrt(dmin₊), sqrt(fmin₊)
 sqrt_dmax₋, sqrt_fmax₋ = sqrt(dmax₋), sqrt(fmax₋)
 cbrt_dmin₊, cbrt_fmin₊ = cbrt(dmin₊), cbrt(fmin₊)
-cbrt_dmax₋, sqrt_fmax₋ = sqrt(dmax₋), sqrt(fmax₋)
+cbrt_dmax₋, cbrt_fmax₋ = cbrt(dmax₋), cbrt(fmax₋)
 cbrt2_dmin₊, cbrt2_fmin₊ = cbrt_dmin₊^2, cbrt_fmin₊^2 
 cbrt2_dmax₋, cbrt2_fmax₋ = cbrt_dmax₋^2, cbrt_fmax₋^2
 
