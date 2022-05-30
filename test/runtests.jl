@@ -58,8 +58,10 @@ include("promote.jl")
 
 include("prearith.jl")
 include("arithmetic.jl")
+include("morearith.jl")
 include("fma.jl")
 include("modrem.jl")
+
 include("functions.jl")
 include("matmul.jl")
 include("complex.jl")
