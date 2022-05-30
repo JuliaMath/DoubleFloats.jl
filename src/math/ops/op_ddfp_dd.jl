@@ -28,7 +28,7 @@ function mul_ddfp_dd(x::Tuple{T,T}, y::T) where T<:IEEEFloat
     hi, lo = x
     hihi, hilo = two_prod(y, hi)
     lohi, lolo = two_prod(y, lo)
-    hi, lo = two_sum(hihi, hilo, lohi)
+    hi, lo = two_sum(hihi, hilo, lohi, lolo)
     isinf(hihi) ? (hihi, NaN) : (hi, lo)
 end
 #=

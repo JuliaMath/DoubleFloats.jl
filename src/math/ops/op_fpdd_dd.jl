@@ -26,12 +26,12 @@ end
 =#
 function mul_fpdd_dd(x::T, y::Tuple{T,T}) where T<:IEEEFloat
     hi, lo = y
-    hihi, hilo = two_prod(x, hi)
-    lohi, lolo = two_prod(x, lo)
-    hi, lo = two_sum(hihi, hilo, lohi)
+    hihi, hilo = two_prod(hi, x)
+    lohi, lolo = two_prod(lo, x)
+    hi, lo = two_sum(hihi, hilo, lohi, lolo)
     isinf(hihi) ? (hihi, NaN) : (hi, lo)
 end
-	   
+#=
 
 
 @inline function dvi_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:IEEEFloat}
