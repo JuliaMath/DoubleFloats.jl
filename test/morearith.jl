@@ -28,45 +28,39 @@ cbrt_dmax₋, cbrt_fmax₋ = cbrt(dmax₋), cbrt(fmax₋)
 cbrt2_dmin₊, cbrt2_fmin₊ = cbrt_dmin₊^2, cbrt_fmin₊^2 
 cbrt2_dmax₋, cbrt2_fmax₋ = cbrt_dmax₋^2, cbrt_fmax₋^2
 
-dvals = (dnan, dinf, d0, d1, dmin, dmax, dmin₊, dmax₋, sqrt_dmin, sqrt_dmax, sqrt_dmin₊, sqrt_dmax₋, 
+dvals = (d0, d1, dmin, dmax, dmin₊, dmax₋, sqrt_dmin, sqrt_dmax, sqrt_dmin₊, sqrt_dmax₋, 
          cbrt_dmin, cbrt_dmax, cbrt_dmin₊, cbrt_dmax₋, cbrt2_dmin, cbrt2_dmax, cbrt2_dmin₊, cbrt2_dmax₋,)
-fvals = (fnan, finf, f0, f1, dmin, fmax, fmin₊, fmax₋, sqrt_fmin, sqrt_fmax, sqrt_fmin₊, sqrt_fmax₋, 
+
+fvals = (f0, f1, dmin, fmax, fmin₊, fmax₋, sqrt_fmin, sqrt_fmax, sqrt_fmin₊, sqrt_fmax₋, 
          cbrt_fmin, cbrt_fmax, cbrt_fmin₊, cbrt_fmax₋, cbrt2_fmin, cbrt2_fmax, cbrt2_fmin₊, cbrt2_fmax₋,)
 
-dfvals = zip(dvals, fvals)
+dpairs = combinations(dvals, 2)
+fpairs = combinations(fvals, 2)
+
+dfvals = zip(dpairs, fpairs)
 
 @testset "more addition" begin
-  for (d1, f1) in dfvals
-    for (d2, f2) in dfvals
-      @test isapprox(d1+d2, f1+f2)
-    end
+  for (d, f) in dfvals
+      @test isapprox(+(d...), +(f...))
   end
 end
 
 @testset "more subtraction" begin
-  for (d1,f1) in dfvals
-    for (d2, f2) in dfvals
-      @test isapprox(d1-d2, f1-f2)
-    end
+  for (d, f) in dfvals
+      @test isapprox(-(d...), -(f...))
   end
 end
 
 @testset "more multiplication" begin
-  for (d1,f1) in dfvals
-    for (d2, f2) in dfvals
-      @test isapprox(d1*d2, f1*f2)
-    end
+  for (d, f) in dfvals
+      @test isapprox(*(d...), *(f...))
   end
 end
 
 @testset "more division" begin
-  for (d1,f1) in dfvals
-    for (d2, f2) in dfvals
-      if !iszero(d2)
-          @test isapprox(d1/d2, f1/f2)
-      end  
+  for (d,f) in dfvals
+    if !iszero(d2)
+      @test isapprox(/(d...), /(f...))
     end
   end
-end
-
 end
