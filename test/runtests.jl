@@ -1,5 +1,5 @@
 using DoubleFloats, LinearAlgebra
-using Quadmath
+using Quadmath, Combinatorics
 using Test
 
 using  Base: IEEEFloat
