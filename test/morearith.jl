@@ -28,11 +28,17 @@ cbrt_dmax₋, cbrt_fmax₋ = cbrt(dmax₋), cbrt(fmax₋)
 cbrt2_dmin₊, cbrt2_fmin₊ = cbrt_dmin₊^2, cbrt_fmin₊^2 
 cbrt2_dmax₋, cbrt2_fmax₋ = cbrt_dmax₋^2, cbrt_fmax₋^2
 
-dvals = (d0, d1, dmin, dmax, dmin₊, dmax₋, sqrt_dmin, sqrt_dmax, sqrt_dmin₊, sqrt_dmax₋, 
-         cbrt_dmin, cbrt_dmax, cbrt_dmin₊, cbrt_dmax₋, cbrt2_dmin, cbrt2_dmax, cbrt2_dmin₊, cbrt2_dmax₋,)
+dvals = (d0, d1, 
+         dmin, dmax, dmin₊, dmax₋, 
+         sqrt_dmin, sqrt_dmax, sqrt_dmin₊, sqrt_dmax₋, 
+         cbrt_dmin, cbrt_dmax, cbrt_dmin₊, cbrt_dmax₋,
+         cbrt2_dmin, cbrt2_dmax, cbrt2_dmin₊, cbrt2_dmax₋,)
 
-fvals = (f0, f1, dmin, fmax, fmin₊, fmax₋, sqrt_fmin, sqrt_fmax, sqrt_fmin₊, sqrt_fmax₋, 
-         cbrt_fmin, cbrt_fmax, cbrt_fmin₊, cbrt_fmax₋, cbrt2_fmin, cbrt2_fmax, cbrt2_fmin₊, cbrt2_fmax₋,)
+fvals = (f0, f1, 
+         fmin, fmax, fmin₊, fmax₋, 
+         sqrt_fmin, sqrt_fmax, sqrt_fmin₊, sqrt_fmax₋, 
+         cbrt_fmin, cbrt_fmax, cbrt_fmin₊, cbrt_fmax₋,
+        cbrt2_fmin, cbrt2_fmax, cbrt2_fmin₊, cbrt2_fmax₋,)
 
 dpairs = combinations(dvals, 2)
 fpairs = combinations(fvals, 2)
