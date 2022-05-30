@@ -36,7 +36,7 @@ fvals = (fnan, finf, f0, f1, dmin, fmax, fmin₊, fmax₋, sqrt_fmin, sqrt_fmax,
 dfvals = zip(dvals, fvals)
 
 @testset "more addition" begin
-  for (d1,f1) in dfvals
+  for (d1, f1) in dfvals
     for (d2, f2) in dfvals
       @test isapprox(d1+d2, f1+f2)
     end
