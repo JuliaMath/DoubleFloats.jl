@@ -48,7 +48,7 @@ end
 end
 =#
 # reltime 107
-
+#=
 @inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
@@ -57,6 +57,18 @@ end
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
     hi,lo = two_hilo_sum(hi, lo)
     return hi, lo
+end
+=#
+@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
+    xhi, xlo = x
+    yhi, ylo = y
+    hihi, hilo = two_prod(xhi, yhi)
+    t = xlo * ylo
+    t = fma(xhi, ylo, t)
+    t = fma(xlo, yhi, t)
+    t = hilo + t
+    hi, lo = two_hilo_sum(hihi, t)
+    isinf(hihi) ? (hSihi, NaN) : (hi,lo)
 end
 
 # reltime 40

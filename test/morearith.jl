@@ -65,7 +65,7 @@ end
 
 @testset "more division" begin
   for (d,f) in dfvals
-    if !iszero(d2)
+    if !iszero(d[2])
       @test isapprox(/(d...), /(f...))
     end
   end
