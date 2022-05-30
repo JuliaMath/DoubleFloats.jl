@@ -9,7 +9,7 @@ end
 end
 
 @inline function mul_dbfp_db(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
-    isfinite(HI(x) + HI(y)) && return DoubleFloat{T}(mul_ddfp_dd(HILO(x), y))
+    isfinite(HI(x) * HI(y)) && return DoubleFloat{T}(mul_ddfp_dd(HILO(x), y))
     mul_dbfp_db_nonfinite(x, y)
 end
 
