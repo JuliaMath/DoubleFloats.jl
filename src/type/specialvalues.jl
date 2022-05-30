@@ -9,7 +9,7 @@ neginf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(-Inf), T(
 typemax(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(typemax(T))
 typemin(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(typemin(T))
 
-floatmin(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(floatmin(T))
+floatmin(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(floatmin(T)) / eps(T)
 
 floatmax(::Type{DoubleFloat{Float64}}) = Double64(ldexp(Float64(0.9999999999999999), 1024), ldexp(Float64(0.9999999999999999), 970))
 floatmax(::Type{DoubleFloat{Float32}}) = Double32(ldexp(Float32(0.99999994f0), 128), ldexp(Float32(0.99999994f0), 103))
