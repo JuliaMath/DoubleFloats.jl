@@ -37,7 +37,7 @@
     @test round(Double64(123456.0, -1.0e-17), RoundDown) == Double64(123455.0, 0.0)
 
     @test typemax(Double64) == Double64(typemax(Float64))
-    @test floatmin(Double64) == Double32(floatmin(Float64)) / eps(Float64)
+    @test floatmin(Double64) == Double64(floatmin(Float64)) / eps(Float64)
 
     @test isnan( nan(Double64) )
     @test isinf( inf(Double16) )
