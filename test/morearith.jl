@@ -9,8 +9,8 @@ dinf, finf = DT(Inf), FT(Inf)
 d0, f0 = zero(DT), zero(FT)
 d1, f1 = one(DT), one(FT)
 
-dmin, fmin = floatmin(DT), floatmin(FT)
-dmax, fmax = floatmax(DT), floatmax(FT)
+dmin, fmin = floatmin(DT), FT(floatmin(DT))
+dmax, fmax = floatmax(DT), FT(floatmax(DT))
 dmin₊, fmin₊ = dmin * (1025/1024), fmin * (1025/1024)
 dmax₋, fmax₋ = dmax * (1023/1024), fmax * (1023/1024)
 
