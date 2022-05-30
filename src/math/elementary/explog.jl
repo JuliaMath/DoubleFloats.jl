@@ -245,18 +245,28 @@ end
 end
 =#
 
-function log(x::DoubleFloat{T}) where {T<:IEEEFloat}
+# contributed by @KlausC
+function log(x::D) where {T<:IEEEFloat, D<:DoubleFloat{T}}
     isnan(x) && return x
     isinf(x) && !signbit(x) && return x
-    x === zero(DoubleFloat{T}) && return neginf(DoubleFloat{T})
+    x === zero(D) && return neginf(D)
     y = DoubleFloat(log(HI(x)), zero(T))
-    z = exp(y)
-    adj = (z - x) / (z + x)
-    adj = mul_by_two(adj)
+    if HI(x) > floatmax(T) / 3
+        z = exp(y - 1) # avoid spurious Inf results
+        x = x * exp(-one(D))
+        zx = x + ldexp(z - x, -1) # avoid overflow (x + z) / 2
+    elseif HI(x) < floatmin(T) / eps(T)
+        z = exp(y + 64) # avoid unprecise exp results
+        x = x * exp(D(64.0))
+        zx = ldexp(x + z, -1)
+    else
+        z = exp(y)
+        zx = ldexp(x + z, -1)
+    end
+    adj = (z - x) / zx
     y = y - adj
     return y
 end
-
 
 function log1p(x::DoubleFloat{T})  where {T<:IEEEFloat}
     isnan(x) && return x
@@ -265,7 +275,7 @@ function log1p(x::DoubleFloat{T})  where {T<:IEEEFloat}
     if u == one(DoubleFloat{T})
         x
     else
-        log(u)*x/(u-1.0)
+        log(u)*x / (u-1.0)
     end
 end
 
