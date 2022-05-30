@@ -1,6 +1,7 @@
 # more comprehensive tests of corner and extremal cases
 
-FT = Float64; DT = Double{FT}
+FT = Float64
+DT = DoubleFloat{FT}
 
 dnan, fnan = DT(NaN), FT(NaN)
 dinf, finf = DT(Inf), FT(Inf)
