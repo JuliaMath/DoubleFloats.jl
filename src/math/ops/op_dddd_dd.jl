@@ -53,7 +53,7 @@ end
     xhi, xlo = x
     yhi, ylo = y
     xyhi = xhi / yhi
-    uh, ul = two_prod(hi, yhi)
+    uh, ul = two_prod(xyhi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
     hi,lo = two_hilo_sum(xyhi, lo)
 end
