@@ -41,6 +41,7 @@ end
     isinf(hihi) ? (hihi, NaN) : (hi, lo)
 end
 =#
+
 @inline function dvi_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
     xhi, xlo = x    
     hi = xhi / y
