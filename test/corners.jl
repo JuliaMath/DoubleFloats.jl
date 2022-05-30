@@ -72,3 +72,30 @@ end
     @test isapprox(negzero / negtwo, negzerof / negtwof)
     @test isapprox(negtwo / negzero, negtwof / negzerof)
 end
+
+@testset "corner cases NaN" begin
+
+    x = Double64((6.61334345850887e307, 4.073749943731599e291))
+    y = Double64((2.718281828459045, 1.4456468917292502e-16))
+
+    @test !isnan(x + y)
+    @test !isnan(y + x)
+    @test !isnan(x - y)
+    @test !isnan(y - x)
+    @test !isnan(x * y)
+    @test !isnan(y * x)
+    @test !isnan(x / y)
+    @test !isnan(y / x)
+
+    x = floatmax(Double64)
+    y = Double64(3.0)
+
+    @test !isnan(x + y)
+    @test !isnan(y + x)
+e   @test !isnan(x - y)
+    @test !isnan(y - x)
+e   @test !isnan(x * y)
+    @test !isnan(y * x)
+e   @test !isnan(x / y)
+    @test !isnan(y / x)
+ nd
