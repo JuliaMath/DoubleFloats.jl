@@ -121,7 +121,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
 end
 
 function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:IEEEFloat}
-   if isinteger(n)
+   if isinteger(n) && n < 2^27 & r <= 1.0
       return r^Int(n)
    else
       return exp(n * log(r))
@@ -129,11 +129,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:IEEEFloat}
-   if isinteger(n)
-      return r^Int(n)
-   else
-      return exp(n * log(r))
-   end
+   return exp(n * log(r))
 end
 
 function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
