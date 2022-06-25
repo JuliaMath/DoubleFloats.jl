@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: If you use this software, please cite it using these metadata.
 title: DoubleFloats
-abstract: A high-performance floating point type for accurate extended precision math.
+abstract: A high-performance type for accurate extended precision math.
 authors:
   - given-names: Jeffrey
     family-names: Sarnoff
