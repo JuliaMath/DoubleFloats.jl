@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - given-names: "Jeffrey"
+    family-names: "Sarnoff"
+    email: "jeffrey.sarnoff@gmail.com"
+    affiliation: "Julia Innovator"
+    orcid: "https://orcid.org/0000-0001-9159-1667"
+title: "DoubleFloats.jl"
+version: 1.2.2
+type: software
+repository-code: "https://github.com/JuliaMath/DoubleFloats.jl"
+date-released: 2022-06-25
+url: "https://juliamath.github.io/DoubleFloats.jl/stable
+license: "MIT"
+license-url: "https://opensource.org/licenses/MIT"
