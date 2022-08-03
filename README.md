@@ -12,7 +12,7 @@
 [![Build Status](https://travis-ci.org/JuliaMath/DoubleFloats.jl.svg?branch=master)](https://travis-ci.org/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)&nbsp;&nbsp;&nbsp;
 [![Coverage Status](https://coveralls.io/repos/github/JuliaCI/Coverage.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaMath/DoubleFloats.jl?branch=master)&nbsp;&nbsp;&nbsp;
 [![codecov](https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/DoubleFloats.jl)&nbsp;&nbsp;&nbsp;
-[![Package Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/DoubleFloats)](https://pkgs.genieframework.com?packages=DoubleFloats&startdate=2015-12-30&enddate=2022-09-01)
+[![Package Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/DoubleFloats)](https://pkgs.genieframework.com?packages=DoubleFloats&startdate=2015-12-30&enddate=2040-12-31)
 
 
 ## Installation
