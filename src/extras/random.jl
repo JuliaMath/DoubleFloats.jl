@@ -1,5 +1,6 @@
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
-    hi, lo  = rand(rng, T, 2)
+    hi = rand(rng, T)
+    lo = rand(rng, T)
     if hi === zero(T)
         if lo === zero(T)
             return zero(DoubleFloat(T))
