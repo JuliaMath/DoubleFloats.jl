@@ -3,7 +3,7 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Doubl
     lo = rand(rng, T)
     if hi === zero(T)
         if lo === zero(T)
-            return zero(DoubleFloat(T))
+            return DoubleFloat(zero(T))
         end
         hi, lo = lo, hi
     end
