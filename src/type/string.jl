@@ -1,5 +1,5 @@
 function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    (!isfinite(HI(x)) || LO(x) === 0.0) && return string(HI(x))
+    (!isfinite(HI(x)) || iszero(LO(x))) && return string(HI(x))
     str = string(Float128(x))
     eat = findlast('e', str)
     isnothing(eat) && return str
