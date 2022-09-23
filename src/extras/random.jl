@@ -85,7 +85,8 @@ function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     urand1, urand2, s = ntuple(i -> zero(DoubleFloat{T}), Val{3}())
 
     while true
-        urand1, urand2 = rand(rng, DoubleFloat{T}, 2)
+        urand1 = rand(rng, DoubleFloat{T})
+        urand2 = rand(rng, DoubleFloat{T})
         urand1 = urand1 + urand1 - 1
         urand2 = urand2 + urand2 - 1
         s = urand1*urand1 + urand2*urand2
