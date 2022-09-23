@@ -90,7 +90,7 @@ function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
         urand2 = urand2 + urand2 - 1
         s = urand1*urand1 + urand2*urand2
 
-        (s >= 1 || s === 0) || break
+        (s >= 1 | iszero(s)) || break
     end
 
     s = sqrt( -log(s) / s )
