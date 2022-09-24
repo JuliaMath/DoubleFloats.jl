@@ -1,8 +1,9 @@
 function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
-    hi, lo  = rand(rng, T, 2)
+    hi = rand(rng, T)
+    lo = rand(rng, T)
     if hi === zero(T)
         if lo === zero(T)
-            return zero(DoubleFloat(T))
+            return DoubleFloat(zero(T))
         end
         hi, lo = lo, hi
     end
@@ -81,16 +82,16 @@ end
 # normal variates
 
 function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
-    urand1, urand2 = rand(rng, DoubleFloat{T}, 2)
-    urand1 = urand1 + urand1 - 1
-    urand2 = urand2 + urand2 - 1
-    s = urand1*urand1 + urand2*urand2
+    urand1, urand2, s = ntuple(i -> zero(DoubleFloat{T}), Val{3}())
 
-    while s >= 1 || s === 0
-        urand1, urand2 = rand(rng, DoubleFloat{T}, 2)
+    while true
+        urand1 = rand(rng, DoubleFloat{T})
+        urand2 = rand(rng, DoubleFloat{T})
         urand1 = urand1 + urand1 - 1
         urand2 = urand2 + urand2 - 1
         s = urand1*urand1 + urand2*urand2
+
+        (s >= 1 | iszero(s)) || break
     end
 
     s = sqrt( -log(s) / s )
