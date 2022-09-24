@@ -12,14 +12,14 @@ end
 
 
 function vecsum(x0::T,x1::T,x2::T) where {T}
-   x0 === 0.0 && return (two_sum(x1, x2)..., 0.0)
+   iszero(x0) && return (two_sum(x1, x2)..., 0.0)
    s1, e2 = two_sum(x1, x2)
    e0, e1 = two_sum(x0, s1)
    return (e0, e1, e2)
 end
 
 function vseb(a0::T, a1::T, a2::T, a3::T, a4::T, a5::T) where {T}
-    a2 === 0.0 && return (a0, a1, a2)
+    iszero(a2) && return (a0, a1, a2)
 	r0, e1 = two_sum(a0, a1)
 	if e1 != 0.0
 	  y0 = r0
@@ -31,7 +31,7 @@ function vseb(a0::T, a1::T, a2::T, a3::T, a4::T, a5::T) where {T}
 end
 
 function vseb(a0::T, a1::T, a2::T) where {T}
-    a2 === 0.0 && return (a0, a1, a2)
+    iszero(a2) && return (a0, a1, a2)
 	r0, e1 = two_sum(a0, a1)
 	if e1 != 0.0
 	  y0 = r0
