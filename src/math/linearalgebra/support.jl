@@ -16,7 +16,7 @@ function LinearAlgebra.norm(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T
     elseif p==2
         return vp = sqrt(sum(v .* v))
     else    
-        vp = sum((v).^(p))
+        vp = sum(abs.(v).^(p))
         r = inv(DoubleFloat{T}(p))
         return vp^r
     end    
