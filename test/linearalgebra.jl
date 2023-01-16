@@ -29,6 +29,9 @@ using GenericLinearAlgebra, GenericSchur
     @test norm(Double64[2, 1]) ≈ norm(Float64[2, 1])
     @test norm(Double64[2, 1], 3.0) ≈ norm(Float64[2, 1], 3.0)
 
+    # issue #159
+    @test norm(Double64[-1, -1], 1) ≈ 2
+
     # issue #105
     for T in [Double16, Double32, Double64]
         for p in [0, 1.0, 2.0, Inf, -Inf]
