@@ -4,7 +4,7 @@ show(io::IO, ::Type{Double64}) = print(io, "Double64")
 show(io::IO, ::Type{Double32}) = print(io, "Double32")
 
 function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
-    compact = get(io, :compact, true)
+    compact = get(io, :compact, false)
     if compact
         str = string(x.hi)
     else
@@ -16,7 +16,7 @@ end
 function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     re, im = reim(x)
     imstr = isfinite(im) ? "im" : "*im"
-    compact = get(io, :compact, true)
+    compact = get(io, :compact, false)
     if compact
         str = string(HI(re), (signbit(x.im.hi) ? " - " : " + "), abs(HI(im)), imstr)
     else
