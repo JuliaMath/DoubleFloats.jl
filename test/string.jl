@@ -1,5 +1,5 @@
 function test_string_and_show(x, s)
-  b = IOBuffer
+  b = IOBuffer()
   show(b, x)
   @test String(take!(b)) == string(x) == s
 end
