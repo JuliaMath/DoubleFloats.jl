@@ -7,8 +7,7 @@
 end
 
 macro df64_str(val::AbstractString)
-  n = Double64(val)
-  :(Double64($(n.hi), $(n.lo)))
+  Double64(val)
 end
 
 @inline function Double32(str::S) where {S<:AbstractString}
@@ -20,8 +19,7 @@ end
 end
 
 macro df32_str(val::AbstractString)
-  n = Double32(val)
-  :(Double32($(n.hi), $(n.lo)))
+  Double32(val)
 end
 
 @inline function Double16(str::S) where {S<:AbstractString}
@@ -33,8 +31,7 @@ end
 end
 
 macro df16_str(val::AbstractString)
-  n = Double16(val)
-  :(Double16($(n.hi), $(n.lo)))
+  Double16(val)
 end
 
 function tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int=10) where {S<:AbstractString}
