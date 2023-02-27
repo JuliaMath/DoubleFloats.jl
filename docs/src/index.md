@@ -3,7 +3,7 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
-- N.B. `Double64` is the most performant type <sup>[β](#involvement)</sup>
+- N.B. `Double64` is the most performant type [^β]
 
 ----
 
@@ -140,8 +140,6 @@ Contributions are very welcome, as are feature requests and suggestions. Please 
 
 ----
 
-<a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
+[^β]: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
 
 ----
-
-
