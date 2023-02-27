@@ -14,7 +14,7 @@ using DoubleFloats, LinearAlgebra
 n = 25
 vector = rand(Double64, n)
 matrix = reshape(rand(Double64,n*n),n,n)
-
+```
 
 ## Matrix Predicates
 
@@ -54,5 +54,3 @@ matrix = reshape(rand(Double64,n*n),n,n)
 - `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
 
 - matrixfunction(function, matrix)
-
-
