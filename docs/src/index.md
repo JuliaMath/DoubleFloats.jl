@@ -136,7 +136,7 @@ Usage questions can be posted on the [Julia Discourse forum](https://discourse.j
 
 ## Contributions
 
-Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/man/contributing/) has a few guidelines that should be followed when opening pull requests.
+Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/#Contributions) has a few guidelines that should be followed when opening pull requests.
 
 ----
 
