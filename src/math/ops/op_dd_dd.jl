@@ -60,7 +60,6 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     hi, lo = x
     (isnan(hi) | iszero(hi)) && return x
     signbit(hi) && throw(DomainError("sqrt(x) expects x >= 0"))
-    issubnormal(hi) && return DoubleFloat{T}(sqrt(hi), zero(T))
 
     half = T(0.5)
     dhalf = (half, zero(T))
@@ -81,6 +80,7 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     r = add_dddd_dd(r, radj)
 
     r = mul_dddd_dd(r, x)
+    isnan(HI(r)) && return DoubleFloat{T}(sqrt(hi), zero(T))  # subnormal numbers
 
     return r
 end
@@ -100,7 +100,7 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 =#
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    issubnormal(HI(a)) && return DoubleFloat{T}(cbrt(HI(a)), zero(T))
+    isnan(HI(a)) && return a
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
@@ -151,5 +151,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
     amax3 = mul_dddd_dd(amax3, onethird)
 
     ax = add_dddd_dd(ax, amax3)
+
+    isnan(HI(ax)) && return DoubleFloat{T}(cbrt(HI(a)), zero(T))  # subnormal numbers
     return ax
 end
