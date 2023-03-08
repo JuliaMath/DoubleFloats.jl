@@ -46,3 +46,17 @@
     @test typeof(rand(Double32)) == Double32
     @test typeof(rand(Double16)) == Double16
 end
+
+@testset "Subnormal numbers" begin
+    for (F, D) in (
+        (Float64, Double64),
+        (Float32, Double32),
+        (Float16, Double16),
+    )
+        sn = D(prevfloat(floatmin(F)) / 10)
+
+        @test issubnormal(sn)
+        @test sqrt(F(sn)) == F(sqrt(D(sn)))
+        @test cbrt(F(sn)) == F(cbrt(D(sn)))
+    end
+end
