@@ -53,7 +53,8 @@ end
         (Float32, Double32),
         (Float16, Double16),
     )
-        sn = D(prevfloat(floatmin(F)) / 10)
+        # NOTE: using `prevfloat(floatmin(F))` doesn't expose `sqrt(D(sn))` returning a `NaN`
+        sn = D(floatmin(F) / 10)
 
         @test issubnormal(sn)
         @test sqrt(F(sn)) == F(sqrt(D(sn)))
