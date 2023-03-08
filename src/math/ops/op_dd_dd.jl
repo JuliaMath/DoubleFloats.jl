@@ -57,14 +57,16 @@ end
 
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    (isnan(HI(x)) | iszero(HI(x))) && return x
-    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
+    hi, lo = x
+    (isnan(hi) | iszero(hi)) && return x
+    signbit(hi) && throw(DomainError("sqrt(x) expects x >= 0"))
+    issubnormal(hi) && return DoubleFloat{T}(sqrt(hi), zero(T))
 
     half = T(0.5)
     dhalf = (half, zero(T))
 
-    r = inv(sqrt(HI(x)))
-    h = (HI(x) * half, LO(x) * half)
+    r = inv(sqrt(hi))
+    h = (hi * half, lo * half)
 
     r2 = mul_fpfp_dd(r, r)
     hr2 = mul_dddd_dd(h, r2)
@@ -98,7 +100,7 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 =#
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = HILO(a)
+    issubnormal(HI(a)) && return DoubleFloat{T}(cbrt(HI(a)), zero(T))
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
