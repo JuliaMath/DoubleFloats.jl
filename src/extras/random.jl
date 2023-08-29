@@ -21,15 +21,16 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Compl
     return Complex{DoubleFloat{T}}(re, im)
 end
 
-function randpm(::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
-    r = rand(DoubleFloat{T})
-    r = rand(Bool) ? r : -r
-    return r
-end
 
 function randpm(rng::MersenneTwister, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     r = rand(rng, DoubleFloat{T})
     r = rand(rng, Bool) ? r : -r
+    return r
+end
+
+function randpm(::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
+    r = rand(DoubleFloat{T})
+    r = rand(Bool) ? r : -r
     return r
 end
 
