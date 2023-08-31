@@ -74,11 +74,11 @@ function round(x::DoubleFloat{T}, ::RoundingMode{:Down}) where {T<:IEEEFloat}
     return floor(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:RoundToZero}) where {T<:IEEEFloat}
+function round(x::DoubleFloat{T}, ::RoundingMode{:ToZero}) where {T<:IEEEFloat}
     return isnegative(x) ? ceil(x) : floor(x)
 end
 
-function round(x::DoubleFloat{T}, ::RoundingMode{:RoundFromZero}) where {T<:IEEEFloat}
+function round(x::DoubleFloat{T}, ::RoundingMode{:FromZero}) where {T<:IEEEFloat}
     return isnegative(x) ? floor(x) : ceil(x)
 end
 
