@@ -59,3 +59,6 @@ end
     @test 6.0 == @eval tld($T(pi), 0.5)
 end
 
+@testset "#176" begin
+    @test round(Double16(pi), RoundToZero) == 3
+end
