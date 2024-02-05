@@ -169,7 +169,7 @@ end
 
 function DWTimesDW2(xₕᵢ::T, xₗₒ::T, yₕᵢ::T, yₗₒ::T) where {T<:AbstractFloat}
    cₕᵢ, c1 = Fast2Mult(xₕᵢ, yₕᵢ)
-   t0 = xₗₒ * yₗₒ
+   t0 = xₕᵢ * yₗₒ
    c2 = fma(xₗₒ, yₕᵢ, t0)
    c3 = c1 + c2
    zₕᵢ, zₗₒ = Fast2Sum(cₕᵢ, c3)
