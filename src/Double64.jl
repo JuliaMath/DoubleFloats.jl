@@ -9,7 +9,7 @@ end
 @inline _ntuple_equal(x::NTuple{2,Float64}, y::NTuple{2,Float64}) = (x[1] === y[1]) && (x[2] === y[2])
 @inline _ntuple_equal(x::NTuple{N,Vec{M,T}}, y::NTuple{N,Vec{M,T}}) where {N,M,T} = all(all.(x .== y))
 
-const Tuple2 = NTuple{2, Float64]
+const Tuple2 = NTuple{2, Float64}
 
 struct Double64 <: AbstractFloat
     hilo::NTuple{2,Float64}
