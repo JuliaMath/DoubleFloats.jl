@@ -11,7 +11,19 @@ convert(::Type{Float32}, x::Double32) = HI(x)
 convert(::Type{Float16}, x::Double16) = HI(x)
 
 convert(::Type{DoubleFloat{T}}, x::I) where {T<:IEEEFloat, I<:Integer} = DoubleFloat{T}(T(x))
-convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat, I<:Integer} = I(round(BigInt, BigFloat(HI(x))+ BigFloat(LO(x))))
+function convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat, I<:Integer}
+    bi = trunc(BigInt, BigFloat(HI(x)) + BigFloat(LO(x)))
+    abi = abs(bi)
+    if abi <= typemax(Int)
+        convert(Int, bi)
+    elseif abi <= typemax(Int64)
+        convert(Int64, bi)
+    elseif abi <= typemax(Int128)
+        convert(Int128, bi)
+    else
+        bi
+    end
+end
 
 function convert(::Type{BigFloat}, x::DoubleFloat{T}) where {T<:IEEEFloat}
     res = Base.BigFloat(HI(x)) + Base.BigFloat(LO(x))
