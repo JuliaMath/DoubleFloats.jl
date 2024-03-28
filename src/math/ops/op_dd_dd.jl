@@ -56,7 +56,7 @@ end
 end
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    iszero(HI(x))) && return x
+    iszero(HI(x)) && return x
     signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))   # maybe we can remove this check? It will return nan anyway.
 
     ahi, alo = HILO(x)
