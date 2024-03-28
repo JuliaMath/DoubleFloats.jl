@@ -56,7 +56,6 @@ end
     return z
 end
 
-
 function mul_by_half(r::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, xphi = frexp(HI(r))
     frlo, xplo = frexp(LO(r))
@@ -120,20 +119,20 @@ function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     return s
 end
 
-function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:IEEEFloat}
-   if isinteger(n)
-      return r^Int(n)
-   else
-      return exp(n * log(r))
-   end
+function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T <: IEEEFloat}
+    if isinteger(n)
+        return r^Int64(Float64(n)) # convert n to Float64 first
+    else
+       return exp(n * log(r))
+    end
 end
 
 function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:IEEEFloat}
-   if isinteger(n)
-      return r^Int(n)
-   else
-      return exp(n * log(r))
-   end
+    if isinteger(n)
+        return r^Int64(Float64(n)) # convert n to Float64 first
+    else
+        return exp(n * log(r))
+    end
 end
 
 function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
