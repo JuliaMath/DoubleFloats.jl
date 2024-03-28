@@ -55,34 +55,16 @@ end
     return zhi, zlo
 end
 
-
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = x
-    (isnan(hi) | iszero(hi)) && return x
-    signbit(hi) && throw(DomainError("sqrt(x) expects x >= 0"))
+    iszero(HI(x))) && return x
+    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))   # maybe we can remove this check? It will return nan anyway.
 
-    half = T(0.5)
-    dhalf = (half, zero(T))
-
-    r = inv(sqrt(hi))
-    h = (hi * half, lo * half)
-
-    r2 = mul_fpfp_dd(r, r)
-    hr2 = mul_dddd_dd(h, r2)
-    radj = sub_fpdd_dd(half, hr2)
-    radj = mul_ddfp_dd(radj, r)
-    r = add_fpdd_dd(r, radj)
-
-    r2 = mul_dddd_dd(r, r)
-    hr2 = mul_dddd_dd(h, r2)
-    radj = sub_fpdd_dd(half, hr2)
-    radj = mul_dddd_dd(radj, r)
-    r = add_dddd_dd(r, radj)
-
-    r = mul_dddd_dd(r, x)
-    isnan(HI(r)) && return DoubleFloat{T}(sqrt(hi), zero(T))  # subnormal numbers
-
-    return r
+    ahi, alo = HILO(x)
+    s = sqrt(ahi)
+    d = fma(-s, s, ahi)    # ahi=s*s+d,  same order of magnitude than alo, so we can add alo safely below:
+    d += alo               #  ahi+alo = s*s+d = s*s*(1+d/(s*s))   ==> sqrt(ahi+alo) = s*sqrt(1+d/s2) approx= s*(1+d/(2s2)) = s + d/(2*s)
+    d = d/(s+s)
+    return s,d
 end
 
 #=
