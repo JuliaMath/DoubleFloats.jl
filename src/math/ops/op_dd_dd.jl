@@ -55,32 +55,16 @@ end
     return zhi, zlo
 end
 
-
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    (isnan(HI(x)) | iszero(HI(x))) && return x
-    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
+    iszero(HI(x)) && return x
+    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0")) 
 
-    half = T(0.5)
-    dhalf = (half, zero(T))
-
-    r = inv(sqrt(HI(x)))
-    h = (HI(x) * half, LO(x) * half)
-
-    r2 = mul_fpfp_dd(r, r)
-    hr2 = mul_dddd_dd(h, r2)
-    radj = sub_fpdd_dd(half, hr2)
-    radj = mul_ddfp_dd(radj, r)
-    r = add_fpdd_dd(r, radj)
-
-    r2 = mul_dddd_dd(r, r)
-    hr2 = mul_dddd_dd(h, r2)
-    radj = sub_fpdd_dd(half, hr2)
-    radj = mul_dddd_dd(radj, r)
-    r = add_dddd_dd(r, radj)
-
-    r = mul_dddd_dd(r, x)
-
-    return r
+    ahi, alo = HILO(x)
+    s = sqrt(ahi)
+    d = fma(-s, s, ahi)    # ahi=s*s+d,  same order of magnitude than alo, so we can add alo safely below:
+    d += alo               #  ahi+alo = s*s+d = s*s*(1+d/(s*s))   ==> sqrt(ahi+alo) = s*sqrt(1+d/s2) approx= s*(1+d/(2s2)) = s + d/(2*s)
+    d = d/(s+s)
+    return s,d
 end
 
 #=
@@ -98,7 +82,7 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 =#
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = HILO(a)
+    isnan(HI(a)) && return a
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
@@ -149,5 +133,7 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
     amax3 = mul_dddd_dd(amax3, onethird)
 
     ax = add_dddd_dd(ax, amax3)
+
+    isnan(HI(ax)) && return DoubleFloat{T}(cbrt(HI(a)), zero(T))  # subnormal numbers
     return ax
 end
