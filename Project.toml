@@ -18,7 +18,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
 Polynomials = "1, 2, 3, 4, 5, 6"
-Quadmath = "0.4, 0.5, 0.6, 0.7, 0.8"
+Quadmath = "0.5.10, 0.6, 0.7, 0.8"
 Requires = "1"
 SpecialFunctions = "1.0, 1.1, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5"
 GenericLinearAlgebra = "0.2.5, 0.3, 0.4, 0.5, 0.6"

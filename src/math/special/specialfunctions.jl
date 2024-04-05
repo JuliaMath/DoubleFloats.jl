@@ -1,5 +1,5 @@
 import .SpecialFunctions
-import .SpecialFunctions: erf, erfc, gamma, lgamma, logabsgamma,
+import .SpecialFunctions: erf, erfc, gamma, logabsgamma,
     besselj0, besselj1, besselj, bessely0, bessely1, bessely,
     ellipk
 
