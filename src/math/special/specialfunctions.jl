@@ -1,6 +1,7 @@
 import .SpecialFunctions
-import .SpecialFunctions: erf, erfc, gamma, lgamma,
-    besselj0, besselj1, besselj, bessely0, bessely1, bessely
+import .SpecialFunctions: erf, erfc, gamma, logabsgamma,
+    besselj0, besselj1, besselj, bessely0, bessely1, bessely,
+    ellipk
 
 include("agm.jl")
 include("bessel.jl")
