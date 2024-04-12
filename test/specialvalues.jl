@@ -29,8 +29,23 @@ end
 @testset "Inf and NaN layout $T" for T in (Double16, Double32, Double64)
     @test isinf(HI(T(Inf)))
     @test isnan(HI(T(NaN)))
-    @test isnan(LO(T(Inf)))
+    @test isinf(LO(T(Inf)))
     @test isnan(LO(T(NaN)))
+end
+
+@testset "Inf and NaN conversion" for T in (Double16, Double32, Double64)
+    for S in (BigFloat, Float128)
+        @test isnan(S(T(NaN)))
+        @test isinf(S(T(Inf)))
+        @test S(T(Inf)) > 0
+        @test isinf(S(T(-Inf)))
+        @test S(T(-Inf)) < 0
+        @test isnan(T(S(NaN)))
+        @test isinf(T(S(Inf)))
+        @test T(S(Inf)) > 0
+        @test isinf(T(S(-Inf)))
+        @test T(S(-Inf)) < 0
+    end
 end
 
 @testset "NaNs $T" for T in (Double16, Double32, Double64)
