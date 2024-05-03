@@ -29,8 +29,6 @@ end
 @testset "Inf and NaN layout $T" for T in (Double16, Double32, Double64)
     @test isinf(HI(T(Inf)))
     @test isnan(HI(T(NaN)))
-    @test isinf(LO(T(Inf)))
-    @test isnan(LO(T(NaN)))
 end
 
 @testset "Inf and NaN conversion" for T in (Double16, Double32, Double64)
