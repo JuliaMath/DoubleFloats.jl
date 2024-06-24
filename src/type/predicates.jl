@@ -1,4 +1,4 @@
-""""
+"""
 __Predicates__ are functions that ask "yes or no" questions of their argument[s].
 You can ask of a number "Is this zero?" or "Is this one?" and these predicates
 (`iszero`, `isone`) will work as expected with almost all numerical types.
@@ -87,10 +87,10 @@ isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 """
     isposinf(x)
 
-Tests whether a number positive and infinite.
+Tests whether a number is positive and infinite.
 """
 isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isinf(HI(x))
+    isinf(HI(x)) && !signbit(HI(x))
 
 """
     isneginf(x)
