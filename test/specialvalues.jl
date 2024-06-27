@@ -13,16 +13,19 @@ end
     @test isinf(T(Inf)) == isinf(inf(T))
     @test isinf(T(Inf)) == isposinf(posinf(T))
     @test isinf(T(-Inf)) == isneginf(neginf(T))
+    @test isinf(T(-Inf)) == !isposinf(neginf(T))
     @test isnan(T(NaN)) == isnan(nan(T))
 
     @test isinf(T(Inf32)) == isinf(inf(T))
     @test isinf(T(Inf32)) == isposinf(posinf(T))
     @test isinf(T(-Inf32)) == isneginf(neginf(T))
+    @test isinf(T(-Inf32)) == !isposinf(neginf(T))
     @test isnan(T(NaN32)) == isnan(nan(T))
 
     @test isinf(T(Inf16)) == isinf(inf(T))
     @test isinf(T(Inf16)) == isposinf(posinf(T))
     @test isinf(T(-Inf16)) == isneginf(neginf(T))
+    @test isinf(T(-Inf16)) == !isposinf(neginf(T))
     @test isnan(T(NaN16)) == isnan(nan(T))
 end
 
@@ -75,6 +78,18 @@ end
     @test isnan(acsch(T(NaN)))
     @test isnan(asech(T(NaN)))
     @test isnan(acoth(T(NaN)))
+end
+
+@testset "Inf and NaN function values $T" for T in (Double16, Double32, Double64)
+    @test isnan(sqrt(T(0)/T(0)))
+    @test isinf(sqrt(T(Inf)))
+    @test isinf(exp(T(Inf)))
+    @test isinf(log(T(Inf)))
+    @test isinf(log2(T(Inf)))
+    @test isinf(log10(T(Inf)))
+    @test isinf(log1p(T(Inf)))
+    @test isinf(T(Inf)*T(1))
+    @test isinf(T(1)*T(Inf))
 end
     
 @testset "floatmin2 $T" for T in (Double16, Double32, Double64)

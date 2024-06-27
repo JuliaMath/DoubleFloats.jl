@@ -259,7 +259,7 @@ end
 
 function log1p(x::DoubleFloat{T})  where {T<:IEEEFloat}
     isnan(x) && return x
-    isinf(x) && !signbit(x) && return 
+    isinf(x) && !signbit(x) && return x
     u = 1.0 + x
     if u == one(DoubleFloat{T})
         x

@@ -2,9 +2,9 @@ zero(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(zero(T), zero
 one(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(one(T), zero(T))
 
 nan(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(NaN), T(NaN))
-inf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(Inf), T(NaN))
-posinf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(Inf), T(NaN))
-neginf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(-Inf), T(NaN))
+inf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(Inf), T(Inf))
+posinf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(Inf), T(Inf))
+neginf(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(T(-Inf), T(-Inf))
 
 typemax(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(typemax(T))
 typemin(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = DoubleFloat{T}(typemin(T))

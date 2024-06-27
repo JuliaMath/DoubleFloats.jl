@@ -56,8 +56,9 @@ end
 end
 
 function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    iszero(HI(x)) && return x
-    signbit(HI(x)) && throw(DomainError("sqrt(x) expects x >= 0"))
+    (isnan(HI(x)) | iszero(HI(x))) && return x
+    signbit(HI(x)) && Base.Math.throw_complex_domainerror(:sqrt, HI(x))
+    isinf(HI(x)) && return x
 
     ahi, alo = HILO(x)
     s = sqrt(ahi)

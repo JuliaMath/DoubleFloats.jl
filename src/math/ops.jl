@@ -6,7 +6,7 @@ isnotfinite(x::Float32) = reinterpret(UInt32,x) & 0x7f800000 === 0x7f800000
 isqnan(x::Float32) = reinterpret(UInt32,x)      & 0x7fc00000 === 0x7fc00000
 isainf(x::Float32) = reinterpret(UInt32,x)      & 0x7fc00000 === 0x7f800000
 
-isnotfinite(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(LO(x))
+isnotfinite(x::DoubleFloat{T}) where {T<:IEEEFloat} = !isfinite(HI(x))
 isqnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isqnan(HI(x))
 isainf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isainf(HI(x))
 
