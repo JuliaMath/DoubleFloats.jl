@@ -17,6 +17,13 @@ end
     @test Double64(10.0)^0 == Double64(1.0)
     @test Double64(10.0)^1 == Double64(10.0)
     @test Double64(0.0)^0 == Double64(1.0)
+    @test 2^Double64(-3) == 0.125
+    @test isa(2^Double16(1), Double16)
+    @test isa(2^Double16(-1), Double16)
+    @test isa(2^Double32(1), Double32)
+    @test isa(2^Double32(-1), Double32)
+    @test isa(2^Double64(1), Double64)
+    @test isa(2^Double64(-1), Double64)
 end
 
 f64a = sqrt(2.0)
