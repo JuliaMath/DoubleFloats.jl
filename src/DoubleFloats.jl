@@ -28,7 +28,6 @@ export DoubleFloat,
        spread, sld, tld,
        signs,
        randpm,
-       tanpi,
        agm, agm1, ellipk,
        besselj0, besselj1, besselj, bessely0, bessely1, bessely,
        gamma, loggamma, lgamma, erf, erfc,
@@ -74,6 +73,12 @@ import Base.Math: modf, fma, muladd,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth,
              sinpi, cospi, sincos, sincospi, cis, cispi
+
+@static if VERSION >= v"1.10.0"
+    import Base.Math: tanpi 
+else
+    export tanpi 
+end       
 
 import Quadmath: Float128
 
