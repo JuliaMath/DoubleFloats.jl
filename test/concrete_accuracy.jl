@@ -8,7 +8,7 @@
     @test pi_accurate   == DoubleFloat{Float64}(pi)
 
     @test abs(inv(inv(pi_accurate)) - pi_accurate) <= eps(LO(pi_accurate))
-    @test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= eps(LO(phi_accurate))
+    @test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= 3eps(LO(phi_accurate))
 
     a = Base.TwicePrecision(3.0) / Base.TwicePrecision(7.0)
     b = Double64(3.0) / Double64(7.0)

@@ -25,14 +25,14 @@ end
     return hi, lo
 end
 
-# Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
+# Algorithm 10 from Tight and rigourous error bounds.  relative error <= 7u²
 @inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_prod(xhi, yhi)
-    t = xlo * ylo
-    t = fma(xhi, ylo, t)
-    t = fma(xlo, yhi, t)
+    t1 = xhi * ylo
+    t2 = xlo * yhi
+    t = t1 + t2
     t = lo + t
     hi, lo = two_hilo_sum(hi, t)
     return hi, lo
