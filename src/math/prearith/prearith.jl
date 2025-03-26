@@ -41,21 +41,33 @@ end
 flipsign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
 copysign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
 
-function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
+"""
+    frexps(x::DoubleFloat)
+
+Applies `Base.frexp` to both `hi` and `lo` parts, and returns a tuple of tuples.
+See also `DoubleFloats.ldexps` for the inverse, and `DoubleFloats.signs` similar tuple.
+"""
+function frexps(x::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, exphi = frexp(HI(x))
     frlo, explo = frexp(LO(x))
     return (frhi, exphi), (frlo, explo)
+end
+
+function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    frhi, exphi = frexp(HI(x))
+    frlo, explo = frexp(LO(x))
+    return DoubleFloat{T}(frhi, ldexp(frlo, explo - exphi)), exphi
 end
 
 function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat, I<:Integer}
     return DoubleFloat{T}(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function Base.Math.ldexp(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
+function ldexps(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
     return DoubleFloat(ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
-function Base.Math.ldexp(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:Integer}
+function ldexps(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:Integer}
     return ldexp(dhilo[1], dhilo[2])
 end
 
