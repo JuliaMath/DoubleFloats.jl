@@ -199,10 +199,10 @@ Double64(x::Double16) = isfinite(x) ? Double64(two_sum(Float64(HI(x)), Float64(L
 Promote a `Double16` to a `Double32` by converting the `hi` and `lo` attributes
 of `x` to `Double32`s and adding in extended precision.
 """
-Double32(x::Double16) = isfinite(x) ? Double32(BigFloat(x)) : Double32(Float32(x))
+Double32(x::Double16) = isfinite(x) ? Double32(two_sum(Float32(HI(x)), Float32(LO(x)))) : Double32(Float32(x))
 Double32(x::Double64) = isfinite(x) ? Double32(BigFloat(x)) : Double32(Float32(x))
 Double16(x::Double64) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
-Double16(x::Double32) = isfinite(x) ? Double16(BigFloat(x)) : Double16(Float16(x))
+Double16(x::Double32) = isfinite(x) ? Double16(Float64(HI(x))+LO(x)) : Double16(Float16(x))
 
 # cleanup to support other pkgs
 DoubleFloat(x::Float64) = Double64(x, 0.0)
@@ -245,5 +245,5 @@ function Base.decompose(x::Double64)
     return decompose(BigFloat(x))
 end
 function Base.decompose(x::D) where {D<:Union{Double32,Double16}}
-    return decompose(Double64(x))
+    return decompose(Float64(x))
 end
