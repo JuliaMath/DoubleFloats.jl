@@ -8,6 +8,8 @@ f3 = 3.0
 d3 = Double64(3.0)
 b3 = BigFloat(3)
 r3 = 3//1
+p0 = Double64(0.0)
+n0 = Double64(-0.0)
 
 small = Double64(0.25*eps(1.0))
 gt1 = one(Double64) + small
@@ -126,4 +128,19 @@ end
   @test !(gt1 < 1.0)
   @test lt1 < 1.0
   @test !(lt1 > 1.0)
+end
+
+@testset "compare zeros" begin
+  @test !(p0 === n0)
+  @test p0 == n0
+  
+  @test p0 <= n0
+  @test n0 <= p0
+  @test !(p0 < n0)
+  @test !(n0 < p0)
+  
+  @test p0 >= n0
+  @test n0 >= p0
+  @test !(p0 > n0)
+  @test !(n0 > p0)
 end
