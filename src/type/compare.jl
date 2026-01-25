@@ -12,10 +12,10 @@ end
     return (LO(x) !== LO(y)) || (HI(x) !== HI(y) || posnegzeros(HI(x),HI(y)))
 end
 @inline function (<)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (HI(x) < HI(y)) || (HI(x) == HI(y) && LO(x) < LO(y))
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y)) || posnegzeros(HI(x), HI(y))
 end
-@inline function (<=)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
-    return (HI(x) < HI(y)) || (HI(x) == HI(y) && LO(x) <= LO(y))
+@inline function (<=)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T}
+    return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) <= LO(y)) || posnegzeros(HI(x), HI(y))
 end
 
 @inline function isequal(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -24,7 +24,6 @@ end
 @inline function isless(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     return x < y
 end
-
 
 @inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
     return (==)(x, DoubleFloat{T}(y))
