@@ -137,7 +137,7 @@ end
   @test p0 <= n0
   @test n0 <= p0
   @test !(p0 < n0)
-  @test !(no < p0)
+  @test !(n0 < p0)
   
   @test p0 >= n0
   @test n0 >= p0
