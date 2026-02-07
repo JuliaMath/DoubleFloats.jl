@@ -127,13 +127,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T <: IEEEFloat}
     end
 end
 
-function Base.:(^)(r::Int, n::DoubleFloat{T}) where {T<:IEEEFloat}
-    if isinteger(n)
-        return DoubleFloat{T}(r)^Int64(Float64(n)) # convert n to Float64 first
-    else
-        return exp(n * log(r))
-    end
-end
+Base.:(^)(r::Integer, n::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(r)^n
 
 function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
     is_neg = signbit(HI(a))
