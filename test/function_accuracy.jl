@@ -85,6 +85,12 @@ end
     @test test_atol(rand_bigf, rand_vals, atanh, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, atanh, 1.0e-29)
 
+    @test test_atol(rand_bigf, rand_vals, x -> x^x, 1.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, x -> x^x, 1.0e-31)
+
+    @test test_atol(rand_bigf, rand_vals, x -> 2^x, 1.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, x -> 2^x, 1.0e-31)
+
 
     @test test_atol(rand1_bigf, rand1_vals, exp, 1.0e-30)
     @test test_rtol(rand1_bigf, rand1_vals, exp, 1.0e-31)
@@ -115,4 +121,10 @@ end
 
     @test test_atol(rand1_bigf, rand1_vals, asinh, 1.0e-31)
     @test test_rtol(rand1_bigf, rand1_vals, asinh, 1.0e-31)
+
+    @test test_atol(rand1_bigf, rand1_vals, x -> x^x, 1.0e-30)
+    @test test_rtol(rand1_bigf, rand1_vals, x -> x^x, 1.0e-31)
+
+    @test test_atol(rand1_bigf, rand1_vals, x -> 2^x, 1.0e-30)
+    @test test_rtol(rand1_bigf, rand1_vals, x -> 2^x, 1.0e-31)
 end
