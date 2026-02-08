@@ -127,8 +127,6 @@ function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T <: IEEEFloat}
     end
 end
 
-Base.:(^)(r::Integer, n::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(r)^n
-
 function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
     is_neg = signbit(HI(a))
     xabs = is_neg ? -a : a
