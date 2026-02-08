@@ -120,7 +120,7 @@ function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
 end
 
 function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T <: IEEEFloat}
-    if isinteger(n) && n ≤ min(2^20, intmaxfloat(T, Int64))
+    if isinteger(n) && n ≤ min(2^20, maxintfloat(T, Int64))
         return r^Int64(n.hi)
     else
         return exp(n * log(r))
