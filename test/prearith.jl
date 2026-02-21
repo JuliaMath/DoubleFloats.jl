@@ -26,6 +26,8 @@
     # @test ldexp(significand(val), exponent(val)) == val
 
     @test signs(val) == (sign(HI(val)), sign(LO(val)))
+    @test sign(val) === T(1)
+    @test sign(negval) === T(-1)
 end
 
 @testset "trunc $T" for T in (Double16, Double32, Double64)

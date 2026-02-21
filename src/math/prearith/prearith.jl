@@ -1,5 +1,5 @@
 @inline signbit(a::DoubleFloat{T}) where {T} = signbit(HI(a))
-@inline sign(a::DoubleFloat{T}) where {T} = sign(HI(a))
+@inline sign(a::DoubleFloat{T}) where {T} = DoubleFloat{T}(sign(HI(a)))
 
 @inline function (-)(a::DoubleFloat{T}) where {T<:IEEEFloat}
     if iszero(LO(a)) || isnan(LO(a))
