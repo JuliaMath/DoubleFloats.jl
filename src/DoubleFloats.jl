@@ -132,15 +132,7 @@ include("extras/random.jl")
 include("extras/misc.jl")
 include("extras/macros.jl")
 
-if VERSION >= v"1.1.0"
-  using SpecialFunctions
-  include("math/special/specialfunctions.jl")
-else
-    function __init__()
-        @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" begin
-            include("math/special/specialfunctions.jl")
-        end
-    end
-end
+using SpecialFunctions
+include("math/special/specialfunctions.jl")
 
 end # module DoubleFloats
