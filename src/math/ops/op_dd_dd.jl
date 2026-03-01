@@ -1,47 +1,7 @@
-@inline function abs_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = x
-    if signbit(hi)
-        hi = -hi
-        lo = -lo
-    end
-    return hi, lo
-end
-
-@inline function neg_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = x
-    hi = -hi
-    lo = -lo
-    return hi, lo
-end
-
-@inline function negabs_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = x
-    if !signbit(hi)
-        hi = -hi
-        lo = -lo
-    end
-    return hi, lo
-end
-
 function inv_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     return DWInvDW3(HI(x), LO(x))
 end
-function inv_dd_dd_fast(x::Tuple{T,T}) where {T<:IEEEFloat}
-    return DWInvDW2(HI(x), LO(x))
-end
 
-#=
-   slightly faster than inv_dd_dd_fast, without analytic relerr though
-@inline function inv_dd_dd_fast(y::Tuple{T,T}) where {T<:IEEEFloat}
-    xhi, xlo = one(T), zero(T)
-    yhi, ylo = y
-    hi = xhi / yhi
-    uh, ul = two_prod(hi, yhi)
-    lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi, lo = two_sum(hi, lo)
-    return hi, lo
-end
-=#
 @inline function square_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
     ahi, alo = HILO(a)
     zhi = ahi * ahi
@@ -49,6 +9,7 @@ end
     zlo = fma(alo, alo, zlo)
     return zhi, fma(alo*2, ahi, zlo)
 end
+
 @inline function cube_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
     zhi, zlo = square_dd_dd(a)
     zhi, zlo = mul_dddd_dd((zhi, zlo), a)
