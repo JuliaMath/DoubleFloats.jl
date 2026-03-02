@@ -132,7 +132,6 @@ include("extras/random.jl")
 include("extras/misc.jl")
 include("extras/macros.jl")
 
-import SpecialFunctions
 import SpecialFunctions: erf, erfc, gamma, logabsgamma,
     besselj0, besselj1, besselj, bessely0, bessely1, bessely,
     ellipk
