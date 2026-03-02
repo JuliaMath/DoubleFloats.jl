@@ -40,8 +40,6 @@ using Printf
 using Random
 import Random: rand, randn
 
-using Polynomials
-
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
