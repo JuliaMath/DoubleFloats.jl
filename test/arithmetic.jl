@@ -78,15 +78,8 @@ end
 end
 
 @testset "rempi" begin
-    @test iszero(DoubleFloats.rem1pi(Double64(pi)))
     @test iszero(DoubleFloats.rem2pi(2*Double64(pi)))
-    @test iszero(DoubleFloats.remhalfpi(0.5*Double64(pi)))
-    @test iszero(DoubleFloats.remqrtrpi(0.25*Double64(pi)))
-
-    @test iszero(DoubleFloats.rem1pi(Double32(pi)))
     @test iszero(DoubleFloats.rem2pi(2*Double32(pi)))
-    @test iszero(DoubleFloats.remhalfpi(0.5*Double32(pi)))
-    @test iszero(DoubleFloats.remqrtrpi(0.25*Double32(pi)))
 end
 
 @testset "hypot" begin

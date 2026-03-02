@@ -12,7 +12,5 @@ end
     x=cbrt(41)*sqrt(Double64(pi))
 
     @test DoubleFloats.rem2pi(x) == Double64(6.111805926475162, -1.667563077572613e-16)
-    @test DoubleFloats.rem1pi(x) == Double64(2.9702132728853683, 1.54868222178066e-16)
     @test DoubleFloats.rem2pi(-x) == Double64(-0.1713793807044248, 4.647966647701768e-18)
-    @test DoubleFloats.rem1pi(-x) == Double64(2.9702132728853683, 1.54868222178066e-16)
 end

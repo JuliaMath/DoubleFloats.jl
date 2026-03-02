@@ -94,21 +94,6 @@ function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return HI(x) < 0 ? -m : m
 end
 
-function rem1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    m = mod1pi(x)
-    return HI(x) < 0 ? -m : m
-end
-
-function remhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    m = modhalfpi(x)
-    return HI(x) < 0 ? -m : m
-end
-
-function remqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    m = modqrtrpi(x)
-    return HI(x) < 0 ? -m : m
-end
-
 # ========================================== ^^^^^ =========================================
 
 const pi_1o1_t64_hi = pi_1o1_t64[1]
@@ -131,32 +116,6 @@ end
 mod1pipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod1pipm(DoubleFloat{Float64}(x)))
 mod1pipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod1pipm(DoubleFloat{Float64}(x)))
 
-function modhalfpipm(x::DoubleFloat{Float64})
-    abs(x) < halfpi_d64 && return x
-    w1 = mul323(inv_pi_1o2_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o2_t64, w2)
-    z = Double64(y)
-    return z
-end
-
-modhalfpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modhalfpipm(DoubleFloat{Float64}(x)))
-modhalfpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modhalfpipm(DoubleFloat{Float64}(x)))
-
-function modqrtrpipm(x::DoubleFloat{Float64})
-    abs(x) < qrtrpi_d64 && return x
-    w1 = mul323(inv_pi_1o4_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o4_t64, w2)
-    z = Double64(y)
-    return z
-end
-
-modqrtrpipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(modqrtrpipm(DoubleFloat{Float64}(x)))
-modqrtrpipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(modqrtrpipm(DoubleFloat{Float64}(x)))
-
-
-
 #=
     rem2pi(x) =  x - 2π*round(x/(2π),r)
     rem2pi(x, RoundDown) == mod2pi(x)
@@ -178,15 +137,3 @@ rem2pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(rem2pi(DoubleFloat{Float64}(x), rounding))
 rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
     DoubleFloat{Float16}(rem2pi(DoubleFloat{Float64}(x), rounding))
-
-
-rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod1pi(x)
-rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem1pi(-x, RoundDown)
-rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = modhalfpipm(x)
-rem1pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
-    signbit(x) ? rem1pi(x, RoundUp) : rem1pi(x, RoundDown)
-
-rem1pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
-    DoubleFloat{Float32}(rem1pi(DoubleFloat{Float64}(x), rounding))
-rem1pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
-    DoubleFloat{Float16}(rem1pi(DoubleFloat{Float64}(x), rounding))
