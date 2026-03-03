@@ -76,21 +76,6 @@ function mul_by_two(r::DoubleFloat{T}) where {T<:IEEEFloat}
     return DoubleFloat{T}(hi, lo)
 end
 
-function mul_pow2(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi += n
-    xplo += n
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return DoubleFloat{T}(hi, lo)
-end
-
-function mul_pwr2(r::DoubleFloat{T}, n::Real) where {T<:IEEEFloat}
-    m = 2.0^n
-    return DoubleFloat{T}(HI(r)*m, LO(r)*m)
-end
-
 function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     if (n == 0)
         return one(DoubleFloat{T})

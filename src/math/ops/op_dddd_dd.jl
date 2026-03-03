@@ -38,30 +38,7 @@ end
     return hi, lo
 end
 
-#=
-# reltime 60
-@inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
-    yinv = inv_dd_dd(y)
-    hi, lo = mul_dddd_dd(x, yinv)
-    return hi, lo
-end
-=#
-# reltime 107
-
 @inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
-    xhi, xlo = x
-    yhi, ylo = y
-    hi = xhi / yhi
-    uh, ul = two_prod(hi, yhi)
-    lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi,lo = two_hilo_sum(hi, lo)
-    return hi, lo
-end
-
-# reltime 40
-
-
-@inline function dvi_dddd_dd_fast(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi

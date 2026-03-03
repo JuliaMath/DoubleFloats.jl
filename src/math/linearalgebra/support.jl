@@ -35,11 +35,3 @@ function LinearAlgebra.norm(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) wh
         return vp^r
     end    
 end
-
-function LinearAlgebra.normalize(v::Array{DoubleFloat{T},N}, p::Real=2.0) where {N, T<:IEEEFloat}
-    return v ./ norm(v, p)
-end
-
-function LinearAlgebra.normalize(v::Array{Complex{DoubleFloat{T}},N}, p::Real=2.0) where {N, T<:IEEEFloat}
-    return v ./ norm(v, p)
-end

@@ -215,20 +215,6 @@ end
 
 Base.sincos(x::DoubleFloat) = (sin(x), cos(x))
 
-#=
-function tangent(x::T) where {T}
-    signbit(x) && return -tangent(abs(x))
-    x > halfpi(T) && return tangent(DoubleFloats.modhalfpi(x))
-    x > qrtrpi(T) && return inv(tangent_0_qrtrpi(halfpi(T)-x))
-    return sin(x)/cos(x)
-end
-function tangent_0_qrtrpi(x)
-   c = cos(x)                #  c = cos(x); cc = c*c; return sqrt((1-cc)/cc)
-   s = sqrt(1 - c*c)
-   return s/c
-end
-
-=#
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
@@ -257,46 +243,6 @@ function tan(x::Double64)
 end
 
 
-
-
-const tan0qrtrpi_numercoeffs = [
- Double64(-4.589387262410812e-34, 3.615269061456329e-50),
- Double64(-1.1277602868617984, -3.7260835757356473e-17),
- Double64(0.023504022820282806, -8.687970367035411e-19),
- Double64(0.15800109650013386, 1.0039888332689995e-17),
- Double64(-0.0032234179678582767, 7.13543487768582e-20),
- Double64(-0.00485067399529607, 2.5007870884389995e-19),
- Double64(9.183636558700604e-5, 6.505326980348073e-21),
- Double64(4.3378563109937034e-5, -1.5862612770718012e-21),
- Double64(-6.679371552585612e-7, 2.526644583588966e-24),
- Double64(-8.978969477885054e-8, 4.807483176770941e-24),
- Double64(6.62853386447739e-10, 1.0925131977072127e-26)
-];
-
-const tan0qrtrpi_denomcoeffs = [
- Double64(-1.1277602868617984, -3.726083575735698e-17),
- Double64(0.023504022820282806, -8.68797036610413e-19),
- Double64(0.5339211921207333, 5.0215742527305713e-17),
- Double64(-0.011058092241285879, 2.163933343013038e-19),
- Double64(-0.03245636645396739, -2.0950660440965625e-18),
- Double64(0.0006439974033112582, -4.907277021564753e-20),
- Double64(0.0005359286750031091, 3.4429445937395886e-20),
- Double64(-9.392512261553479e-6, -6.384836458590209e-22),
- Double64(-2.4709845162823393e-6, -1.6760465043339782e-22),
- Double64(3.015269279339435e-8, -8.41236508210075e-25),
- Double64(1.5859442637424446e-9, 6.30689666197131e-26)
-];
-
-const tan0qrtrpi_numerpoly = Polynomial(tan0qrtrpi_numercoeffs);
-const tan0qrtrpi_denompoly = Polynomial(tan0qrtrpi_denomcoeffs);
-
-function tan0qrtrpi(x::Double64)
-     numer = polyval(tan0qrtrpi_numerpoly, x)
-     denom = polyval(tan0qrtrpi_denompoly, x)
-     return numer/denom
-end
-
-
 function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
@@ -320,39 +266,18 @@ function sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sinpi(x) only defined for finite x"))
     return DoubleFloat{T}(sinpi(Quadmath.Float128(x)))
-    #=
-    y = Double64(x)
-    hi,lo = mul322(pi_1o1_t64, HILO(y))
-    y = Double64(hi, lo)
-    z = sin(y)
-    return DoubleFloat{T}(z)
-    =#
 end
 
 function cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cospi(x) only defined for finite x"))
     return DoubleFloat{T}(cospi(Quadmath.Float128(x)))
-    #=
-     y = Double64(x)
-    hi,lo = mul322(pi_1o1_t64, HILO(y))
-    y = Double64(hi, lo)
-    z = cos(y)
-    return DoubleFloat{T}(z)
-    =#
 end
 
 function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("tanpi(x) only defined for finite x"))
     return sinpi(x)/cospi(x)
-    #=
-    y = Double64(x)
-    hi,lo = mul322(pi_1o1_t64, HILO(y))
-    y = Double64(hi, lo)
-    z = tan(y)
-    return DoubleFloat{T}(z)
-    =#
 end
 
 function sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}

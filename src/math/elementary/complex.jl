@@ -1,7 +1,3 @@
-@inline function reim(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    return x.re, x.im
-end
-
 @inline function csgn(r,i)
     HI(r) > 0 && return  1
     HI(r) < 0 && return -1
