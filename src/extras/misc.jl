@@ -5,10 +5,6 @@
                                                                                                   (32.5 sig bits must match)
 
 =#
-releps(::Type{Float64}) = ldexp(0.5, -31)
-releps(::Type{Float32}) = ldexp(inv(sqrt(2.0f0)), -17)
-releps(::Type{Double64}) = ldexp(0.5, -62)
-releps(::Type{Double32}) = ldexp(inv(sqrt(2.0f0)), -34)
 
 function Base.isapprox(x::DoubleFloat{T}, y::Real; atol::Real=0.0, rtol::Real=Base.rtoldefault(HI(x),y,atol), nans::Bool=false) where {T<:IEEEFloat}
     return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans)
@@ -43,11 +39,6 @@ function Base.clamp(x::T, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
      lo <= x && return hi
      return lo
 end
-
-abs2(x::DoubleFloat{T}) where {T} =
-    let absx = abs(x)
-        absx * absx
-    end
 
 # for compatibility with old or unrevised outside linalg functions
 function Base.:(+)(v::Vector{DoubleFloat{T}}, x::T) where {T}

@@ -40,8 +40,6 @@ using Printf
 using Random
 import Random: rand, randn
 
-using Polynomials
-
 using LinearAlgebra
 import LinearAlgebra: norm, mul!
 
@@ -51,7 +49,7 @@ import Quadmath
 
 import Base: hash, promote_type, promote_rule, convert,
              string, show, parse, tryparse, eltype,
-             signbit, sign, abs, flipsign, copysign,
+             signbit, sign, abs, hypot,
              significand, exponent, precision, widen,
              (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
              (==), (!=), (<), (<=), (>=), (>), isequal, isless,

@@ -35,9 +35,3 @@ end
     zhi, zlo = mul_fpdd_dd(x, yinv)
     return zhi, zlo
 end
-
-@inline function dvi_fpdd_dd_fast(x::T, y::Tuple{T,T}) where {T<:IEEEFloat}
-    yinv = inv_dd_dd_fast(y)
-    zhi, zlo = mul_fpdd_dd(x, yinv)
-    return zhi, zlo
-end

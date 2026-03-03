@@ -28,17 +28,6 @@ function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return copysign(one(DoubleFloat{T}), x)
     return sinh(x) / cosh(x)
 end
-#=
-function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    x < 0 && return -tanh(-x)
-    iszero(x) && return zero(x)
-    !isfinite(x) && return nan(typeof(x))
-    epos = exp(x)
-    eneg = exp(-x)
-    z = (epos - eneg) / (epos + eneg)
-    return z
-end
-=#
 
 function csch(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return copysign(zero(DoubleFloat{T}), x)

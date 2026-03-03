@@ -9,37 +9,10 @@
     end
 end
 
-@inline function (-)(a::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    Complex{DoubleFloat{T}}(-real(a), -imag(a))
-end
-
 @inline function abs(a::DoubleFloat{T}) where {T<:IEEEFloat}
     (!signbit(a) || isnan(a)) && return a
     return -a
 end
-
-@inline function abs(a::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    hypot(reim(a)...)
-end
-
-@inline function negabs(a::DoubleFloat{T}) where {T<:IEEEFloat}
-    (signbit(a) || isnan(a)) && return a
-    return -a
-end
-
-@inline function negabs(a::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
-    -hypot(reim(a)...)
-end
-
-@inline function flipsign(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:Union{AbstractFloat, Signed}}
-    signbit(y) ? -x : x
-end
-@inline function copysign(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:Union{AbstractFloat, Signed}}
-    signbit(y) ? -abs(x) : abs(x)
-end
-
-flipsign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
-copysign(x::DoubleFloat{T}, y::U) where {T<:IEEEFloat, U<:Unsigned} = +x
 
 """
     frexps(x::DoubleFloat)
