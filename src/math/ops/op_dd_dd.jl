@@ -1,5 +1,14 @@
-function inv_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
-    return DWInvDW3(HI(x), LO(x))
+# inv using Algorithms 17 and 18 from Tight and rigorous error bounds
+
+function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
+   yₕᵢ, yₗₒ = y
+   tₕᵢ = inv(yₕᵢ)
+   rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
+   rₗₒ = -(yₗₒ * tₕᵢ)
+   eₕᵢ, eₗₒ = two_hilo_sum(rₕᵢ, rₗₒ)
+   dₕᵢ, dₗₒ = mul_ddfp_dd((eₕᵢ, eₗₒ), tₕᵢ)
+   zₕᵢ, zₗₒ = add_ddfp_dd((dₕᵢ, dₗₒ), tₕᵢ)
+   return zₕᵢ, zₗₒ
 end
 
 @inline function square_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}

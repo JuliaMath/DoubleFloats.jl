@@ -10,16 +10,6 @@ end
     return hi, lo
 end
 
-#=
-@inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
-    hi, lo = x
-    hihi, hilo = two_prod(y, hi)
-    lohi, lolo = two_prod(y, lo)
-    hi, lo = two_sum(hihi, hilo, lohi, lolo)
-    return hi, lo
-end
-=#
-
 # Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
 @inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where T<:IEEEFloat
     xhi, xlo = x
