@@ -66,7 +66,7 @@ import Base: hash, promote_type, promote_rule, convert,
             
 import Base.Math: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
-             sin, cos, tan, csc, sec, cot, 
+             sin, cos, tan, cot,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth,

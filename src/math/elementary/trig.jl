@@ -195,19 +195,6 @@ function tan(x::Double64)
     return tan_circle(y)               # 0 <= y < 3pi/16 [(3/4 * pi/4)< 0.5891]
 end
 
-
-function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnan(x) && return x
-    isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
-    return inv(sin(x))
-end
-
-function sec(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnan(x) && return x
-    isinf(x) && throw(DomainError("sec(x) only defined for finite x"))
-    return inv(cos(x))
-end
-
 function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cot(x) only defined for finite x"))
