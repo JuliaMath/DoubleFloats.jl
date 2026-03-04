@@ -14,8 +14,7 @@ end
 @inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where T<:IEEEFloat
     xhi, xlo = x
     hi, lo = two_prod(xhi, y)
-    t = xlo * y
-    t = t + lo
+    t = fma(xlo, y, lo)
     hi, lo = two_hilo_sum(hi, t)
     return hi, lo
 end
