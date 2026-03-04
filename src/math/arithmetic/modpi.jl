@@ -2,7 +2,7 @@
 ## This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internships Program (SULI) program at Oak Ridge National Laboratory, administered by the Oak Ridge Institute for Science and Education.
 
 function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
-	s = signbit(x)
+	s = x < 0
 	c = s ? -1 : 1
     y = c * x
 	y < pi2o1(DoubleFloat{T}) && return s ? pi2o1(DoubleFloat{T}) - y : y
@@ -96,26 +96,6 @@ end
 
 # ========================================== ^^^^^ =========================================
 
-const pi_1o1_t64_hi = pi_1o1_t64[1]
-const pi_1o1_t64_md = pi_1o1_t64[2]
-const pi_1o1_t64_lo = pi_1o1_t64[3]
-
-const pi_1o4_t64_hi = pi_1o4_t64[1]
-const pi_1o4_t64_md = pi_1o4_t64[2]
-const pi_1o4_t64_lo = pi_1o4_t64[3]
-
-function mod1pipm(x::DoubleFloat{Float64})
-    abs(x) < onepi_d64 && return x
-    w1 = mul323(inv_pi_1o1_t64, HILO(x))
-    w2 = two_sum(w1[1] - trunc(w1[1]), w1[2], w1[3])
-    y = mul322(pi_1o1_t64, w2)
-    z = Double64(y)
-    return z
-end
-
-mod1pipm(x::DoubleFloat{Float32}) = DoubleFloat{Float32}(mod1pipm(DoubleFloat{Float64}(x)))
-mod1pipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod1pipm(DoubleFloat{Float64}(x)))
-
 #=
     rem2pi(x) =  x - 2π*round(x/(2π),r)
     rem2pi(x, RoundDown) == mod2pi(x)
@@ -127,9 +107,17 @@ mod1pipm(x::DoubleFloat{Float16}) = DoubleFloat{Float16}(mod1pipm(DoubleFloat{Fl
     •    if r == RoundUp, then the result is in the interval [-2π, 0].
 =#
 
+function rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest})
+    abs(x) < onepi && return x
+    w1 = mul323(inv_pi_2o1_t64, HILO(x))
+    w2 = two_sum(w1[1] - round(w1[1]), w1[2], w1[3])
+    y = mul322(pi_2o1_t64, w2)
+    z = Double64(y)
+    return z
+end
+
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod2pi(x)
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem2pi(-x, RoundDown)
-rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest}) = mod1pipm(x)
 rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
     signbit(x) ? rem2pi(x, RoundUp) : rem2pi(x, RoundDown)
 

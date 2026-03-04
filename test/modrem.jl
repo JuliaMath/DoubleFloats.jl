@@ -1,4 +1,7 @@
 @testset "modpi" begin
+
+    @test mod2pi(Double64(-13)) ≈ mod2pi(big(-13.)) atol = 1e-31
+
     x=cbrt(41)*sqrt(Double64(pi))
 
     @test DoubleFloats.mod2pi(x) == Double64(6.111805926475162, -1.667563077572613e-16)
@@ -13,4 +16,12 @@ end
 
     @test DoubleFloats.rem2pi(x) == Double64(6.111805926475162, -1.667563077572613e-16)
     @test DoubleFloats.rem2pi(-x) == Double64(-0.1713793807044248, 4.647966647701768e-18)
+
+    v = Double64.(-7:7)
+    bigv = big.(v)
+    for rounding in (RoundUp, RoundDown, RoundNearest, RoundToZero)
+        drem = rem2pi.(v, Ref(rounding))
+        bigrem = rem2pi.(bigv, Ref(rounding))
+        @test all(abs.(bigrem-drem) .< 1e-31)
+    end
 end
