@@ -143,4 +143,5 @@ end
   @test n0 >= p0
   @test !(p0 > n0)
   @test !(n0 > p0)
+  @test !(p0 != n0)
 end
