@@ -11,12 +11,11 @@ function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    return zₕᵢ, zₗₒ
 end
 
-@inline function square_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    ahi, alo = HILO(a)
-    zhi = ahi * ahi
-    zlo = fma(ahi, ahi, -zhi)
-    zlo = fma(alo, alo, zlo)
-    return zhi, fma(alo*2, ahi, zlo)
+@inline function square_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
+    p00, e00 = two_prod(x[1], x[1])
+    e00 = fma(x[1], 2x[2], e00)
+    p00, e00 = two_hilo_sum(p00, e00)
+    return p00, e00
 end
 
 @inline function cube_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}

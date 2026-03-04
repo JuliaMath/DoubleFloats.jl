@@ -3,6 +3,8 @@ inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
 square(x::DoubleFloat{T}) where {T<:IEEEFloat} = square_db_db(x)
 cube(x::DoubleFloat{T}) where {T<:IEEEFloat} = cube_db_db(x)
 
+abs2(x::DoubleFloat{T}) where {T<:IEEEFloat} = square(x)
+
 sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = sqrt_db_db(x)
 cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = cbrt_db_db(x)
 

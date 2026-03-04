@@ -15,6 +15,11 @@
     @test x ^ x isa Complex{Double64}
     @test y ^ y isa Double64
 
+    @test y * y * y ≈ cube(y)
+    @test y * y ≈ square(y) == abs2(y)
+    @test x * x ≈ square(x)
+    @test x * conj(x) ≈ abs2(x)
+
     x, y = rand(2)
     @test add2(x, y) == (Double64(x) + Double64(y))
     @test sub2(x, y) == (Double64(x) - Double64(y))

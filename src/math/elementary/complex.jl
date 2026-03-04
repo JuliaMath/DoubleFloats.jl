@@ -4,7 +4,11 @@
     return HI(i) > 0 ? 1 : -1
 end
 
-square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = x*x
+function square(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+    a, b = reim(x)
+    return Complex(square(a) - square(b), 2 * a * b)
+end
+abs2(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = square(real(x)) + square(imag(x))
 
 sqrt(x::ComplexDF64) = ComplexDF64ComplexF128(sqrt, x)
 
