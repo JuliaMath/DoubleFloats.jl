@@ -233,10 +233,6 @@ function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return sinpi(x)/cospi(x)
 end
 
-if VERSION < v"1.10"
-    tanpi(x::T) where {T<:IEEEFloat} = T(tanpi(DoubleFloat{T}(x)))
-end
-
 function sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sincos(x) only defined for finite x"))
