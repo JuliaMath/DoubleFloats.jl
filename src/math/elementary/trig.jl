@@ -57,32 +57,6 @@ function sincos_taylor(a::Double64)
     return s,c
 end
 
-
-function tan_taylor(a::Double64)
-    iszero(a) && return(zero(Double64))
-    s = sin_taylor(a)
-    c = cos_taylor(a)
-    return s/c
-end
-
-function csc_taylor(a::Double64)
-    return inv(sin_taylor(a))
-end
-
-function sec_taylor(a::Double64)
-    return inv(cos_taylor(a))
-end
-
-function cot_taylor(a::Double64)
-    iszero(a) && return(zero(Double64))
-    s = sin_taylor(a)
-    c = cos_taylor(a)
-    return c/s
- end
-
-
-
-
 function index_npio32(x::DoubleFloat{T}) where {T<:IEEEFloat}
     x < npio32[1] && return 1
     x >= npio32[end] && return length(npio32)
@@ -144,25 +118,6 @@ end
     return sin_result / cos_result
 end
 
-
-
-function sincos_circle(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    idx = index_npio32(x)
-    pipart = npio32[idx]
-    rest = x - pipart
-    sin_part = sin_npio32[idx]
-    cos_part = cos_npio32[idx]
-    sin_rest, cos_rest = sincos_taylor(rest)
-    s1 = sin_part * cos_rest
-    s2 = cos_part * sin_rest
-    s  = s1 + s2
-    c1 = cos_part * cos_rest
-    c2 = sin_part * sin_rest
-    c  = c1 - c2
-    return s, c
-end
-
-
 @inline function sin_kernel(x::DoubleFloat{T}) where {T<:IEEEFloat}
     signbit(x) && return -sin(abs(x))
     iszero(x) && return zero(typeof(x))
@@ -213,8 +168,6 @@ function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return abs(x.hi) < 6.28125 ? sin_kernel(x) : DoubleFloat{T}(sin(Quadmath.Float128(x)))
 end
 
-Base.sincos(x::DoubleFloat) = (sin(x), cos(x))
-
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
@@ -240,19 +193,6 @@ function tan(x::Double64)
         return (1-t)/(1+t)
     end
     return tan_circle(y)               # 0 <= y < 3pi/16 [(3/4 * pi/4)< 0.5891]
-end
-
-
-function csc(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnan(x) && return x
-    isinf(x) && throw(DomainError("csc(x) only defined for finite x"))
-    return inv(sin(x))
-end
-
-function sec(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnan(x) && return x
-    isinf(x) && throw(DomainError("sec(x) only defined for finite x"))
-    return inv(cos(x))
 end
 
 function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -303,4 +243,3 @@ function cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
     return cospi(x) + im*sinpi(x)
 end
-               

@@ -44,10 +44,13 @@ end
 end
 
 @testset "Trig functions" begin
-    x = rand(Double64)
+    x = randn(Double64)
     sinx, cosx = sincos(x)
     @test sinx ≈ sin(x)
     @test cosx ≈ cos(x)
+    sinpix, cospix = sincospi(x)
+    @test sinpix ≈ sinpi(x)
+    @test cospix ≈ cospi(x)
 end
 
 @testset "promotion" begin

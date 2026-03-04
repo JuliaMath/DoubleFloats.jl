@@ -42,19 +42,29 @@ d64b = sqrt(Double64(2.0))/2
    @test isapprox(expm1(f64a), expm1(d64a))    
 end
 
+if VERSION < v"1.10"
+    DoubleFloats.tanpi(x::T) where {T<:IEEEFloat} = T(tanpi(DoubleFloat{T}(x)))
+end
+
 @testset "trig functions" begin
-   @test isapprox(sin(f64a), sin(d64a))
-   @test isapprox(cos(f64a), cos(d64a))
-   @test isapprox(tan(f64a), tan(d64a))
-   @test isapprox(csc(f64a), csc(d64a))
-   @test isapprox(sec(f64a), sec(d64a))
-   @test isapprox(cot(f64a), cot(d64a))
-   @test isapprox(asin(f64b), asin(d64b))
-   @test isapprox(acos(f64b), acos(d64b))
-   @test isapprox(atan(f64a), atan(d64a))
-   @test isapprox(acsc(f64a), acsc(d64a))
-   @test isapprox(asec(f64a), asec(d64a))
-   @test isapprox(acot(f64a), acot(d64a))
+    for d64 in (-Double64(4),-Double64(3)/10, Double64(3)/10, d64a, d64b, Double64(4))
+        f64 = Float64(d64)
+        for f in (sin, sinpi, cos, cospi, cis, cispi, tan, tanpi, csc, sec, cot, atan, acot)
+            @test f(d64) ≈ f(f64)
+        end
+    end
+    for d64 in (-Double64(3)/10, Double64(3)/10, d64b)
+        f64 = Float64(d64)
+        for f in (asin, acos)
+            @test f(d64) ≈ f(f64)
+        end
+    end
+    for d64 in (-Double64(4), Double64(4), d64a)
+        f64 = Float64(d64)
+        for f in (acsc, asec)
+            @test f(d64) ≈ f(f64)
+        end
+    end
 end
 
 @testset "hyperbolic trig functions" begin
