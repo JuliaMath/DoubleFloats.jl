@@ -72,3 +72,16 @@ end
 @inline function fma(x::Tuple{T,T}, y::Tuple{T,T}, z::Tuple{T,T}) where {T<:IEEEFloat}
    return fma(x[1], x[2], y[1], y[2], z[1], z[2])
 end
+
+@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
+    return fma(x, y, z)
+end
+@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
+    return fma(x, y, z)
+end
+@inline function muladd(x::DoubleFloat{T}, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
+    return fma(x, y, z)
+end
+@inline function muladd(x::T, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
+    return fma(x, y, z)
+end
