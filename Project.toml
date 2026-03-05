@@ -4,7 +4,7 @@ keywords = ["math", "floating-point", "doubledouble", "extended-precision", "acc
 license = "MIT"
 desc = "extended precision floating point types using value pairs"
 repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
-version = "1.6.1"
+version = "1.6.2"
 
 [deps]
 GenericLinearAlgebra = "14197337-ba66-59df-a3e3-ca00e7dcff7a"
