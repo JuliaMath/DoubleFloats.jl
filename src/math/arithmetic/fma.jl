@@ -79,9 +79,6 @@ end
 @inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
     return fma(x, y, z)
 end
-@inline function muladd(x::DoubleFloat{T}, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
-    return fma(x, y, z)
-end
-@inline function muladd(x::T, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function muladd(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
     return fma(x, y, z)
 end
