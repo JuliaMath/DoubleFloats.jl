@@ -62,7 +62,15 @@ import Base: hash, promote_type, promote_rule, convert,
              BigFloat, BigInt,
              Int8, Int16, Int32, Int64, Int128,
              Float64, Float32, Float16
-            
+             
+@static if isdefined(Base, :ispositive)
+    import Base: ispositive
+end
+
+@static if isdefined(Base, :isnegative)
+    import Base: isnegative
+end
+
 import Base.Math: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
              sin, cos, tan, cot,
@@ -133,3 +141,4 @@ import SpecialFunctions: erf, erfc, gamma, logabsgamma,
 include("math/special/specialfunctions.jl")
 
 end # module DoubleFloats
+
