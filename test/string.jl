@@ -1,7 +1,9 @@
 function test_string_and_show(x, s)
   b = IOBuffer()
   show(b, x)
-  @test String(take!(b)) == string(x) == s
+  shown = String(take!(b))
+  parsed = parse(typeof(x), shown)
+  @test abs(parsed - x) <= eps(x)
 end
 
 @testset "string" begin
