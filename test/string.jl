@@ -3,7 +3,7 @@ function test_string_and_show(x, s)
   show(b, x)
   shown = String(take!(b))
   parsed = parse(typeof(x), shown)
-  @test abs(parsed - x) <= eps(x)
+  @test abs(parsed - x) <= eps(max(abs(real(x)),abs(imag(x)))
 end
 
 @testset "string" begin
