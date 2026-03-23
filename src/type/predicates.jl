@@ -15,7 +15,8 @@ These are the predicates made available for use with DoubleFloats:
   isnormal,                                #  value is finite and not subnormal
   isinteger, isfractional                  #  value == round(value)
   iseven, isodd,                           #  isinteger(value/2.0), !isinteger(value/2.0)
-""" predicates
+"""
+predicates
 
 """
     isnonzero(x)
@@ -24,12 +25,9 @@ Return `!iszero(x)`
 """
 isnonzero(x::T) where {T<:AbstractFloat} = !iszero(x)
 
-"""
-    ispositive(x)
-
-Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
-"""
-ispositive(x::T) where {T<:AbstractFloat} = !isnegative(x) && isnonzero(x)
+@static if !isdefined(Base, :ispositive)
+    ispositive(x::T) where {T<:AbstractFloat} = !isnegative(x) && isnonzero(x)
+end
 
 """
     isnonnegative(x)
@@ -61,6 +59,11 @@ isnonzero(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 isone(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     isone(HI(x)) && iszero(LO(x))
 
+"""
+    ispositive(x)
+
+Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
+"""
 ispositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     !signbit(HI(x)) && !iszero(HI(x))
 
@@ -122,16 +125,16 @@ isfractional(x::DoubleFloat{T}) where {T<:IEEEFloat} =
 
 isodd(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     if isinteger(x)
-       (iszero(LO(x)) && isodd(HI(x))) || isodd(LO(x))
+        (iszero(LO(x)) && isodd(HI(x))) || isodd(LO(x))
     else
-       false
+        false
     end
 
 iseven(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     if isinteger(x)
-       (iszero(LO(x)) && iseven(HI(x))) || iseven(LO(x))
+        (iszero(LO(x)) && iseven(HI(x))) || iseven(LO(x))
     else
-       false
+        false
     end
 
 if VERSION < v"1.7"
