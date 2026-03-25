@@ -3,8 +3,8 @@ uuid = "497a8b3b-efae-58df-a0af-a86822472b78"
 keywords = ["math", "floating-point", "doubledouble", "extended-precision", "accuracy", "precision"]
 license = "MIT"
 desc = "extended precision floating point types using value pairs"
-repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 version = "1.6.2"
+repo = "https://github.com/JuliaMath/DoubleFloats.jl.git"
 
 [deps]
 GenericLinearAlgebra = "14197337-ba66-59df-a3e3-ca00e7dcff7a"
@@ -15,7 +15,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
-GenericLinearAlgebra = "0.2.5 - 0.3"
+GenericLinearAlgebra = "0.2.5 - 0.3, 0.4"
 Quadmath = "0.5.10"
 SpecialFunctions = "1 - 2"
 julia = "1.6"
