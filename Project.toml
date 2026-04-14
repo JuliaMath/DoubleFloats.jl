@@ -16,7 +16,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
 GenericLinearAlgebra = "0.2.5 - 0.3"
-Quadmath = "0.5.10"
+Quadmath = "1"
 SpecialFunctions = "1 - 2"
 julia = "1.6"
 
