@@ -77,13 +77,8 @@ import Base.Math: modf, fma, muladd,
              asin, acos, atan, acsc, asec, acot,
              sinh, cosh, tanh, csch, sech, coth,
              asinh, acosh, atanh, acsch, asech, acoth,
-             sinpi, cospi, sincos, sincospi, cis, cispi
-
-@static if VERSION >= v"1.10.0"
-    import Base.Math: tanpi 
-else
-    export tanpi 
-end       
+             sinpi, cospi, tanpi,
+             sincos, sincospi, cis, cispi
 
 import Quadmath: Float128
 

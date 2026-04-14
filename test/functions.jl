@@ -42,10 +42,6 @@ d64b = sqrt(Double64(2.0))/2
    @test isapprox(expm1(f64a), expm1(d64a))    
 end
 
-if VERSION < v"1.10"
-    DoubleFloats.tanpi(x::T) where {T<:IEEEFloat} = T(tanpi(DoubleFloat{T}(x)))
-end
-
 @testset "trig functions" begin
     for d64 in (-Double64(4),-Double64(3)/10, Double64(3)/10, d64a, d64b, Double64(4))
         f64 = Float64(d64)

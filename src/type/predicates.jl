@@ -136,8 +136,3 @@ iseven(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     else
         false
     end
-
-if VERSION < v"1.7"
-    iseven(x::AbstractFloat) = isinteger(x) && (abs(x) > maxintfloat(x) || iseven(Integer(x)))
-    isodd(x::AbstractFloat) = isinteger(x) && abs(x) ≤ maxintfloat(x) && isodd(Integer(x))
-end
