@@ -24,7 +24,7 @@
     @test add2(x, y) == (Double64(x) + Double64(y))
     @test sub2(x, y) == (Double64(x) - Double64(y))
     @test mul2(x, y) == (Double64(x) * Double64(y))
-    @test div2(x, y) == ((x) / Double64(y))
+    @test div2(x, y) == (Double64(x) / Double64(y))
 
     @test x ⊕ y == (Double64(x) + Double64(y))
     @test x ⊖ y == (Double64(x) - Double64(y))
@@ -35,9 +35,9 @@ end
 @testset "inv" begin
    tiny = DoubleFloat(1.0e-310)
    z = DoubleFloat(0.0)
-   infinity = DoubleFloat(Inf)
-   @test inv(tiny) == infinity
-   @test inv(z) == infinity
+   infy = DoubleFloat(Inf)
+   @test inv(tiny) == infy
+   @test inv(z) == infy
    @test inv(infinity) == z
 end
 
