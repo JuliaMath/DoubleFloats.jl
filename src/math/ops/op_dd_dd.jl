@@ -3,7 +3,7 @@
 function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    yₕᵢ, yₗₒ = y
    tₕᵢ = inv(yₕᵢ)
-   iszero(tₕᵢ) && return(zero(T), zero(T))
+   iszero(tₕᵢ) && return (zero(T), zero(T))
    isinf(tₕᵢ) && return (T(Inf), zero(T))
    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
    rₗₒ = -(yₗₒ * tₕᵢ)
