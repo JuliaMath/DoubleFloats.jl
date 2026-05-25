@@ -1,7 +1,15 @@
-# inv using Algorithms 17 and 18 from Tight and rigorous error bounds
-
+# inv corrected to handle zero and nonfinite values
 function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    yₕᵢ, yₗₒ = y
+   if iszero(yₗₒ) || !isfinite(yₗₒ)
+      DoubleFloat{T}(inv(yₕᵢ))
+   else
+      unsafe_inv_dd_dd(yₕᵢ, yₗₒ)
+   end
+end
+
+# inv using Algorithms 17 and 18 from Tight and rigorous error bounds
+@inline function unsafe_inv_dd_dd(yₕᵢ::T, yₗₒ::T) where {T<:IEEEFloat}
    tₕᵢ = inv(yₕᵢ)
    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
    rₗₒ = -(yₗₒ * tₕᵢ)
