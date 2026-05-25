@@ -42,10 +42,16 @@ end
     @test cld(da, db) == cld(a, b) 
     @test fld(da, db) == fld(a, b) 
     @test rem(da, db) == rem(a, b) 
-    @test mod(da, db) == mod(a, b) 
+    @test mod(da, db) == mod(a, b)
     @test divrem(da, db) == divrem(a, b) 
     
     @test fldmod(da, db) == fldmod(a, b) 
+end
+
+@testset "inv corner cases" begin
+    @test inv(Double64(0.0)) == Double64(Inf)
+    @test inv(Double64(Inf)) == Double64(0.0)
+    @test inv(Double64(1.0e-310)) == Double64(Inf)
 end
 
 @testset "Trig functions" begin
