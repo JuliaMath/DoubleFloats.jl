@@ -3,9 +3,8 @@
 function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    yₕᵢ, yₗₒ = y
    tₕᵢ = inv(yₕᵢ)
-   if isinf(tₕᵢ)
-      return (T(Inf), T(0))
-   end
+   iszero(tₕᵢ) && return(zero(T), zero(T))
+   isinf(tₕᵢ) && return (T(Inf), zero(T))
    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
    rₗₒ = -(yₗₒ * tₕᵢ)
    eₕᵢ, eₗₒ = two_hilo_sum(rₕᵢ, rₗₒ)
