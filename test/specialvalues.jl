@@ -8,6 +8,13 @@
     @test maxintfloat(T) < floatmax(T)
 end
 
+@testset "corner cases"
+   @test 2/Double64(1e-310) == Double64(Inf)
+   @test Double64(1e300)^2 == Double64(Inf)
+   b = floatmax(DoubleFloat{Float64})
+   @test b + b == Double64(Inf)
+   @test exp(b) == Double64(Inf)
+end
 
 @testset "Inf and NaN generation $T" for T in (Double16, Double32, Double64)
     @test isinf(T(Inf)) == isinf(inf(T))
