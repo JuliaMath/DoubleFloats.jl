@@ -20,10 +20,29 @@ end
    return zₕᵢ, zₗₒ
 end
 
+# branch-free hot-path variant; bit-identical for finite results.
+@inline function unsafe_inv_dd_dd_(yₕᵢ::T, yₗₒ::T) where {T<:IEEEFloat}
+   tₕᵢ = inv(yₕᵢ)
+   rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
+   rₗₒ = -(yₗₒ * tₕᵢ)
+   eₕᵢ, eₗₒ = two_hilo_sum_(rₕᵢ, rₗₒ)
+   dₕᵢ, dₗₒ = mul_ddfp_dd_((eₕᵢ, eₗₒ), tₕᵢ)
+   zₕᵢ, zₗₒ = add_ddfp_dd_((dₕᵢ, dₗₒ), tₕᵢ)
+   return zₕᵢ, zₗₒ
+end
+
 @inline function square_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     p00, e00 = two_prod(x[1], x[1])
     e00 = fma(x[1], 2x[2], e00)
     p00, e00 = two_hilo_sum(p00, e00)
+    return p00, e00
+end
+
+# branch-free hot-path variant; bit-identical for finite results.
+@inline function square_dd_dd_(x::Tuple{T,T}) where {T<:IEEEFloat}
+    p00, e00 = two_prod_(x[1], x[1])
+    e00 = fma(x[1], 2x[2], e00)
+    p00, e00 = two_hilo_sum_(p00, e00)
     return p00, e00
 end
 

@@ -38,6 +38,45 @@ end
     return hi, lo
 end
 
+# Branch-free hot-path variants of the kernels above. Bit-identical to the
+# guarded versions for finite results; callers must re-check the result and
+# fall back to the guarded kernel on non-finite output (see op_dbdb_db.jl).
+@inline function add_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+    xhi, xlo = x
+    yhi, ylo = y
+    hi, lo = two_sum_(xhi, yhi)
+    thi, tlo = two_sum_(xlo, ylo)
+    c = lo + thi
+    hi, lo = two_hilo_sum_(hi, c)
+    c = tlo + lo
+    hi, lo = two_hilo_sum_(hi, c)
+    return hi, lo
+end
+
+@inline function sub_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+    xhi, xlo = x
+    yhi, ylo = y
+    hi, lo = two_diff_(xhi, yhi)
+    thi, tlo = two_diff_(xlo, ylo)
+    c = lo + thi
+    hi, lo = two_hilo_sum_(hi, c)
+    c = tlo + lo
+    hi, lo = two_hilo_sum_(hi, c)
+    return hi, lo
+end
+
+@inline function mul_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+    xhi, xlo = x
+    yhi, ylo = y
+    hi, lo = two_prod_(xhi, yhi)
+    t1 = xhi * ylo
+    t2 = xlo * yhi
+    t = t1 + t2
+    t = lo + t
+    hi, lo = two_hilo_sum_(hi, t)
+    return hi, lo
+end
+
 @inline function dvi_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
@@ -48,5 +87,16 @@ end
     uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
     hi,lo = two_hilo_sum(hi, lo)
+    return hi, lo
+end
+
+# branch-free hot-path variant; bit-identical for finite results.
+@inline function dvi_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
+    xhi, xlo = x
+    yhi, ylo = y
+    hi = xhi / yhi
+    uh, ul = two_prod_(hi, yhi)
+    lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
+    hi, lo = two_hilo_sum_(hi, lo)
     return hi, lo
 end
