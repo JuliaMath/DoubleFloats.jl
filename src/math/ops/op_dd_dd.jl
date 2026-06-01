@@ -1,8 +1,9 @@
 # inv corrected to handle zero and nonfinite values
-function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
+@inline function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    yₕᵢ, yₗₒ = y
-   if iszero(yₗₒ) || !isfinite(yₗₒ)
-      DoubleFloat{T}(inv(yₕᵢ))
+    tₕᵢ = inv(yₕᵢ)
+    if !isfinite(tₕᵢ) || iszero(yₗₒ) || !isfinite(yₗₒ)
+          zero_error_result(tₕᵢ)
    else
       unsafe_inv_dd_dd(yₕᵢ, yₗₒ)
    end

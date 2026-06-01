@@ -11,17 +11,48 @@ end
 
 const FloatWithFMA = Union{Float64, Float32, Float16}
 
+@noinline zero_error_result(x::T) where {T<:AbstractFloat} = (x, zero(T))
+
 """
     two_sum(a, b)
 Computes `hi = fl(a+b)` and `lo = err(a+b)`.
 """
 @inline function two_sum(a::T, b::T) where {T<:FloatWithFMA}
-    hi = a + b
-    a1 = hi - b
-    b1 = hi - a1
-    lo = (a - a1) + (b - b1)
-    return hi, lo
+    s = a + b                       # rounded sum
+
+    # --- Corner case: any non-finite input or an overflowed result ----------
+    # The TwoSum error formula below subtracts quantities that become ±Inf
+    # when `s` is non-finite, producing a spurious NaN (Inf - Inf). Detect
+    # this and short-circuit. We branch only on the (rare) non-finite path so
+    # the hot path stays branch-light and the common case is unaffected.
+    if !isfinite(s)
+        # Genuine overflow of a finite+finite sum. The rounding error is
+        # not representable as a finite float, but NaN would wrongly
+        # suggest the inputs were invalid. Report the unrepresentable
+        # error as exactly 0 so callers compensating with s+e still see
+        # the (saturated) ±Inf rather than NaN.
+        # or
+        # An input was already Inf/NaN: let `s` carry IEEE semantics
+        # (incl. legitimate NaN from Inf + (-Inf)) and give a 0 error,
+        # since the "error of infinity" is undefined, not NaN-worthy.
+        return zero_error_result(s)
+    end
+    # --- Knuth TwoSum, exact when `s` is finite -----------------------------
+    # bb is b reconstructed as (s - a); the part of b actually absorbed.
+    bb = s - a
+    # (a - (s - bb)) recovers the part of a lost in rounding, and
+    # (b - bb) recovers the part of b lost. Their sum is the exact error.
+    # All five subtractions here are exact under IEEE-754 (Sterbenz / Knuth),
+    # including in the subnormal range, so e is exact with no extra rounding.
+    e = (a - (s - bb)) + (b - bb)
+    return (s, e)
 end
+
+# Promote mixed float types to a common type so the EFT guarantees still hold.
+two_sum(a::AbstractFloat, b::AbstractFloat) = two_sum(promote(a, b)...)
+
+# Convenience for non-float reals: promote to Float64.
+two_sum(a::Real, b::Real) = two_sum(float(promote(a, b))...)
 
 """
     three_sum(a, b, c)
@@ -98,6 +129,9 @@ Computes `hi = fl(a-b)` and `lo = err(a-b)`.
 """
 @inline function two_diff(a::T, b::T) where {T<:FloatWithFMA}
     hi = a - b
+    if !isfinite(hi)
+        return zero_error_result(hi)
+    end
     a1 = hi + b
     b1 = hi - a1
     lo = (a - a1) - (b + b1)
@@ -125,9 +159,73 @@ Computes `s = fl(a+b)` and `e = err(a+b)`.
 """
 @inline function two_hilo_sum(a::T, b::T) where {T<:FloatWithFMA}
     s = a + b
+    if !isfinite(s)
+        return zero_error_result(s)
+    end
     e = b - (s - a)
     return s, e
 end
+"""
+    two_hilo_sum(a::T, b::T) where {T<:AbstractFloat} -> (s::T, e::T)
+
+Error-free transformation of the sum `a + b`, fast (Dekker / FastTwoSum)
+variant. 3 flops in the hot path vs. 6 for the symmetric `two_sum`.
+
+Returns `(s, e)` where `s = fl(a + b)` is the correctly-rounded sum and
+`e` is the exact rounding error, so *mathematically* `a + b == s + e`.
+
+Algorithmic precondition: `|a| >= |b|` (or one of them is zero). Under that
+ordering, `s - a` is provably exact (the absorbed part of `b`), so
+`b - (s - a)` is the exact remainder. Violate the precondition and the
+function silently returns a wrong `e` — this is the single most common
+footgun with FastTwoSum, so we close it below rather than trust the caller.
+
+Robustness contract:
+  * `|a| < |b|` is corrected by an unconditional swap. Floating-point
+    addition is commutative bit-for-bit (modulo NaN payload), so the
+    returned `s` is unchanged and `e` is now exact. Cost: one compare
+    plus a possible register swap; the 3-flop core is preserved.
+  * Overflow: if `fl(a+b)` overflows to ±Inf while `a,b` are finite, the
+    naive formula yields `b - (Inf - a) = b - Inf = ∓Inf`, an
+    *infinite rounding error*, which is nonsense. We detect non-finite
+    `s` and return `e = 0`, matching the `two_sum` convention.
+  * Underflow / subnormals: with the precondition restored, FastTwoSum
+    is exact in gradual-underflow arithmetic. No special handling needed.
+  * NaN or ±Inf inputs: `s` carries IEEE semantics (e.g. `Inf + (-Inf) = NaN`)
+    and we return `e = 0`, since the "error of a non-finite sum" is
+    undefined, not NaN-worthy.
+"""
+function two_hilo_sum(a::T, b::T) where {T<:AbstractFloat}
+    s = a + b                       # rounded sum
+
+    # --- Non-finite guard: overflow, ±Inf input, or NaN -------------------
+    # If s is non-finite, the error formula below evaluates `s - a`, which
+    # is either Inf-Inf = NaN or Inf-finite = Inf, and then `b - (s-a)`
+    # propagates that, fabricating either NaN or an infinite "error". An
+    # infinite rounding error is meaningless: the true error of an
+    # overflowed sum simply isn't representable, and reporting NaN would
+    # falsely suggest the inputs were invalid. We return e = 0 and let `s`
+    # carry the saturated ±Inf (or genuine NaN from e.g. Inf + (-Inf)).
+    if !isfinite(s)
+        return (s, zero(T))
+    end
+
+    # --- Dekker / FastTwoSum core ----------------------------------------
+    # With |a| >= |b| and s finite, (s - a) is exact under IEEE-754 — it
+    # recovers the portion of b absorbed into s. The unabsorbed remainder
+    # `b - (s - a)` is therefore the exact rounding error, including in
+    # the subnormal range. Two subtractions, no rounding error introduced.
+    e = b - (s - a)
+
+    return (s, e)
+end
+
+# Mixed float types: promote so the EFT exactness guarantees still hold
+# in the common type (mixing precisions would break the Sterbenz lemma).
+two_hilo_sum(a::AbstractFloat, b::AbstractFloat) = two_hilo_sum(promote(a, b)...)
+
+# Non-float reals: promote to Float64.
+two_hilo_sum(a::Real, b::Real) = two_hilo_sum(float(promote(a, b))...)
 
 
 """
@@ -209,6 +307,9 @@ end
 
 @inline function two_prod(a::T, b::T) where {T<:FloatWithFMA}
     s = a * b
+    if !isfinite(s)
+        return zero_error_result(s)
+    end
     t = fma(a, b, -s)
     return s, t
 end

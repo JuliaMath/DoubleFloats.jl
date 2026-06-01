@@ -22,6 +22,9 @@ end
 @inline function dvi_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
     xhi, xlo = x    
     hi = xhi / y
+    if !isfinite(hi)
+        return zero_error_result(hi)
+    end
     uh, ul = two_prod(hi, y)
     lo = ((((xhi - uh) - ul) + xlo))/y
     hi,lo = two_hilo_sum(hi, lo)

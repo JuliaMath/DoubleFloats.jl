@@ -1,4 +1,4 @@
-function fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat}
+@inline function fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat}
    chi, c1 = two_prod(xhi, yhi)
    t0 = xlo * ylo
    t1 = fma(xhi, ylo, t0)
@@ -19,7 +19,7 @@ end
    return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
 
-function fma(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
+@inline function fma(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
    chi, c1 = two_prod(x, y)
    shi, slo = two_sum(zhi, chi)
    thi, tlo = two_sum(zlo, c1)
@@ -34,7 +34,7 @@ end
    return fma(x, y, z.hi, z.lo)
 end
 
-function fma(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:IEEEFloat}
+@inline function fma(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:IEEEFloat}
    chi, c1 = two_prod(xhi, yhi)
    t0 = xlo * ylo
    t1 = fma(xhi, ylo, t0)

@@ -42,6 +42,9 @@ end
     xhi, xlo = x
     yhi, ylo = y
     hi = xhi / yhi
+    if !isfinite(hi)
+        return zero_error_result(hi)
+    end
     uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
     hi,lo = two_hilo_sum(hi, lo)
