@@ -313,3 +313,52 @@ end
     t = fma(a, b, -s)
     return s, t
 end
+
+# ---------------------------------------------------------------------------
+# Branch-free error-free transforms.
+#
+# These omit the `!isfinite` short-circuit present in the public EFTs above.
+# For finite results they return bit-identical values; the only behavioural
+# difference is on overflow, where they may yield NaN/Inf instead of the
+# saturated (x, 0) convention. They are intended ONLY for internal use inside
+# the DoubleFloat arithmetic kernels, whose wrappers already (a) route
+# non-finite operands to a dedicated path and (b) re-check the finished result
+# and fall back to the guarded kernel when it is non-finite. Stripping the
+# per-EFT branch turns 2-4 hot-path branches into a single output check.
+# ---------------------------------------------------------------------------
+
+@inline function two_sum_(a::T, b::T) where {T<:FloatWithFMA}
+    s = a + b
+    bb = s - a
+    e = (a - (s - bb)) + (b - bb)
+    return s, e
+end
+
+@inline function two_diff_(a::T, b::T) where {T<:FloatWithFMA}
+    hi = a - b
+    a1 = hi + b
+    b1 = hi - a1
+    lo = (a - a1) - (b + b1)
+    return hi, lo
+end
+
+# *unchecked* requirement `|a| >= |b|`
+@inline function two_hilo_sum_(a::T, b::T) where {T<:FloatWithFMA}
+    s = a + b
+    e = b - (s - a)
+    return s, e
+end
+
+@inline function two_prod_(a::T, b::T) where {T<:FloatWithFMA}
+    s = a * b
+    t = fma(a, b, -s)
+    return s, t
+end
+
+@inline function two_sum3_(a::T, b::T, c::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum_(a,  b)
+    hi, t2 = two_sum_(t0, c)
+    lo = t2 + t1
+    hi, lo = two_hilo_sum_(hi, lo)
+    return hi, lo
+end
