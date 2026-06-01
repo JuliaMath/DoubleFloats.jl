@@ -6,6 +6,9 @@
     (reinterpret(UInt16, x) | reinterpret(UInt16, y))  === 0x8000
 
 @inline function (==)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+    if isinf(HI(x)) && isinf(HI(y))
+        return signbit(HI(x)) == signbit(HI(y))
+    end
     return (LO(x) === LO(y)) && (HI(x) === HI(y) || posnegzeros(HI(x),HI(y)))
 end
 @inline function (<)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}

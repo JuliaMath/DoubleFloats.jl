@@ -11,11 +11,13 @@ end
 
 const FloatWithFMA = Union{Float64, Float32, Float16}
 
+@noinline zero_error_result(x::T) where {T<:AbstractFloat} = (x, zero(T))
+
 """
     two_sum(a, b)
 Computes `hi = fl(a+b)` and `lo = err(a+b)`.
 """
-function two_sum(a::T, b::T) where {T<:FloatWithFMA}
+@inline function two_sum(a::T, b::T) where {T<:FloatWithFMA}
     s = a + b                       # rounded sum
 
     # --- Corner case: any non-finite input or an overflowed result ----------
@@ -33,7 +35,7 @@ function two_sum(a::T, b::T) where {T<:FloatWithFMA}
         # An input was already Inf/NaN: let `s` carry IEEE semantics
         # (incl. legitimate NaN from Inf + (-Inf)) and give a 0 error,
         # since the "error of infinity" is undefined, not NaN-worthy.
-        return (s, zero(T))
+        return zero_error_result(s)
     end
     # --- Knuth TwoSum, exact when `s` is finite -----------------------------
     # bb is b reconstructed as (s - a); the part of b actually absorbed.
@@ -127,6 +129,9 @@ Computes `hi = fl(a-b)` and `lo = err(a-b)`.
 """
 @inline function two_diff(a::T, b::T) where {T<:FloatWithFMA}
     hi = a - b
+    if !isfinite(hi)
+        return zero_error_result(hi)
+    end
     a1 = hi + b
     b1 = hi - a1
     lo = (a - a1) - (b + b1)
@@ -154,6 +159,9 @@ Computes `s = fl(a+b)` and `e = err(a+b)`.
 """
 @inline function two_hilo_sum(a::T, b::T) where {T<:FloatWithFMA}
     s = a + b
+    if !isfinite(s)
+        return zero_error_result(s)
+    end
     e = b - (s - a)
     return s, e
 end
@@ -299,6 +307,9 @@ end
 
 @inline function two_prod(a::T, b::T) where {T<:FloatWithFMA}
     s = a * b
+    if !isfinite(s)
+        return zero_error_result(s)
+    end
     t = fma(a, b, -s)
     return s, t
 end

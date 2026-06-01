@@ -57,23 +57,11 @@ end
 end
 
 function mul_by_half(r::DoubleFloat{T}) where {T<:IEEEFloat}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi -= 1
-    xplo -= 1
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return DoubleFloat{T}(hi, lo)
+    return DoubleFloat{T}(ldexp(r.hi, -1), ldexp(r.lo, -1))
 end
 
 function mul_by_two(r::DoubleFloat{T}) where {T<:IEEEFloat}
-    frhi, xphi = frexp(HI(r))
-    frlo, xplo = frexp(LO(r))
-    xphi += 1
-    xplo += 1
-    hi = ldexp(frhi, xphi)
-    lo = ldexp(frlo, xplo)
-    return DoubleFloat{T}(hi, lo)
+    return DoubleFloat{T}(ldexp(r.hi, 1), ldexp(r.lo, 1))
 end
 
 function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
@@ -115,9 +103,12 @@ end
 function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
     is_neg = signbit(HI(a))
     xabs = is_neg ? -a : a
-    xintpart = modf(xabs)[2]
-    xintpart = xintpart.hi + xintpart.lo
-    xint = Int64(xintpart)
+    xhi = xabs.hi
+    xlo = xabs.lo
+    xint = trunc(Int64, xhi)
+    if xhi == T(xint) && signbit(xlo)
+        xint -= 1
+    end
     xfrac = xabs - T(xint)
 
     if 0 < xint <= 64
@@ -133,14 +124,16 @@ function calc_exp(a::DoubleFloat{T}) where {T<:IEEEFloat}
     end
 
     # exp(xfrac)
-    if HI(xfrac) < 0.5
+    xfrac_hi = xfrac.hi
+    xfrac_lo = xfrac.lo
+    if xfrac_hi < 0.5
         zfrac = exp_zero_half(xfrac)
-    elseif HI(xfrac) > 0.5
+    elseif xfrac_hi > 0.5
         zfrac = exp_half_one(xfrac)
     else
-        if LO(xfrac) == 0.0
+        if xfrac_lo == 0.0
             zfrac = DoubleFloat{T}(1.6487212707001282, -4.731568479435833e-17)
-        elseif signbit(LO(xfrac))
+        elseif signbit(xfrac_lo)
             zfrac = exp_zero_half(xfrac)
         else
             zfrac = exp_half_one(xfrac)
@@ -183,13 +176,13 @@ end
 function exp2(a::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(a) && return a
     isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
-    return DoubleFloat{T}(2)^a
+    return exp(a * logtwo(DoubleFloat{T}))
 end
 
 function exp10(a::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(a) && return a
     isinf(a) && return(signbit(a) ? zero(DoubleFloat{T}) : a)
-    return DoubleFloat{T}(10)^a
+    return exp(a * logten(DoubleFloat{T}))
 end
 
 #=
@@ -225,7 +218,7 @@ function log(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && !signbit(x) && return x
     x === zero(DoubleFloat{T}) && return neginf(DoubleFloat{T})
-    y = DoubleFloat(log(HI(x)), zero(T))
+    y = DoubleFloat{T}(log(HI(x)), zero(T))
     z = exp(y)
     adj = (z - x) / (z + x)
     adj = mul_by_two(adj)
@@ -252,14 +245,28 @@ logten(::Type{DoubleFloat{Float32}}) = Double32(2.3025851, -3.1975436e-8)
 logtwo(::Type{DoubleFloat{Float16}}) = Double16(0.6934, -0.0002122)
 logten(::Type{DoubleFloat{Float16}}) = Double16(2.303, -0.0001493)
 
+const invlogtwo64 = inv(logtwo(DoubleFloat{Float64}))
+const invlogten64 = inv(logten(DoubleFloat{Float64}))
+const invlogtwo32 = inv(logtwo(DoubleFloat{Float32}))
+const invlogten32 = inv(logten(DoubleFloat{Float32}))
+const invlogtwo16 = inv(logtwo(DoubleFloat{Float16}))
+const invlogten16 = inv(logten(DoubleFloat{Float16}))
+
+invlogtwo(::Type{DoubleFloat{Float64}}) = invlogtwo64
+invlogten(::Type{DoubleFloat{Float64}}) = invlogten64
+invlogtwo(::Type{DoubleFloat{Float32}}) = invlogtwo32
+invlogten(::Type{DoubleFloat{Float32}}) = invlogten32
+invlogtwo(::Type{DoubleFloat{Float16}}) = invlogtwo16
+invlogten(::Type{DoubleFloat{Float16}}) = invlogten16
+
 function log2(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && !signbit(x) && return x
-    log(x) / logtwo(DoubleFloat{T})
+    log(x) * invlogtwo(DoubleFloat{T})
 end
 
 function log10(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && !signbit(x) && return x
-    log(x) / logten(DoubleFloat{T})
+    log(x) * invlogten(DoubleFloat{T})
 end
