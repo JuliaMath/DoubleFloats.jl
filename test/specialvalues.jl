@@ -8,7 +8,7 @@
     @test maxintfloat(T) < floatmax(T)
 end
 
-@testset "corner cases"
+@testset "corner cases" begin
    @test 2/Double64(1e-310) == Double64(Inf)
    @test Double64(1e300)^2 == Double64(Inf)
    b = floatmax(DoubleFloat{Float64})
