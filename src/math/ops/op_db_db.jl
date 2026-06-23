@@ -1,7 +1,9 @@
 @inline function inv_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     yhi, ylo = x.hi, x.lo
     thi = inv(yhi)
-    (!isfinite(thi) || iszero(ylo) || !isfinite(ylo)) &&
+    # See the comment on inv_dd_dd: ylo == 0 must not short-circuit, or inv loses
+    # the low word for every exactly-representable argument (e.g. inv(Double64(3))).
+    (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) &&
         return DoubleFloat{T}(zero_error_result(thi)...)
     zhi, zlo = unsafe_inv_dd_dd_(yhi, ylo)
     isfinite(zhi) || return DoubleFloat{T}(unsafe_inv_dd_dd(yhi, ylo)...)

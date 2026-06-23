@@ -50,8 +50,32 @@ end
 
 @testset "inv corner cases" begin
     @test inv(Double64(0.0)) == Double64(Inf)
+    @test inv(Double64(-0.0)) == Double64(-Inf)
     @test inv(Double64(Inf)) == Double64(0.0)
+    @test inv(Double64(-Inf)) == Double64(0.0)
+    @test signbit(inv(Double64(-Inf)))
+    @test isnan(inv(Double64(NaN)))
     @test inv(Double64(1.0e-310)) == Double64(Inf)
+end
+
+# n = number of significand bits in the underlying float type
+@testset "inv full precision when LO(x) == 0, $D" for (D, n) in
+        ((Double64, 53), (Double32, 24), (Double16, 11))
+    # `inv` must capture the rounding error of `inv(HI(x))` in the low word, even
+    # when LO(x) == 0 — i.e., for every exactly-representable argument, such as
+    # ordinary integers.  An early version of the nonfinite-value handling above
+    # returned a zero low word for all such arguments, silently reducing `inv` to
+    # the precision of the underlying float type.
+    setprecision(BigFloat, 512) do
+        for k in (3, 5, 6, 7, 9, 10, 11, 49, 1.5)
+            x = D(k)
+            @test iszero(LO(x))  # otherwise this test exercises nothing
+            relerr = abs(BigFloat(inv(x)) - inv(BigFloat(x))) * BigFloat(x)
+            @test relerr < BigFloat(2)^(-2n + 2)  # full double-word precision
+        end
+        # The reciprocal of a power of two is exact.
+        @test inv(D(4)) == D(1) / D(4) == D(0.25)
+    end
 end
 
 @testset "Trig functions" begin
