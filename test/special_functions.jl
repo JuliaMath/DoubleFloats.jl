@@ -12,7 +12,8 @@ using SpecialFunctions
     for func in (bessely, besselj)
         @test func(3,halfq) ≈ func(3,0.5)
     end
-    @test gamma(Double64(2),3) ≈ gamma(2,3)
+    a, b = Double64(2), Double64(b)
+    @test gamma(a, b) ≈ gamma(2,3)
     @test all(logabsgamma(Double64(-0.5)) .≈ logabsgamma(-0.5))
     @test all(logabsgamma(Double64(-1.5)) .≈ logabsgamma(-1.5))
 end
