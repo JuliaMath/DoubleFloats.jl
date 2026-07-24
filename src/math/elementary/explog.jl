@@ -207,7 +207,7 @@ Behavioral notes versus the current DoubleFloats implementation:
 # 32-entry lookup table: centers 1 + (2i-1)/64 (exact in T) and log2(center)
 # as (hi, lo) pairs, generated at load time (log.jl:185)
 for (T, prec) in ((Float64, 160), (Float32, 80))
-    centers = ntuple(i -> T(1 + (2i - 1) // 64), 32)
+    centers = ntuple(h -> T(1 + (2h - 1) // 64), 32)
     values = ntuple(32) do i
         b = setprecision(() -> log2(Float128(centers[i])), Float128, prec)
         hi = T(b)
