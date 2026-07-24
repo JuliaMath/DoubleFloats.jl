@@ -1,32 +1,40 @@
+include("eigen.jl")
+include("ddmatmul.jl")
+include("matfun.jl")
+include("sylvester.jl")
+
 function matrixfunction(fn::Function, m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
-    evecs = eigvecs(m)
+    F = eigen(m)
+    evecs = F.vectors
     rank(evecs) == size(m)[1] || throw(ErrorException("matrix is not diagonalizable"))
-    evals = eigenvals(m)
-    fnevals = fn.(evals)
-    invevecs = inv(evecs)
-    diagevals = Diagonal(fnevals)
-    result = evecs * diagevals * invevecs
-    return result
+    # a real spectrum may still need the complex plane (e.g. log of a
+    # negative eigenvalue); retry there rather than escaping a DomainError
+    fnevals = try
+        fn.(F.values)
+    catch e
+        e isa DomainError || rethrow()
+        fn.(Complex{DoubleFloat{T}}.(F.values))
+    end
+    result = (evecs * Diagonal(fnevals)) / evecs
+    return result isa Matrix{Complex{DoubleFloat{T}}} ? _strip_imag_dust(result) : result
 end
 
 function matrixfunction(fn::Function, m::Matrix{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
-    evecs = eigvecs(m)
+    F = eigen(m)
+    evecs = F.vectors
     rank(evecs) == size(m)[1] || throw(ErrorException("matrix is not diagonalizable"))
-    evals = eigenvals(m)
-    fnevals = fn.(evals)
-    invevecs = inv(evecs)
-    diagevals = Diagonal(fnevals)
-    result = evecs * diagevals * invevecs
-    return result
+    fnevals = fn.(F.values)
+    return (evecs * Diagonal(fnevals)) / evecs
 end
 
-for F in (:sqrt, :cbrt,
-          :log, :log1p, :log2, :log10, :exp, :expm1, 
-          :sin, :sinpi, :cos, :cospi, :tan, :csc, :sec, :cot,
+# exp, log, sqrt, and the trig/hyperbolic families have dedicated
+# defective-safe implementations in matfun.jl; the functions below still
+# use eigen-diagonalization and require a diagonalizable argument
+for F in (:cbrt,
+          :sinpi, :cospi,
           :asin, :acos, :atan, :acsc, :asec, :acot,
-          :sinh, :cosh, :tanh, :csch, :sech, :coth,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
     function $F(m::Matrix{DoubleFloat{T}}) where {T<:IEEEFloat}
@@ -38,12 +46,13 @@ for F in (:sqrt, :cbrt,
   end
 end
 
+# sincos is implemented in matfun.jl (one matrix exponential for both)
 
 function Base.:(^)(m::Matrix{DoubleFloat{T}}, p::Union{IEEEFloat, DoubleFloat{T}}) where {T<:IEEEFloat}
     pw = DoubleFloat{T}(p)
     res = pw * log(m)
     result = exp(res)
-    return result
+    return result isa Matrix{Complex{DoubleFloat{T}}} ? _strip_imag_dust(result) : result
 end
 function Base.:(^)(m::Matrix{Complex{DoubleFloat{T}}}, p::Union{IEEEFloat, DoubleFloat{T}}) where {T<:IEEEFloat}
     pw = DoubleFloat{T}(p)
