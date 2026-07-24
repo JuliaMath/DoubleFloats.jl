@@ -201,6 +201,9 @@ Usage questions can be posted on the [Julia Discourse forum][discourse-tag-url].
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue][issues-url] if you encounter any problems.
 
+## Use of AI
+
+Claude Fable (High) was used to revisit some approaches with a great deal of guidance.
 ----
 
 <a name="involvement">β</a>: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
