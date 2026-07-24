@@ -1,13 +1,13 @@
 using Documenter, DoubleFloats
 
 # the benchmark and accuracy reports are generated into docs/reports by
-# docs/reports/benchmarks.jl and docs/reports/accuracies.jl; copy the
-# current versions into the documentation source when they exist
+# docs/reports/benchmarks.jl and docs/reports/accuracies.jl and are tracked
+# in git; copy the current versions into the documentation source
 for report in ("benchmark_report.md", "accuracy_report.md")
     src = joinpath(@__DIR__, "reports", report)
-    if isfile(src)
-        cp(src, joinpath(@__DIR__, "src", report); force = true)
-    end
+    isfile(src) || error("$src is missing: regenerate it with the matching " *
+                         "script in docs/reports/ and commit it")
+    cp(src, joinpath(@__DIR__, "src", report); force = true)
 end
 
 makedocs(
