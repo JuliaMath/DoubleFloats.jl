@@ -2,9 +2,14 @@ name: Documentation
 on:
   push:
     branches:
-      - master
+      - main
     tags: '*'
   pull_request:
+
+permissions:
+  contents: write
+  pull-requests: read
+  statuses: write
   
 jobs:
   build:
