@@ -1,5 +1,6 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DoubleFloats = "497a8b3b-efae-58df-a0af-a86822472b78"
 
 [compat]
 Documenter = "0.20, 0.25, 0.26, 0.27, 0.28, 0.29, 0.30"
