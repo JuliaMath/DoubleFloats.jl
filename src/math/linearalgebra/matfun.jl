@@ -159,6 +159,27 @@ function _mat_pair(A::Matrix{E}, codd::NTuple{14,Double64},
     return sn, cs
 end
 
+# cos and cosh alone: the even member of each pair satisfies its own
+# double-angle identity (cos 2X = 2cos²X - I, cosh 2X = 2cosh²X - I), so the
+# odd polynomial and the second product per squaring step are unnecessary:
+# 7 + s matrix products instead of the pair driver's 11 + 2s.
+function _mat_even(A::Matrix{E}, ceven::NTuple{14,Double64}) where {E<:Number}
+    n = LinearAlgebra.checksquare(A)
+    RT = real(E)
+    eta = opnorm(A, 1)
+    isfinite(eta) || return fill(E(NaN), n, n)
+    s = eta > 0.5 ? exponent(Float64(eta)) + 2 : 0
+    B = s > 0 ? A .* RT(2.0)^(-s) : A
+    Y = B * B
+    P2 = Y * Y; P3 = P2 * Y; P4 = P3 * Y
+    cs = _pair_poly(ceven, Y, P2, P3, P4, n)
+    for _ in 1:s
+        cs2 = cs * cs
+        cs = (cs2 .+ cs2) - I
+    end
+    return cs
+end
+
 _diag_allnonneg(m) = all(i -> !signbit(HI(m[i,i])), 1:size(m,1))
 _diag_allpos(m)    = all(i -> HI(m[i,i]) > 0.0, 1:size(m,1))
 
@@ -305,7 +326,11 @@ function sincos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
 end
 
 sin(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = sincos(m)[1]
-cos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = sincos(m)[2]
+
+function cos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+    ishermitian(m) && return _herm_apply(cos, m)
+    return _mat_even(m, _msc_cos)
+end
 
 function tan(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     ishermitian(m) && return _herm_apply(tan, m)
@@ -320,7 +345,7 @@ end
 
 function cosh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     ishermitian(m) && return _herm_apply(cosh, m)
-    return _mat_pair(m, _msc_sinh, _msc_cosh)[2]
+    return _mat_even(m, _msc_cosh)
 end
 
 function tanh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
