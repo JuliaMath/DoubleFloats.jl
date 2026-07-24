@@ -40,7 +40,7 @@ using Random
 import Random: rand, randn
 
 using LinearAlgebra
-import LinearAlgebra: norm, mul!
+import LinearAlgebra: norm, mul!, AdjointQ
 
 using GenericLinearAlgebra
 using GenericSchur
