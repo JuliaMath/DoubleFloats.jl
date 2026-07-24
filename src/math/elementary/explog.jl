@@ -209,7 +209,9 @@ Behavioral notes versus the current DoubleFloats implementation:
 for (T, prec) in ((Float64, 160), (Float32, 80))
     centers = ntuple(h -> T(1 + (2h - 1) // 64), 32)
     values = ntuple(32) do i
-        b = setprecision(() -> log2(Float128(centers[i])), Float128, prec)
+        b = setprecision(prec) do
+            log2(BigFloat(centers[i]))
+        end
         hi = T(b)
         (hi, T(b - hi))
     end
@@ -315,6 +317,15 @@ function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     y = _log_special(t, _mf_mul(_unsafe_log2(t), _ln_2(T)))
     return DoubleFloat{T}(y[1], y[2])
+end
+
+function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
+    isinf(x) && return x
+    return log(x + one(x))
+end
+
+function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
+    return exp(x) - one(x)
 end
 
 function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
