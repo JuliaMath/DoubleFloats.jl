@@ -66,6 +66,59 @@ end
     return Int((reinterpret(U, x) >> (Base.significand_bits(T) - 5)) & U(0x1F))
 end
 
+# ---------------------------------------------------------------------------
+# Shared helpers used outside this file (trig.jl, arctrig.jl, archyptrig.jl,
+# hyptrig.jl, linearalgebra/matfun.jl).  These predate the kernel rewrite and
+# must remain here: the files that consume them are included after explog.jl.
+# ---------------------------------------------------------------------------
+
+# multiplication by an exact power of two is correctly rounded, so these
+# match ldexp bit-for-bit (including subnormals) without its branches
+@inline function mul_by_half(r::DoubleFloat{T}) where {T<:IEEEFloat}
+    return DoubleFloat{T}(r.hi * T(0.5), r.lo * T(0.5))
+end
+
+@inline function mul_by_two(r::DoubleFloat{T}) where {T<:IEEEFloat}
+    return DoubleFloat{T}(r.hi * T(2.0), r.lo * T(2.0))
+end
+
+# one Horner step  (chi,clo) + m*(ph,pl)  on raw hi/lo pairs.
+# REQUIRES |chi| >= |m*ph| (guaranteed in a convergent series Horner where
+# coefficients dominate), which permits the branch-free two_hilo_sum and
+# makes this fully accurate at roughly half the flops of the general path.
+@inline function _horner_step(chi::T, clo::T, m::T, ph::T, pl::T) where {T<:IEEEFloat}
+    th, tl = two_prod(ph, m)
+    tl = fma(pl, m, tl)
+    s, e = two_hilo_sum(chi, th)
+    return two_hilo_sum(s, (clo + tl) + e)
+end
+
+const inv_oddint = (
+  Double64(0.3333333333333333,1.850371707708594e-17),     # 1/3
+  Double64(0.2,-1.1102230246251566e-17),                  # 1/5
+  Double64(0.14285714285714285,7.93016446160826e-18),     # 1/7
+  Double64(0.1111111111111111,6.1679056923619804e-18),    # 1/9
+  Double64(0.09090909090909091,-2.523234146875356e-18),   # 1/11
+  Double64(0.07692307692307693,-4.270088556250602e-18),   # 1/13
+  Double64(0.06666666666666667,9.251858538542971e-19),    # 1/15
+  Double64(0.058823529411764705,8.163404592832033e-19),   # 1/17
+  Double64(0.05263157894736842,2.921639538487254e-18),    # 1/19
+  Double64(0.047619047619047616,2.64338815386942e-18),    # 1/21
+  Double64(0.043478260869565216,1.206764157201257e-18),   # 1/23
+  Double64(0.04,-8.326672684688674e-19),                  # 1/25
+  Double64(0.037037037037037035,2.05596856412066e-18),    # 1/27
+  Double64(0.034482758620689655,4.785444071660157e-19),   # 1/29
+  Double64(0.03225806451612903,8.953411488912552e-19),    # 1/31
+  Double64(0.030303030303030304,-8.410780489584519e-19),  # 1/33
+  Double64(0.02857142857142857,8.921435019309293e-19),    # 1/35
+  Double64(0.02702702702702703,-1.50030138462859e-18),    # 1/37
+  Double64(0.02564102564102564,8.896017825522087e-19),    # 1/39
+  Double64(0.024390243902439025,-8.46206573647223e-19),   # 1/41
+)
+
+const inv_oddint_f64 = map(x -> HI(x), inv_oddint)
+const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
+
 ## 3. The `exp2` / `exp` / `exp10` family
 
 ### Constants
@@ -75,6 +128,15 @@ end
 @inline _exp2_max(::Type{Float64}) = +0x1.FFFFFFFFFFFFFp+0009   # ~1024.0
 @inline _exp2_min(::Type{Float32}) = Float32(-0x1.F80000p+006)  # -126.0f0
 @inline _exp2_max(::Type{Float32}) = Float32(+0x1.FFFFFEp+006)  # ~128.0f0
+
+# below this, 2^x rounds to zero even in the subnormals (safely past
+# -1075.0 / -150.0f0, the exact round-to-zero cutoffs)
+@inline _exp2_zero(::Type{Float64}) = -1080.0
+@inline _exp2_zero(::Type{Float32}) = -155.0f0
+
+# exact power-of-2 offset that lifts the subnormal band into normal range
+@inline _exp2_shift(::Type{Float64}) = 64
+@inline _exp2_shift(::Type{Float32}) = 32
 
 # 2-limb base-conversion constants (heads of the MultiFloats full tables)
 @inline _log2_e(::Type{Float64}) =
@@ -136,8 +198,10 @@ end
     # reduction: x = n + 8r, n integer, |r| ≤ 1/16              (exact)
     # trunc-based nearest-integer: reproducible across CPU/GPU backends
     n_float = trunc(x[1] + copysign(_half, x[1]))
-    r = _mf_add(x, (-n_float, zero(T)))
-    r = (_eighth * r[1], _eighth * r[2])
+    # x₁ and n_float share x₁'s ulp grid and differ by ≤ 1/2, so the
+    # subtraction is exact; one two_sum replaces the full _mf_add
+    rh, rl = two_sum(x[1] - n_float, x[2])
+    r = (_eighth * rh, _eighth * rl)
     # kernel: 2^(x-n) = (2^r)^8
     p = _exp2_poly(r)
     p = _mf_sqr(_mf_sqr(_mf_sqr(p)))
@@ -152,10 +216,18 @@ end
 end
 
 @inline function _exp2_clamped(x::Tuple{T,T}) where {T<:IEEEFloat}
+    if x[1] < _exp2_min(T)
+        # gradual underflow: run the kernel shifted into normal range, then
+        # scale back by an exact power of 2; the multiply rounds correctly
+        # into the subnormals (Base.ldexp truncates there).  The low limb
+        # is meaningless at subnormal magnitudes and is dropped.
+        x[1] < _exp2_zero(T) && return (zero(T), zero(T))
+        k = _exp2_shift(T)
+        p = _exp2_kernel(_mf_add(x, (T(k), zero(T))))
+        return (p[1] * _pow2(T, -k), zero(T))
+    end
     p = _exp2_kernel(x)
-    p = ifelse(x[1] < _exp2_min(T), (zero(T), zero(T)), p)
-    p = ifelse(x[1] > _exp2_max(T), (T(Inf), T(Inf)), p)
-    return p
+    return ifelse(x[1] > _exp2_max(T), (T(Inf), T(Inf)), p)
 end
 
 const _DF64or32 = Union{Float64, Float32}
@@ -175,18 +247,21 @@ function Base.exp10(x::DoubleFloat{T}) where {T<:_DF64or32}
     return DoubleFloat{T}(p[1], p[2])
 end
 
+# templated.jl promotes exp/expm1/log/log1p/log2/log10 for Double16, but
+# exp2/exp10 are not in its list — cover them here the same way
+Base.exp2(x::Double16)  = Double16(exp2(Double64(x)))
+Base.exp10(x::Double16) = Double16(exp10(Double64(x)))
+
 #=
-Behavioral notes versus the current DoubleFloats implementation:
+Behavioral notes:
 
 - NaN propagates through `n_float` and the polynomial naturally; `-Inf`
   hits the low clamp → `0.0`; `+Inf` hits the high clamp →
   `inf(DoubleFloat{T})`. No explicit guards needed.
-- **Subnormal outputs are flushed to zero**: `exp2` arguments in
-  `[-1074, -1022)` (`Double64`) / `[-149, -126)` (`Double32`) return `0`
-  rather than a subnormal-`hi` result. The current DoubleFloats `exp`
-  goes through a `Float128` path to cover roughly `[-745, -600]`; if
-  that behavior must be preserved, keep the existing guard as a
-  pre-check and fall through to this kernel otherwise.
+- Subnormal outputs (`exp2` arguments in `[-1074, -1022)` for `Double64`,
+  `[-149, -126)` for `Double32`) are produced by a shifted kernel plus a
+  correctly-rounded `ldexp`; the low limb is zero there, matching what a
+  subnormal-`hi` double-double can represent.
 - `exp2` is exact-reduction throughout and is the most accurate of the
   three; `exp`/`exp10` add one inexact constant multiplication up front.
 =#
@@ -278,58 +353,155 @@ end
 
 ### Kernel and public methods
 
+# positive x below this can have a subnormal limb (hi subnormal, or lo
+# subnormal because hi is within 2^(precision+1) of floatmin), which breaks
+# the raw exponent-field arithmetic; such x are rescaled up exactly first
+@inline _log_tiny(::Type{Float64}) = 0x1p-1000
+@inline _log_tiny(::Type{Float32}) = Float32(0x1p-100)
+
 @inline function _unsafe_log2(x::Tuple{T,T}) where {T<:IEEEFloat}
     _one = one(T)
     _zero = zero(T)
-    # exact split: x = 2^e · m,  m₁ ∈ [1, 2)
-    e = _raw_exponent(x[1])
-    m = (_uldexp(x[1], -e), _uldexp(x[2], -e))
+    # rescue non-normal leading limbs.  hi == 0 with lo != 0 (cancellation
+    # can leave the value entirely in lo): promote lo to the leading term.
+    x = ifelse(iszero(x[1]) & !iszero(x[2]), (x[2], _zero), x)
+    # near 1 take the direct path and skip the exponent split, table load,
+    # and tabled kernel entirely; numerator is Sterbenz-exact
+    if (T(0.9375) < x[1]) & (x[1] < T(1.0625))  # 15/16 < x₁ < 17/16
+        t = _mf_div(_mf_add(x, (-_one, _zero)), _mf_add(x, (_one, _zero)))
+        return _mf_mul(t, _log2_poly_wide(_mf_sqr(t)))
+    end
+    # subnormal-limb region: multiply by an exact power of 2, subtract it
+    # from the exponent afterwards
+    _shift = Base.significand_bits(T) + 2
+    tiny = abs(x[1]) < _log_tiny(T)
+    _scale = _pow2(T, _shift)
+    x = ifelse(tiny, (_scale * x[1], _scale * x[2]), x)
+    # exact split: x = 2^er · m,  m₁ ∈ [1, 2)
+    er = _raw_exponent(x[1])
+    e = er - ifelse(tiny, _shift, 0)
+    m = (_uldexp(x[1], -er), _uldexp(x[2], -er))
     i = _log2_index(x[1]) + 1
-    c = _log2_centers(T)[i]
-    v = _log2_values(T)[i]
-
-    # both paths, branch-free; numerators are Sterbenz-exact
-    t_dir = _mf_div(_mf_add(x, (-_one, _zero)), _mf_add(x, (_one, _zero)))
-    t_tab = _mf_div(_mf_add(m, (-c, -_zero)), _mf_add(m, (c, _zero)))
-    direct = _mf_mul(t_dir, _log2_poly_wide(_mf_sqr(t_dir)))
-    tabled = _mf_add(_mf_add((T(e), _zero), v),
-                     _mf_mul(t_tab, _log2_poly_narrow(_mf_sqr(t_tab))))
-
-    near_one = (T(0.9375) < x[1]) & (x[1] < T(1.0625))  # 15/16 < x₁ < 17/16
-    return ifelse(near_one, direct, tabled)
+    c = @inbounds _log2_centers(T)[i]
+    v = @inbounds _log2_values(T)[i]
+    # numerator is Sterbenz-exact
+    t = _mf_div(_mf_add(m, (-c, -_zero)), _mf_add(m, (c, _zero)))
+    return _mf_add(_mf_add((T(e), _zero), v),
+                   _mf_mul(t, _log2_poly_narrow(_mf_sqr(t))))
 end
 
 @inline function _log_special(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     y = ifelse(iszero(x[1]) & iszero(x[2]), (T(-Inf), T(-Inf)), y)
     y = ifelse(isinf(x[1]) & !signbit(x[1]), (T(Inf), T(Inf)), y)
-    y = ifelse(isnan(x[1]) | (signbit(x[1]) & !iszero(x[1])),
-        (T(NaN), T(NaN)), y)
+    y = ifelse(isnan(x[1]), (T(NaN), T(NaN)), y)
     return y
+end
+
+# negative arguments throw, matching Base and the pre-rewrite behavior
+@inline function _log_domain_check(x::Tuple{T,T}) where {T<:IEEEFloat}
+    if (x[1] < zero(T)) | (iszero(x[1]) & (x[2] < zero(T)))
+        throw(DomainError(x[1],
+            "log requires a non-negative argument; try log(Complex(x))"))
+    end
+    return nothing
 end
 
 function Base.log2(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
+    _log_domain_check(t)
     y = _log_special(t, _unsafe_log2(t))
     return DoubleFloat{T}(y[1], y[2])
 end
 
 function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
+    _log_domain_check(t)
     y = _log_special(t, _mf_mul(_unsafe_log2(t), _ln_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
+function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
+    t = HILO(x)
+    _log_domain_check(t)
+    y = _log_special(t, _mf_mul(_unsafe_log2(t), _log10_2(T)))
+    return DoubleFloat{T}(y[1], y[2])
+end
+
 function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
-    isinf(x) && return x
+    u = HI(x)
+    (isnan(u) | iszero(u)) && return x
+    if -T(0.0625) < u < T(0.0625)
+        # inside the wide-poly window use t = x/(2 + x) directly: the
+        # double-word division keeps every low bit of x, so nothing is
+        # lost forming 1 + x
+        t = _mf_div(HILO(x), _mf_add(HILO(x), (T(2), zero(T))))
+        y = _mf_mul(_mf_mul(t, _log2_poly_wide(_mf_sqr(t))), _ln_2(T))
+        return DoubleFloat{T}(y[1], y[2])
+    end
+    # elsewhere 1 + x carries full double-word relative accuracy;
+    # +Inf passes through, x == -1 gives -Inf, x < -1 throws DomainError
     return log(x + one(x))
 end
 
-function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
-    return exp(x) - one(x)
+# expm1 series coefficients 1/j! as per-type (hi, lo) pairs
+for (T, prec, nterms) in ((Float64, 160, 12), (Float32, 80, 8))
+    coeffs = ntuple(nterms) do j
+        b = setprecision(prec) do
+            inv(factorial(BigInt(j)))
+        end
+        hi = T(b)
+        (hi, T(b - hi))
+    end
+    @eval @inline _expm1_coeffs(::Type{$T}) = $coeffs
 end
 
-function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
-    t = HILO(x)
-    y = _log_special(t, _mf_mul(_unsafe_log2(t), _log10_2(T)))
-    return DoubleFloat{T}(y[1], y[2])
+## 5. Powers
+
+function Base.:(^)(r::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
+    n == 0 && return one(DoubleFloat{T})
+    s = one(DoubleFloat{T})
+    nabs = abs(n)
+    if nabs > 1
+        while nabs > 0
+            if isodd(nabs)
+                s = s * r
+            end
+            nabs >>= 1
+            if nabs > 0
+                r = square(r)
+            end
+        end
+    else
+        s = r
+    end
+    return n < 0 ? inv(s) : s
+end
+
+function Base.:(^)(r::DoubleFloat{T}, n::DoubleFloat{T}) where {T<:IEEEFloat}
+    if isinteger(n) && abs(HI(n)) <= 0x1p20
+        return r ^ unsafe_trunc(Int, HI(n))
+    end
+    return exp(n * log(r))
+end
+
+function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
+    u = HI(x)
+    (isnan(u) | iszero(u)) && return x
+    # away from zero exp(x) - 1 does not cancel harmfully (exp(x) ∉ (0.6, 1.65))
+    abs(u) >= T(0.5) && return exp(x) - one(x)
+    # scale exactly to |s| < 2^-8, run the Taylor series there, then undo the
+    # scaling with expm1(2t) = expm1(t)·(expm1(t) + 2); at most 8 doublings
+    k = max(0, Base.exponent(u) + 9)
+    tw = _pow2(T, -k)
+    s = (u * tw, LO(x) * tw)
+    c = _expm1_coeffs(T)
+    p = c[end]
+    for j in length(c)-1:-1:1
+        p = _mf_add(_mf_mul(p, s), c[j])
+    end
+    e = _mf_mul(s, p)
+    for _ in 1:k
+        e = _mf_mul(e, _mf_add(e, (T(2), zero(T))))
+    end
+    return DoubleFloat{T}(e[1], e[2])
 end
