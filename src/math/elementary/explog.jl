@@ -148,6 +148,34 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
 @inline _log2_10(::Type{Float32}) =
     (Float32(+0x1.A934F0p+001), Float32(+0x1.2F346Ep-024))
 
+# 3-limb versions: a 2-limb constant times a 2-limb x truncates the base-2
+# argument y = x*log2(base) at ~|y|*2^-106, and 2^y amplifies that into
+# ln2*|y|*2^-106 of relative error — ~25 ulps at |x| = 100.  Carrying a
+# third limb through the conversion removes the growth with |x|.
+@inline _log2_e3(::Type{Float64}) =
+    (+0x1.71547652B82FEp+0000, +0x1.777D0FFDA0D24p-0056, -0x1.60BB8A5442AB9p-0110)
+@inline _log2_10_3(::Type{Float64}) =
+    (+0x1.A934F0979A371p+0001, +0x1.7F2495FB7FA6Dp-0053, +0x1.FB699B2D8ABFCp-0107)
+@inline _log2_e3(::Type{Float32}) =
+    (Float32(+0x1.715476p+000), Float32(+0x1.4AE0C0p-026), Float32(-0x1.E8883p-052))
+@inline _log2_10_3(::Type{Float32}) =
+    (Float32(+0x1.A934F0p+001), Float32(+0x1.2F346Ep-024), Float32(+0x1.5FC926p-051))
+
+# x (2 limbs) times constant c (3 limbs), to 3 limbs (y1, y2, y3) with
+# |y2| <= ulp(y1) and |y3| ~ |y|*2^-105: keeps the product bits a plain
+# double-word multiply would discard.
+@inline function _mf_mul3(x::Tuple{T,T}, c::Tuple{T,T,T}) where {T<:IEEEFloat}
+    p1, e1 = two_prod(x[1], c[1])
+    p2, e2 = two_prod(x[1], c[2])
+    p3, e3 = two_prod(x[2], c[1])
+    t = fma(x[2], c[2], e2 + e3)
+    t = fma(x[1], c[3], t)
+    s, u = two_sum(p2, p3)
+    m, v = two_sum(e1, s)
+    y1, w = two_sum(p1, m)
+    return y1, w, (u + v) + t
+end
+
 ### Polynomial kernels
 
 #=
@@ -192,7 +220,7 @@ end
 
 ### Kernel and public methods
 
-@inline function _exp2_kernel(x::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function _exp2_kernel(x::Tuple{T,T}, x3::T = zero(T)) where {T<:IEEEFloat}
     _half   = T(0.5)
     _eighth = T(0.125)
     # reduction: x = n + 8r, n integer, |r| ≤ 1/16              (exact)
@@ -201,6 +229,7 @@ end
     # x₁ and n_float share x₁'s ulp grid and differ by ≤ 1/2, so the
     # subtraction is exact; one two_sum replaces the full _mf_add
     rh, rl = two_sum(x[1] - n_float, x[2])
+    rl += x3          # third limb of the base-conversion product, if any
     r = (_eighth * rh, _eighth * rl)
     # kernel: 2^(x-n) = (2^r)^8
     p = _exp2_poly(r)
@@ -215,7 +244,7 @@ end
     return p
 end
 
-@inline function _exp2_clamped(x::Tuple{T,T}) where {T<:IEEEFloat}
+@inline function _exp2_clamped(x::Tuple{T,T}, x3::T = zero(T)) where {T<:IEEEFloat}
     if x[1] < _exp2_min(T)
         # gradual underflow: run the kernel shifted into normal range, then
         # scale back by an exact power of 2; the multiply rounds correctly
@@ -223,27 +252,36 @@ end
         # is meaningless at subnormal magnitudes and is dropped.
         x[1] < _exp2_zero(T) && return (zero(T), zero(T))
         k = _exp2_shift(T)
-        p = _exp2_kernel(_mf_add(x, (T(k), zero(T))))
+        p = _exp2_kernel(_mf_add(x, (T(k), zero(T))), x3)
         return (p[1] * _pow2(T, -k), zero(T))
     end
-    p = _exp2_kernel(x)
+    p = _exp2_kernel(x, x3)
     return ifelse(x[1] > _exp2_max(T), (T(Inf), T(Inf)), p)
 end
 
 const _DF64or32 = Union{Float64, Float32}
 
+# x == 0 short-circuits: the polynomial's constant term carries minimax
+# low-limb dust (~2^-113), so the kernel would return 1 + 9e-34 instead of
+# the exact 1 that exp(±0.0) must produce.
+
 function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
+    iszero(x) && return one(DoubleFloat{T})
     p = _exp2_clamped(HILO(x))
     return DoubleFloat{T}(p[1], p[2])
 end
 
 function Base.exp(x::DoubleFloat{T}) where {T<:_DF64or32}
-    p = _exp2_clamped(_mf_mul(HILO(x), _log2_e(T)))
+    iszero(x) && return one(DoubleFloat{T})
+    y1, y2, y3 = _mf_mul3(HILO(x), _log2_e3(T))
+    p = _exp2_clamped((y1, y2), y3)
     return DoubleFloat{T}(p[1], p[2])
 end
 
 function Base.exp10(x::DoubleFloat{T}) where {T<:_DF64or32}
-    p = _exp2_clamped(_mf_mul(HILO(x), _log2_10(T)))
+    iszero(x) && return one(DoubleFloat{T})
+    y1, y2, y3 = _mf_mul3(HILO(x), _log2_10_3(T))
+    p = _exp2_clamped((y1, y2), y3)
     return DoubleFloat{T}(p[1], p[2])
 end
 
@@ -278,6 +316,30 @@ Behavioral notes:
     (Float32(+0x1.62E430p-001), Float32(-0x1.05C610p-029))
 @inline _log10_2(::Type{Float32}) =
     (Float32(+0x1.344136p-002), Float32(-0x1.EC10C0p-027))
+
+# DoubleFloat-valued ln(2) / ln(10) and reciprocals, used by archyptrig.jl
+# (large-argument branches) and linearalgebra/matfun.jl (matrix log2/log10);
+# these were dropped in the kernel rewrite while their callers remained
+logtwo(::Type{DoubleFloat{Float64}}) = Double64(0.6931471805599453, 2.3190468138462996e-17)
+logten(::Type{DoubleFloat{Float64}}) = Double64(2.302585092994046, -2.1707562233822494e-16)
+logtwo(::Type{DoubleFloat{Float32}}) = Double32(0.6931472, -1.9046542e-9)
+logten(::Type{DoubleFloat{Float32}}) = Double32(2.3025851, -3.1975436e-8)
+logtwo(::Type{DoubleFloat{Float16}}) = Double16(0.6934, -0.0002122)
+logten(::Type{DoubleFloat{Float16}}) = Double16(2.303, -0.0001493)
+
+const invlogtwo64 = inv(logtwo(DoubleFloat{Float64}))
+const invlogten64 = inv(logten(DoubleFloat{Float64}))
+const invlogtwo32 = inv(logtwo(DoubleFloat{Float32}))
+const invlogten32 = inv(logten(DoubleFloat{Float32}))
+const invlogtwo16 = inv(logtwo(DoubleFloat{Float16}))
+const invlogten16 = inv(logten(DoubleFloat{Float16}))
+
+invlogtwo(::Type{DoubleFloat{Float64}}) = invlogtwo64
+invlogten(::Type{DoubleFloat{Float64}}) = invlogten64
+invlogtwo(::Type{DoubleFloat{Float32}}) = invlogtwo32
+invlogten(::Type{DoubleFloat{Float32}}) = invlogten32
+invlogtwo(::Type{DoubleFloat{Float16}}) = invlogtwo16
+invlogten(::Type{DoubleFloat{Float16}}) = invlogten16
 
 # 32-entry lookup table: centers 1 + (2i-1)/64 (exact in T) and log2(center)
 # as (hi, lo) pairs, generated at load time (log.jl:185)

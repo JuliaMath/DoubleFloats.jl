@@ -19,6 +19,9 @@ makedocs(
     # while retaining pretty URLs for hosted CI deployments.
     format = Documenter.HTML(prettyurls = get(ENV, "CI", "false") == "true"),
     build = get(ENV, "DOCS_BUILD_DIR", "build"),
+    # internal helpers carry docstrings that are deliberately not in the
+    # manual; report them without failing the build
+    warnonly = [:missing_docs],
     pages = Any[
         "Overview" => "index.md",
         "User Guide" => "userguide.md",

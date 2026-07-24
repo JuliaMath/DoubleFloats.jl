@@ -1,4 +1,8 @@
-@inline Base.Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x))
+# For Double64 the hi limb IS the correctly rounded Float64; for the narrower
+# types Float64 can hold both limbs, so dropping lo would lose up to 2^-24
+# (2^-11) of relative accuracy for Double32 (Double16).
+@inline Base.Float64(x::DoubleFloat{Float64}) = HI(x)
+@inline Base.Float64(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float64(HI(x)) + Float64(LO(x))
 @inline Base.Float32(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float32(Float64(x))
 @inline Base.Float16(x::DoubleFloat{T}) where {T<:IEEEFloat} = Float16(Float64(x))
 

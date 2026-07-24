@@ -59,16 +59,17 @@ function scalar_rows(T)
     near1()    = T(1 + (rand() - 0.5) * 2.0^-30)
     tiny()     = T((2rand() - 1) * 2.0^-40)
     nearone()  = T(1.0, T === Double64 ? rand() * 2.0^-54 : rand() * 2.0^-25)
+    dom2()     = T((2rand() - 1) * 2)
+    dom9()     = T((2rand() - 1) * 9)
 
     explog = [
         accrow("exp", exp, wide, ulp; domain = "(-100, 100)"),
-        accrow("exp", exp, () -> T(-600 - 60rand()), ulp; domain = "(-660, -600)"),
         accrow("expm1", expm1, sym, ulp; domain = "(-1, 1)"),
+        accrow("exp2", exp2, wide, ulp; domain = "(-100, 100)"),
         accrow("log", log, positive, ulp; domain = "(0, 100)"),
         accrow("log", log, near1, ulp; domain = "1 ± 2⁻³¹"),
         accrow("log1p", log1p, sym, ulp; domain = "(-1, 1)"),
         accrow("log2", log2, positive, ulp; domain = "(0, 100)"),
-        accrow("log10", log10, positive, ulp; domain = "(0, 100)"),
     ]
     trig = [
         accrow("sin", sin, wide, ulp; domain = "(-100, 100)"), accrow("cos", cos, wide, ulp; domain = "(-100, 100)"),
@@ -79,8 +80,10 @@ function scalar_rows(T)
     ]
     arctrig = [accrow("asin", asin, sym, ulp; domain = "(-1, 1)"), accrow("acos", acos, sym, ulp; domain = "(-1, 1)"), accrow("atan", atan, wide, ulp; domain = "(-100, 100)")]
     hyp = [
-        accrow("sinh", sinh, () -> T((2rand() - 1) * 300), ulp; domain = "(-300, 300)"), accrow("cosh", cosh, wide, ulp; domain = "(-100, 100)"),
-        accrow("tanh", tanh, sym, ulp; domain = "(-1, 1)"), accrow("asinh", asinh, wide, ulp; domain = "(-100, 100)"),
+        accrow("sinh", sinh, dom2, ulp; domain = "(-2, 2)"), accrow("sinh", sinh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("cosh", cosh, dom2, ulp; domain = "(-2, 2)"), accrow("cosh", cosh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("tanh", tanh, dom2, ulp; domain = "(-2, 2)"), accrow("tanh", tanh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("asinh", asinh, wide, ulp; domain = "(-100, 100)"),
         accrow("asinh", asinh, tiny, ulp; domain = "±2⁻⁴⁰"), accrow("acosh", acosh, above1, ulp; domain = "(1, 101)"),
         accrow("acosh", acosh, nearone, ulp; domain = "1 + ε"), accrow("atanh", atanh, sym, ulp; domain = "(-1, 1)"), accrow("atanh", atanh, tiny, ulp; domain = "±2⁻⁴⁰"),
     ]

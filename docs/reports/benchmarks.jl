@@ -82,7 +82,7 @@ function scalar_row(T, baseT, name, op1, op2 = nothing)
     else
         d = mapbench2(op2, xs, ys); f = mapbench2(op2, xbase, ybase); b = mapbench2(op2, xsB, ysB)
     end
-    return "| `$name` | $(fmt(d)) | $(fmt(f)) | $(ratio(d, f))x | $(fmt(b)) | $(ratio(b, d))x |"
+    return "| `$name` | $(fmt(d)) | $(fmt(f)) | $(fmt(b)) | $(ratio(d, f))x | $(ratio(b, d))x |"
 end
 
 function scalar_rows(T, baseT)
@@ -127,6 +127,20 @@ function la_row(T, baseT, name, make::F; iters::Int = 3) where {F<:Function}
     return "| `$name` | $(fmt(d)) | $(fmt(f)) | $(ratio(d, f))x |"
 end
 
+# same as la_row, but also times a BigFloat baseline for the Linear Algebra
+# table, matching the operation/name/based/BigFloat/ratio/big_ratio columns
+# used by the Scalar Arithmetic and Elementary Functions tables.
+function la_row_big(T, baseT, name, make::F; iters::Int = 3, big::Bool = true,
+                    big_iters::Int = iters, big_trials::Int = 5) where {F<:Function}
+    d = nsper(make(T), iters, trials = 5)
+    f = nsper(make(baseT), iters, trials = 5)
+    if !big
+        return "| `$name` | $(fmt(d)) | $(fmt(f)) | missing | $(ratio(d, f))x | — |"
+    end
+    b = nsper(make(BigFloat), big_iters, trials = big_trials)
+    return "| `$name` | $(fmt(d)) | $(fmt(f)) | $(fmt(b)) | $(ratio(d, f))x | $(ratio(b, d))x |"
+end
+
 """
     matmul_row(n) -> markdown table row
 
@@ -137,48 +151,77 @@ and the reduction that keeps its result live.
 function matmul_row(T, baseT, n::Int)
     a = rand(n, n) .- 0.5
     b = rand(n, n) .- 0.5
-    return la_row(T, baseT, "A * B  (n=$n)", T -> begin
+    return la_row_big(T, baseT, "A * B  (n=$n)", T -> begin
         Ad = T.(a)
         Bd = T.(b)
         () -> sum(abs, Ad * Bd)
     end)
 end
 
-function linear_rows(T, baseT; include_sylvester::Bool = true)
+function linear_rows(T, baseT)
     matmul = [matmul_row(T, baseT, n) for n in (4, 8, 16, 32, 64)]
     la = [
         matmul...,
-        la_row(T, baseT, "lu(A)",               T -> (Ad = T.(A0); () -> sum(abs, lu(Ad).factors))),
-        la_row(T, baseT, "qr(A)",               T -> (Ad = T.(A0); () -> sum(abs, qr(Ad).factors))),
-        la_row(T, baseT, "A \\ b",              T -> (Ad = T.(A0); bd = T.(b0); () -> sum(abs, Ad \ bd))),
-        la_row(T, baseT, "eigen(S)  symmetric", T -> (Sd = T.(S0); () -> sum(abs, eigen(Sd).values))),
-        la_row(T, baseT, "eigen(A)  general",   T -> (Ad = T.(A0); () -> sum(abs, eigen(Ad).values))),
-        la_row(T, baseT, "svd(A)",              T -> (Ad = T.(A0); () -> sum(svdvals(Ad)))),
+        la_row_big(T, baseT, "lu(A)",               T -> (Ad = T.(A0); () -> sum(abs, lu(Ad).factors))),
+        la_row_big(T, baseT, "qr(A)",               T -> (Ad = T.(A0); () -> sum(abs, qr(Ad).factors)); big_iters = 1, big_trials = 3),
+        la_row_big(T, baseT, "A \\ b",              T -> (Ad = T.(A0); bd = T.(b0); () -> sum(abs, Ad \ bd)); big_iters = 1, big_trials = 3),
+        # BigFloat isn't a BlasFloat and GenericSchur only specializes DoubleFloat
+        # types, so eigen/svd have no generic BigFloat method to benchmark against.
+        la_row_big(T, baseT, "eigen(S)  symmetric", T -> (Sd = T.(S0); () -> sum(abs, eigen(Sd).values)); big = false),
+        la_row_big(T, baseT, "eigen(A)  general",   T -> (Ad = T.(A0); () -> sum(abs, eigen(Ad).values)); big = false),
+        la_row_big(T, baseT, "svd(A)",              T -> (Ad = T.(A0); () -> sum(svdvals(Ad))); big = false),
     ]
+    return la
+end
+
+# Matrix-function rows at a given size n.  Fresh random operands are built at
+# size n: A general, S = A + Aᵀ symmetric, P = SSᵀ symmetric positive definite.
+function matfun_rows(T, baseT, n::Int; include_sylvester::Bool = true)
+    A = rand(n, n) .- 0.5
+    B = rand(n, n) .- 0.5
+    S = A + transpose(A)
+    P = S * transpose(S)             # symmetric positive definite
+    # matrix functions have no BigFloat methods (exp/sqrt/log/cosh of a
+    # BigFloat matrix all throw), so the BigFloat column is unavailable
     mf = [
-        la_row(T, baseT, "exp(A)   (n=32)",     T -> (Ad = T.(A0); () -> sum(abs, exp(Ad)))),
-        la_row(T, baseT, "sqrt(P)  spd",        T -> (Pd = T.(P0); () -> sum(abs, sqrt(Pd)))),
-        la_row(T, baseT, "log(P)   spd",        T -> (Pd = T.(P0); () -> sum(abs, log(Pd)))),
+        la_row_big(T, baseT, "exp(A)",       T -> (Ad = T.(A); () -> sum(abs, exp(Ad))); big = false),
+        la_row_big(T, baseT, "exp(P)   spd", T -> (Pd = T.(P); () -> sum(abs, exp(Pd))); big = false),
+        la_row_big(T, baseT, "sqrt(P)  spd", T -> (Pd = T.(P); () -> sum(abs, sqrt(Pd))); big = false),
+        la_row_big(T, baseT, "log(P)   spd", T -> (Pd = T.(P); () -> sum(abs, log(Pd))); big = false),
+        la_row_big(T, baseT, "cosh(A)",      T -> (Ad = T.(A); () -> sum(abs, cosh(Ad))); big = false),
+        la_row_big(T, baseT, "cosh(P)  spd", T -> (Pd = T.(P); () -> sum(abs, cosh(Pd))); big = false),
     ]
     if include_sylvester
-        push!(mf, la_row(T, baseT, "sylvester(A, B, S)",
-                         T -> (Ad = T.(A0); Bd = T.(B0); Sd = T.(S0); () -> sum(abs, sylvester(Ad, Bd, Sd)))))
+        push!(mf, la_row_big(T, baseT, "sylvester(A, B, S)",
+                             T -> (Ad = T.(A); Bd = T.(B); Sd = T.(S); () -> sum(abs, sylvester(Ad, Bd, Sd))); big = false))
     else
-        push!(mf, "| `sylvester(A, B, S)` | unavailable | unavailable | — |")
+        push!(mf, "| `sylvester(A, B, S)` | missing | missing | missing | — | — |")
     end
-    return la, mf
+    return mf
 end
 
 # ------------------------------------------------------------- assemble --
 
+const MFSIZES = (8, 16, 64)
+
 vinfo = string(VERSION)
 arith64, elementary64 = scalar_rows(Double64, Float64)
-la64, mf64 = linear_rows(Double64, Float64)
+la64 = linear_rows(Double64, Float64)
+mf64 = [matfun_rows(Double64, Float64, n) for n in MFSIZES]
 arith32, elementary32 = scalar_rows(Double32, Float32)
-la32, mf32 = linear_rows(Double32, Float32)
+la32 = linear_rows(Double32, Float32)
+mf32 = [matfun_rows(Double32, Float32, n) for n in MFSIZES]
 
 function precision_section(name, based_name, ratio_name, big_ratio_name,
                            digits, arith, elementary, la, mf)
+    mftables = join(("""#### Matrix Functions (n = $n)
+
+| operation | $name | $based_name | BigFloat | $ratio_name | $big_ratio_name |
+|:----------|---------:|--------:|---------:|--------:|--------:|
+$(join(rows, "\n"))
+
+<p align="center"><em>spd = symmetric positive definite</em></p>
+""" for (n, rows) in zip(MFSIZES, mf)), "\n")
     return """
 ## $name
 
@@ -187,14 +230,14 @@ native baseline; `BigFloat` timings use the default 256-bit precision.
 
 ### Scalar Arithmetic
 
-| operation | $name | $based_name | $ratio_name | BigFloat | $big_ratio_name |
-|:----------|---------:|--------:|--------:|---------:|--------:|
+| operation | $name | $based_name | BigFloat | $ratio_name | $big_ratio_name |
+|:----------|---------:|--------:|---------:|--------:|--------:|
 $(join(arith, "\n"))
 
 ### Elementary Functions
 
-| function | $name | $based_name | $ratio_name | BigFloat | $big_ratio_name |
-|:---------|---------:|--------:|--------:|---------:|--------:|
+| function | $name | $based_name | BigFloat | $ratio_name | $big_ratio_name |
+|:---------|---------:|--------:|---------:|--------:|--------:|
 $(join(elementary, "\n"))
 
 ### Linear Algebra
@@ -204,15 +247,11 @@ algorithms (GenericLinearAlgebra / GenericSchur), so these ratios combine the
 precision cost with the loss of BLAS blocking and SIMD.  Matrix multiplication
 is measured at several square sizes; the remaining operations use n = 32.
 
-| operation | $name | $based_name | $ratio_name |
-|:----------|---------:|--------:|--------:|
+| operation | $name | $based_name | BigFloat | $ratio_name | $big_ratio_name |
+|:----------|---------:|--------:|---------:|--------:|--------:|
 $(join(la, "\n"))
 
-### Matrix Functions (n = 32 unless noted)
-
-| operation | $name | $based_name | $ratio_name |
-|:----------|---------:|--------:|--------:|
-$(join(mf, "\n"))
+$mftables
 """
 end
 
@@ -243,8 +282,8 @@ $double32_section
   inline, which is where much of the advantage over `BigFloat` comes from.
 - Matrix-function timings include the full dense algorithm
   (scaling-and-squaring for `exp`, Schur-based methods for `sqrt`/`log`).
-- The `Double32` Sylvester row is unavailable: its generic Schur path currently
-  fails for `Complex{Double32}`, so reporting a timing would be misleading.
+- `missing` BigFloat entries mark operations with no BigFloat method to
+  benchmark against (generic eigen/svd and the dense matrix functions).
 """
 
 outpath = joinpath(@__DIR__, "benchmark_report.md")
