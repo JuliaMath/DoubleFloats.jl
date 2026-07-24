@@ -1,5 +1,7 @@
 # ---------------------------------------------------------------------------
-# approach to exp, log are adapted from MulitFloats.jl v3.0
+# MultiFloats v3.0 double-word kernels (mfadd/mfmul/mfsqr/mfdiv, N = 2),
+# operating on (hi, lo) tuples.  two_sum / two_hilo_sum / two_prod are the
+# error-free transformations already defined in math/errorfree.jl.
 # ---------------------------------------------------------------------------
 
 @inline function _mf_add(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
@@ -320,4 +322,3 @@ function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
     y = _log_special(t, _mf_mul(_unsafe_log2(t), _log10_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
-
