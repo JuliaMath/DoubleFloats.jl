@@ -409,6 +409,13 @@ function log(x::DoubleFloat{T}) where {T<:IEEEFloat}
     end
     signbit(HI(x)) && return DoubleFloat{T}(log(HI(x)), zero(T))  # throws DomainError
 
+    # HI(x) can be exactly 0.0 with LO(x) nonzero when a subtraction cancels
+    # the leading double (x is then equal in value to LO(x)); exponent(0.0)
+    # throws, so renormalize by promoting LO(x) to the leading term.
+    if HI(x) == zero(T)
+        x = DoubleFloat{T}(LO(x), zero(T))
+    end
+
     # reduce exactly: x = 2^m * f with f in [1, 2), then anchor f against
     # a = 1 + j/16, so that log(x) = m*ln2 + log(a) + log1p((f - a)/a)
     # with |(f - a)/a| <= 1/16, deep inside log1p's fast series window.
@@ -522,3 +529,4 @@ function log10(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && !signbit(x) && return x
     log(x) * invlogten(DoubleFloat{T})
 end
+
