@@ -1,8 +1,8 @@
 @inline function inv_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     yhi, ylo = x.hi, x.lo
     thi = inv(yhi)
-    # See the comment on inv_dd_dd: ylo == 0 must not short-circuit, or inv loses
-    # the low word for every exactly-representable argument (e.g. inv(Double64(3))).
+    # NB: ylo == 0 does NOT make the reciprocal exact; unsafe_inv_dd_dd_
+    #     handles it properly and must not be skipped
     (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) &&
         return DoubleFloat{T}(zero_error_result(thi)...)
     zhi, zlo = unsafe_inv_dd_dd_(yhi, ylo)

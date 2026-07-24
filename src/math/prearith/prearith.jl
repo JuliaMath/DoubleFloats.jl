@@ -44,16 +44,23 @@ function ldexps(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:In
     return ldexp(dhilo[1], dhilo[2])
 end
 
+# Base contract: exponent returns the Int e with 2^e <= |x| < 2^(e+1),
+# and significand returns x / 2^e.  (These once returned per-word tuples,
+# which broke any Base code that calls them -- e.g. sqrt(::Complex) via
+# ssqs, which sank the Complex{Double32} Schur path.)
 function exponent(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    ehi = Base.exponent(HI(x))
-    elo = Base.exponent(LO(x))
-    return ehi, elo
+    e = Base.exponent(HI(x))
+    # a hi word exactly at a binade boundary with an opposing lo word puts
+    # |x| just below 2^e
+    if !iszero(LO(x)) && (signbit(LO(x)) != signbit(HI(x))) &&
+       abs(HI(x)) == ldexp(one(T), e)
+        e -= 1
+    end
+    return e
 end
 
 function significand(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    shi = Base.significand(HI(x))
-    slo = Base.significand(LO(x))
-    return shi, slo
+    return ldexp(x, -exponent(x))
 end
 
 function signs(x::DoubleFloat{T}) where {T<:IEEEFloat}

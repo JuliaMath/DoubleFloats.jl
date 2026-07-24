@@ -19,6 +19,69 @@ end
    return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
 
+# The fast double-double FMA loses relative accuracy only when the product
+# and addend nearly cancel.  In that uncommon case, retain an exact expansion
+# of the four component products and the addend before rounding back to a
+# Double64.  The expansion path is deliberately Float64-specific: it uses
+# Float64 error-free transforms and leaves the Float32/Float16 hot paths
+# unchanged.
+@inline function _fma_cancellation_ratio(xhi::Float64, xlo::Float64,
+                                         yhi::Float64, ylo::Float64,
+                                         zhi::Float64, zlo::Float64,
+                                         rhi::Float64)
+    p0 = abs(xhi * yhi)
+    p1 = abs(xhi * ylo)
+    p2 = abs(xlo * yhi)
+    p3 = abs(xlo * ylo)
+    bound = p0 + p1 + p2 + p3 + abs(zhi) + abs(zlo)
+    return isfinite(bound) && bound != 0.0 ? abs(rhi) / bound : Inf
+end
+
+function _fma_grow_expansion!(h::Vector{Float64}, e::Vector{Float64}, b::Float64)
+    empty!(h)
+    q = b
+    for a in e
+        qnext, err = two_sum(q, a)
+        err != 0.0 && push!(h, err)
+        q = qnext
+    end
+    q != 0.0 && push!(h, q)
+    return h
+end
+
+function _fma_refined(x::Double64, y::Double64, z::Double64)
+    # Each two_prod pair is exact.  Grow the expansion rather than summing
+    # the terms into a Double64 so cancellation cannot discard their tails.
+    e = Float64[]
+    scratch = Float64[]
+    sizehint!(e, 10)
+    sizehint!(scratch, 10)
+    for (a, b) in ((x.hi, y.hi), (x.hi, y.lo),
+                   (x.lo, y.hi), (x.lo, y.lo))
+        p, err = two_prod(a, b)
+        e, scratch = _fma_grow_expansion!(scratch, e, err), e
+        e, scratch = _fma_grow_expansion!(scratch, e, p), e
+    end
+    e, scratch = _fma_grow_expansion!(scratch, e, z.lo), e
+    e, scratch = _fma_grow_expansion!(scratch, e, z.hi), e
+
+    # The expansion is ordered from low to high.  Double64 accumulation then
+    # rounds the exact expansion only at the target precision.
+    result = zero(Double64)
+    for term in e
+        result += Double64(term)
+    end
+    return result
+end
+
+@inline function fma(x::Double64, y::Double64, z::Double64)
+    result = fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
+    (!isfinite(result) ||
+     _fma_cancellation_ratio(x.hi, x.lo, y.hi, y.lo,
+                             z.hi, z.lo, result.hi) >= 0x1.0p-6) && return result
+    return _fma_refined(x, y, z)
+end
+
 @inline function fma(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
    chi, c1 = two_prod(x, y)
    shi, slo = two_sum(zhi, chi)

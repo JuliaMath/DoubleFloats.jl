@@ -1,12 +1,6 @@
 # inv corrected to handle zero and nonfinite values
-# - !isfinite(tₕᵢ) catches yₕᵢ == ±0 and reciprocals that overflow (issue #278),
-#   where the residual fma below would produce NaNs.
-# - !isfinite(yₕᵢ) catches yₕᵢ == ±Inf and NaN, whose reciprocals (±0, NaN) are
-#   not caught by the first test.
-# Note that yₗₒ == 0 must NOT short-circuit: the residual fma in unsafe_inv_dd_dd
-# captures the rounding error of inv(yₕᵢ) itself, so returning zero_error_result
-# would discard the low word entirely — e.g., inv(Double64(3)) would be accurate
-# only to Float64 precision.
+# (a zero low word does NOT mean the reciprocal is exact -- the correction
+#  in unsafe_inv_dd_dd handles yₗₒ == 0 properly, so it must not be skipped)
 @inline function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
    yₕᵢ, yₗₒ = y
     tₕᵢ = inv(yₕᵢ)

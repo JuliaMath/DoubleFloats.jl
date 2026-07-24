@@ -65,6 +65,8 @@ include("matmul.jl")
 include("complex.jl")
 
 include("linearalgebra.jl")
+include("eigen.jl")
+include("matrixfunctions.jl")
 include("special_functions.jl")
 
 include("concrete_accuracy.jl")
