@@ -39,18 +39,35 @@ matrix = reshape(rand(Double64,n*n),n,n)
 
 ## Matrix Factorizations
 
-- general: `lu`, `lu!`, `qr`, `qr!`
+- general: `lu`, `lu!`, `qr`, `qr!`, `lq`
 - square: `schur`, `schur!`, `hessenberg`, `hessenberg!`
-- square+symmetric, Hermitian: `cholesky`, `cholesky!`
+- square+symmetric, Hermitian: `cholesky`, `cholesky!`, `bunchkaufman`
+
+`eigen` for DoubleFloat matrices follows the LAPACK-route conventions:
+symmetric/Hermitian input yields real eigenvalues and orthonormal vectors,
+a real matrix with an all-real spectrum yields a real factorization, and
+eigenvalues are sorted by `(real, imag)`.
+
+## Matrix Equations
+
+- `sylvester(A, B, C)` -- solves `AX + XB + C = 0`
+- `lyap(A, C)` -- solves `AX + XA' + C = 0`
+
+## Functions of Matrices (any square matrix)
+
+These use dense Schur-based and scaling-and-squaring algorithms, so they
+are correct for defective (non-diagonalizable) matrices too, and real
+matrices give real results whenever the mathematical result is real:
+
+- `exp`, `expm1`, `log`, `log1p`, `log2`, `log10`, `sqrt`
+- `matrix^power`
+- `sin`, `cos`, `sincos`, `tan`, `csc`, `sec`, `cot`
+- `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
 
 ## Functions of Matrices (diagonalizable & square only)
 
-- `sqrt`, `cbrt`
-- `matrix^power`
-- `exp`, `log`
-- `sin`, `cos`, `tan`, `csc`, `sec`, `cot`
-- `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
-- `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
-- `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
+These use eigen-diagonalization via `matrixfunction(function, matrix)`:
 
-- matrixfunction(function, matrix)
+- `cbrt`, `sinpi`, `cospi`
+- `asin`, `acos`, `atan`, `acsc`, `asec`, `acot`
+- `asinh`, `acosh`, `atanh`, `acsch`, `asech`, `acoth`
