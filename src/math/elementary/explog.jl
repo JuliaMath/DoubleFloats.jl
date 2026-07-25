@@ -411,47 +411,43 @@ the direct path near 1 (`|t| ≤ 1/31`). `Float64`: 7 / 9 coefficients
 @inline function _log2_poly_narrow(u::Tuple{Float64,Float64})
     u1 = u[1]
     t = +0x1.C6A48D52BA6C7p-0003                       # k7
-    t = t * u1 + 0x1.0C9A845FCF968p-0002               # k6
-    t = t * u1 + 0x1.484B13D7C0C4Dp-0002               # k5
-    p = (t, 0.0)
-    p = _mf_add(_mf_mul(p, u), (+0x1.A61762A7ADED9p-0002, +0x1.90D60ECEBE07Fp-0057))  # k4
-    p = _mf_add(_mf_mul(p, u), (+0x1.2776C50EF9BFEp-0001, +0x1.E4B2AE3DCBD87p-0055))  # k3
-    p = _mf_add(_mf_mul(p, u), (+0x1.EC709DC3A03FDp-0001, +0x1.D27F055486A5Ap-0055))  # k2
-    p = _mf_add(_mf_mul(p, u), (+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055))  # k1
+    t = muladd(t, u1, +0x1.0C9A845FCF968p-0002)        # k6
+    t = muladd(t, u1, +0x1.484B13D7C0C4Dp-0002)        # k5
+    p = _horner_step_dd((+0x1.A61762A7ADED9p-0002, +0x1.90D60ECEBE07Fp-0057), t, u)  # k4
+    p = _horner_step_dd((+0x1.2776C50EF9BFEp-0001, +0x1.E4B2AE3DCBD87p-0055), p, u)  # k3
+    p = _horner_step_dd((+0x1.EC709DC3A03FDp-0001, +0x1.D27F055486A5Ap-0055), p, u)  # k2
+    p = _horner_step_dd((+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055), p, u)  # k1
     return p
 end
 
 @inline function _log2_poly_wide(u::Tuple{Float64,Float64})
     u1 = u[1]
     t = +0x1.5D108CD7E21EBp-0003                       # w9
-    t = t * u1 + 0x1.89F2F69137330p-0003               # w8
-    t = t * u1 + 0x1.C68F56BF8A8ACp-0003               # w7
-    p = (t, 0.0)
-    p = _mf_add(_mf_mul(p, u), (+0x1.0C9A84993C2EEp-0002, +0x1.0E0FE2C5542A6p-0056))  # w6
-    p = _mf_add(_mf_mul(p, u), (+0x1.484B13D7C02AFp-0002, -0x1.9282874496178p-0057))  # w5
-    p = _mf_add(_mf_mul(p, u), (+0x1.A61762A7ADED9p-0002, +0x1.F8B804528988Ap-0057))  # w4
-    p = _mf_add(_mf_mul(p, u), (+0x1.2776C50EF9BFEp-0001, +0x1.E4B2A0D0290E2p-0055))  # w3
-    p = _mf_add(_mf_mul(p, u), (+0x1.EC709DC3A03FDp-0001, +0x1.D27F055480ABFp-0055))  # w2
-    p = _mf_add(_mf_mul(p, u), (+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055))  # w1
+    t = muladd(t, u1, +0x1.89F2F69137330p-0003)        # w8
+    t = muladd(t, u1, +0x1.C68F56BF8A8ACp-0003)        # w7
+    p = _horner_step_dd((+0x1.0C9A84993C2EEp-0002, +0x1.0E0FE2C5542A6p-0056), t, u)  # w6
+    p = _horner_step_dd((+0x1.484B13D7C02AFp-0002, -0x1.9282874496178p-0057), p, u)  # w5
+    p = _horner_step_dd((+0x1.A61762A7ADED9p-0002, +0x1.F8B804528988Ap-0057), p, u)  # w4
+    p = _horner_step_dd((+0x1.2776C50EF9BFEp-0001, +0x1.E4B2A0D0290E2p-0055), p, u)  # w3
+    p = _horner_step_dd((+0x1.EC709DC3A03FDp-0001, +0x1.D27F055480ABFp-0055), p, u)  # w2
+    p = _horner_step_dd((+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055), p, u)  # w1
     return p
 end
 
 @inline function _log2_poly_narrow(u::Tuple{Float32,Float32})
     t = Float32(+0x1.A6217Cp-002)                      # k4
-    t = t * u[1] + Float32(+0x1.2776C6p-001)           # k3
-    p = (t, 0.0f0)
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FDB2p-028)))  # k2
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)))  # k1
+    t = muladd(t, u[1], Float32(+0x1.2776C6p-001))     # k3
+    p = _horner_step_dd((Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FDB2p-028)), t, u)  # k2
+    p = _horner_step_dd((Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)), p, u)  # k1
     return p
 end
 
 @inline function _log2_poly_wide(u::Tuple{Float32,Float32})
     t = Float32(+0x1.48FE3Ap-002)                      # w5
-    t = t * u[1] + Float32(+0x1.A61738p-002)           # w4
-    p = (t, 0.0f0)
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.2776C6p-001), Float32(-0x1.DE12AAp-026)))  # w3
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FE88p-028)))  # w2
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)))  # w1
+    t = muladd(t, u[1], Float32(+0x1.A61738p-002))     # w4
+    p = _horner_step_dd((Float32(+0x1.2776C6p-001), Float32(-0x1.DE12AAp-026)), t, u)  # w3
+    p = _horner_step_dd((Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FE88p-028)), p, u)  # w2
+    p = _horner_step_dd((Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)), p, u)  # w1
     return p
 end
 
