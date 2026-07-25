@@ -457,11 +457,17 @@ end
 
 ### Kernel and public methods
 
-# positive x below this can have a subnormal limb (hi subnormal, or lo
-# subnormal because hi is within 2^(precision+1) of floatmin), which breaks
-# the raw exponent-field arithmetic; such x are rescaled up exactly first
-@inline _log_tiny(::Type{Float64}) = 0x1p-1000
-@inline _log_tiny(::Type{Float32}) = Float32(0x1p-100)
+# positive x below this can have a subnormal limb, which breaks the raw
+# exponent-field arithmetic; such x are rescaled up exactly first.
+#
+# The bound is floatmin * 2^(2*precision): a subnormal low limb still holds
+# bits the double-word format carries as long as |lo| >= |hi|*2^-2p, i.e. as
+# long as |hi| < floatmin*2^2p — 2^-916 for Float64, 2^-78 for Float32.  One
+# bit of margin is added.  (The former values, 2^-1000 and 2^-100, covered
+# only a subnormal *leading* limb, so a low limb that went subnormal first
+# reached _uldexp intact and its exponent field wrapped.)
+@inline _log_tiny(::Type{Float64}) = 0x1p-915
+@inline _log_tiny(::Type{Float32}) = Float32(0x1p-77)
 
 @inline function _unsafe_log2(x::Tuple{T,T}) where {T<:IEEEFloat}
     _one = one(T)
@@ -481,6 +487,14 @@ end
     tiny = abs(x[1]) < _log_tiny(T)
     _scale = _pow2(T, _shift)
     x = ifelse(tiny, (_scale * x[1], _scale * x[2]), x)
+    # the rescale above normalizes any nonzero low limb (the smallest
+    # subnormal clears floatmin after 2^_shift), but a low limb can be
+    # subnormal for *any* leading limb — Double64(2.0^100, 1e-320) is a legal
+    # double-word.  Beyond the _log_tiny band such a limb lies below the
+    # 2^-2p the format carries, so dropping it is exact to within the
+    # representable precision, whereas feeding it to _uldexp would wrap the
+    # exponent field and fabricate a large mantissa correction.
+    x = ifelse(abs(x[2]) < floatmin(T), (x[1], _zero), x)
     # exact split: x = 2^er · m,  m₁ ∈ [1, 2)
     er = _raw_exponent(x[1])
     e = er - ifelse(tiny, _shift, 0)
