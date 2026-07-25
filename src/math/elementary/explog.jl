@@ -1,40 +1,23 @@
 # ---------------------------------------------------------------------------
-# MultiFloats v3.0 double-word kernels (mfadd/mfmul/mfsqr/mfdiv, N = 2),
-# operating on (hi, lo) tuples.  two_sum_ / two_hilo_sum_ / two_prod_ are the
-# branch-free error-free transformations from math/errorfree.jl.
+# Double-word arithmetic for the exp/log kernels, on raw (hi, lo) tuples.
 #
-# Every caller of these kernels lives in this file, and each one either keeps
-# its operands well inside the exponent range (series arguments |r| <= 1/16,
-# reduced mantissas in [1, 2), table centers, exponents as floats) or routes
-# non-finite input around the kernel with a post-hoc select — _exp2_clamped
-# for the exp family, _log_special for the log family.  Nothing here can
-# newly overflow, so the saturating `!isfinite` guard inside the public EFTs
-# is dead weight.  Dropping it (together with the fused Horner step below)
-# takes exp2(::Double64) from 384 branches and 2979 lines of LLVM IR to 3
-# and 205, and leaves the remaining straight-line code vectorizable.
+# Addition, multiplication, and squaring use the branch-free hot-path kernels
+# from math/ops (add_dddd_dd_ / mul_dddd_dd_ / square_dd_dd_), which are the
+# same algorithms without the saturating `!isfinite` guard of the public
+# EFTs.  Every caller in this file either keeps its operands well inside the
+# exponent range (series arguments |r| <= 1/16, reduced mantissas in [1, 2),
+# table centers, exponents as floats) or routes non-finite input around the
+# kernel with a post-hoc select — _exp2_clamped for the exp family,
+# _log_special for the log family.  Nothing here can newly overflow, so the
+# guard is dead weight: dropping it (together with the fused Horner step
+# below) takes exp2(::Double64) from 384 branches and 2979 lines of LLVM IR
+# to 3 and 205, and leaves the remaining straight-line code vectorizable.
+#
+# Division keeps a local kernel: _mf_div is reciprocal-based
+# (Karp–Markstein, one division) where ops' dvi_dddd_dd divides twice; it is
+# measurably faster and only this file relies on its exact rounding.
 # ---------------------------------------------------------------------------
 
-@inline function _mf_add(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
-    a, b = two_sum_(x[1], y[1])
-    c, d = two_sum_(x[2], y[2])
-    a, c = two_hilo_sum_(a, c)
-    b = (b + d) + c
-    return two_hilo_sum_(a, b)
-end
-
-@inline function _mf_mul(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
-    p, e = two_prod_(x[1], y[1])
-    e = e + fma(x[1], y[2], x[2] * y[1])
-    return two_hilo_sum_(p, e)
-end
-
-@inline function _mf_sqr(x::Tuple{T,T}) where {T<:IEEEFloat}
-    p, e = two_prod_(x[1], x[1])
-    e = fma(x[1], x[2] + x[2], e)
-    return two_hilo_sum_(p, e)
-end
-
-# reciprocal-based (Karp–Markstein): differs from dvi_dddd_dd, which divides.
 @inline function _mf_div(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     w = inv(y[1])
     z = x[1] * w
@@ -110,9 +93,9 @@ end
 end
 
 # the same fusion for a double-word multiplier: one Horner step  c + p*r  on
-# raw (hi, lo) pairs.  A separate _mf_mul then _mf_add renormalizes twice and
-# throws away the exact product bits in between; keeping them costs a third
-# of the flops and a much shorter dependency chain.
+# raw (hi, lo) pairs.  A separate mul_dddd_dd_ then add_dddd_dd_ renormalizes
+# twice and throws away the exact product bits in between; keeping them costs
+# a third of the flops and a much shorter dependency chain.
 #
 # REQUIRES |c[1]| >= |hi(p*r)|, as _horner_step does.  In the series below
 # the coefficient ratio |c_{k+1}/c_k| stays under 3/4 and the argument is
@@ -277,14 +260,14 @@ end
     # trunc-based nearest-integer: reproducible across CPU/GPU backends
     n_float = trunc(x[1] + copysign(_half, x[1]))
     # x₁ and n_float share x₁'s ulp grid and differ by ≤ 1/2, so the
-    # subtraction is exact; one two_sum replaces the full _mf_add.  Both
+    # subtraction is exact; one two_sum replaces the full add_dddd_dd_.  Both
     # operands are bounded by 1/2 here, so the branch-free form applies.
     rh, rl = two_sum_(x[1] - n_float, x[2])
     rl += x3          # third limb of the base-conversion product, if any
     r = (_eighth * rh, _eighth * rl)
     # kernel: 2^(x-n) = (2^r)^8
     p = _exp2_poly(r)
-    p = _mf_sqr(_mf_sqr(_mf_sqr(p)))
+    p = square_dd_dd_(square_dd_dd_(square_dd_dd_(p)))
     # reconstruction: · 2^n in two exact halves (avoids over/underflow)
     n = unsafe_trunc(_int_type(T), n_float)
     h = n >> 1
@@ -483,8 +466,8 @@ end
     # near 1 take the direct path and skip the exponent split, table load,
     # and tabled kernel entirely; numerator is Sterbenz-exact
     if (T(0.9375) < x[1]) & (x[1] < T(1.0625))  # 15/16 < x₁ < 17/16
-        t = _mf_div(_mf_add(x, (-_one, _zero)), _mf_add(x, (_one, _zero)))
-        return _mf_mul(t, _log2_poly_wide(_mf_sqr(t)))
+        t = _mf_div(add_dddd_dd_(x, (-_one, _zero)), add_dddd_dd_(x, (_one, _zero)))
+        return mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t)))
     end
     # subnormal-limb region: multiply by an exact power of 2, subtract it
     # from the exponent afterwards
@@ -508,9 +491,9 @@ end
     c = @inbounds _log2_centers(T)[i]
     v = @inbounds _log2_values(T)[i]
     # numerator is Sterbenz-exact
-    t = _mf_div(_mf_add(m, (-c, -_zero)), _mf_add(m, (c, _zero)))
-    return _mf_add(_mf_add((T(e), _zero), v),
-                   _mf_mul(t, _log2_poly_narrow(_mf_sqr(t))))
+    t = _mf_div(add_dddd_dd_(m, (-c, -_zero)), add_dddd_dd_(m, (c, _zero)))
+    return add_dddd_dd_(add_dddd_dd_((T(e), _zero), v),
+                   mul_dddd_dd_(t, _log2_poly_narrow(square_dd_dd_(t))))
 end
 
 @inline function _log_special(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
@@ -539,14 +522,14 @@ end
 function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, _mf_mul(_unsafe_log2(t), _ln_2(T)))
+    y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _ln_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
 function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, _mf_mul(_unsafe_log2(t), _log10_2(T)))
+    y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _log10_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
@@ -557,8 +540,8 @@ function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
         # inside the wide-poly window use t = x/(2 + x) directly: the
         # double-word division keeps every low bit of x, so nothing is
         # lost forming 1 + x
-        t = _mf_div(HILO(x), _mf_add(HILO(x), (T(2), zero(T))))
-        y = _mf_mul(_mf_mul(t, _log2_poly_wide(_mf_sqr(t))), _ln_2(T))
+        t = _mf_div(HILO(x), add_dddd_dd_(HILO(x), (T(2), zero(T))))
+        y = mul_dddd_dd_(mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t))), _ln_2(T))
         return DoubleFloat{T}(y[1], y[2])
     end
     # elsewhere 1 + x carries full double-word relative accuracy;
@@ -620,11 +603,11 @@ function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     c = _expm1_coeffs(T)
     p = c[end]
     for j in length(c)-1:-1:1
-        p = _mf_add(_mf_mul(p, s), c[j])
+        p = add_dddd_dd_(mul_dddd_dd_(p, s), c[j])
     end
-    e = _mf_mul(s, p)
+    e = mul_dddd_dd_(s, p)
     for _ in 1:k
-        e = _mf_mul(e, _mf_add(e, (T(2), zero(T))))
+        e = mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
     end
     return DoubleFloat{T}(e[1], e[2])
 end
