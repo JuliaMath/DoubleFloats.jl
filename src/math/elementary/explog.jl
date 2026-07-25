@@ -1,37 +1,31 @@
 # ---------------------------------------------------------------------------
-# MultiFloats v3.0 double-word kernels (mfadd/mfmul/mfsqr/mfdiv, N = 2),
-# operating on (hi, lo) tuples.  two_sum / two_hilo_sum / two_prod are the
-# error-free transformations already defined in math/errorfree.jl.
+# Double-word arithmetic for the exp/log kernels, on raw (hi, lo) tuples.
+#
+# Addition, multiplication, and squaring use the branch-free hot-path kernels
+# from math/ops (add_dddd_dd_ / mul_dddd_dd_ / square_dd_dd_), which are the
+# same algorithms without the saturating `!isfinite` guard of the public
+# EFTs.  Every caller in this file either keeps its operands well inside the
+# exponent range (series arguments |r| <= 1/16, reduced mantissas in [1, 2),
+# table centers, exponents as floats) or routes non-finite input around the
+# kernel with a post-hoc select — _exp2_clamped for the exp family,
+# _log_special for the log family.  Nothing here can newly overflow, so the
+# guard is dead weight: dropping it (together with the fused Horner step
+# below) takes exp2(::Double64) from 384 branches and 2979 lines of LLVM IR
+# to 3 and 205, and leaves the remaining straight-line code vectorizable.
+#
+# Division keeps a local kernel: _mf_div is reciprocal-based
+# (Karp–Markstein, one division) where ops' dvi_dddd_dd divides twice; it is
+# measurably faster and only this file relies on its exact rounding.
 # ---------------------------------------------------------------------------
 
-@inline function _mf_add(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
-    a, b = two_sum(x[1], y[1])
-    c, d = two_sum(x[2], y[2])
-    a, c = two_hilo_sum(a, c)
-    b += d
-    b += c
-    return two_hilo_sum(a, b)
-end
-
-@inline function _mf_mul(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
-    p, e = two_prod(x[1], y[1])
-    e += x[1] * y[2] + x[2] * y[1]
-    return two_hilo_sum(p, e)
-end
-
-@inline function _mf_sqr(x::Tuple{T,T}) where {T<:IEEEFloat}
-    p, e = two_prod(x[1], x[1])
-    e = fma(x[1], x[2] + x[2], e)
-    return two_hilo_sum(p, e)
-end
-
-# reciprocal-based (Karp–Markstein): differs from dvi_dddd_dd, which divides.
 @inline function _mf_div(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     w = inv(y[1])
     z = x[1] * w
-    p, e = two_prod(y[1], z)
-    r = ((x[1] - p) - e) + fma(-y[2], z, x[2])
-    return two_hilo_sum(z, r * w)
+    # residual x - y*z.  fma(-y[1], z, x[1]) is the correctly rounded leading
+    # residual, replacing a two_prod plus two subtractions; the second fma
+    # folds in the y[2] correction alongside x[2].
+    r = fma(-y[1], z, x[1]) + fma(-y[2], z, x[2])
+    return two_hilo_sum_(z, r * w)
 end
 
 # ---------------------------------------------------------------------------
@@ -86,11 +80,46 @@ end
 # REQUIRES |chi| >= |m*ph| (guaranteed in a convergent series Horner where
 # coefficients dominate), which permits the branch-free two_hilo_sum and
 # makes this fully accurate at roughly half the flops of the general path.
+#
+# The branch-free EFTs are what that precondition buys.  Every caller —
+# _sincos_taylor_core in trig.jl, _atan_small in arctrig.jl — is reached
+# only after its entry point has rejected non-finite input, and evaluates a
+# convergent series in a reduced argument, so no operand here can overflow.
 @inline function _horner_step(chi::T, clo::T, m::T, ph::T, pl::T) where {T<:IEEEFloat}
-    th, tl = two_prod(ph, m)
+    th, tl = two_prod_(ph, m)
     tl = fma(pl, m, tl)
-    s, e = two_hilo_sum(chi, th)
-    return two_hilo_sum(s, (clo + tl) + e)
+    s, e = two_hilo_sum_(chi, th)
+    return two_hilo_sum_(s, (clo + tl) + e)
+end
+
+# the same fusion for a double-word multiplier: one Horner step  c + p*r  on
+# raw (hi, lo) pairs.  A separate mul_dddd_dd_ then add_dddd_dd_ renormalizes
+# twice and throws away the exact product bits in between; keeping them costs
+# a third of the flops and a much shorter dependency chain.
+#
+# REQUIRES |c[1]| >= |hi(p*r)|, as _horner_step does.  In the series below
+# the coefficient ratio |c_{k+1}/c_k| stays under 3/4 and the argument is
+# bounded by 1/16, so the incoming term is at most |c[1]|/16.
+@inline function _horner_step_dd(c::Tuple{T,T}, p::Tuple{T,T},
+                                 r::Tuple{T,T}) where {T<:IEEEFloat}
+    th, tl = two_prod_(p[1], r[1])
+    # both cross terms in one independent fma, off the critical path: tl
+    # arrives late from two_prod_, and this way it waits on a single add
+    # rather than on a chain of two fmas.  The extra rounding lands on a
+    # second-order term, ~2^-2p below the step's leading bits.
+    tl = tl + fma(p[1], r[2], p[2] * r[1])
+    s, e = two_hilo_sum_(c[1], th)
+    return two_hilo_sum_(s, (c[2] + tl) + e)
+end
+
+# entry step: the accumulator is still a bare scalar (the tapered tail), so
+# the p[2]*r[1] correction is identically zero
+@inline function _horner_step_dd(c::Tuple{T,T}, p::T,
+                                 r::Tuple{T,T}) where {T<:IEEEFloat}
+    th, tl = two_prod_(p, r[1])
+    tl = fma(p, r[2], tl)
+    s, e = two_hilo_sum_(c[1], th)
+    return two_hilo_sum_(s, (c[2] + tl) + e)
 end
 
 const inv_oddint = (
@@ -134,10 +163,6 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
 @inline _exp2_zero(::Type{Float64}) = -1080.0
 @inline _exp2_zero(::Type{Float32}) = -155.0f0
 
-# exact power-of-2 offset that lifts the subnormal band into normal range
-@inline _exp2_shift(::Type{Float64}) = 64
-@inline _exp2_shift(::Type{Float32}) = 32
-
 # 2-limb base-conversion constants (heads of the MultiFloats full tables)
 @inline _log2_e(::Type{Float64}) =
     (+0x1.71547652B82FEp+0000, +0x1.777D0FFDA0D24p-0056)
@@ -164,15 +189,25 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
 # x (2 limbs) times constant c (3 limbs), to 3 limbs (y1, y2, y3) with
 # |y2| <= ulp(y1) and |y3| ~ |y|*2^-105: keeps the product bits a plain
 # double-word multiply would discard.
+#
+# The three products keep the guarded two_prod: they are the only place a
+# raw (possibly huge or infinite) x reaches a multiply, and the saturating
+# (Inf, 0) convention is what lets exp(+Inf) reconstruct to +Inf downstream.
+# Every sum below is fed by those already-saturated values and by quantities
+# bounded by ulp(p1), so none can newly overflow — the branch-free EFTs
+# apply, leaving the three products as the only branches here.
 @inline function _mf_mul3(x::Tuple{T,T}, c::Tuple{T,T,T}) where {T<:IEEEFloat}
     p1, e1 = two_prod(x[1], c[1])
     p2, e2 = two_prod(x[1], c[2])
     p3, e3 = two_prod(x[2], c[1])
-    t = fma(x[2], c[2], e2 + e3)
-    t = fma(x[1], c[3], t)
-    s, u = two_sum(p2, p3)
-    m, v = two_sum(e1, s)
-    y1, w = two_sum(p1, m)
+    # third-order tail: both product errors plus the two terms a double-word
+    # multiply drops outright
+    t = fma(x[1], c[3], fma(x[2], c[2], e2 + e3))
+    s, u = two_sum_(p2, p3)
+    m, v = two_sum_(e1, s)
+    # every second-order term is a full limb below p1 (|c2| <= ulp(c1) and
+    # |x2| <= ulp(x1)), so |m| <= 2^-51*|p1| and the ordered sum applies
+    y1, w = two_hilo_sum_(p1, m)
     return y1, w, (u + v) + t
 end
 
@@ -187,34 +222,32 @@ Tapered minimax approximations of `2^r` on `|r| ≤ 1/16`; coefficients
 @inline function _exp2_poly(r::Tuple{Float64,Float64})
     r1 = r[1]
     t = +0x1.816519F74C4AFp-0040                       # c14
-    t = t * r1 + 0x1.C3C1919538484p-0036               # c13
-    t = t * r1 + 0x1.E8CAC72F6E9E5p-0032               # c12
-    t = t * r1 + 0x1.E4CF5152FBB30p-0028               # c11
-    t = t * r1 + 0x1.B5253D395E80Fp-0024               # c10
-    p = (t, 0.0)
-    p = _mf_add(_mf_mul(p, r), (+0x1.62C0223A5C863p-0020, -0x1.99EF542AA8E1Ep-0074))  # c9
-    p = _mf_add(_mf_mul(p, r), (+0x1.FFCBFC588B0C7p-0017, -0x1.E645E286FE571p-0071))  # c8
-    p = _mf_add(_mf_mul(p, r), (+0x1.430912F86C787p-0013, +0x1.BC7CDBCDC0339p-0067))  # c7
-    p = _mf_add(_mf_mul(p, r), (+0x1.5D87FE78A6731p-0010, +0x1.0717F88815ADFp-0066))  # c6
-    p = _mf_add(_mf_mul(p, r), (+0x1.3B2AB6FBA4E77p-0007, +0x1.4E65DFEF67D34p-0062))  # c5
-    p = _mf_add(_mf_mul(p, r), (+0x1.C6B08D704A0C0p-0005, -0x1.D3316275139AEp-0059))  # c4
-    p = _mf_add(_mf_mul(p, r), (+0x1.EBFBDFF82C58Fp-0003, -0x1.5E43A53E454F1p-0057))  # c3
-    p = _mf_add(_mf_mul(p, r), (+0x1.62E42FEFA39EFp-0001, +0x1.ABC9E3B39803Fp-0056))  # c2
-    p = _mf_add(_mf_mul(p, r), (+0x1.0000000000000p+0000, +0x1.314BACF0323FFp-0113))  # c1
+    t = muladd(t, r1, +0x1.C3C1919538484p-0036)        # c13
+    t = muladd(t, r1, +0x1.E8CAC72F6E9E5p-0032)        # c12
+    t = muladd(t, r1, +0x1.E4CF5152FBB30p-0028)        # c11
+    t = muladd(t, r1, +0x1.B5253D395E80Fp-0024)        # c10
+    p = _horner_step_dd((+0x1.62C0223A5C863p-0020, -0x1.99EF542AA8E1Ep-0074), t, r)  # c9
+    p = _horner_step_dd((+0x1.FFCBFC588B0C7p-0017, -0x1.E645E286FE571p-0071), p, r)  # c8
+    p = _horner_step_dd((+0x1.430912F86C787p-0013, +0x1.BC7CDBCDC0339p-0067), p, r)  # c7
+    p = _horner_step_dd((+0x1.5D87FE78A6731p-0010, +0x1.0717F88815ADFp-0066), p, r)  # c6
+    p = _horner_step_dd((+0x1.3B2AB6FBA4E77p-0007, +0x1.4E65DFEF67D34p-0062), p, r)  # c5
+    p = _horner_step_dd((+0x1.C6B08D704A0C0p-0005, -0x1.D3316275139AEp-0059), p, r)  # c4
+    p = _horner_step_dd((+0x1.EBFBDFF82C58Fp-0003, -0x1.5E43A53E454F1p-0057), p, r)  # c3
+    p = _horner_step_dd((+0x1.62E42FEFA39EFp-0001, +0x1.ABC9E3B39803Fp-0056), p, r)  # c2
+    p = _horner_step_dd((+0x1.0000000000000p+0000, +0x1.314BACF0323FFp-0113), p, r)  # c1
     return p
 end
 
 @inline function _exp2_poly(r::Tuple{Float32,Float32})
     r1 = r[1]
     t = Float32(+0x1.FFD486p-017)                      # d8
-    t = t * r1 + Float32(+0x1.430E9Ep-013)             # d7
-    t = t * r1 + Float32(+0x1.5D87FEp-010)             # d6
-    p = (t, 0.0f0)
-    p = _mf_add(_mf_mul(p, r), (Float32(+0x1.3B2AB6p-007), Float32(+0x1.DB9286p-032)))  # d5
-    p = _mf_add(_mf_mul(p, r), (Float32(+0x1.C6B08Ep-005), Float32(-0x1.1F6B9Cp-030)))  # d4
-    p = _mf_add(_mf_mul(p, r), (Float32(+0x1.EBFBE0p-003), Float32(-0x1.F4DEB0p-033)))  # d3
-    p = _mf_add(_mf_mul(p, r), (Float32(+0x1.62E430p-001), Float32(-0x1.05C610p-029)))  # d2
-    p = _mf_add(_mf_mul(p, r), (Float32(+0x1.000000p+000), Float32(-0x1.62C458p-059)))  # d1
+    t = muladd(t, r1, Float32(+0x1.430E9Ep-013))       # d7
+    t = muladd(t, r1, Float32(+0x1.5D87FEp-010))       # d6
+    p = _horner_step_dd((Float32(+0x1.3B2AB6p-007), Float32(+0x1.DB9286p-032)), t, r)  # d5
+    p = _horner_step_dd((Float32(+0x1.C6B08Ep-005), Float32(-0x1.1F6B9Cp-030)), p, r)  # d4
+    p = _horner_step_dd((Float32(+0x1.EBFBE0p-003), Float32(-0x1.F4DEB0p-033)), p, r)  # d3
+    p = _horner_step_dd((Float32(+0x1.62E430p-001), Float32(-0x1.05C610p-029)), p, r)  # d2
+    p = _horner_step_dd((Float32(+0x1.000000p+000), Float32(-0x1.62C458p-059)), p, r)  # d1
     return p
 end
 
@@ -227,13 +260,14 @@ end
     # trunc-based nearest-integer: reproducible across CPU/GPU backends
     n_float = trunc(x[1] + copysign(_half, x[1]))
     # x₁ and n_float share x₁'s ulp grid and differ by ≤ 1/2, so the
-    # subtraction is exact; one two_sum replaces the full _mf_add
-    rh, rl = two_sum(x[1] - n_float, x[2])
+    # subtraction is exact; one two_sum replaces the full add_dddd_dd_.  Both
+    # operands are bounded by 1/2 here, so the branch-free form applies.
+    rh, rl = two_sum_(x[1] - n_float, x[2])
     rl += x3          # third limb of the base-conversion product, if any
     r = (_eighth * rh, _eighth * rl)
     # kernel: 2^(x-n) = (2^r)^8
     p = _exp2_poly(r)
-    p = _mf_sqr(_mf_sqr(_mf_sqr(p)))
+    p = square_dd_dd_(square_dd_dd_(square_dd_dd_(p)))
     # reconstruction: · 2^n in two exact halves (avoids over/underflow)
     n = unsafe_trunc(_int_type(T), n_float)
     h = n >> 1
@@ -245,17 +279,17 @@ end
 end
 
 @inline function _exp2_clamped(x::Tuple{T,T}, x3::T = zero(T)) where {T<:IEEEFloat}
-    if x[1] < _exp2_min(T)
-        # gradual underflow: run the kernel shifted into normal range, then
-        # scale back by an exact power of 2; the multiply rounds correctly
-        # into the subnormals (Base.ldexp truncates there).  The low limb
-        # is meaningless at subnormal magnitudes and is dropped.
-        x[1] < _exp2_zero(T) && return (zero(T), zero(T))
-        k = _exp2_shift(T)
-        p = _exp2_kernel(_mf_add(x, (T(k), zero(T))), x3)
-        return (p[1] * _pow2(T, -k), zero(T))
-    end
     p = _exp2_kernel(x, x3)
+    # gradual underflow needs no shifted re-run of the kernel: down to
+    # _exp2_zero the split exponents h and n-h stay well above the normal
+    # limit, so p·s1 is an exact normal scaling and the final ·s2 is the
+    # one multiply that rounds correctly into the subnormals (Base.ldexp
+    # truncates there).  The low limb is meaningless at subnormal
+    # magnitudes and is dropped.  Below _exp2_zero and above _exp2_max the
+    # kernel output is garbage (n overflows its exponent field or the
+    # integer type) — the selects override it, keeping this branch-free.
+    p = ifelse(x[1] < _exp2_min(T), (p[1], zero(T)), p)
+    p = ifelse(x[1] < _exp2_zero(T), (zero(T), zero(T)), p)
     return ifelse(x[1] > _exp2_max(T), (T(Inf), T(Inf)), p)
 end
 
@@ -369,57 +403,59 @@ the direct path near 1 (`|t| ≤ 1/31`). `Float64`: 7 / 9 coefficients
 @inline function _log2_poly_narrow(u::Tuple{Float64,Float64})
     u1 = u[1]
     t = +0x1.C6A48D52BA6C7p-0003                       # k7
-    t = t * u1 + 0x1.0C9A845FCF968p-0002               # k6
-    t = t * u1 + 0x1.484B13D7C0C4Dp-0002               # k5
-    p = (t, 0.0)
-    p = _mf_add(_mf_mul(p, u), (+0x1.A61762A7ADED9p-0002, +0x1.90D60ECEBE07Fp-0057))  # k4
-    p = _mf_add(_mf_mul(p, u), (+0x1.2776C50EF9BFEp-0001, +0x1.E4B2AE3DCBD87p-0055))  # k3
-    p = _mf_add(_mf_mul(p, u), (+0x1.EC709DC3A03FDp-0001, +0x1.D27F055486A5Ap-0055))  # k2
-    p = _mf_add(_mf_mul(p, u), (+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055))  # k1
+    t = muladd(t, u1, +0x1.0C9A845FCF968p-0002)        # k6
+    t = muladd(t, u1, +0x1.484B13D7C0C4Dp-0002)        # k5
+    p = _horner_step_dd((+0x1.A61762A7ADED9p-0002, +0x1.90D60ECEBE07Fp-0057), t, u)  # k4
+    p = _horner_step_dd((+0x1.2776C50EF9BFEp-0001, +0x1.E4B2AE3DCBD87p-0055), p, u)  # k3
+    p = _horner_step_dd((+0x1.EC709DC3A03FDp-0001, +0x1.D27F055486A5Ap-0055), p, u)  # k2
+    p = _horner_step_dd((+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055), p, u)  # k1
     return p
 end
 
 @inline function _log2_poly_wide(u::Tuple{Float64,Float64})
     u1 = u[1]
     t = +0x1.5D108CD7E21EBp-0003                       # w9
-    t = t * u1 + 0x1.89F2F69137330p-0003               # w8
-    t = t * u1 + 0x1.C68F56BF8A8ACp-0003               # w7
-    p = (t, 0.0)
-    p = _mf_add(_mf_mul(p, u), (+0x1.0C9A84993C2EEp-0002, +0x1.0E0FE2C5542A6p-0056))  # w6
-    p = _mf_add(_mf_mul(p, u), (+0x1.484B13D7C02AFp-0002, -0x1.9282874496178p-0057))  # w5
-    p = _mf_add(_mf_mul(p, u), (+0x1.A61762A7ADED9p-0002, +0x1.F8B804528988Ap-0057))  # w4
-    p = _mf_add(_mf_mul(p, u), (+0x1.2776C50EF9BFEp-0001, +0x1.E4B2A0D0290E2p-0055))  # w3
-    p = _mf_add(_mf_mul(p, u), (+0x1.EC709DC3A03FDp-0001, +0x1.D27F055480ABFp-0055))  # w2
-    p = _mf_add(_mf_mul(p, u), (+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055))  # w1
+    t = muladd(t, u1, +0x1.89F2F69137330p-0003)        # w8
+    t = muladd(t, u1, +0x1.C68F56BF8A8ACp-0003)        # w7
+    p = _horner_step_dd((+0x1.0C9A84993C2EEp-0002, +0x1.0E0FE2C5542A6p-0056), t, u)  # w6
+    p = _horner_step_dd((+0x1.484B13D7C02AFp-0002, -0x1.9282874496178p-0057), p, u)  # w5
+    p = _horner_step_dd((+0x1.A61762A7ADED9p-0002, +0x1.F8B804528988Ap-0057), p, u)  # w4
+    p = _horner_step_dd((+0x1.2776C50EF9BFEp-0001, +0x1.E4B2A0D0290E2p-0055), p, u)  # w3
+    p = _horner_step_dd((+0x1.EC709DC3A03FDp-0001, +0x1.D27F055480ABFp-0055), p, u)  # w2
+    p = _horner_step_dd((+0x1.71547652B82FEp+0001, +0x1.777D0FFDA0D24p-0055), p, u)  # w1
     return p
 end
 
 @inline function _log2_poly_narrow(u::Tuple{Float32,Float32})
     t = Float32(+0x1.A6217Cp-002)                      # k4
-    t = t * u[1] + Float32(+0x1.2776C6p-001)           # k3
-    p = (t, 0.0f0)
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FDB2p-028)))  # k2
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)))  # k1
+    t = muladd(t, u[1], Float32(+0x1.2776C6p-001))     # k3
+    p = _horner_step_dd((Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FDB2p-028)), t, u)  # k2
+    p = _horner_step_dd((Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)), p, u)  # k1
     return p
 end
 
 @inline function _log2_poly_wide(u::Tuple{Float32,Float32})
     t = Float32(+0x1.48FE3Ap-002)                      # w5
-    t = t * u[1] + Float32(+0x1.A61738p-002)           # w4
-    p = (t, 0.0f0)
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.2776C6p-001), Float32(-0x1.DE12AAp-026)))  # w3
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FE88p-028)))  # w2
-    p = _mf_add(_mf_mul(p, u), (Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)))  # w1
+    t = muladd(t, u[1], Float32(+0x1.A61738p-002))     # w4
+    p = _horner_step_dd((Float32(+0x1.2776C6p-001), Float32(-0x1.DE12AAp-026)), t, u)  # w3
+    p = _horner_step_dd((Float32(+0x1.EC709Ep-001), Float32(-0x1.E2FE88p-028)), p, u)  # w2
+    p = _horner_step_dd((Float32(+0x1.715476p+001), Float32(+0x1.4AE0C0p-025)), p, u)  # w1
     return p
 end
 
 ### Kernel and public methods
 
-# positive x below this can have a subnormal limb (hi subnormal, or lo
-# subnormal because hi is within 2^(precision+1) of floatmin), which breaks
-# the raw exponent-field arithmetic; such x are rescaled up exactly first
-@inline _log_tiny(::Type{Float64}) = 0x1p-1000
-@inline _log_tiny(::Type{Float32}) = Float32(0x1p-100)
+# positive x below this can have a subnormal limb, which breaks the raw
+# exponent-field arithmetic; such x are rescaled up exactly first.
+#
+# The bound is floatmin * 2^(2*precision): a subnormal low limb still holds
+# bits the double-word format carries as long as |lo| >= |hi|*2^-2p, i.e. as
+# long as |hi| < floatmin*2^2p — 2^-916 for Float64, 2^-78 for Float32.  One
+# bit of margin is added.  (The former values, 2^-1000 and 2^-100, covered
+# only a subnormal *leading* limb, so a low limb that went subnormal first
+# reached _uldexp intact and its exponent field wrapped.)
+@inline _log_tiny(::Type{Float64}) = 0x1p-915
+@inline _log_tiny(::Type{Float32}) = Float32(0x1p-77)
 
 @inline function _unsafe_log2(x::Tuple{T,T}) where {T<:IEEEFloat}
     _one = one(T)
@@ -430,8 +466,8 @@ end
     # near 1 take the direct path and skip the exponent split, table load,
     # and tabled kernel entirely; numerator is Sterbenz-exact
     if (T(0.9375) < x[1]) & (x[1] < T(1.0625))  # 15/16 < x₁ < 17/16
-        t = _mf_div(_mf_add(x, (-_one, _zero)), _mf_add(x, (_one, _zero)))
-        return _mf_mul(t, _log2_poly_wide(_mf_sqr(t)))
+        t = _mf_div(add_dddd_dd_(x, (-_one, _zero)), add_dddd_dd_(x, (_one, _zero)))
+        return mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t)))
     end
     # subnormal-limb region: multiply by an exact power of 2, subtract it
     # from the exponent afterwards
@@ -439,6 +475,14 @@ end
     tiny = abs(x[1]) < _log_tiny(T)
     _scale = _pow2(T, _shift)
     x = ifelse(tiny, (_scale * x[1], _scale * x[2]), x)
+    # the rescale above normalizes any nonzero low limb (the smallest
+    # subnormal clears floatmin after 2^_shift), but a low limb can be
+    # subnormal for *any* leading limb — Double64(2.0^100, 1e-320) is a legal
+    # double-word.  Beyond the _log_tiny band such a limb lies below the
+    # 2^-2p the format carries, so dropping it is exact to within the
+    # representable precision, whereas feeding it to _uldexp would wrap the
+    # exponent field and fabricate a large mantissa correction.
+    x = ifelse(abs(x[2]) < floatmin(T), (x[1], _zero), x)
     # exact split: x = 2^er · m,  m₁ ∈ [1, 2)
     er = _raw_exponent(x[1])
     e = er - ifelse(tiny, _shift, 0)
@@ -447,9 +491,9 @@ end
     c = @inbounds _log2_centers(T)[i]
     v = @inbounds _log2_values(T)[i]
     # numerator is Sterbenz-exact
-    t = _mf_div(_mf_add(m, (-c, -_zero)), _mf_add(m, (c, _zero)))
-    return _mf_add(_mf_add((T(e), _zero), v),
-                   _mf_mul(t, _log2_poly_narrow(_mf_sqr(t))))
+    t = _mf_div(add_dddd_dd_(m, (-c, -_zero)), add_dddd_dd_(m, (c, _zero)))
+    return add_dddd_dd_(add_dddd_dd_((T(e), _zero), v),
+                   mul_dddd_dd_(t, _log2_poly_narrow(square_dd_dd_(t))))
 end
 
 @inline function _log_special(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
@@ -478,14 +522,14 @@ end
 function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, _mf_mul(_unsafe_log2(t), _ln_2(T)))
+    y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _ln_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
 function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, _mf_mul(_unsafe_log2(t), _log10_2(T)))
+    y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _log10_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
@@ -496,8 +540,8 @@ function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
         # inside the wide-poly window use t = x/(2 + x) directly: the
         # double-word division keeps every low bit of x, so nothing is
         # lost forming 1 + x
-        t = _mf_div(HILO(x), _mf_add(HILO(x), (T(2), zero(T))))
-        y = _mf_mul(_mf_mul(t, _log2_poly_wide(_mf_sqr(t))), _ln_2(T))
+        t = _mf_div(HILO(x), add_dddd_dd_(HILO(x), (T(2), zero(T))))
+        y = mul_dddd_dd_(mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t))), _ln_2(T))
         return DoubleFloat{T}(y[1], y[2])
     end
     # elsewhere 1 + x carries full double-word relative accuracy;
@@ -559,11 +603,11 @@ function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     c = _expm1_coeffs(T)
     p = c[end]
     for j in length(c)-1:-1:1
-        p = _mf_add(_mf_mul(p, s), c[j])
+        p = add_dddd_dd_(mul_dddd_dd_(p, s), c[j])
     end
-    e = _mf_mul(s, p)
+    e = mul_dddd_dd_(s, p)
     for _ in 1:k
-        e = _mf_mul(e, _mf_add(e, (T(2), zero(T))))
+        e = mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
     end
     return DoubleFloat{T}(e[1], e[2])
 end

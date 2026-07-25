@@ -16,27 +16,27 @@ native baseline; `BigFloat` timings use the default 256-bit precision.
 
 | operation | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `+` | 2 ns | 0 ns | 31 ns | 6.9x | 13.1x |
-| `*` | 2 ns | 0 ns | 41 ns | 4.9x | 24.4x |
+| `+` | 2 ns | 0 ns | 31 ns | 6.9x | 13.2x |
+| `*` | 2 ns | 0 ns | 41 ns | 4.9x | 24.7x |
 | `/` | 2 ns | 1 ns | 64 ns | 3.1x | 29.8x |
-| `sqrt` | 1 ns | 1 ns | 131 ns | 1.0x | 124.3x |
-| `abs` | 0 ns | 0 ns | 18 ns | 1.1x | 50.4x |
-| `fma` | 6 ns | 0 ns | 59 ns | 17.3x | 10.0x |
+| `sqrt` | 1 ns | 1 ns | 121 ns | 1.0x | 114.8x |
+| `abs` | 0 ns | 0 ns | 31 ns | 1.1x | 88.8x |
+| `fma` | 6 ns | 0 ns | 58 ns | 16.0x | 9.9x |
 
 ### Elementary Functions
 
 | function | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:---------|---------:|--------:|---------:|--------:|--------:|
-| `exp` | 73 ns | 2 ns | 1.41 µs | 43.2x | 19.2x |
-| `log` | 54 ns | 3 ns | 2.49 µs | 16.7x | 46.3x |
-| `sin` | 80 ns | 3 ns | 1.32 µs | 30.0x | 16.6x |
-| `cos` | 80 ns | 3 ns | 973 ns | 28.3x | 12.1x |
-| `tan` | 135 ns | 4 ns | 1.48 µs | 33.7x | 10.9x |
-| `atan` | 148 ns | 3 ns | 6.15 µs | 45.1x | 41.5x |
-| `sinh` | 94 ns | 3 ns | 1.58 µs | 36.3x | 16.7x |
-| `tanh` | 90 ns | 3 ns | 1.65 µs | 30.9x | 18.3x |
-| `asinh` | 100 ns | 7 ns | 2.81 µs | 13.4x | 28.2x |
-| `x^y` | 140 ns | 14 ns | 4.21 µs | 10.1x | 30.1x |
+| `exp` | 32 ns | 2 ns | 1.40 µs | 19.0x | 43.5x |
+| `log` | 29 ns | 3 ns | 2.48 µs | 9.1x | 85.1x |
+| `sin` | 64 ns | 4 ns | 1.32 µs | 18.2x | 20.5x |
+| `cos` | 65 ns | 3 ns | 963 ns | 22.0x | 14.9x |
+| `tan` | 119 ns | 4 ns | 1.47 µs | 30.3x | 12.4x |
+| `atan` | 145 ns | 3 ns | 6.11 µs | 43.8x | 42.3x |
+| `sinh` | 68 ns | 3 ns | 1.58 µs | 26.3x | 23.2x |
+| `tanh` | 61 ns | 3 ns | 1.64 µs | 20.6x | 27.0x |
+| `asinh` | 73 ns | 7 ns | 2.81 µs | 10.2x | 38.4x |
+| `x^y` | 88 ns | 14 ns | 4.20 µs | 6.3x | 48.0x |
 
 ### Linear Algebra
 
@@ -47,29 +47,29 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `A * B  (n=4)` | 406 ns | 87 ns | 5.17 µs | 4.6x | 12.7x |
-| `A * B  (n=8)` | 4.26 µs | 132 ns | 35.40 µs | 32.3x | 8.3x |
-| `A * B  (n=16)` | 4.14 µs | 307 ns | 264.57 µs | 13.5x | 63.9x |
-| `A * B  (n=32)` | 24.16 µs | 1.90 µs | 1.95 ms | 12.7x | 80.9x |
-| `A * B  (n=64)` | 136.20 µs | 15.62 µs | 15.49 ms | 8.7x | 113.8x |
-| `lu(A)` | 61.75 µs | 5.03 µs | 796.37 µs | 12.3x | 12.9x |
-| `qr(A)` | 150.86 µs | 16.48 µs | 1.65 ms | 9.2x | 11.0x |
-| `A \ b` | 59.28 µs | 5.55 µs | 1.21 ms | 10.7x | 20.5x |
-| `eigen(S)  symmetric` | 860.22 µs | 50.46 µs | missing | 17.0x | — |
-| `eigen(A)  general` | 4.22 ms | 131.64 µs | missing | 32.1x | — |
-| `svd(A)` | 458.27 µs | 26.57 µs | missing | 17.2x | — |
+| `A * B  (n=4)` | 407 ns | 88 ns | 5.13 µs | 4.6x | 12.6x |
+| `A * B  (n=8)` | 4.27 µs | 138 ns | 35.05 µs | 30.9x | 8.2x |
+| `A * B  (n=16)` | 4.18 µs | 309 ns | 257.77 µs | 13.5x | 61.6x |
+| `A * B  (n=32)` | 23.10 µs | 1.71 µs | 1.94 ms | 13.5x | 84.2x |
+| `A * B  (n=64)` | 136.47 µs | 15.07 µs | 15.80 ms | 9.1x | 115.8x |
+| `lu(A)` | 61.55 µs | 4.73 µs | 800.53 µs | 13.0x | 13.0x |
+| `qr(A)` | 151.01 µs | 16.66 µs | 1.63 ms | 9.1x | 10.8x |
+| `A \ b` | 59.26 µs | 5.15 µs | 862.26 µs | 11.5x | 14.5x |
+| `eigen(S)  symmetric` | 860.32 µs | 50.05 µs | missing | 17.2x | — |
+| `eigen(A)  general` | 4.20 ms | 130.25 µs | missing | 32.3x | — |
+| `svd(A)` | 457.76 µs | 26.51 µs | missing | 17.3x | — |
 
 #### Matrix Functions (n = 8)
 
 | operation | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 51.09 µs | 2.23 µs | missing | 23.0x | — |
-| `exp(P)   spd` | 24.16 µs | 6.63 µs | missing | 3.6x | — |
-| `sqrt(P)  spd` | 22.96 µs | 6.50 µs | missing | 3.5x | — |
-| `log(P)   spd` | 23.30 µs | 5.79 µs | missing | 4.0x | — |
-| `cosh(A)` | 36.94 µs | 4.72 µs | missing | 7.8x | — |
-| `cosh(P)  spd` | 24.31 µs | 6.46 µs | missing | 3.8x | — |
-| `sylvester(A, B, S)` | 660.35 µs | 14.76 µs | missing | 44.7x | — |
+| `exp(A)` | 62.72 µs | 2.26 µs | missing | 27.8x | — |
+| `exp(P)   spd` | 23.16 µs | 6.52 µs | missing | 3.6x | — |
+| `sqrt(P)  spd` | 23.19 µs | 6.45 µs | missing | 3.6x | — |
+| `log(P)   spd` | 23.30 µs | 5.23 µs | missing | 4.5x | — |
+| `cosh(A)` | 37.37 µs | 4.64 µs | missing | 8.0x | — |
+| `cosh(P)  spd` | 24.37 µs | 6.38 µs | missing | 3.8x | — |
+| `sylvester(A, B, S)` | 646.22 µs | 14.73 µs | missing | 43.9x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
@@ -77,13 +77,13 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 98.74 µs | 5.96 µs | missing | 16.6x | — |
-| `exp(P)   spd` | 153.30 µs | 15.58 µs | missing | 9.8x | — |
-| `sqrt(P)  spd` | 147.38 µs | 15.82 µs | missing | 9.3x | — |
-| `log(P)   spd` | 144.34 µs | 15.65 µs | missing | 9.2x | — |
-| `cosh(A)` | 64.75 µs | 12.39 µs | missing | 5.2x | — |
-| `cosh(P)  spd` | 148.98 µs | 15.64 µs | missing | 9.5x | — |
-| `sylvester(A, B, S)` | 3.97 ms | 59.09 µs | missing | 67.2x | — |
+| `exp(A)` | 104.13 µs | 6.23 µs | missing | 16.7x | — |
+| `exp(P)   spd` | 145.50 µs | 15.99 µs | missing | 9.1x | — |
+| `sqrt(P)  spd` | 145.18 µs | 15.73 µs | missing | 9.2x | — |
+| `log(P)   spd` | 142.26 µs | 15.83 µs | missing | 9.0x | — |
+| `cosh(A)` | 67.91 µs | 12.33 µs | missing | 5.5x | — |
+| `cosh(P)  spd` | 147.20 µs | 15.91 µs | missing | 9.3x | — |
+| `sylvester(A, B, S)` | 3.85 ms | 58.21 µs | missing | 66.2x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
@@ -91,13 +91,13 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double64 | Float64 | BigFloat | D64/F64 | Big/D64 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 2.48 ms | 126.02 µs | missing | 19.7x | — |
-| `exp(P)   spd` | 8.07 ms | 229.45 µs | missing | 35.2x | — |
-| `sqrt(P)  spd` | 7.62 ms | 222.10 µs | missing | 34.3x | — |
-| `log(P)   spd` | 7.48 ms | 223.22 µs | missing | 33.5x | — |
-| `cosh(A)` | 1.93 ms | 258.16 µs | missing | 7.5x | — |
-| `cosh(P)  spd` | 7.58 ms | 224.60 µs | missing | 33.8x | — |
-| `sylvester(A, B, S)` | 200.88 ms | 1.53 ms | missing | 131.1x | — |
+| `exp(A)` | 2.47 ms | 124.91 µs | missing | 19.7x | — |
+| `exp(P)   spd` | 7.57 ms | 225.51 µs | missing | 33.6x | — |
+| `sqrt(P)  spd` | 7.52 ms | 225.01 µs | missing | 33.4x | — |
+| `log(P)   spd` | 7.40 ms | 219.91 µs | missing | 33.6x | — |
+| `cosh(A)` | 1.86 ms | 252.40 µs | missing | 7.4x | — |
+| `cosh(P)  spd` | 7.55 ms | 222.09 µs | missing | 34.0x | — |
+| `sylvester(A, B, S)` | 195.13 ms | 1.51 ms | missing | 128.9x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
@@ -112,27 +112,27 @@ native baseline; `BigFloat` timings use the default 256-bit precision.
 
 | operation | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `+` | 3 ns | 0 ns | 31 ns | 6.8x | 12.1x |
-| `*` | 2 ns | 0 ns | 41 ns | 4.1x | 26.4x |
-| `/` | 2 ns | 1 ns | 65 ns | 4.3x | 27.2x |
-| `sqrt` | 1 ns | 1 ns | 130 ns | 2.2x | 112.5x |
-| `abs` | 1 ns | 0 ns | 17 ns | 2.1x | 24.7x |
-| `fma` | 4 ns | 0 ns | 59 ns | 10.7x | 14.2x |
+| `+` | 3 ns | 0 ns | 30 ns | 6.5x | 11.7x |
+| `*` | 2 ns | 0 ns | 41 ns | 4.0x | 26.2x |
+| `/` | 2 ns | 1 ns | 65 ns | 4.2x | 27.4x |
+| `sqrt` | 1 ns | 1 ns | 122 ns | 2.2x | 105.2x |
+| `abs` | 1 ns | 0 ns | 18 ns | 2.1x | 25.3x |
+| `fma` | 4 ns | 0 ns | 59 ns | 11.0x | 14.1x |
 
 ### Elementary Functions
 
 | function | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:---------|---------:|--------:|---------:|--------:|--------:|
-| `exp` | 79 ns | 2 ns | 1.40 µs | 35.5x | 17.7x |
-| `log` | 59 ns | 3 ns | 2.48 µs | 16.9x | 42.1x |
-| `sin` | 85 ns | 2 ns | 1.32 µs | 37.8x | 15.5x |
-| `cos` | 86 ns | 2 ns | 952 ns | 36.7x | 11.1x |
-| `tan` | 140 ns | 3 ns | 1.49 µs | 53.4x | 10.7x |
-| `atan` | 154 ns | 3 ns | 6.16 µs | 61.4x | 40.1x |
-| `sinh` | 101 ns | 1 ns | 1.58 µs | 70.3x | 15.6x |
-| `tanh` | 99 ns | 3 ns | 1.63 µs | 33.5x | 16.4x |
-| `asinh` | 106 ns | 7 ns | 2.81 µs | 15.2x | 26.4x |
-| `x^y` | 153 ns | 13 ns | 4.20 µs | 12.2x | 27.6x |
+| `exp` | 39 ns | 2 ns | 1.41 µs | 17.6x | 35.9x |
+| `log` | 36 ns | 3 ns | 2.48 µs | 10.3x | 69.0x |
+| `sin` | 70 ns | 2 ns | 1.32 µs | 30.8x | 18.9x |
+| `cos` | 70 ns | 2 ns | 961 ns | 30.1x | 13.7x |
+| `tan` | 125 ns | 3 ns | 1.47 µs | 47.4x | 11.8x |
+| `atan` | 152 ns | 3 ns | 6.15 µs | 60.6x | 40.6x |
+| `sinh` | 76 ns | 1 ns | 1.59 µs | 52.5x | 21.1x |
+| `tanh` | 71 ns | 3 ns | 1.64 µs | 23.8x | 23.0x |
+| `asinh` | 83 ns | 7 ns | 2.82 µs | 11.8x | 34.1x |
+| `x^y` | 103 ns | 13 ns | 4.20 µs | 8.2x | 40.9x |
 
 ### Linear Algebra
 
@@ -143,29 +143,29 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `A * B  (n=4)` | 365 ns | 67 ns | 5.13 µs | 5.5x | 14.0x |
-| `A * B  (n=8)` | 3.13 µs | 136 ns | 35.27 µs | 23.0x | 11.3x |
-| `A * B  (n=16)` | 18.10 µs | 210 ns | 259.57 µs | 86.2x | 14.3x |
-| `A * B  (n=32)` | 139.26 µs | 1.10 µs | 1.97 ms | 126.7x | 14.1x |
-| `A * B  (n=64)` | 1.08 ms | 7.23 µs | 16.66 ms | 148.9x | 15.5x |
-| `lu(A)` | 54.71 µs | 3.29 µs | 806.39 µs | 16.6x | 14.7x |
-| `qr(A)` | 127.89 µs | 16.26 µs | 1.65 ms | 7.9x | 12.9x |
-| `A \ b` | 52.06 µs | 4.07 µs | 921.27 µs | 12.8x | 17.7x |
-| `eigen(S)  symmetric` | 686.83 µs | 46.01 µs | missing | 14.9x | — |
-| `eigen(A)  general` | 2.97 ms | 106.43 µs | missing | 27.9x | — |
-| `svd(A)` | 363.99 µs | 25.27 µs | missing | 14.4x | — |
+| `A * B  (n=4)` | 367 ns | 75 ns | 6.25 µs | 4.9x | 17.0x |
+| `A * B  (n=8)` | 2.46 µs | 101 ns | 34.05 µs | 24.5x | 13.8x |
+| `A * B  (n=16)` | 18.04 µs | 207 ns | 256.99 µs | 87.3x | 14.2x |
+| `A * B  (n=32)` | 139.20 µs | 1.17 µs | 1.96 ms | 119.2x | 14.1x |
+| `A * B  (n=64)` | 1.07 ms | 6.92 µs | 16.04 ms | 155.1x | 14.9x |
+| `lu(A)` | 54.86 µs | 3.28 µs | 804.32 µs | 16.7x | 14.7x |
+| `qr(A)` | 128.02 µs | 16.79 µs | 1.66 ms | 7.6x | 12.9x |
+| `A \ b` | 52.27 µs | 3.97 µs | 868.48 µs | 13.2x | 16.6x |
+| `eigen(S)  symmetric` | 687.29 µs | 45.88 µs | missing | 15.0x | — |
+| `eigen(A)  general` | 2.98 ms | 106.33 µs | missing | 28.0x | — |
+| `svd(A)` | 365.66 µs | 25.55 µs | missing | 14.3x | — |
 
 #### Matrix Functions (n = 8)
 
 | operation | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 199.33 µs | 2.08 µs | missing | 96.0x | — |
-| `exp(P)   spd` | 19.66 µs | 5.36 µs | missing | 3.7x | — |
-| `sqrt(P)  spd` | 19.05 µs | 5.38 µs | missing | 3.5x | — |
-| `log(P)   spd` | 19.64 µs | 5.33 µs | missing | 3.7x | — |
-| `cosh(A)` | 107.75 µs | 4.37 µs | missing | 24.7x | — |
-| `cosh(P)  spd` | 19.78 µs | 5.37 µs | missing | 3.7x | — |
-| `sylvester(A, B, S)` | 332.10 µs | 12.12 µs | missing | 27.4x | — |
+| `exp(A)` | 199.63 µs | 2.15 µs | missing | 92.7x | — |
+| `exp(P)   spd` | 19.70 µs | 5.50 µs | missing | 3.6x | — |
+| `sqrt(P)  spd` | 20.42 µs | 5.41 µs | missing | 3.8x | — |
+| `log(P)   spd` | 19.74 µs | 5.39 µs | missing | 3.7x | — |
+| `cosh(A)` | 107.80 µs | 4.44 µs | missing | 24.3x | — |
+| `cosh(P)  spd` | 20.49 µs | 5.43 µs | missing | 3.8x | — |
+| `sylvester(A, B, S)` | 331.57 µs | 12.01 µs | missing | 27.6x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
@@ -173,13 +173,13 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 1.34 ms | 4.96 µs | missing | 270.7x | — |
-| `exp(P)   spd` | 114.20 µs | 13.27 µs | missing | 8.6x | — |
-| `sqrt(P)  spd` | 112.69 µs | 13.07 µs | missing | 8.6x | — |
-| `log(P)   spd` | 113.61 µs | 12.96 µs | missing | 8.8x | — |
-| `cosh(A)` | 821.90 µs | 10.07 µs | missing | 81.6x | — |
-| `cosh(P)  spd` | 113.92 µs | 13.07 µs | missing | 8.7x | — |
-| `sylvester(A, B, S)` | 2.14 ms | 48.52 µs | missing | 44.2x | — |
+| `exp(A)` | 1.34 ms | 4.98 µs | missing | 268.9x | — |
+| `exp(P)   spd` | 113.55 µs | 13.18 µs | missing | 8.6x | — |
+| `sqrt(P)  spd` | 112.83 µs | 13.04 µs | missing | 8.7x | — |
+| `log(P)   spd` | 113.19 µs | 13.15 µs | missing | 8.6x | — |
+| `cosh(A)` | 821.02 µs | 9.52 µs | missing | 86.2x | — |
+| `cosh(P)  spd` | 113.37 µs | 13.07 µs | missing | 8.7x | — |
+| `sylvester(A, B, S)` | 2.14 ms | 48.29 µs | missing | 44.3x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
@@ -187,13 +187,13 @@ is measured at several square sizes; the remaining operations use n = 32.
 
 | operation | Double32 | Float32 | BigFloat | D32/F32 | Big/D32 |
 |:----------|---------:|--------:|---------:|--------:|--------:|
-| `exp(A)` | 80.08 ms | 78.75 µs | missing | 1016.9x | — |
-| `exp(P)   spd` | 5.70 ms | 217.07 µs | missing | 26.2x | — |
-| `sqrt(P)  spd` | 5.67 ms | 218.18 µs | missing | 26.0x | — |
-| `log(P)   spd` | 5.68 ms | 215.54 µs | missing | 26.4x | — |
-| `cosh(A)` | 67.63 ms | 159.03 µs | missing | 425.2x | — |
-| `cosh(P)  spd` | 5.67 ms | 214.26 µs | missing | 26.5x | — |
-| `sylvester(A, B, S)` | 120.53 ms | 1.20 ms | missing | 100.4x | — |
+| `exp(A)` | 80.02 ms | 78.68 µs | missing | 1017.0x | — |
+| `exp(P)   spd` | 5.65 ms | 215.49 µs | missing | 26.2x | — |
+| `sqrt(P)  spd` | 5.65 ms | 211.57 µs | missing | 26.7x | — |
+| `log(P)   spd` | 5.66 ms | 213.29 µs | missing | 26.5x | — |
+| `cosh(A)` | 67.59 ms | 160.11 µs | missing | 422.1x | — |
+| `cosh(P)  spd` | 5.66 ms | 217.18 µs | missing | 26.0x | — |
+| `sylvester(A, B, S)` | 120.23 ms | 1.19 ms | missing | 101.3x | — |
 
 <p align="center"><em>spd = symmetric positive definite</em></p>
 
