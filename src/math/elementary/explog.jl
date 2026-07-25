@@ -97,11 +97,16 @@ end
 # REQUIRES |chi| >= |m*ph| (guaranteed in a convergent series Horner where
 # coefficients dominate), which permits the branch-free two_hilo_sum and
 # makes this fully accurate at roughly half the flops of the general path.
+#
+# The branch-free EFTs are what that precondition buys.  Every caller —
+# _sincos_taylor_core in trig.jl, _atan_small in arctrig.jl — is reached
+# only after its entry point has rejected non-finite input, and evaluates a
+# convergent series in a reduced argument, so no operand here can overflow.
 @inline function _horner_step(chi::T, clo::T, m::T, ph::T, pl::T) where {T<:IEEEFloat}
-    th, tl = two_prod(ph, m)
+    th, tl = two_prod_(ph, m)
     tl = fma(pl, m, tl)
-    s, e = two_hilo_sum(chi, th)
-    return two_hilo_sum(s, (clo + tl) + e)
+    s, e = two_hilo_sum_(chi, th)
+    return two_hilo_sum_(s, (clo + tl) + e)
 end
 
 # the same fusion for a double-word multiplier: one Horner step  c + p*r  on
@@ -115,7 +120,11 @@ end
 @inline function _horner_step_dd(c::Tuple{T,T}, p::Tuple{T,T},
                                  r::Tuple{T,T}) where {T<:IEEEFloat}
     th, tl = two_prod_(p[1], r[1])
-    tl = fma(p[2], r[1], fma(p[1], r[2], tl))
+    # both cross terms in one independent fma, off the critical path: tl
+    # arrives late from two_prod_, and this way it waits on a single add
+    # rather than on a chain of two fmas.  The extra rounding lands on a
+    # second-order term, ~2^-2p below the step's leading bits.
+    tl = tl + fma(p[1], r[2], p[2] * r[1])
     s, e = two_hilo_sum_(c[1], th)
     return two_hilo_sum_(s, (c[2] + tl) + e)
 end
