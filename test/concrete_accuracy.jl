@@ -47,6 +47,24 @@
     @test typeof(rand(Double16)) == Double16
 end
 
+@testset "cbrt returns a DoubleFloat" begin
+    for D in (Double64, Double32, Double16)
+        for v in (8, 2, 27, 0.001, -27)
+            x = D(v)
+            r = cbrt(x)
+            @test r isa D
+            @test abs(r^3 - x) <= 8 * eps(D) * abs(x)
+        end
+        @test cbrt(D(8)) == 2
+        @test cbrt(D(-27)) == -3
+        @test cbrt(D(0)) isa D && iszero(cbrt(D(0)))
+        @test cbrt(D(Inf)) isa D && isinf(cbrt(D(Inf)))
+        @test cbrt(D(NaN)) isa D && isnan(cbrt(D(NaN)))
+        # the result can be used in arithmetic, e.g. a tolerance of the form cbrt(eps(T))^2
+        @test cbrt(eps(D))^2 isa D
+    end
+end
+
 @testset "Subnormal numbers" begin
     for (F, D) in (
         (Float64, Double64),
