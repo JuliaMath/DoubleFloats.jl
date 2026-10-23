@@ -3,10 +3,6 @@
 ### Math with 85+ accurate bits.
 #### Extended precision float and complex types
 
-- Note: `Double64` is the most performant type <sup>[β](#involvement)</sup>
-
-
-
 ----
 
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)
