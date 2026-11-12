@@ -30,7 +30,7 @@ export DoubleFloat,
        randpm,
        agm, agm1, ellipk,
        besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-       gamma, loggamma, lgamma, erf, erfc,
+       gamma, erf, erfc,
        matrixfunction
 
 using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
