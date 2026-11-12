@@ -17,3 +17,8 @@ using SpecialFunctions
     @test all(logabsgamma(Double64(-0.5)) .≈ logabsgamma(-0.5))
     @test all(logabsgamma(Double64(-1.5)) .≈ logabsgamma(-1.5))
 end
+
+@testset "exported names are defined" begin
+    # loggamma and lgamma were exported without being defined (#323)
+    @test filter(n -> !isdefined(DoubleFloats, n), names(DoubleFloats)) == Symbol[]
+end
