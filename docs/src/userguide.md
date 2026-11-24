@@ -16,8 +16,9 @@ behave.  For how things work internally, see the Technical Guide.
 
 `Double64` is the recommended type.  It is faster and more precise than
 `Double32`/`Double16` (which mainly exist for completeness), and much
-faster than `BigFloat` at comparable precision because values are
-immutable bitstypes with no per-operation allocation.
+faster than `BigFloat` at comparable precision in typical workloads.
+The values are immutable bitstypes, and ordinary scalar arithmetic
+does not allocate.
 
 ## Constructing values
 
@@ -48,20 +49,27 @@ true
 ## What accuracy to expect
 
 One unit in the last place (ulp) of `Double64` is about `2⁻¹⁰⁴ ≈ 4.9e-32`
-relative.  The elementary functions (`exp`, `log`, `sin`, `cos`, `tan`,
-inverses, hyperbolics and their inverses) are accurate to about 1 ulp
-across their domains, including the traditionally difficult regions:
-`log` near 1, `asinh`/`atanh` near 0, `acosh` near 1, trigonometric
-argument reduction near multiples of π/2.  Measured results are in the
-[Accuracy Report](accuracy_report.md).
+relative. The elementary functions generally deliver working-precision
+accuracy. In the [Accuracy Report](accuracy_report.md), the sampled
+maximum error varies by function and input range. For example, the
+sampled worst case for `exp` on `(-100, 100)` is about 3.3 ulps.
 
 Boundary behavior worth knowing:
 
-- `exp(x)` overflows to `Inf` at `x ≈ 709.78` and underflows to `0`
-  near `x ≈ -745.2`, like `Float64`.  For `x` below about `-670` the
-  result's low word falls under `Float64`'s subnormal floor, so fewer
-  than 32 digits are *representable* — any library returning `Double64`
-  has this limit.
+- For `Double64`, `exp(x)` overflows near `x ≈ 709.78` and rounds
+  to zero near `x ≈ -745.13`. As the result approaches zero its low
+  limb eventually runs out of representable bits. Subnormal results
+  from `exp`, `exp2`, and `exp10` on `Double64` and `Double32`
+  round to the nearest value on the underlying float's subnormal grid.
+  For example, `exp2(Double64(-1075.0))` rounds to zero, while
+  `exp2(Double64(-1075.0, 1e-30))` returns the smallest positive
+  `Float64` subnormal as a `Double64`.
+- A finite positive logarithm argument can have a tiny low limb, even
+  when its high limb is far from zero. Mantissa normalization accounts
+  for low limbs that would become subnormal during scaling.
+- Scalar `cbrt` returns the same double-word type as its argument.
+  `Double64` cube roots retain working precision at extreme magnitudes
+  through scaling before refinement.
 - `sinh`/`cosh` stay finite through `x ≈ 710.47`.
 - Relative accuracy near the zeros of `sin`/`cos` is limited by the
   condition of the function itself; absolute accuracy stays at the
@@ -121,8 +129,9 @@ and require a diagonalizable argument.
 
 ## Performance
 
-See the [Benchmark Report](benchmark_report.md).  As rough guidance:
-scalar arithmetic is a small multiple of `Float64` cost, elementary
-functions are 50–250x `Float64` (and several times faster than
-`BigFloat`), and dense linear algebra pays an additional factor for
-running pure-Julia generic kernels instead of BLAS/LAPACK.
+See the [Benchmark Report](benchmark_report.md) for representative
+timings. Exponential inputs guaranteed to round to zero skip the
+polynomial. A subnormal result close enough to a rounding midpoint can
+require a higher-precision fallback, which takes longer and allocates.
+Near-cancelling `Double64` `fma` and `muladd` calls also do more
+work than ordinary calls, using an allocation-free refinement.

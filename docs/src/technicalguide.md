@@ -45,24 +45,44 @@ inputs like `Double64(3.0)`).
 
 ## Elementary function algorithms
 
-**exp** (`src/math/elementary/explog.jl`): split `x = n + f`; `exp(n)`
-from a table of `exp(k)` values, `exp(f)` by a Taylor series with
-double-double reciprocal-factorial coefficients (`inv_fact`).  Above
-`ln(floatmax) ≈ 709.78` the result overflows to `Inf`; below `-600` the
-computation routes through `Float128` to avoid inverting a near-overflow
-intermediate, extending the domain to the true underflow point `≈ -745.2`.
+**Exponential functions** (`src/math/elementary/explog.jl`). The shared
+base-2 kernel reduces the exponent to `n + 8r` with `|r| ≲ 1/16`.
+It evaluates a tapered polynomial for `2^r` using fused Horner steps,
+squares three times, and reconstructs with a split power-of-two scale.
+`exp` and `exp10` use three-limb base conversion on the native path.
 
-**log**: exact reduction `x = 2^m·f`, `f ∈ [1, 2)`, anchored against a
-16-entry table: `log(x) = m·ln2 + log(1 + j/16) + log1p((f-a)/a)` with
-`|(f-a)/a| ≤ 1/16`, deep inside `log1p`'s fast series window.  Near 1
-(`0.75 ≤ x ≤ 1.375`) any decomposition would cancel against the small
-result, so `log1p(x - 1)` is used directly (`x - 1` is exact there).
+Inputs safely below the zero-rounding threshold bypass the polynomial.
+In the underflow band, both reduced limbs contribute to rounding on the
+target format's subnormal grid. If the error bound overlaps a rounding
+midpoint, the fallback evaluates the original input with directed MPFR
+rounding and increases precision until the bounds agree. An exact input
+sum lets one downward evaluation and its next representable MPFR value
+bound an inexact result. The fallback compiles on first use. Ordinary
+`Double32` calls to `exp` promote through `Double64`, with direct
+rounding to the `Float32` grid in the underflow band.
 
-**log1p**: for `-0.25 ≤ x ≤ 0.375`, the atanh series
-`log(1+u) = 2·atanh(u/(2+u))` with double-double coefficients
-`1/3, 1/5, …` (`inv_oddint`) — this preserves relative accuracy however
-close the argument is to 0, and is the backbone of the accurate inverse
-hyperbolics.
+**Logarithms**. The `log2` kernel decomposes a positive input into an
+exponent and a mantissa. It uses 32 exact table centers `c` and a
+polynomial in `t²`, where `t = (m-c)/(m+c)` for mantissa `m`.
+Near one it uses `t = (x-1)/(x+1)` directly to preserve the small
+result. The table path rescales tiny inputs and checks both source and
+destination exponent fields before adjusting the low limb's exponent.
+This matters even when the low limb starts out normal. `log` and
+`log10` convert the `log2` result to their respective bases.
+
+**`log1p` and `expm1`**. Near zero, `log1p` uses
+`log(1+x) = 2·atanh(x/(2+x))`. `expm1` evaluates a Taylor series on
+a scaled argument and reconstructs with the doubling identity
+`expm1(2t) = expm1(t)·(expm1(t) + 2)`.
+
+**Cube root and fused multiply-add**. Scalar `cbrt` returns a
+`DoubleFloat`. For extreme `Double64` inputs it scales both limbs by
+`2^(-3k)` before Newton refinement and scales the root by `2^k`
+afterward. This keeps intermediate products in range and retains the
+input's low-limb contribution at working precision. Near cancellation,
+`fma` and `muladd` for three `Double64` operands refine the result
+with an allocation-free expansion. Its tuple capacity grows one slot
+at a time as product and addend terms are inserted.
 
 **Trigonometric functions** (`trig.jl`): argument reduction by `mod2pi`,
 then circle-splitting into `[0, π/32]` segments with tabulated

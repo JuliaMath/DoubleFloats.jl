@@ -66,9 +66,11 @@ degenerate — that is where naïve formulas collapse:
 
 ### Step 3: series and coefficients
 
-- Coefficients must be double-double.  Generate `hi`/`lo` pairs from
-  `BigFloat` at ≥ 256 bits and store them as `Double64(hi, lo)` tuple
-  constants (see `inv_fact`, `inv_oddint`).
+- Generate coefficients at higher precision and store them as
+  `hi`/`lo` pairs when they need double-word precision. See
+  `_expm1_coeffs` in `explog.jl` for generated pairs. The tapered
+  exponential kernels use scalar coefficients in higher-order terms
+  where their contribution to the total error is small.
 - Bound the truncation: with term ratio `r`, you need
   `n·log2(1/r) ≥ 107` plus margin.  State the bound in a comment.
 - Series windows and branch guards must be **bounded on both sides**.

@@ -1,7 +1,35 @@
 # Scalar Function Input-Path Timing Report
 
-*Measured on the current `DoubleFloats.jl` checkout with Julia
-1.13.0-DEV.1123 on 2026-07-18.*
+## Exp/log, FMA, and cube-root updates
+
+The measurements below compare `404f1215` with the numerical fixes in
+`5f232729`, using Julia 1.13.3 on an Intel Core i9-14900K. They come
+from warmed loops with preallocated output and varying `Double64`
+inputs. All listed workloads allocated zero bytes per result.
+
+| Workload | Before (ns/result) | After (ns/result) |
+| --- | ---: | ---: |
+| `log2`, ordinary table path | 25.17 | 24.76 |
+| `exp2`, guaranteed to round to zero | 30.07 | 1.61 |
+| `exp2`, native subnormal rounding | 76.56 | 33.81 |
+| `fma`, deep cancellation | 140.13 | 125.74 |
+| `cbrt`, ordinary inputs | 119.14 | 120.24 |
+| `cbrt`, very large inputs | 174.28 | 128.75 |
+| `cbrt`, very small inputs | 162.32 | 128.79 |
+
+These are workload-specific timings. The former subnormal exponential
+path could round incorrectly near midpoints, and the former cube-root
+fallback could lose the low limb at extreme magnitudes. Deliberately
+ambiguous midpoint inputs take the MPFR fallback. A separate comparison
+of the two correctly rounding implementations measured the
+`Double64` `exp2` fallback at 2.47 µs before buffer reuse and the
+single-evaluation optimization, and 1.43 µs afterward. Allocation fell
+from 768 to 512 bytes per result.
+
+## Historical measurements
+
+*Measured before these changes with Julia 1.13.0-DEV.1123 on
+2026-07-18. The paths in this section describe that checkout.*
 
 This report identifies inputs that take a slower scalar path than an ordinary
 finite `Double64` input.  Each timing is the best of seven amortized loops of
