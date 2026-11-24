@@ -79,20 +79,20 @@ end
 # positive even at the largest allowed low-limb correction.
 @inline function _batch_asinh(x)
     x2 = _batch_square(x)
-    return _log1p_direct(_batch_add(x, _batch_div(x2, _batch_add(1.0, _batch_sqrt(_batch_add(1.0, x2))))))
+    return _log1p_near(_batch_add(x, _batch_div(x2, _batch_add(1.0, _batch_sqrt(_batch_add(1.0, x2))))))
 end
 @inline _batch_acsch(x) = _batch_asinh(_batch_inv(x))
 
 @inline _batch_acosh_offset(u) =
-    _log1p_direct(_batch_add(u, _batch_sqrt(_batch_mul(u, _batch_add(2.0, u)))))
+    _log1p_near(_batch_add(u, _batch_sqrt(_batch_mul(u, _batch_add(2.0, u)))))
 @inline _batch_acosh(x) = _batch_acosh_offset(_batch_sub(x, 1.0))
 @inline _batch_asech(x) = _batch_acosh_offset(_batch_div(_batch_sub(1.0, x), x))
-@inline _batch_atanh(x) = mul_by_half(_log1p_direct(_batch_div(mul_by_two(x), _batch_sub(1.0, x))))
+@inline _batch_atanh(x) = mul_by_half(_log1p_near(_batch_div(mul_by_two(x), _batch_sub(1.0, x))))
 # The scalar expression uses a mixed-float reciprocal and multiplication.
 @inline function _batch_acoth(x)
     y = _batch_inv(_batch_sub(x, 1.0))
     ratio = Double64(_mul_fpdd_dd(two_prod_, two_sum4_, 2.0, HILO(y))...)
-    return mul_by_half(_log1p_direct(ratio))
+    return mul_by_half(_log1p_near(ratio))
 end
 
 for (scalar, kernel, lower, upper) in (

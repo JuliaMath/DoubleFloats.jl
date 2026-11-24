@@ -97,12 +97,17 @@ function scalar_rows(T, baseT)
 
     elementary = [
         scalar_row(T, baseT, "exp",   exp),
+        scalar_row(T, baseT, "exp2",  exp2),
+        scalar_row(T, baseT, "expm1", expm1),
         scalar_row(T, baseT, "log",   log),
+        scalar_row(T, baseT, "log2",  log2),
+        scalar_row(T, baseT, "log1p", log1p),
         scalar_row(T, baseT, "sin",   sin),
         scalar_row(T, baseT, "cos",   cos),
         scalar_row(T, baseT, "tan",   tan),
         scalar_row(T, baseT, "atan",  atan),
         scalar_row(T, baseT, "sinh",  sinh),
+        scalar_row(T, baseT, "cosh",  cosh),
         scalar_row(T, baseT, "tanh",  tanh),
         scalar_row(T, baseT, "asinh", asinh),
         scalar_row(T, baseT, "x^y",   nothing, ^),

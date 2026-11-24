@@ -33,6 +33,13 @@ rounding step dominates the relative working-precision score.
 See the [Technical Guide](technicalguide.md#Elementary-function-algorithms)
 for details and the [Benchmark Report](benchmark_report.md) for timings.
 
+The faster Double64 paths apply automatically in their input ranges.
+For example, small `sinh` and `tanh` arguments use direct
+approximations, while `tan` can use higher precision near poles to keep
+the contribution of a small input component. The
+[Technical Guide](technicalguide.md#Faster-Double64-elementary-kernels)
+describes the ranges and how the implementations preserve accuracy.
+
 ## Elementwise operations on vectors
 
 Ordinary Julia broadcasting applies a scalar function to each element.

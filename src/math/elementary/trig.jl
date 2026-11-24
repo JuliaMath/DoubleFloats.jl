@@ -253,21 +253,48 @@ function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return abs(x.hi) < 6.28125 ? sin_kernel(x) : DoubleFloat{T}(sin(Quadmath.Float128(x)))
 end
 
+include("local_hyperbolic.jl")
+
+@noinline function _tan_mpfr(x::Double64)
+    h, l = HILO(x)
+    # Include every bit of a widely separated input pair. MPFR performs
+    # the range reduction on the sum before rounding the tangent.
+    p = max(256, exponent(abs(h)) - exponent(abs(l)) + 64)
+    a = BigFloat(h, RoundNearest; precision=p)
+    b = BigFloat(l, RoundNearest; precision=p)
+    value = BigFloat(; precision=p)
+    rnd = Base.MPFR.MPFRRoundNearest
+    _exp_mpfr_add!(value, a, b, rnd)
+    ccall((:mpfr_tan, Base.MPFR.libmpfr), Cint,
+          (Ref{BigFloat}, Ref{BigFloat}, Base.MPFR.MPFRRoundingMode), value, value, rnd)
+    hi = Float64(value)
+    isfinite(hi) || return Double64(hi)
+    _exp_mpfr_add!(value, value, BigFloat(-hi, RoundNearest; precision=p), rnd)
+    return Double64(hi, Float64(value))
+end
+
+@inline function _tan_wide(x::Double64)
+    h, l = HILO(x)
+    hi = Float128(h)
+    lo = Float128(l)
+    q = hi + lo
+    # For a normalized input the subtraction is exact by Sterbenz.
+    return q - hi == lo ? Double64(tan(q)) : _tan_mpfr(x)
+end
+
 function tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
+    abs(HI(x)) <= 0.5 && return _tan_local(x)
     if abs(HI(x)) < 6.28125
-        # the π-fraction reductions keep full relative accuracy near the
-        # roots of sin and cos, so the quotient is relatively accurate
-        # everywhere.  Close to the poles, though, |tan| is large and its
-        # *absolute* error grows with it; Float128's quad-precision
-        # reduction does ~500x better there, so give the pole band to it.
+        # Extremely small reduced sine or cosine needs a more accurate
+        # argument reduction than the circular pair supplies here.
         s, c = sincos_kernel(abs(x))
-        abs(HI(c)) < 0.1 && return Double64(tan(Float128(x)))
+        (abs(HI(c)) < 0.1 || abs(HI(s)) < 0x1p-45) && return _tan_wide(x)
         t = s / c
         return signbit(x) ? -t : t
     end
-    return Double64(tan(Float128(x)))
+    return _tan_wide(x)
 end
 
 function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -346,20 +373,12 @@ end
     return ComplexDF64(_batch_add(c, zero(Double64)), s)
 end
 
-@inline function _batch_tan(x)
-    s, c = _batch_sincos(x)
-    return _batch_div(s, c)
-end
-
-@inline function _batch_tan_signed(x)
-    t = _batch_tan(_batch_abs(x))
-    return ifelse(signbit(x), _batch_neg(t), t)
-end
+@inline _batch_tan(x) = _tan_local(x)
 
 @inline _batch_cot(x) = _batch_inv(_batch_tan(x))
 
 for (scalar, kernel, result) in ((sin, _batch_sin, Double64), (cos, _batch_cos_signed, Double64),
-        (tan, _batch_tan_signed, Double64), (cot, _batch_cot, Double64),
+        (tan, _batch_tan, Double64), (cot, _batch_cot, Double64),
         (sincos, _batch_sincos_signed, Tuple{Double64,Double64}), (cis, _batch_cis, ComplexDF64))
     @eval _batch_kernel(::typeof($scalar), ::Type{$result}, ::Type{Double64}) =
         _batch_trig_kernel($scalar, $kernel)
@@ -376,8 +395,8 @@ end
     h = abs(HI(x))
     # A distance of 0.11 from either pole leaves ample margin over the
     # scalar cosine-head cutoff, including the low limb and rounding.
-    return _batch_circle_range(x) & (abs(h - _trig_halfpi[1]) > 0.11) &
-           (abs(h - _trig_threehalfpi[1]) > 0.11)
+    return _batch_circle_range(x) & (h > 0.5) & (abs(h - _trig_halfpi[1]) > 0.11) &
+           (abs(h - _trig_threehalfpi[1]) > 0.11) & (abs(h - _trig_pi[1]) > 0x1p-44)
 end
 
 @inline function _batch_trig_quadrant(a)
@@ -440,12 +459,16 @@ _batch_trig_kernel(::typeof(sincos), kernel) =
                        _BatchKernel(_batch_circle_range, _batch_circle_sincos))
 
 for (f, p, k) in ((sin, _batch_circle_range, _batch_circle_sin),
-                  (cos, _batch_circle_range, _batch_circle_cos),
-                  (tan, _batch_circle_tan_range, _batch_circle_tan))
+                  (cos, _batch_circle_range, _batch_circle_cos))
     @eval _batch_trig_kernel(::typeof($f), narrow) =
         _BatchAlternatives(_BatchRepair(_BatchKernel(_batch_signed_trig_range, narrow), Double64(0.03125)),
                            _BatchRepair(_BatchKernel($p, $k), Double64(0.5)))
 end
+
+@inline _batch_local_tan_range(x) = _batch_abs_bounded(x, 0.005, 0.5)
+_batch_trig_kernel(::typeof(tan), kernel) =
+    _BatchAlternatives(_BatchRepair(_BatchKernel(_batch_local_tan_range, kernel), Double64(0.25)),
+                       _BatchRepair(_BatchKernel(_batch_circle_tan_range, _batch_circle_tan), Double64(1.0)))
 
 # Outside the direct Taylor branch the scalar sine and cosine share the
 # same circular reduction, including reflection of negative angles.

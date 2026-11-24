@@ -5,18 +5,19 @@
 ## Follow-up after the implementation
 
 The signed error budgets below describe the original kernels. The
-normal-range kernel now uses a 16-entry table and one multiplication
-to reconstruct the result. `Double64 expm1` carries the offset from
-one directly for input heads with magnitudes between 0.5 and 1.
+first revision used a 16-entry table and one multiplication
+to reconstruct the result. The latest ordinary Double64 paths refine
+the reduction to a 128-entry table. `Double64 expm1` now carries the
+offset from one directly through input head magnitudes of one.
 The regenerated [Accuracy Report](reports/accuracy_report.md) keeps
 ordinary relative accuracy separate from the underflow lattice and
 counts zero and infinite results. See the
 [Technical Guide](src/technicalguide.md#elementary-function-algorithms)
 for the current algorithms and batch timings.
 
-On the same random draws, the largest ordinary scores are 0.43 for
+In the 16-entry revision, the largest ordinary scores were 0.43 for
 `Double64 exp`, 0.56 for `Double64 exp2`, and 0.63 for
-`Double32 exp2`. The `Double64 expm1` maximum is 1.11.
+`Double32 exp2`. The `Double64 expm1` maximum was 1.11.
 All 18 subnormal `Double32 exp` results still match nearest lattice
 rounding.
 

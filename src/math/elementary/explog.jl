@@ -467,13 +467,17 @@ const _DF64or32 = Union{Float64, Float32}
 function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
     input = HILO(x)
-    p = _exp2_clamped(input, zero(T), exp2, input)
+    p = T === Float64 && _exp2_fine_range(input[1]) ?
+        _exp2_fine(input) : _exp2_clamped(input, zero(T), exp2, input)
     return DoubleFloat{T}(p[1], p[2])
 end
 
 function Base.exp(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
     input = HILO(x)
+    if T === Float64 && _exp_fine_range(input[1])
+        return Double64(_exp_fine(input)...)
+    end
     y1, y2, y3 = _mf_mul3(input, _log2_e3(T))
     p = _exp2_clamped((y1, y2), y3, exp, input)
     return DoubleFloat{T}(p[1], p[2])
@@ -689,14 +693,16 @@ end
 function Base.log2(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, _unsafe_log2(t))
+    y = T === Float64 && _log_fine_range(t[1]) ?
+        _log_fine(t, Val(true)) : _log_special(t, _unsafe_log2(t))
     return DoubleFloat{T}(y[1], y[2])
 end
 
 function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
-    y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _ln_2(T)))
+    y = T === Float64 && _log_fine_range(t[1]) ?
+        _log_fine(t, Val(false)) : _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _ln_2(T)))
     return DoubleFloat{T}(y[1], y[2])
 end
 
@@ -710,10 +716,8 @@ end
 function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
     u = HI(x)
     (isnan(u) | iszero(u)) && return x
+    T === Float64 && abs(u) <= 0.125 && return _log1p_near(x)
     if -T(0.0625) < u < T(0.0625)
-        # inside the wide-poly window use t = x/(2 + x) directly: the
-        # double-word division keeps every low bit of x, so nothing is
-        # lost forming 1 + x
         return _log1p_direct(x)
     end
     # elsewhere 1 + x carries full double-word relative accuracy;
@@ -771,8 +775,11 @@ end
 function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     u = HI(x)
     (isnan(u) | iszero(u)) && return x
+    if T === Float64 && abs(u) <= 1.0
+        abs(u) <= 0x1p-104 && return x
+        return _expm1_central(x, two_prod)
+    end
     if abs(u) >= T(0.5)
-        T === Float64 && abs(u) <= one(T) && return _expm1_central(x, two_prod)
         return exp(x) - one(x)
     end
     # scale exactly to |s| < 2^-8, run the Taylor series there, then undo the
@@ -780,17 +787,22 @@ function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     return _expm1_series(x, max(0, Base.exponent(u) + 9))
 end
 
-# On the central outer interval the nearest integer n to x*log2(e)
-# is ±1. Carry 2^(x*log2(e)-n)-1 through reconstruction.
+# On the central interval the nearest integer to x*log2(e) is 0 or ±1.
+# Carry the offset from one through reconstruction.
 @inline function _expm1_central(x::Double64, prod::F) where {F}
     h, l, t = _mf_mul3(prod, HILO(x), _log2_e3(Float64))
-    n = copysign(1.0, h)
-    rh, rl = two_sum_(h - n, l)
-    r = 0.125 * rh, 0.125 * (rl + t)
-    q = mul_dddd_dd_(r, _exp2_poly_tail(r))
-    q = _expm1_double_fused(_expm1_double_fused(_expm1_double_fused(q)))
+    n = trunc(h + copysign(0.5, h))
+    q = _expm1_offset(h - n, l, t)
+    iszero(n) && return Double64(q...)
     scale = ifelse(n > 0.0, 2.0, 0.5)
     return Double64(add_dddd_dd_((scale - 1.0, 0.0), (scale * q[1], scale * q[2]))...)
+end
+
+@inline function _expm1_offset(h, l, t)
+    rh, rl = two_sum_(h, l)
+    r = 0.125 * rh, 0.125 * (rl + t)
+    q = mul_dddd_dd_(r, _exp2_poly_tail(r))
+    return _expm1_double_fused(_expm1_double_fused(_expm1_double_fused(q)))
 end
 
 @inline function _expm1_double_fused(q)
@@ -821,28 +833,31 @@ end
 @inline _expm1_double(e::Tuple{T,T}) where {T} =
     mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
 
+include("fast_explog.jl")
+
 # The largest allowed magnitudes convert to less than 1010 (exp) or
 # 997 (exp10) in base 2, including both converted tails. This leaves
 # headroom from the scalar clamps and keeps the table scale normal.
-@inline _batch_exp_range(x) = _batch_abs_bounded(x, 0.001, 700.0)
+@inline _batch_exp_range(x) = _batch_bounded(x, -670.0, -0.001) |
+                             _batch_bounded(x, 0.001, 700.0)
 @inline _batch_exp10_range(x) = _batch_abs_bounded(x, 0.001, 300.0)
 @inline _batch_expm1_central_range(x) = _batch_abs_bounded(x, 0.5, 1.0)
-@inline _batch_expm1_ordinary_range(x) = _batch_abs_bounded(x, nextfloat(1.0), 700.0)
+@inline _batch_expm1_ordinary_range(x) = _batch_abs_bounded(x, nextfloat(1.0), 670.0)
 
 # With no base conversion the scalar ordinary branch admits a wider
 # interval. Leave a unit of headroom at either end so neither limb of
 # the input can push the high result into underflow or overflow.
 @inline _batch_exp2_range(x) =
-    _batch_bounded(x, -1021.0, -0.001) | _batch_bounded(x, 0.001, 1023.0)
+    _batch_bounded(x, -966.0, -0.001) | _batch_bounded(x, 0.001, 1023.0)
 
-@inline _batch_exp2(x) = Double64(_exp2_normal(HILO(x), 0.0)...)
+@inline _batch_exp2(x) = Double64(_exp2_fine(HILO(x))...)
 
 @inline function _batch_converted_exp(x, constant)
     h, l, t = _mf_mul3(two_prod_, HILO(x), constant)
     return Double64(_exp2_normal((h, l), t)...)
 end
 
-@inline _batch_exp(x) = _batch_converted_exp(x, _log2_e3(Float64))
+@inline _batch_exp(x) = Double64(_exp_fine(HILO(x))...)
 @inline _batch_exp10(x) = _batch_converted_exp(x, _log2_10_3(Float64))
 
 _batch_kernel(::typeof(exp2), ::Type{Double64}, ::Type{Double64}) =
@@ -858,37 +873,39 @@ _batch_kernel(::typeof(exp10), ::Type{Double64}, ::Type{Double64}) =
 @inline _batch_log_direct_range(x) = _batch_bounded(x, nextfloat(0.9375), prevfloat(1.0625))
 @inline _batch_log_table_range(x) =
     _batch_bounded(x, _log_tiny(Float64), 0.9375) | _batch_bounded(x, 1.0625, floatmax(Float64))
-@inline _batch_log2_direct(x) = Double64(_log2_direct(HILO(x))...)
-@inline _batch_log_direct(x) = Double64(mul_dddd_dd_(_log2_direct(HILO(x)), _ln_2(Float64))...)
+@inline _batch_log2_direct(x) = Double64(_log_fine_near(HILO(x), Val(true), Val(true))...)
+@inline _batch_log_direct(x) = Double64(_log_fine_near(HILO(x), Val(false), Val(true))...)
 @inline _batch_log10_direct(x) = Double64(mul_dddd_dd_(_log2_direct(HILO(x)), _log10_2(Float64))...)
-@inline _batch_log2_table(x) = Double64(_log2_table(HILO(x), 0)...)
-@inline _batch_log_table(x) = Double64(mul_dddd_dd_(_log2_table(HILO(x), 0), _ln_2(Float64))...)
+@inline _batch_log_fine_range(x) = _batch_bounded(x, 0x1p-500, 0.9375) |
+                                  _batch_bounded(x, 1.0625, 0x1p500)
+@inline _batch_log2_table(x) = Double64(_log_fine_table(HILO(x), Val(true))...)
+@inline _batch_log_table(x) = Double64(_log_fine_table(HILO(x), Val(false))...)
 @inline _batch_log10_table(x) = Double64(mul_dddd_dd_(_log2_table(HILO(x), 0), _log10_2(Float64))...)
 
 _batch_kernel(::typeof(log2), ::Type{Double64}, ::Type{Double64}) =
     (_BatchKernel(_batch_log_direct_range, _batch_log2_direct),
-     _BatchKernel(_batch_log_table_range, _batch_log2_table))
+     _BatchKernel(_batch_log_fine_range, _batch_log2_table))
 _batch_kernel(::typeof(log), ::Type{Double64}, ::Type{Double64}) =
     (_BatchKernel(_batch_log_direct_range, _batch_log_direct),
-     _BatchKernel(_batch_log_table_range, _batch_log_table))
+     _BatchKernel(_batch_log_fine_range, _batch_log_table))
 _batch_kernel(::typeof(log10), ::Type{Double64}, ::Type{Double64}) =
     (_BatchKernel(_batch_log_direct_range, _batch_log10_direct),
      _BatchKernel(_batch_log_table_range, _batch_log10_table))
 
+@inline function _batch_log1p(x)
+    h, l = HILO(x)
+    dh, dl = two_sum_(h, 2.0)
+    return Double64(_log_near_regular(h, l, dh, dl, l, _LOG_FINE_COEFFS)...)
+end
 _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
-    _BatchKernel(x -> _batch_bounded(x, 0.005, 0.05), _log1p_direct)
+    _BatchKernel(x -> _batch_bounded(x, 0.005, 0.05), _batch_log1p)
 
-# For 2^-5 <= abs(hi) < 2^-4, exponent(hi) + 9 == 4.
+# This band has n = 0 in the scalar offset reduction.
 @inline _batch_expm1_series_range(x) = _batch_abs_bounded(x, 0x1p-5, prevfloat(0x1p-4))
 
 @inline function _batch_expm1_series(x)
-    s = (HI(x) * 0.0625, LO(x) * 0.0625)
-    c = _expm1_coeffs(Float64)
-    p = c[end]
-    Base.Cartesian.@nexprs 11 k -> (p = _expm1_horner(p, s, c[12 - k]))
-    e = mul_dddd_dd_(s, p)
-    Base.Cartesian.@nexprs 4 k -> (e = _expm1_double(e))
-    return Double64(e...)
+    h, l, t = _mf_mul3(two_prod_, HILO(x), _log2_e3(Float64))
+    return Double64(_expm1_offset(h, l, t)...)
 end
 @inline _batch_expm1_ordinary(x) = Double64(sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
 @inline _batch_expm1_central(x) = _expm1_central(x, two_prod_)

@@ -47,44 +47,22 @@ low word, as happens when taking the reciprocal of `Double64(3.0)`.
 
 ## Elementary function algorithms
 
-**Exponential functions**. For ordinary results, the shared base-2 kernel
-in `src/math/elementary/explog.jl` reduces the exponent to `n + j/16 + r`.
-The high component chooses the index and both components contribute
-to `r`. Its magnitude is at most about `1/32`. The kernel evaluates
-a tapered polynomial for `2^r`, multiplies by the stored two-component
-`2^(j/16)`, and scales by `2^n`. This path serves scalar calls and
-eligible vector batches. The native `exp` and `exp10` kernels use
-three-component conversion to base 2.
-
-Near the exponent limits, the fallback reduces to `n + 8r`, evaluates
-the polynomial over the wider interval, and squares three times. Inputs
-safely below the zero-rounding threshold skip the polynomial. In the
+**Exponential and logarithmic functions**. The guarded Double64 paths
+are described [below](#Faster-Double64-elementary-kernels). The wider
+exponential paths use either the 16-entry base-2 table or the original
+reduction with three squarings near the exponent limits. Arguments
+safely past the zero-rounding threshold skip the polynomial. In the
 underflow band, both components determine the nearest point on the
-underlying subnormal grid. Near a rounding midpoint, directed MPFR
-bounds refine the decision until both endpoints round to the same
-value. Ordinary `Double32 exp` still evaluates in `Double64` before
-narrowing. Its underflow path rounds directly to the `Float32` grid.
-The [Accuracy Report](accuracy_report.md) shows relative errors and
+underlying grid. Directed MPFR bounds refine a rounding decision near
+a midpoint. Ordinary `Double32 exp` evaluates in `Double64` before
+narrowing and rounds directly to the `Float32` grid in its underflow band.
+
+Outside the guarded Double64 log ranges, the 32-center table path
+rescales tiny inputs and checks both source and destination exponent
+fields before shifting the low component. `log10` also uses this
+base-2 kernel and converts its result to base ten.
+The [Accuracy Report](accuracy_report.md) presents ordinary error and
 lattice rounding separately.
-
-**Logarithms**. The `log2` kernel decomposes a positive input into an
-exponent and a mantissa. It uses 32 exact table centers `c` and a
-polynomial in `t²`, where `t = (m-c)/(m+c)` for mantissa `m`.
-Near one it uses `t = (x-1)/(x+1)` directly to preserve the small
-result. The table path rescales tiny inputs and checks both source and
-destination exponent fields before adjusting the low limb's exponent.
-This matters even when the low limb starts out normal. `log` and
-`log10` convert the `log2` result to their respective bases.
-
-**`log1p` and `expm1`**. Near zero, `log1p` uses
-`log(1+x) = 2·atanh(x/(2+x))`. Near zero, `expm1` evaluates a
-Taylor series on a scaled argument and reconstructs by doubling.
-When the `Double64` input head has magnitude from 0.5 through 1,
-the kernel evaluates the offset from one using the exponential
-polynomial with its constant term removed. Three fused updates
-`q ← 2q + q²` reconstruct the reduced offset. With `s = 2^n`,
-the final result is `(s - 1) + s*q`. For larger arguments the
-function evaluates `exp(x) - 1`.
 
 **Cube root and fused multiply-add**. Scalar `cbrt` returns a
 `DoubleFloat`. For extreme `Double64` inputs it scales both limbs by
@@ -127,6 +105,107 @@ be chosen correctly in advance for all operand scales.
 **erf, erfc, gamma, Bessel**: computed via `Float128` (Quadmath), whose
 113-bit significand slightly exceeds `Double64` working precision.
 
+### Faster Double64 elementary kernels
+
+The kernels below use a short reduced interval or a bounded direct
+approximation. The extra speed comes from fewer double-word operations
+and less reconstruction. Near a root, pole, or format limit, the
+accuracy of the reduced argument or the available output spacing
+determines which path is appropriate.
+
+**`exp` and `exp2`** use two-component values of `2^(j/128)`.
+For `exp`, a high-word estimate selects the integer index. A three-part
+`ln(2)/128` then reduces the original argument in natural units,
+including its low component. The first product is exact in the
+admitted range because its constant head is shortened. `exp2` uses
+an exact dyadic center and a polynomial in base-2 units instead.
+Both evaluate a degree-nine polynomial and reconstruct with one
+double-word multiplication and one exact power-of-two scale.
+The fast input-head ranges are `[-670, 700]` for `exp` and
+`[-966, 1023]` for `exp2`. The wider and low-range paths retain their
+original reduction and subnormal rounding. The 128-entry table
+leaves more accuracy margin and uses half the storage of the
+evaluated 256-entry alternative.
+
+**`expm1`** carries the exponential offset from one for Double64 heads
+with magnitude through one. A tiny argument returns directly before
+any halving can quantize away the input. Otherwise the reduced
+polynomial omits its constant term and three fused updates
+`q ← 2q + q²` carry the offset through reconstruction. If the reduction
+selects an integer `n`, the final expression is `(2^n - 1) + 2^n*q`.
+For `n = 0`, the result is simply `q`.
+
+**`log` and `log2`** use 128 exact dyadic mantissa centers and store
+anchors in the requested base for heads between `2^-500` and `2^500`.
+They evaluate an odd series on `t = (m-c)/(m+c)`. Normalizing the
+numerator before the reciprocal refinement is essential when its high
+component is small. Using the upper binade's anchors relative to the
+next power of two keeps the exponent contribution and residual from
+nearly cancelling. In the near-one interval, the numerator `x - 1`
+is formed directly. A second residual correction accounts for the
+tail of the denominator and the rounding of the first quotient
+correction.
+
+**`log1p`** shares the compensated quotient with numerator `x` and
+denominator `2 + x` for Double64 heads with magnitude through 0.125.
+The outer part of this interval retains more terms and more
+double-word coefficients. Evaluating the larger interval with the
+narrower taper gave measurable errors. Forming `x` or `x - 1` directly
+also lets the natural logarithm return the first-order term when it is
+too small to halve without losing representable bits.
+
+**`atan`** reduces by reciprocal for magnitudes above one and uses
+17 dyadic anchors at `j/16` on the unit interval. The tangent
+subtraction formula leaves a reduced argument of magnitude about
+`1/32`. Nine odd correction terms replace the former square-root
+half-angle step. The highest-degree terms use one component and the
+remaining terms retain two. Tiny inputs return directly, preserving
+the sign and avoiding underflow from an intermediate halving.
+
+**`sinh`, `cosh`, `tanh`, and `tan`** use direct bounded
+approximations. `sinh` and `cosh` evaluate odd and even Taylor series
+for magnitudes through one, with one-component coefficients only in
+the highest terms. The tangent functions use the same rational
+correction derived from the continued fraction for `tanh(x)/x`.
+They change the sign of the squared argument to select circular
+or hyperbolic tangent. Keeping the correction separate from `x`
+protects relative accuracy at zero. The rational ranges extend to
+one for `tanh` and one-half for `tan`. Outside that interval,
+`tan` keeps its circular reduction where the reduced sine and cosine
+are safely away from zero. The wider path uses Float128 when it
+can store both input components exactly. Otherwise a local MPFR
+calculation includes the low component in the argument reduction.
+
+Compensated arithmetic and retained low components were chosen before
+relaxing the error target. Boundary tests vary the low component
+around each reduction or branch switch. The tests use 2.2 report units
+for ordinary nonzero results and nearest rounding on the underlying
+grid for the tested quantized results. These checks and the
+[Accuracy Report](accuracy_report.md) give sampled errors. The
+[implementation plan](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/scalarbetter.md)
+describes the review decisions and the basis for the performance
+comparisons.
+
+On an i9-14900K with Julia 1.10.10, warmed scalar-call loops processed
+20,000 seeded inputs per operation. The Double64 inputs included a
+populated low component. The Float64 baseline used the corresponding
+heads. The before column uses revision `bbe7832c`. Timings apply to
+the listed intervals and are throughput measurements.
+
+| Operation | Input heads | Double64 time, before → after | D64/F64, before → after |
+|:---|:---|---:|---:|
+| `atan` | −1 to 1 | 145 → 41 ns | 23.5× → 7.1× |
+| `tan` | −0.5 to 0.5 | 64 → 31 ns | 26.6× → 12.4× |
+| `sinh` | −1 to 1 | 97 → 25 ns | 37.0× → 9.3× |
+| `cosh` | −1 to 1 | 51 → 24 ns | 29.0× → 15.9× |
+| `tanh` | −1 to 1 | 75 → 31 ns | 12.7× → 5.5× |
+| `exp` | 0.25 to 2.25 | 27 → 16 ns | 11.9× → 7.0× |
+| `exp2` | 0.25 to 2.25 | 25 → 16 ns | 12.4× → 7.8× |
+| `expm1` | −0.5 to 0.5 | 103 → 31 ns | 22.1× → 7.0× |
+| `log` | 0.25 to 2.25 | 27 → 19 ns | 5.9× → 4.2× |
+| `log2` | 0.25 to 2.25 | 25 → 19 ns | 5.7× → 4.2× |
+| `log1p` | −0.0625 to 0.0625 | 22 → 19 ns | 4.5× → 3.9× |
+
 ## [Elementary vector kernels](@id elementary-vector-kernels)
 
 The [User Guide](userguide.md#Elementwise-operations-on-vectors) describes
@@ -145,18 +224,18 @@ Vectors shorter than 64 elements take the scalar path.
 
 | Input type and operations | Native ranges and result |
 |:---|:---|
-| `Double64` `exp2` | Heads on −1021 to −0.001 or 0.001 to 1023, where the high word of the result stays normal. |
-| `Double64` `exp`, `exp10` | Absolute head from 0.001 to 700 for `exp` and from 0.001 to 300 for `exp10`, with three-limb base conversion. |
-| `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Table regime at or above `2^-915` outside the direct interval, up to the largest finite head. |
-| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings on `[2^-5, 2^-4)`, direct offset reconstruction on `[0.5, 1]`, and exponential subtraction on `(1, 700]`. These ranges refer to absolute heads. |
+| `Double64` `exp2` | Heads on −966 to −0.001 or 0.001 to 1023. |
+| `Double64` `exp`, `exp10` | `exp` on −670 to −0.001 or 0.001 to 700. `exp10` uses three-limb base conversion on absolute heads from 0.001 to 300. |
+| `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Outside that interval, `log2` and `log` use the 128-center table for heads from `2^-500` to `2^500`. `log10` uses the 32-center table from `2^-915` through the largest finite head. |
+| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses an offset kernel with fixed integer reduction on `[2^-5, 2^-4)`, direct offset reconstruction on `[0.5, 1]`, and exponential subtraction on `(1, 670]`. These ranges refer to absolute heads. |
 | `Double64` power | Scalar `Int` exponent `5` with bases on 0.5–1.5, or vector `Double64` exponents on 0.2–0.9 with bases on 1.1–1.5. |
 | `Double64` `sin`, `cos`, `sincos` | Absolute head from 0.005 up to 6.28125 radians, exclusive of the upper bound. `sincos` writes a tuple. |
-| `Double64` `tan` | Same head interval, with a 0.11-radian exclusion around the heads of π/2 and 3π/2 in the absolute angle. |
+| `Double64` `tan` | Rational kernel for absolute heads on 0.005–0.5. Above 0.5 through the wider circular range, it excludes 0.11 radians around pole heads and a small window around π. |
 | `Double64` `cis` | Absolute heads on 0.005–0.09 and strictly between the direct Taylor cutoff (approximately 0.09817) and 6.28125. Writes a complex result. |
 | `Double64` `hypot`, `DoubleFloats.normalize` | Both absolute heads on 0.25–8. `normalize` writes a tuple in input order. |
 | `Double64` `inv` | Absolute head from `2^-256` through `2^256`. |
-| `Double64` `cot`, unary `atan` | Positive heads on 0.005–0.09 and 0.005–0.19, respectively. |
-| `Double64` hyperbolic functions | `sinh`, `cosh`, `tanh`, `csch`, `sech`, and `coth` on 1.1–5. |
+| `Double64` `cot`, unary `atan` | Positive heads on 0.005–0.09 for `cot` and from 0.005 up to one, exclusive, for `atan`. |
+| `Double64` hyperbolic functions | `sinh`, `cosh`, `tanh`, `csch`, `sech`, and `coth` on positive heads on 1.1–5. `sinh`, `cosh`, and `tanh` also have a direct path for absolute heads on 0.005–1. |
 | `Double64` inverse hyperbolic functions | `asinh` on 0.005–0.045, `acosh` on 1.00002–1.001, `atanh` on 0.005–0.025, `acsch` on 30–50, `asech` on 0.999–0.99998, and `acoth` on 40–100. |
 | `ComplexDF64` `square`, `abs2`, `exp`, `sinh`, `cosh` | Real head on 1.1–5 and imaginary head on 0.005–0.09. `abs2` writes a real result. |
 | `ComplexDF64` `sin`, `cos`, `tan`, `cot`, `DoubleFloats.csc`, `DoubleFloats.sec` | Imaginary head on 1.1–5. Real head on 0.005–0.09 for `sin` and `cos`, or 0.005–0.045 for the other four. |
@@ -243,7 +322,7 @@ previous throughput because few lanes fell within one circle.
 
 On the i9-14900K with Julia 1.10.10 and one Julia thread, five warmed
 timings of 65,536 eligible `Double64` inputs in 0.55–16 gave these
-serial batch medians before and after table reduction. All three
+serial batch medians for the earlier transition to the 16-entry table. All three
 revised paths allocated zero bytes in the warmed calls.
 
 | Operation | Previous batch | Table reduction |

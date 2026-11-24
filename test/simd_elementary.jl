@@ -121,6 +121,21 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         @test all(==(-1), dest[95:end])
     end
 
+    @testset "Revised local scalar kernels" begin
+        for f in (sinh, cosh, tanh, atan)
+            compare_batch(f, bounded(0.005, 1.0))
+        end
+        for f in (sinh, cosh, tanh, tan)
+            compare_batch(f, bounded(-0.5, -0.005))
+        end
+        nearroot = fill(Double64(0.75), 129)
+        nearroot[2] = Double64(pi)
+        nearroot[66] = Double64(Float64(pi) / 2, 0x1p-120)
+        compare_batch(tan, nearroot)
+        compare_batch(log, bounded(0.9376, 1.0624))
+        compare_batch(log2, bounded(0.9376, 1.0624))
+    end
+
     @testset "Wider converted exponentials" begin
         for (f, first_head, last_head) in ((exp, 0.001, 700.0), (exp10, 0.001, 300.0),
                                            (expm1, 0.5, 700.0))
