@@ -39,3 +39,16 @@ end
     end
   end
 end
+
+# There was a performance regression in version 1.10.0 of DoubleFloats.jl
+# where `fma` and `muladd` were allocating memory for some inputs.
+# These regression tests ensure that this does not happen again.
+_fma_allocation_regression() = fma(Double64(1.0), Double64(1.0), Double64(-1.0))
+_muladd_allocation_regression() = muladd(Double64(1.0), Double64(1.0), Double64(-1.0))
+
+@testset "fma/muladd inference and allocations" begin
+  @test (@inferred _fma_allocation_regression()) == zero(Double64)
+  @test (@inferred _muladd_allocation_regression()) == zero(Double64)
+  @test @allocated(_fma_allocation_regression()) == 0
+  @test @allocated(_muladd_allocation_regression()) == 0
+end

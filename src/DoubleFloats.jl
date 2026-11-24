@@ -40,7 +40,7 @@ using Random
 import Random: rand, randn
 
 using LinearAlgebra
-import LinearAlgebra: norm, mul!
+import LinearAlgebra: norm, mul!, AdjointQ
 
 using GenericLinearAlgebra
 using GenericSchur
@@ -72,7 +72,7 @@ end
     import Base: isnegative
 end
 
-import Base.Math: modf, fma, muladd,
+import Base: modf, fma, muladd,
              log, log1p, log2, log10, exp, expm1, exp2, exp10,
              sin, cos, tan, cot,
              asin, acos, atan, acsc, asec, acot,

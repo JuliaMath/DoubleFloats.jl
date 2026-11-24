@@ -134,6 +134,6 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
 
     ax = add_dddd_dd(ax, amax3)
 
-    isnan(HI(ax)) && return DoubleFloat{T}(cbrt(HI(a)), zero(T))  # subnormal numbers
+    isnan(HI(ax)) && return (cbrt(HI(a)), zero(T))  # subnormal numbers
     return ax
 end

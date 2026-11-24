@@ -4,3 +4,7 @@ Manifest.toml
 *.jl.mem
 deps/deps.jl
 .DS_Store
+
+# generated at docs build time from docs/reports/ (see docs/make.jl)
+docs/src/accuracy_report.md
+docs/src/benchmark_report.md

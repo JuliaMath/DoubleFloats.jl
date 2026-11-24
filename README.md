@@ -10,6 +10,7 @@
 ----
 
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/stable/)
+[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](http://juliamath.github.io/DoubleFloats.jl/dev/)
 [![codecov](https://codecov.io/gh/JuliaMath/DoubleFloats.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/DoubleFloats.jl)
 
 ## Installation

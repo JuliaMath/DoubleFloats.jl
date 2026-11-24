@@ -134,12 +134,20 @@ true
 
 Usage questions can be posted on the [Julia Discourse forum](https://discourse.julialang.org/tags/doublefloats).  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
 
+
+## Acknowledgements
+
+There have been many helpful contributors.
+
+Claude Fable (High) was applied for specific purposes and always with a great deal of guidance, rigorous checking, and re-validation.
+
+The logic for exp and log is adapted from MultiFloats.jl.
+
 ## Contributions
 
 Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/#Contributions) has a few guidelines that should be followed when opening pull requests.
 
-----
 
 [^β]: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
 
-----
+

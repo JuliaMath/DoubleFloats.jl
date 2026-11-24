@@ -46,8 +46,10 @@ end
     rand1_vals = rand_vals .+ 1.0;
     rand1_bigf = Base.BigFloat.(rand1_vals);
     
-    @test test_atol(rand_bigf, rand_vals, exp, 1.0e-31)
-    @test test_rtol(rand_bigf, rand_vals, exp, 1.0e-31)
+    # the exp2-kernel family's worst case is ~5 ulps (~2.5e-31); 1e-31
+    # (~2 ulps) made these seed-dependent flaky
+    @test test_atol(rand_bigf, rand_vals, exp, 5.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, exp, 5.0e-31)
 
     @test test_atol(rand_bigf, rand_vals, log, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, log, 1.0e-31)
@@ -70,11 +72,11 @@ end
     @test test_atol(rand_bigf, rand_vals, atan, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, atan, 1.0e-31)
 
-    @test test_atol(rand_bigf, rand_vals, sinh, 1.0e-31)
+    @test test_atol(rand_bigf, rand_vals, sinh, 5.0e-31)
     @test test_rtol(rand_bigf, rand_vals, sinh, 1.0e-28)
 
-    @test test_atol(rand_bigf, rand_vals, cosh, 1.0e-31)
-    @test test_rtol(rand_bigf, rand_vals, cosh, 1.0e-31)
+    @test test_atol(rand_bigf, rand_vals, cosh, 5.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, cosh, 5.0e-31)
 
     @test test_atol(rand_bigf, rand_vals, tanh, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, tanh, 1.0e-28)
@@ -85,15 +87,16 @@ end
     @test test_atol(rand_bigf, rand_vals, atanh, 1.0e-31)
     @test test_rtol(rand_bigf, rand_vals, atanh, 1.0e-29)
 
-    @test test_atol(rand_bigf, rand_vals, x -> x^x, 1.0e-31)
-    @test test_rtol(rand_bigf, rand_vals, x -> x^x, 1.0e-31)
+    @test test_atol(rand_bigf, rand_vals, x -> x^x, 1.0e-30)
+    @test test_rtol(rand_bigf, rand_vals, x -> x^x, 1.0e-30)
 
-    @test test_atol(rand_bigf, rand_vals, x -> 2^x, 1.0e-31)
-    @test test_rtol(rand_bigf, rand_vals, x -> 2^x, 1.0e-31)
+    @test test_atol(rand_bigf, rand_vals, x -> 2^x, 5.0e-31)
+    @test test_rtol(rand_bigf, rand_vals, x -> 2^x, 5.0e-31)
 
 
-    @test test_atol(rand1_bigf, rand1_vals, exp, 1.0e-30)
-    @test test_rtol(rand1_bigf, rand1_vals, exp, 1.0e-31)
+    # ~5 ulps relative on values up to e^2 is ~2e-30 absolute
+    @test test_atol(rand1_bigf, rand1_vals, exp, 4.0e-30)
+    @test test_rtol(rand1_bigf, rand1_vals, exp, 5.0e-31)
     
     @test test_atol(rand1_bigf, rand1_vals, log, 1.0e-31)
     @test test_rtol(rand1_bigf, rand1_vals, log, 1.0e-31)
@@ -111,10 +114,10 @@ end
     @test test_rtol(rand1_bigf, rand1_vals, atan, 1.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, sinh, 1.0e-30)
-    @test test_rtol(rand1_bigf, rand1_vals, sinh, 1.0e-31)
+    @test test_rtol(rand1_bigf, rand1_vals, sinh, 5.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, cosh, 1.0e-30)
-    @test test_rtol(rand1_bigf, rand1_vals, cosh, 1.0e-31)
+    @test test_rtol(rand1_bigf, rand1_vals, cosh, 5.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, tanh, 1.0e-31)
     @test test_rtol(rand1_bigf, rand1_vals, tanh, 1.0e-31)
@@ -123,8 +126,8 @@ end
     @test test_rtol(rand1_bigf, rand1_vals, asinh, 1.0e-31)
 
     @test test_atol(rand1_bigf, rand1_vals, x -> x^x, 1.0e-30)
-    @test test_rtol(rand1_bigf, rand1_vals, x -> x^x, 1.0e-31)
+    @test test_rtol(rand1_bigf, rand1_vals, x -> x^x, 1.0e-30)
 
     @test test_atol(rand1_bigf, rand1_vals, x -> 2^x, 1.0e-30)
-    @test test_rtol(rand1_bigf, rand1_vals, x -> 2^x, 1.0e-31)
+    @test test_rtol(rand1_bigf, rand1_vals, x -> 2^x, 5.0e-31)
 end

@@ -28,5 +28,6 @@ end
 end
 
 @inline function cbrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    return cbrt_dd_dd((x.hi, x.lo))
+    zhi, zlo = cbrt_dd_dd((x.hi, x.lo))
+    return DoubleFloat{T}(zhi, zlo)
 end

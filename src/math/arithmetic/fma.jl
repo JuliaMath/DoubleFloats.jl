@@ -37,39 +37,55 @@ end
     return isfinite(bound) && bound != 0.0 ? abs(rhi) / bound : Inf
 end
 
-function _fma_grow_expansion!(h::Vector{Float64}, e::Vector{Float64}, b::Float64)
-    empty!(h)
+@inline function _fma_grow_expansion(e::NTuple{10, Float64}, n::Int, b::Float64)
+    # Only the first n entries are live.  Keeping n separate avoids using a
+    # sentinel value: zero is deliberately removed by the original expansion
+    # algorithm and therefore cannot distinguish live from unused entries.
+    h = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    hn = 0
     q = b
-    for a in e
+    @inbounds for i in 1:n
+        a = e[i]
         qnext, err = two_sum(q, a)
-        err != 0.0 && push!(h, err)
+        if err != 0.0
+            hn += 1
+            h = Base.setindex(h, err, hn)
+        end
         q = qnext
     end
-    q != 0.0 && push!(h, q)
-    return h
+    if q != 0.0
+        hn += 1
+        h = Base.setindex(h, q, hn)
+    end
+    return h, hn
+end
+
+@inline function _fma_grow_product(e::NTuple{10, Float64}, n::Int,
+                                   a::Float64, b::Float64)
+    p, err = two_prod(a, b)
+    e, n = _fma_grow_expansion(e, n, err)
+    return _fma_grow_expansion(e, n, p)
 end
 
 function _fma_refined(x::Double64, y::Double64, z::Double64)
     # Each two_prod pair is exact.  Grow the expansion rather than summing
     # the terms into a Double64 so cancellation cannot discard their tails.
-    e = Float64[]
-    scratch = Float64[]
-    sizehint!(e, 10)
-    sizehint!(scratch, 10)
-    for (a, b) in ((x.hi, y.hi), (x.hi, y.lo),
-                   (x.lo, y.hi), (x.lo, y.lo))
-        p, err = two_prod(a, b)
-        e, scratch = _fma_grow_expansion!(scratch, e, err), e
-        e, scratch = _fma_grow_expansion!(scratch, e, p), e
-    end
-    e, scratch = _fma_grow_expansion!(scratch, e, z.lo), e
-    e, scratch = _fma_grow_expansion!(scratch, e, z.hi), e
+    # Four products contribute at most two terms each, and z contributes two
+    # more, so ten slots suffice. We use a tuple rather than a vector to avoid allocations.
+    e = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    n = 0
+    e, n = _fma_grow_product(e, n, x.hi, y.hi)
+    e, n = _fma_grow_product(e, n, x.hi, y.lo)
+    e, n = _fma_grow_product(e, n, x.lo, y.hi)
+    e, n = _fma_grow_product(e, n, x.lo, y.lo)
+    e, n = _fma_grow_expansion(e, n, z.lo)
+    e, n = _fma_grow_expansion(e, n, z.hi)
 
     # The expansion is ordered from low to high.  Double64 accumulation then
     # rounds the exact expansion only at the target precision.
     result = zero(Double64)
-    for term in e
-        result += Double64(term)
+    @inbounds for i in 1:n
+        result += Double64(e[i])
     end
     return result
 end
