@@ -31,3 +31,11 @@ end
     zhi, zlo = cbrt_dd_dd((x.hi, x.lo))
     return DoubleFloat{T}(zhi, zlo)
 end
+
+# Here the reciprocal head is between 2^-256 and 2^256 in magnitude.
+# The normalized low limb bounds the correction to a few ulps, so the
+# finite fast path in inv_db_db applies throughout the window.
+@inline _batch_inv_range(x) = _batch_abs_bounded(x, 0x1p-256, 0x1p256)
+
+_batch_kernel(::typeof(inv), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(_batch_inv_range, _batch_inv)

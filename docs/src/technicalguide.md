@@ -125,9 +125,9 @@ reuse the scalar coefficients and error-free transforms without reassociation
 or `@fastmath`. They operate on the ordinary interleaved arrays of high and
 low limbs.
 
-For a native route, the driver checks both limbs in 32-element blocks,
-or 64-element blocks for operations with sparse repair. The intervals
-below bound the high word. The low word must be
+For a native route, the driver checks both limbs in blocks of up to
+32 or 64 elements, depending on the operation. The intervals below
+bound the high word. The low word must be
 finite and at most half the high word's binade ulp in magnitude. The
 bounds leave room for the low limb and nested intermediate operations.
 Vectors shorter than 64 elements take the scalar path.
@@ -135,11 +135,15 @@ Vectors shorter than 64 elements take the scalar path.
 | Input type and operations | Native ranges and result |
 |:---|:---|
 | `Double64` `exp2` | Heads on −1021 to −0.001 or 0.001 to 1023, where the high word of the result stays normal. |
-| `Double64` `exp`, `exp10` | Absolute head from 0.001 to 32, with three-limb base conversion. |
+| `Double64` `exp`, `exp10` | Absolute head from 0.001 to 700 for `exp` and from 0.001 to 300 for `exp10), with three-limb base conversion. |
 | `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Table regime at or above `2^-915` outside the direct interval, up to the largest finite head. |
-| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings on 0.032–0.06 and ordinary exponential subtraction when the absolute head is 0.5–32. |
+| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings for absolute heads on `[2^-5, 2^-4)` and ordinary exponential subtraction on 0.5–700. |
 | `Double64` power | Scalar `Int` exponent `5` with bases on 0.5–1.5, or vector `Double64` exponents on 0.2–0.9 with bases on 1.1–1.5. |
-| `Double64` `sin`, `cos`, `tan`, `sincos`, `cis` | Absolute head from 0.005 to 0.09 radians. `sincos` writes a tuple, `cis` writes a complex number. |
+| `Double64` `sin`, `cos`, `sincos` | Absolute head from 0.005 up to 6.28125 radians, exclusive of the upper bound. `sincos` writes a tuple. |
+| `Double64` `tan` | Same head interval, with a 0.11-radian exclusion around the heads of π/2 and 3π/2 in the absolute angle. |
+| `Double64` `cis` | Absolute heads on 0.005–0.09 and strictly between the direct Taylor cutoff (approximately 0.09817) and 6.28125. Writes a complex result. |
+| `Double64` `hypot`, `DoubleFloats.normalize` | Both absolute heads on 0.25–8. `normalize` writes a tuple in input order. |
+| `Double64` `inv` | Absolute head from `2^-256` through `2^256`. |
 | `Double64` `cot`, unary `atan` | Positive heads on 0.005–0.09 and 0.005–0.19, respectively. |
 | `Double64` hyperbolic functions | `sinh`, `cosh`, `tanh`, `csch`, `sech`, and `coth` on 1.1–5. |
 | `Double64` inverse hyperbolic functions | `asinh` on 0.005–0.045, `acosh` on 1.00002–1.001, `atanh` on 0.005–0.025, `acsch` on 30–50, `asech` on 0.999–0.99998, and `acoth` on 40–100. |
@@ -148,7 +152,10 @@ Vectors shorter than 64 elements take the scalar path.
 | `ComplexDF64` `tanh`, `coth`, `csch`, `sech` | Real head on 1.1–5 and imaginary head on 0.005–0.045. |
 
 Mixed blocks normally use the scalar loop, which preserves exception
-order. For `exp2`, `sin`, `cos`, and `tan`, a block with at most one eighth
+order. The circular kernels prefer the small-angle route and then
+try the wider circular reduction. The wider route reuses the three-limb
+π reductions and resolves the table sector using both input limbs.
+For `exp2`, `sin`, `cos`, `tan`, and wider `cis`, a block with at most one eighth
 of its lanes excluded can SIMD-evaluate safe substitute inputs and then
 repair those lanes with the original scalar calls. This requires every
 excluded input to pass a wider check that makes the scalar calls and
@@ -161,7 +168,9 @@ use the existing scalar algorithms inside the batch. The same applies
 to complex `sqrt`, `log`, and the inverse complex functions. This preserves
 special values, signed zeros, argument quadrants, and complex branch cuts.
 Threaded calls use contiguous chunks. Most supported operations are
-eligible from 4,096 elements, and integer power from 65,536 elements.
+eligible from 4,096 elements. For `Double64`, `hypot` and paired
+`normalize` are eligible from 16,384 elements. Reciprocal and integer
+power use a 65,536-element threshold.
 
 ### Batch benchmarks
 
@@ -195,9 +204,30 @@ fixtures ran near scalar speed. In the separate Julia 1.10.10 exponential
 tests, zero-only `exp2` was about 0.9× and MPFR midpoint repair took
 about 9.7 ms for 4,096 elements in both the scalar and serial batch runs.
 On a general-range run with 65,536 elements per case, the median across
-all 71 cases was 1.0× for serial batching and 2.0× with four workers
+the original 71 cases was 1.0× for serial batching and 2.0× with four workers
 relative to scalar broadcast. A caller-managed threaded scalar loop
 also gave 2.0× on that run.
+
+The expanded paths were measured against the public serial batch API
+at revision `9b4a13cf` on the same CPU and Julia 1.13.3. These are
+medians from 13 interleaved timings of 65,536 elements with one Julia
+thread and no warmed heap allocations.
+
+| Operations and input heads | Speedup over the previous batch API |
+|:---|---:|
+| `exp`, `exp10` on −100–100 | 3.2× |
+| `expm1` on −100–100 | 2.6× |
+| `hypot` and paired `normalize` on independent positive pairs from 0.25–8 | 4.2× and 2.0× |
+| `inv` on −128–128 | 2.1× |
+| `sin`, `cos`, `sincos` on −6.25–6.25 | 1.2× |
+| `tan`, `cis` on −6.25–6.25 | 1.9× and 2.1× |
+
+The compiler emitted vector loops for the converted exponentials,
+positive-pair `hypot`, reciprocal, and the masked wide `tan` kernel on
+this target. The wider circular pair and paired normalization also
+benefited from the checked arithmetic when LLVM emitted scalar loops.
+The `sin`, `cos`, and `sincos` fixtures on −100–100 ran near their
+previous throughput because few lanes fell within one circle.
 
 Run the driver from the package root. Its output includes the measured
 range, storage, seed, Julia and CPU versions, CPU target, thread count,
@@ -218,6 +248,12 @@ for poles, exponential underflow, and MPFR midpoint repair. The driver
 also supports comma-separated sizes, `SIMD_STORAGE=strided`, `narrow`, or
 `alias`, alternative whole-block widths via `SIMD_BLOCK_SIZES`, and native
 IR dumps into the directory given by `SIMD_LLVM`.
+For dense calls, the driver prints lane eligibility counts for the
+installed regimes. Eligible lanes can still use scalar code when a
+whole block fails its checks.
+
+The repository's `docs/vecbetter.md` records the phased rollout and the
+numerical results for binary `atan`.
 
 ## Linear algebra
 

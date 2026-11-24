@@ -121,6 +121,105 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         @test all(==(-1), dest[95:end])
     end
 
+    @testset "Wider converted exponentials" begin
+        for (f, first_head, last_head) in ((exp, 0.001, 700.0), (exp10, 0.001, 300.0),
+                                           (expm1, 0.5, 700.0))
+            compare_batch(f, bounded(first_head, last_head))
+            compare_batch(f, bounded(-last_head, -first_head))
+            compare_batch(f, vcat(bounded(first_head, last_head),
+                                  Double64[0, -0.0, NaN, Inf, -Inf, -800, 800]))
+        end
+        compare_batch(expm1, bounded(0x1p-5, prevfloat(0x1p-4)))
+        compare_batch(expm1, bounded(-prevfloat(0x1p-4), -0x1p-5))
+        setprecision(256) do
+            for (f, factor, k) in ((exp, log(big(2.0)), 997), (exp10, log10(big(2.0)), 992))
+                midpoint = Double64(k * factor + factor / 2)
+                mids = Double64[Double64(HI(midpoint), l) for l in
+                                (prevfloat(LO(midpoint)), LO(midpoint), nextfloat(LO(midpoint)))]
+                compare_batch(f, repeat(vcat(mids, -mids), 16))
+                for (x, y) in zip(mids, f.(mids))
+                    exact = f(BigFloat(HI(x)) + BigFloat(LO(x)))
+                    @test abs((BigFloat(HI(y)) + BigFloat(LO(y))) / exact - 1) < big(2.0)^(-98)
+                end
+            end
+        end
+    end
+
+    @testset "Real vector magnitudes and reciprocals" begin
+        x = bounded(0.25, 8.0)
+        y = reverse(x)
+        for f in (hypot, DF.normalize)
+            for (a, b) in ((x, y), (-x, y), (x, -y), (-x, -y), (x, x))
+                compare_batch(f, a, b)
+            end
+            a = repeat(Double64[Double64(2.0, 0.0), Double64(2.0, -0.0)], 40)
+            b = reverse(a)
+            compare_batch(f, a, b)
+            compare_batch(f, a, reverse(b))
+            special = Double64[-0.0, 0.0, Inf, -Inf, NaN, nextfloat(0.0), floatmax(Float64),
+                               Double64(0.0, 1.0), Double64(1.0, Inf), Double64(1.0, NaN)]
+            compare_batch(f, vcat(x, special), vcat(y, reverse(special)))
+        end
+        expected = hypot.(x, y)
+        alias = copy(y)
+        @test simdmap!(hypot, alias, x, alias) === alias
+        @test all(same_limbs.(alias, expected))
+        compare_batch(inv, bounded(0x1p-256, 0x1p256))
+        compare_batch(inv, bounded(-0x1p256, -0x1p-256))
+        reciprocals = Double64[0.0, -0.0, Inf, -Inf, NaN, nextfloat(0.0), floatmin(Float64),
+                               floatmax(Float64), Double64(2.0, NaN)]
+        compare_batch(inv, vcat(x, reciprocals))
+        @test iszero(batch_allocations(hypot, similar(x), x, y))
+        @test iszero(batch_allocations(DF.normalize, Vector{Tuple{Double64,Double64}}(undef, length(x)), x, y))
+        @test iszero(batch_allocations(inv, similar(x), x))
+    end
+
+    @testset "Circular sectors, quadrants and poles" begin
+        for f in (sincos, sin, cos, tan, cis)
+            compare_batch(f, bounded(0.125, 0.18))
+            angles = vcat(bounded(-6.25, -0.005), bounded(0.005, 6.25))
+            shuffle!(MersenneTwister(0x521), angles)
+            compare_batch(f, angles)
+        end
+
+        setprecision(256) do
+            angles = Double64[]
+            for k in 1:64
+                anchor = Double64(k * big(pi) / 32)
+                if HI(anchor) < 6.28125
+                    for l in (prevfloat(LO(anchor)), LO(anchor), nextfloat(LO(anchor)))
+                        angle = Double64(HI(anchor), l)
+                        append!(angles, (angle, -angle))
+                    end
+                end
+            end
+            pairs = compare_batch(sincos, angles)
+            sines, cosines = first.(pairs), last.(pairs)
+            for (x, s, c) in zip(angles, sines, cosines)
+                arg = BigFloat(HI(x)) + BigFloat(LO(x))
+                @test abs(BigFloat(HI(s)) + BigFloat(LO(s)) - sin(arg)) < big(2.0)^(-96)
+                @test abs(BigFloat(HI(c)) + BigFloat(LO(c)) - cos(arg)) < big(2.0)^(-96)
+            end
+            for f in (sin, cos, tan, cis)
+                compare_batch(f, angles)
+            end
+        end
+        guard = 0.11
+        p = DF._trig_halfpi[1]
+        for edge in (p - guard, p + guard, 6.28125, DF._trig_taylor_cutoff)
+            angles = repeat(Double64[prevfloat(edge), edge, nextfloat(edge)], 24)
+            for f in (tan, sin, cos, sincos, cis)
+                compare_batch(f, angles)
+            end
+        end
+        angles = fill(Double64(0.5), 128)
+        angles[95] = Double64(Inf)
+        dest = fill(Double64(-10), length(angles))
+        @test_throws DomainError simdmap!(sin, dest, angles)
+        @test all(same_limbs.(dest[1:94], sin(angles[1])))
+        @test all(==(-10), dest[95:end])
+    end
+
     @testset "Complex rectangles and branch cuts" begin
         small, smaller, large = bounded(0.005, 0.09), bounded(0.005, 0.045), bounded(1.1, 5.0)
         for f in (square, abs2, exp, sinh, cosh)
@@ -249,6 +348,9 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         positive = repeat(bounded(1.1, 1.5), 129)
         compare_batch(exp, positive; threaded=true)
         compare_batch(atan, positive, reverse(positive); threaded=true)
+        compare_batch(hypot, positive, -positive; threaded=true)
+        compare_batch(DF.normalize, -positive, positive; threaded=true)
+        compare_batch(inv, repeat(positive, 4); threaded=true)
         compare_batch(sinpi, positive; threaded=true)
         compare_batch(exp, complex.(positive, Double64(0.03125)); threaded=true)
         compare_batch(sincos, fill(Double64(0.03125), length(positive)); threaded=true)

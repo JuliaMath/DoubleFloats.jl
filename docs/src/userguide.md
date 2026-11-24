@@ -98,7 +98,7 @@ across the batch.
 ```julia
 using DoubleFloats
 
-x = Double64.(range(0.01, 0.08; length=4096))
+x = Double64.(range(0.25, 2; length=4096))
 y = similar(x)
 DoubleFloats.simdmap!(sin, y, x)
 
@@ -107,11 +107,17 @@ DoubleFloats.simdmap!(sincos, pairs, x)
 
 DoubleFloats.simdmap!(^, y, x, 5)
 DoubleFloats.simdmap!(atan, y, x, reverse(x))
+
+z = reverse(x)
+DoubleFloats.simdmap!(hypot, y, x, z)
+DoubleFloats.simdmap!(DoubleFloats.normalize, pairs, x, z)
 ```
 
 Every vector must have the same axes as the destination. A mismatch throws
 `DimensionMismatch` before any writes. The operation uses elementwise
-indexing without broadcast expansion. Assignment uses the destination's
+indexing without broadcast expansion. Paired normalization stores one
+`(x/h, z/h)` tuple per element for ordinary finite inputs, using the
+pair's hypotenuse `h`. Assignment uses the destination's
 usual conversion rules. For example, a `cis` call on a real NaN produces
 a real NaN, which is then converted if the destination holds complex values.
 Overlapping inputs, including exact in-place and shifted overlaps, are

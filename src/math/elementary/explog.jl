@@ -736,12 +736,12 @@ end
 @inline _expm1_double(e::Tuple{T,T}) where {T} =
     mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
 
-# Bounded batch exponentials. The absolute head bound of 32 also covers
-# signed exponents internal to hyperbolic functions. Even after multiplying
-# by log2(10) the reduced integral exponent is within ±107, far from
-# overflow and subnormal output. The public wrappers handle exact zero.
-@inline _batch_exp_range(x) =
-    _batch_bounded(x, -32.0, -0.001) | _batch_bounded(x, 0.001, 32.0)
+# The largest allowed magnitudes convert to less than 1010 (exp) or
+# 997 (exp10) in base 2, including both converted tails. This leaves
+# headroom from the scalar clamps and for ordinary split scaling.
+@inline _batch_exp_range(x) = _batch_abs_bounded(x, 0.001, 700.0)
+@inline _batch_exp10_range(x) = _batch_abs_bounded(x, 0.001, 300.0)
+@inline _batch_expm1_ordinary_range(x) = _batch_abs_bounded(x, 0.5, 700.0)
 
 # With no base conversion the scalar ordinary branch admits a wider
 # interval. Leave a unit of headroom at either end so neither limb of
@@ -764,7 +764,7 @@ _batch_kernel(::typeof(exp2), ::Type{Double64}, ::Type{Double64}) =
 _batch_kernel(::typeof(exp), ::Type{Double64}, ::Type{Double64}) =
     _BatchKernel(_batch_exp_range, _batch_exp)
 _batch_kernel(::typeof(exp10), ::Type{Double64}, ::Type{Double64}) =
-    _BatchKernel(_batch_exp_range, _batch_exp10)
+    _BatchKernel(_batch_exp10_range, _batch_exp10)
 
 # The branch is selected by the head in the scalar kernel. Above the
 # tiny cutoff, table normalization uses the same low-word exponent guards
@@ -792,7 +792,9 @@ _batch_kernel(::typeof(log10), ::Type{Double64}, ::Type{Double64}) =
 _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
     _BatchKernel(x -> _batch_bounded(x, 0.005, 0.05), _log1p_direct)
 
-# (0.032, 0.06) is contained in one binade, so exponent(u) + 9 == 4.
+# For 2^-5 <= abs(hi) < 2^-4, exponent(hi) + 9 == 4.
+@inline _batch_expm1_series_range(x) = _batch_abs_bounded(x, 0x1p-5, prevfloat(0x1p-4))
+
 @inline function _batch_expm1_series(x)
     s = (HI(x) * 0.0625, LO(x) * 0.0625)
     c = _expm1_coeffs(Float64)
@@ -804,9 +806,8 @@ _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
 end
 @inline _batch_expm1_ordinary(x) = Double64(sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
 _batch_kernel(::typeof(expm1), ::Type{Double64}, ::Type{Double64}) =
-    (_BatchKernel(x -> _batch_bounded(x, 0.032, 0.06), _batch_expm1_series),
-     _BatchKernel(x -> _batch_bounded(x, 0.5, 32.0) | _batch_bounded(x, -32.0, -0.5),
-                  _batch_expm1_ordinary))
+    (_BatchKernel(_batch_expm1_series_range, _batch_expm1_series),
+     _BatchKernel(_batch_expm1_ordinary_range, _batch_expm1_ordinary))
 
 @inline _batch_pow5_range(x, n) = _batch_bounded(x, 0.5, 1.5)
 @inline function _batch_pow5(x, n)

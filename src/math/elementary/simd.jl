@@ -76,12 +76,18 @@ struct _BatchRepair{K}
     placeholder::Double64
 end
 
+struct _BatchAlternatives{P,S}
+    preferred::P
+    secondary::S
+end
+
 _batch_kernel(f, result, types...) = nothing
 const _BATCH_BLOCK = 64
 # Shorter blocks retain more eligible lanes when a mixed block needs
 # scalar evaluation. Repair uses the full width of its UInt64 mask.
 _batch_width(k) = 32
 _batch_width(k::_BatchRepair) = _BATCH_BLOCK
+_batch_width(k::_BatchAlternatives) = _batch_width(k.preferred)
 
 # A normalized input in the bounded interval. Check the low limb against
 # half a binade ulp without exponent extraction that assumes normal inputs.
@@ -92,6 +98,9 @@ _batch_width(k::_BatchRepair) = _BATCH_BLOCK
     return (lower <= h <= upper) & (abs(l) <= 0x1p-53 * binade)
 end
 
+@inline _batch_abs_bounded(x::Double64, lower, upper) =
+    _batch_bounded(Double64(abs(HI(x)), LO(x)), lower, upper)
+
 # Only called with dense vector arguments after their axes are checked.
 @inline _batch_eligible(k, args::Tuple{Any}, i) = @inbounds k.eligible(_batch_arg(args[1], i))
 @inline _batch_eligible(k, args::Tuple{Any,Any}, i) =
@@ -101,7 +110,7 @@ end
     @inbounds k.evaluate(_batch_arg(args[1], i), _batch_arg(args[2], i))
 
 @noinline function _batch_native!(k::_BatchKernel, dest, args, indices)
-    @inbounds @simd for i in indices
+    @inbounds @simd ivdep for i in indices
         dest[i] = _batch_value(k, args, i)
     end
     return dest
@@ -141,10 +150,30 @@ end
 @inline _batch_apply!(::Nothing, f::F, dest, args, block) where {F} = _batch_scalar!(f, dest, args, block)
 
 @inline function _batch_block!(repair::_BatchRepair, f::F, dest, args, block) where {F}
+    _batch_try_block!(repair, f, dest, args, block) && return dest
+    return _batch_scalar!(f, dest, args, block)
+end
+
+@inline function _batch_block!(k::_BatchAlternatives, f::F, dest, args, block) where {F}
+    _batch_try_block!(k.preferred, f, dest, args, block) && return dest
+    return _batch_block!(k.secondary, f, dest, args, block)
+end
+
+# These probes either write the whole block or leave the destination alone.
+@inline function _batch_try_block!(k::_BatchKernel, f, dest, args, block)
+    _batch_select(k, args, block) === nothing && return false
+    _batch_native!(k, dest, args, block)
+    return true
+end
+
+@inline function _batch_try_block!(repair::_BatchRepair, f::F, dest, args, block) where {F}
     k = repair.kernel
     x = only(args)
     first_rejected = findfirst(i -> !_batch_eligible(k, args, i), block)
-    first_rejected === nothing && return _batch_native!(k, dest, args, block)
+    if first_rejected === nothing
+        _batch_native!(k, dest, args, block)
+        return true
+    end
     # For the operations that opt in, normalized finite values in this
     # wider interval have a nonthrowing scalar path and a compatible result.
     max_rejected = length(block) ÷ 8
@@ -155,7 +184,7 @@ end
         if j == first_rejected || !k.eligible(lane)
             nrejected += 1
             if nrejected > max_rejected || !_batch_bounded(lane, -128.0, 128.0)
-                return _batch_scalar!(f, dest, args, block)
+                return false
             end
             rejected |= UInt64(1) << (j - 1)
         end
@@ -166,12 +195,12 @@ end
         dest[i] = f(x[i])
         rejected &= rejected - UInt64(1)
     end
-    return dest
+    return true
 end
 
 @noinline function _batch_masked!(k::_BatchKernel, dest, x, block, rejected, placeholder)
     start = first(block)
-    @inbounds @simd for i in block
+    @inbounds @simd ivdep for i in block
         replace = isodd(rejected >> (i - start))
         h, l = HILO(x[i])
         lane = Double64(ifelse(replace, HI(placeholder), h), ifelse(replace, LO(placeholder), l))
@@ -195,6 +224,8 @@ _batch_thread_min(::_BatchUnary, ::Type{<:Union{_BatchReal,_BatchComplex}}) = 40
 _batch_thread_min(::Union{typeof(atan),typeof(atanxy)}, ::Type{T}, ::Type{T}) where {T<:_BatchReal} = 4096
 _batch_thread_min(::typeof(^), ::Type{T}, ::Type{T}) where {T<:_BatchReal} = 4096
 _batch_thread_min(::typeof(^), ::Type{<:_BatchReal}, ::Type{Int}) = 65536
+_batch_thread_min(::typeof(inv), ::Type{Double64}) = 65536
+_batch_thread_min(::Union{typeof(hypot),typeof(normalize)}, ::Type{Double64}, ::Type{Double64}) = 16384
 
 @inline function _batch_dense!(f::F, dest, args, threaded) where {F}
     types = map(_batch_argtype, args)
@@ -255,6 +286,11 @@ end
 @inline _batch_sqrt(x) = Double64(_sqrt_positive(HILO(x), Core.Intrinsics.sqrt_llvm)...)
 @inline _batch_neg(x) = Double64(-HI(x), ifelse(iszero(LO(x)), LO(x), -LO(x)))
 @inline _batch_abs(x) = ifelse(signbit(x), _batch_neg(x), x)
+# For finite nonnegative heads, numeric equality also agrees with the
+# bitwise head equality used by DoubleFloat's scalar ordering.
+@inline function _batch_positive_less(x, y)
+    return (HI(x) < HI(y)) | ((HI(x) == HI(y)) & (LO(x) < LO(y)))
+end
 @inline _batch_add(x::Float64, y::Double64) = Double64(two_sum3_(x, HI(y), LO(y))...)
 @inline _batch_sub(x::Double64, y::Float64) = Double64(two_sum3_(HI(x), LO(x), -y)...)
 

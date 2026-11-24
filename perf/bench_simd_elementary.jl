@@ -47,6 +47,12 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
     for f in REAL_TRIG
         add(f, (0.005, 0.09); wide=(-100.0, 100.0), rejected=(0.1, 100.0))
     end
+    for f in (sin, cos, sincos, tan, cis)
+        add(f, (-6.25, 6.25); label="$(f)/circle", wide=(-6.25, 6.25), rejected=(7.0, 8.0))
+        if bounded
+            add(f, (0.125, 0.18); label="$(f)/sector", rejected=(7.0, 8.0))
+        end
+    end
     for f in REAL_ATAN
         add(f, f in (acsc, asec) ? (1.1, 4.0) : (0.005, 0.19);
             wide=f in (asin, acos) ? (-0.99, 0.99) : f in (acsc, asec) ? (1.01, 100.0) : (-100.0, 100.0))
@@ -69,10 +75,15 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
                    f in (log, log2, log10) ? (0.95, 1.05) : (0.55, 16.0)
         rejected = f === expm1 ? (0.07, 0.4) : f === log1p ? (0.07, 1.0) :
                    f === exp2 ? (0.00005, 0.0005) :
-                   f in (log, log2, log10) ? (0x1p-950, 0x1p-925) : (40.0, 100.0)
+                   f in (log, log2, log10) ? (0x1p-950, 0x1p-925) :
+                   f === exp ? (701.0, 708.0) : (301.0, 307.0)
         add(f, interval; wide=f in (exp, exp2, exp10, expm1) ? (-100.0, 100.0) : (0.01, 100.0),
             rejected)
     end
+    for f in (hypot, DF.normalize)
+        add(f, (0.25, 8.0), (0.25, 8.0); rejected=(9.0, 12.0))
+    end
+    add(inv, (0.25, 8.0); wide=(-128.0, 128.0), rejected=(0x1p257, 0x1p260))
     add(^, (0.5, 1.5); scalar=5, label="^/fixed 5")
     if occursin(filter, "^/Int vector")
         push!(cases, (; label="^/Int vector", f=^, ranges=((0.5, 1.5), (-9, 9)),
@@ -112,7 +123,7 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
                 add(f, (0.95, 1.05); label="$(f)/mixed-regimes", rejected=(1.1, 4.0))
             end
         end
-        add(expm1, (0.55, 16.0); label="expm1/ordinary", rejected=(40.0, 100.0))
+        add(expm1, (0.55, 16.0); label="expm1/ordinary", rejected=(0.07, 0.4))
         add(x -> x^5, (0.5, 1.5); label="^/literal closure")
     end
     return cases
@@ -177,10 +188,19 @@ end
 
 batch_specs(args) = map(x -> x isa Number ? x : eltype(x), args)
 
+function batch_regimes(k)
+    if isdefined(DF, :_BatchAlternatives) && k isa DF._BatchAlternatives
+        return (k.preferred, k.secondary)
+    end
+    return k isa Tuple ? k : (k,)
+end
+
+unmasked(k) = k isa DF._BatchRepair ? k.kernel : k
+
 function report_llvm(path, label, k, dest, args)
     isnothing(k) && return
-    for (i, regime) in enumerate(k isa Tuple ? k : (k,))
-        kernel = regime isa DF._BatchRepair ? regime.kernel : regime
+    for (i, regime) in enumerate(batch_regimes(k))
+        kernel = unmasked(regime)
         file = joinpath(path, replace(label, '/' => '_') * "_$i.ll")
         open(file, "w") do io
             code_llvm(io, DF._batch_native!, Tuple{typeof(kernel),typeof(dest),typeof(args),UnitRange{Int}})
@@ -224,23 +244,31 @@ function run_case(f::F, args, n, label, ranges, repeats, storage; baseline) wher
         scalar=() -> scalar_loop!(f, out, inputs, eachindex(out)),
         caller_threads=() -> threaded_loop!(f, out, inputs),
     )
+    coverage = nothing
     if baseline == false
         methods = merge(methods, (batch=() -> DF.simdmap!(f, out, inputs...),
                                   batch_threads=() -> DF.simdmap!(f, out, inputs...; threaded=true)))
         if storage == "dense" && n > 0
             kernel = DF._batch_kernel(f, eltype(dest), batch_specs(args)...)
-            if kernel isa DF._BatchRepair
-                whole_kernel = kernel.kernel
+            regimes = batch_regimes(kernel)
+            if any(k -> k isa DF._BatchRepair, regimes)
+                whole_kernel = unmasked(last(regimes))
                 methods = merge(methods, (whole_block=() -> compare_block_sizes!(whole_kernel, f, out, inputs, 64),))
             end
             blocks = get(ENV, "SIMD_BLOCK_SIZES", "")
             if kernel !== nothing && !isempty(blocks)
-                whole = kernel isa DF._BatchRepair ? kernel.kernel : kernel
+                whole = kernel isa Tuple ? kernel : unmasked(last(regimes))
                 for width in parse.(Int, split(blocks, ','))
                     width > 0 || throw(ArgumentError("SIMD_BLOCK_SIZES must be positive"))
                     key = Symbol("block_", width)
                     methods = merge(methods, NamedTuple{(key,)}((() -> compare_block_sizes!(whole, f, out, inputs, width),)))
                 end
+            end
+            if kernel !== nothing
+                probes = map(unmasked, regimes)
+                counts = map(k -> count(i -> DF._batch_eligible(k, args, i), 1:n), probes)
+                rejected = count(i -> !any(k -> DF._batch_eligible(k, args, i), probes), 1:n)
+                coverage = (rejected, counts)
             end
         end
     end
@@ -253,6 +281,10 @@ function run_case(f::F, args, n, label, ranges, repeats, storage; baseline) wher
     active = keys(methods)
     med = Dict{Symbol,Float64}()
     @printf("%-21s %-17s %s\n", label, string(eltype(dest)), string(ranges))
+    if coverage !== nothing
+        rejected, counts = coverage
+        println("  rejected lanes ", rejected, "/", n, " / eligible per regime ", counts)
+    end
     samples = Dict(k => Float64[] for k in active)
     first_call = map(measure_first, methods)
     allocation = map(measure_allocations, methods)
