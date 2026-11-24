@@ -123,6 +123,7 @@ include("math/elementary/hyptrig.jl")
 include("math/elementary/archyptrig.jl")
 include("math/elementary/templated.jl")
 include("math/elementary/complex.jl")
+include("math/elementary/simd.jl")
 
 include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")

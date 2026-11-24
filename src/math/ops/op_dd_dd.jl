@@ -59,8 +59,13 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     signbit(HI(x)) && Base.Math.throw_complex_domainerror(:sqrt, HI(x))
     isinf(HI(x)) && return x
 
+    return _sqrt_positive(x, sqrt)
+end
+
+# Called only after proving the high limb is positive and finite.
+@inline function _sqrt_positive(x, root::F) where {F}
     ahi, alo = HILO(x)
-    s = sqrt(ahi)
+    s = root(ahi)
     d = fma(-s, s, ahi)    # ahi=s*s+d,  same order of magnitude than alo, so we can add alo safely below:
     d += alo               #  ahi+alo = s*s+d = s*s*(1+d/(s*s))   ==> sqrt(ahi+alo) = s*sqrt(1+d/s2) approx= s*(1+d/(2s2)) = s + d/(2*s)
     d = d/(s+s)

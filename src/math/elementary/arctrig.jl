@@ -18,7 +18,10 @@ const _atan_tan3pi16_hi = 0.6681786379192989
 
 @inline function _atan_small(x::Double64)
     y = x / (1.0 + sqrt(1.0 + square(x)))
-    z = square(y)
+    return _atan_poly(y, square(y), two_hilo_sum, *)
+end
+
+@inline function _atan_poly(y, z, sum::S, mul::M) where {S,M}
     zh = HI(z); zl = LO(z)
     # Q(z) = sum_{j>=1} (-1)^j z^(j-1)/(2j+1), atan(y) = y*(1 + z*Q(z)).
     # Coefficients must be double-double (a Float64-rounded 1/3 alone costs
@@ -26,19 +29,21 @@ const _atan_tan3pi16_hi = 0.6681786379192989
     # through the Float64 derivative, as in log1p_small.  |z| <= 0.0097,
     # so truncating after 1/37 leaves ~2^-120 margin.
     ph = inv_oddint_f64[18]; pl = inv_oddint_lo[18]
-    for j in 17:-1:1
+    Base.Cartesian.@nexprs 17 k -> begin
+        j = 18 - k
         s = iseven(j) ? 1.0 : -1.0
         ph, pl = _horner_step(s * inv_oddint_f64[j], s * inv_oddint_lo[j], zh, ph, pl)
     end
     qp = 9.0 * inv_oddint_f64[10]
-    for j in 9:-1:2
+    Base.Cartesian.@nexprs 8 k -> begin
+        j = 10 - k
         s = iseven(j) ? 1.0 : -1.0
         qp = s * (j - 1) * inv_oddint_f64[j] + zh * qp
     end
-    ph, pl = two_hilo_sum(ph, qp * zl + pl)
+    ph, pl = sum(ph, qp * zl + pl)
     th, tl = _horner_step(1.0, 0.0, zh, ph, pl)        # 1 + z*Q
-    th, tl = two_hilo_sum(th, ph * zl + tl)
-    return mul_by_two(y * Double64(th, tl))
+    th, tl = sum(th, ph * zl + tl)
+    return mul_by_two(mul(y, Double64(th, tl)))
 end
 
 function atan(x::Double64)
@@ -66,3 +71,11 @@ atan(x::Double16) = Double16(atan(Double64(x)))
 atan(y::Double64, x::Double64) = Double64(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
 atan(y::Double32, x::Double32) = Double32(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
 atan(y::Double16, x::Double16) = Double16(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
+
+@inline function _batch_atan(x)
+    y = _batch_div(x, _batch_add(1.0, _batch_sqrt(_batch_add(1.0, _batch_square(x)))))
+    return _atan_poly(y, _batch_square(y), two_hilo_sum_, _batch_mul)
+end
+
+_batch_kernel(::typeof(atan), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(x -> _batch_bounded(x, 0.005, 0.19), _batch_atan)

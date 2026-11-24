@@ -25,7 +25,10 @@ const cosC_h = map(x -> HI(x), cosC); const cosC_l = map(x -> LO(x), cosC)
 # the lo words enter once each, to first order:
 #   y's lo through the derivatives S'(yh), C'(yh) (Float64 accuracy suffices)
 #   a's lo through sin(ah + al) = sin(ah) + cos(ah)*al + O(al^2), etc.
-@inline function _sincos_taylor_core(ah::Float64, al::Float64)
+@inline _sincos_taylor_core(ah::Float64, al::Float64) =
+    _sincos_taylor_core(ah, al, two_hilo_sum, two_prod)
+
+@inline function _sincos_taylor_core(ah::Float64, al::Float64, sum::S, prod::P) where {S,P}
     yh = ah * ah
     yl = fma(ah, ah, -yh)
     Sh = sinS_h[9]; Sl = sinS_l[9]
@@ -40,17 +43,17 @@ const cosC_h = map(x -> HI(x), cosC); const cosC_l = map(x -> LO(x), cosC)
           yh*(-0.0005952380952380953 + yh*1.1022927689594356e-5))
     Cp = -0.5 + yh*(0.08333333333333333 +
           yh*(-0.004166666666666667 + yh*9.920634920634921e-5))
-    Sh, Sl = two_hilo_sum(Sh, Sp * yl + Sl)
-    Ch, Cl = two_hilo_sum(Ch, Cp * yl + Cl)
-    sh, sl = two_prod(Sh, ah)                        # sin(ah) = ah*S
+    Sh, Sl = sum(Sh, Sp * yl + Sl)
+    Ch, Cl = sum(Ch, Cp * yl + Cl)
+    sh, sl = prod(Sh, ah)                        # sin(ah) = ah*S
     sl = fma(Sl, ah, sl)
-    sh, sl = two_hilo_sum(sh, sl)
+    sh, sl = sum(sh, sl)
     # cross corrections for a's lo word use the already-computed hi words,
     # which carry cos(ah) and sin(ah) to well past Float64 accuracy
-    s1, e1 = two_hilo_sum(sh, Ch * al)
-    c1, e2 = two_hilo_sum(Ch, -sh * al)
-    return DoubleFloat{Float64}(two_hilo_sum(s1, sl + e1)...),
-           DoubleFloat{Float64}(two_hilo_sum(c1, Cl + e2)...)
+    s1, e1 = sum(sh, Ch * al)
+    c1, e2 = sum(Ch, -sh * al)
+    return DoubleFloat{Float64}(sum(s1, sl + e1)...),
+           DoubleFloat{Float64}(sum(c1, Cl + e2)...)
 end
 
 function sin_taylor(a::Double64)
@@ -319,3 +322,47 @@ function cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
     return cospi(x) + im*sinpi(x)
 end
+
+# The small-angle bands reach the Taylor pair directly. Cosine stays
+# above 0.99. The positive cotangent band is far from the mod1pi cutoff.
+@inline _batch_trig_range(x) = _batch_bounded(x, 0.005, 0.09)
+@inline _batch_signed_trig_range(x) = _batch_trig_range(x) | _batch_bounded(x, -0.09, -0.005)
+@inline _batch_sincos(x) = _sincos_taylor_core(HILO(x)..., two_hilo_sum_, two_prod_)
+@inline _batch_sin(x) = first(_batch_sincos(x))
+@inline _batch_cos(x) = last(_batch_sincos(x))
+@inline _batch_cos_signed(x) = _batch_cos(_batch_abs(x))
+
+@inline function _batch_sincos_signed(x)
+    s, c = _batch_sincos(_batch_abs(x))
+    return ifelse(signbit(x), _batch_neg(s), s), c
+end
+
+@inline function _batch_cis(x)
+    s = _batch_sin(x)
+    c = _batch_cos_signed(x)
+    return ComplexDF64(_batch_add(c, zero(Double64)), s)
+end
+
+@inline function _batch_tan(x)
+    s, c = _batch_sincos(x)
+    return _batch_div(s, c)
+end
+
+@inline function _batch_tan_signed(x)
+    t = _batch_tan(_batch_abs(x))
+    return ifelse(signbit(x), _batch_neg(t), t)
+end
+
+@inline _batch_cot(x) = _batch_inv(_batch_tan(x))
+
+for (scalar, kernel, result) in ((sin, _batch_sin, Double64), (cos, _batch_cos_signed, Double64),
+        (tan, _batch_tan_signed, Double64), (cot, _batch_cot, Double64),
+        (sincos, _batch_sincos_signed, Tuple{Double64,Double64}), (cis, _batch_cis, ComplexDF64))
+    @eval _batch_kernel(::typeof($scalar), ::Type{$result}, ::Type{Double64}) =
+        _batch_trig_kernel($scalar, $kernel)
+end
+
+_batch_trig_kernel(f, kernel) = _BatchKernel(_batch_signed_trig_range, kernel)
+_batch_trig_kernel(::typeof(cot), kernel) = _BatchKernel(_batch_trig_range, kernel)
+_batch_trig_kernel(::Union{typeof(sin),typeof(cos),typeof(tan)}, kernel) =
+    _BatchRepair(_BatchKernel(_batch_signed_trig_range, kernel), Double64(0.03125))

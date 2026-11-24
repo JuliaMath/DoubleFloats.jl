@@ -362,3 +362,10 @@ end
     hi, lo = two_hilo_sum_(hi, lo)
     return hi, lo
 end
+
+@inline function two_sum4_(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    h, t1 = two_sum_(a, b)
+    h, t2 = two_sum_(h, c)
+    h, t3 = two_sum_(h, d)
+    return h, (t1 + t2) + t3
+end

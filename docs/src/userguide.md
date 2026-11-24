@@ -88,6 +88,54 @@ including arbitrarily close to `m = 1`).
 `Float128` (113-bit) arithmetic, which caps them at roughly half a
 `Double64` ulp — in practice, full accuracy.
 
+## Elementwise operations on vectors
+
+Use `DoubleFloats.simdmap!` to apply a scalar function to preallocated
+vectors. The call returns the destination. For example, `sincos` stores
+one `(sin, cos)` tuple per element, and `^` can reuse a scalar exponent
+across the batch.
+
+```julia
+using DoubleFloats
+
+x = Double64.(range(0.01, 0.08; length=4096))
+y = similar(x)
+DoubleFloats.simdmap!(sin, y, x)
+
+pairs = Vector{Tuple{Double64,Double64}}(undef, length(x))
+DoubleFloats.simdmap!(sincos, pairs, x)
+
+DoubleFloats.simdmap!(^, y, x, 5)
+DoubleFloats.simdmap!(atan, y, x, reverse(x))
+```
+
+Every vector must have the same axes as the destination. A mismatch throws
+`DimensionMismatch` before any writes. The operation uses elementwise
+indexing without broadcast expansion. Assignment uses the destination's
+usual conversion rules. For example, a `cis` call on a real NaN produces
+a real NaN, which is then converted if the destination holds complex values.
+Overlapping inputs, including exact in-place and shifted overlaps, are
+read from their values at entry. Snapshots can
+allocate. Custom vector storage also uses snapshots when overlap cannot be
+ruled out.
+
+By default the operation is serial. If a scalar call or assignment throws,
+earlier elements have been written and later elements keep their original
+values. Dense, disjoint `Double64` and `ComplexDF64` vectors can use SIMD
+for supported operations and input ranges. Views, other precisions,
+unsupported result types, and out-of-range inputs use scalar methods.
+
+Pass `threaded=true` to allow eligible operations to run on multiple Julia
+threads. Run Julia with multiple threads, for example `julia -t 4`. Threading
+requires sufficiently long, disjoint dense vectors and works for many
+functions that use scalar arithmetic internally. Custom callables still
+run in index order. If a worker fails, the call can raise a task exception
+after other chunks have written to the destination. Keep the default
+when the order of writes on failure matters.
+
+See the [Technical Guide](@ref elementary-vector-kernels) for SIMD coverage
+and measured performance.
+
 ## Linear algebra
 
 ```julia

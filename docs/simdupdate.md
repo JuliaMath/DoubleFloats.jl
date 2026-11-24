@@ -1,5 +1,11 @@
 # SIMD implementation guide for elementary functions
 
+This guide records the original implementation plan and prototype
+measurements. The implemented API, dispatch ranges, and checked
+measurements are in the [User Guide](src/userguide.md#elementwise-operations-on-vectors)
+and [Technical Guide](src/technicalguide.md#elementary-vector-kernels).
+The repeatable driver is [perf/bench_simd_elementary.jl](../perf/bench_simd_elementary.jl).
+
 ## Scope and evidence
 
 Implement opt-in batch evaluation for the 71 operation and overload cases measured in `trig.jl`, `arctrig.jl`, `hyptrig.jl`, `archyptrig.jl`, `explog.jl`, and `complex.jl`. The initial native kernels target `Double64` and `ComplexDF64`. Existing scalar methods define the numerical contract. Other precisions can use their scalar methods through the same vector interface.

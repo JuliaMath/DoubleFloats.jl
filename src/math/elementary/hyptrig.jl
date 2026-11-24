@@ -72,3 +72,31 @@ function coth(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return copysign(one(DoubleFloat{T}), x)
     return cosh(x) / sinh(x)
 end
+
+# The formulas match the scalar positive branches. The shared pair also
+# admits doubled arguments up to 10 in complex kernels, far below the
+# sinh/cosh shortcut at 37.5. All reciprocals and denominators are finite.
+@inline _batch_hyp_range(x) = _batch_bounded(x, 1.1, 5.0)
+@inline function _batch_sinhcosh(x)
+    w = _batch_exp(x)
+    wi = _batch_inv(w)
+    return mul_by_half(_batch_sub(w, wi)), mul_by_half(_batch_add(w, wi))
+end
+@inline _batch_sinh(x) = first(_batch_sinhcosh(x))
+@inline _batch_cosh(x) = last(_batch_sinhcosh(x))
+@inline function _batch_tanh(x)
+    w = _batch_exp(_batch_neg(mul_by_two(x)))
+    return _batch_div(_batch_sub(1.0, w), _batch_add(1.0, w))
+end
+@inline _batch_csch(x) = _batch_inv(_batch_sinh(x))
+@inline _batch_sech(x) = _batch_inv(_batch_cosh(x))
+@inline function _batch_coth(x)
+    s, c = _batch_sinhcosh(x)
+    return _batch_div(c, s)
+end
+
+for (scalar, kernel) in ((sinh, _batch_sinh), (cosh, _batch_cosh), (tanh, _batch_tanh),
+        (csch, _batch_csch), (sech, _batch_sech), (coth, _batch_coth))
+    @eval _batch_kernel(::typeof($scalar), ::Type{Double64}, ::Type{Double64}) =
+        _BatchKernel(_batch_hyp_range, $kernel)
+end

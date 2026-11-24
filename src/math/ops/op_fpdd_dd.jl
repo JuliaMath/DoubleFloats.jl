@@ -22,11 +22,13 @@ end
 end
 =#
 @inline function mul_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:IEEEFloat}
-    hi, lo = y
-    hihi, hilo = two_prod(x, hi)
-    lohi, lolo = two_prod(x, lo)
-    hi, lo = two_sum(hihi, hilo, lohi, lolo)
-    return hi, lo
+    return _mul_fpdd_dd(two_prod, two_sum, x, y)
+end
+
+@inline function _mul_fpdd_dd(prod::P, sum::S, x, y) where {P,S}
+    hihi, hilo = prod(x, y[1])
+    lohi, lolo = prod(x, y[2])
+    return sum(hihi, hilo, lohi, lolo)
 end
 
 

@@ -833,3 +833,128 @@ function acoth(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     imagpart = (atanxy(num1 + 1, -num2) - atanxy(1 - num1, num2)) * 0.5
     return Complex{DoubleFloat{T}}(realpart, imagpart)
 end
+
+# The measured rectangles stay in the positive real kernels, including
+# after doubling. In the double-angle quotients cosh(2h) >= cosh(2.2) > 4,
+# so either sign of the circular term leaves the denominator away from zero.
+@inline _batch_complex_range(z) = _batch_hyp_range(real(z)) & _batch_trig_range(imag(z))
+@inline _batch_complex_circular_range(z) = _batch_trig_range(real(z)) & _batch_hyp_range(imag(z))
+@inline _batch_complex_circular_double_range(z) =
+    _batch_bounded(real(z), 0.005, 0.045) & _batch_hyp_range(imag(z))
+@inline _batch_complex_hyp_double_range(z) =
+    _batch_hyp_range(real(z)) & _batch_bounded(imag(z), 0.005, 0.045)
+
+# Scaling by 2 is exact in these ranges. The finite DD product with a
+# zero low limb also canonicalizes the low limb's zero sign.
+@inline _batch_twice(x) = _batch_mul(Double64(2.0), x)
+
+@inline function _batch_complex_square(z)
+    a, b = reim(z)
+    return ComplexDF64(_batch_sub(_batch_square(a), _batch_square(b)),
+                       _batch_mul(_batch_twice(a), b))
+end
+@inline _batch_complex_abs2(z) = _batch_add(_batch_square(real(z)), _batch_square(imag(z)))
+
+@inline function _batch_complex_exp(z)
+    w = _batch_exp(real(z))
+    s, c = _batch_sincos(imag(z))
+    return ComplexDF64(_batch_mul(w, c), _batch_mul(w, s))
+end
+
+@inline function _batch_complex_sin(z)
+    s, c = _batch_sincos(real(z))
+    sh, ch = _batch_sinhcosh(imag(z))
+    return ComplexDF64(_batch_mul(s, ch), _batch_mul(c, sh))
+end
+@inline function _batch_complex_cos(z)
+    s, c = _batch_sincos(real(z))
+    sh, ch = _batch_sinhcosh(imag(z))
+    return ComplexDF64(_batch_mul(c, ch), _batch_mul(-s, sh))
+end
+@inline function _batch_complex_sinh(z)
+    sh, ch = _batch_sinhcosh(real(z))
+    s, c = _batch_sincos(imag(z))
+    return ComplexDF64(_batch_mul(sh, c), _batch_mul(ch, s))
+end
+@inline function _batch_complex_cosh(z)
+    sh, ch = _batch_sinhcosh(real(z))
+    s, c = _batch_sincos(imag(z))
+    return ComplexDF64(_batch_mul(ch, c), _batch_mul(sh, s))
+end
+
+@inline function _batch_complex_tan(z)
+    s, c = _batch_sincos(_batch_twice(real(z)))
+    sh, ch = _batch_sinhcosh(_batch_twice(imag(z)))
+    den = _batch_add(c, ch)
+    return ComplexDF64(_batch_div(s, den), _batch_div(sh, den))
+end
+@inline function _batch_complex_cot(z)
+    s, c = _batch_sincos(_batch_twice(real(z)))
+    sh, ch = _batch_sinhcosh(_batch_twice(imag(z)))
+    den = _batch_sub(c, ch)
+    return ComplexDF64(_batch_div(-s, den), _batch_div(sh, den))
+end
+@inline function _batch_complex_csc(z)
+    a, b = reim(z)
+    s, c = _batch_sincos(a)
+    sh, ch = _batch_sinhcosh(b)
+    den = _batch_sub(_batch_cos(_batch_twice(a)), _batch_cosh(_batch_twice(b)))
+    return ComplexDF64(_batch_div(-_batch_twice(_batch_mul(s, ch)), den),
+                       _batch_div(_batch_twice(_batch_mul(c, sh)), den))
+end
+@inline function _batch_complex_sec(z)
+    a, b = reim(z)
+    s, c = _batch_sincos(a)
+    sh, ch = _batch_sinhcosh(b)
+    den = _batch_add(_batch_cos(_batch_twice(a)), _batch_cosh(_batch_twice(b)))
+    return ComplexDF64(_batch_div(_batch_twice(_batch_mul(c, ch)), den),
+                       _batch_div(_batch_twice(_batch_mul(s, sh)), den))
+end
+@inline function _batch_complex_tanh(z)
+    sh, ch = _batch_sinhcosh(_batch_twice(real(z)))
+    s, c = _batch_sincos(_batch_twice(imag(z)))
+    den = _batch_add(ch, c)
+    return ComplexDF64(_batch_div(sh, den), _batch_div(s, den))
+end
+@inline function _batch_complex_coth(z)
+    sh, ch = _batch_sinhcosh(_batch_twice(real(z)))
+    s, c = _batch_sincos(_batch_twice(imag(z)))
+    den = _batch_sub(c, ch)
+    return ComplexDF64(_batch_div(-sh, den), _batch_div(s, den))
+end
+@inline function _batch_complex_csch(z)
+    a, b = reim(z)
+    sh, ch = _batch_sinhcosh(a)
+    s, c = _batch_sincos(b)
+    den = _batch_sub(_batch_cos(_batch_twice(b)), _batch_cosh(_batch_twice(a)))
+    return ComplexDF64(_batch_div(-_batch_twice(_batch_mul(sh, c)), den),
+                       _batch_div(_batch_twice(_batch_mul(ch, s)), den))
+end
+@inline function _batch_complex_sech(z)
+    a, b = reim(z)
+    sh, ch = _batch_sinhcosh(a)
+    s, c = _batch_sincos(b)
+    den = _batch_add(_batch_cos(_batch_twice(b)), _batch_cosh(_batch_twice(a)))
+    return ComplexDF64(_batch_div(_batch_twice(_batch_mul(c, ch)), den),
+                       -_batch_div(_batch_twice(_batch_mul(s, sh)), den))
+end
+
+for (scalar, kernel, eligible, result) in (
+        (square, _batch_complex_square, _batch_complex_range, ComplexDF64),
+        (abs2, _batch_complex_abs2, _batch_complex_range, Double64),
+        (exp, _batch_complex_exp, _batch_complex_range, ComplexDF64),
+        (sin, _batch_complex_sin, _batch_complex_circular_range, ComplexDF64),
+        (cos, _batch_complex_cos, _batch_complex_circular_range, ComplexDF64),
+        (sinh, _batch_complex_sinh, _batch_complex_range, ComplexDF64),
+        (cosh, _batch_complex_cosh, _batch_complex_range, ComplexDF64),
+        (tan, _batch_complex_tan, _batch_complex_circular_double_range, ComplexDF64),
+        (cot, _batch_complex_cot, _batch_complex_circular_double_range, ComplexDF64),
+        (csc, _batch_complex_csc, _batch_complex_circular_double_range, ComplexDF64),
+        (sec, _batch_complex_sec, _batch_complex_circular_double_range, ComplexDF64),
+        (tanh, _batch_complex_tanh, _batch_complex_hyp_double_range, ComplexDF64),
+        (coth, _batch_complex_coth, _batch_complex_hyp_double_range, ComplexDF64),
+        (csch, _batch_complex_csch, _batch_complex_hyp_double_range, ComplexDF64),
+        (sech, _batch_complex_sech, _batch_complex_hyp_double_range, ComplexDF64))
+    @eval _batch_kernel(::typeof($scalar), ::Type{$result}, ::Type{ComplexDF64}) =
+        _BatchKernel($eligible, $kernel)
+end

@@ -192,9 +192,13 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
 # product. The clamps inspect the converted head before reconstruction
 # and discard the trailing values when that head is infinite or NaN.
 @inline function _mf_mul3(x::Tuple{T,T}, c::Tuple{T,T,T}) where {T<:IEEEFloat}
-    p1, e1 = two_prod(x[1], c[1])
-    p2, e2 = two_prod(x[1], c[2])
-    p3, e3 = two_prod(x[2], c[1])
+    return _mf_mul3(two_prod, x, c)
+end
+
+@inline function _mf_mul3(prod::F, x::Tuple{T,T}, c::Tuple{T,T,T}) where {F,T<:IEEEFloat}
+    p1, e1 = prod(x[1], c[1])
+    p2, e2 = prod(x[1], c[2])
+    p3, e3 = prod(x[2], c[1])
     # third-order tail: both product errors plus the two terms a double-word
     # multiply drops outright
     t = fma(x[1], c[3], fma(x[2], c[2], e2 + e3))
@@ -381,6 +385,10 @@ end
     x[1] > _exp2_max(T) && return (T(Inf), T(Inf))
     isnan(x[1]) && return (T(NaN), T(NaN))
     x[1] <= _exp2_min(T) && return _exp2_low(x, x3, op, input)
+    return _exp2_ordinary(x, x3)
+end
+
+@inline function _exp2_ordinary(x, x3)
     p, n = _exp2_reduced(x, x3)
     return _exp2_scale(p, n)
 end
@@ -557,7 +565,6 @@ end
 @inline _log_tiny(::Type{Float32}) = Float32(0x1p-77)
 
 @inline function _unsafe_log2(x::Tuple{T,T}) where {T<:IEEEFloat}
-    _one = one(T)
     _zero = zero(T)
     # rescue non-normal leading limbs.  hi == 0 with lo != 0 (cancellation
     # can leave the value entirely in lo): promote lo to the leading term.
@@ -565,8 +572,7 @@ end
     # near 1 take the direct path and skip the exponent split, table load,
     # and tabled kernel entirely; numerator is Sterbenz-exact
     if (T(0.9375) < x[1]) & (x[1] < T(1.0625))  # 15/16 < x₁ < 17/16
-        t = _mf_div(add_dddd_dd_(x, (-_one, _zero)), add_dddd_dd_(x, (_one, _zero)))
-        return mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t)))
+        return _log2_direct(x)
     end
     # subnormal-limb region: multiply by an exact power of 2, subtract it
     # from the exponent afterwards
@@ -574,10 +580,20 @@ end
     tiny = abs(x[1]) < _log_tiny(T)
     _scale = _pow2(T, _shift)
     x = ifelse(tiny, (_scale * x[1], _scale * x[2]), x)
+    return _log2_table(x, ifelse(tiny, _shift, 0))
+end
+
+@inline function _log2_direct(x::Tuple{T,T}) where {T<:IEEEFloat}
+    t = _mf_div(add_dddd_dd_(x, (-one(T), zero(T))), add_dddd_dd_(x, (one(T), zero(T))))
+    return mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t)))
+end
+
+@inline function _log2_table(x::Tuple{T,T}, shift::Int) where {T<:IEEEFloat}
+    _zero = zero(T)
     # Exact split: x = 2^er · m. A tiny low limb can be subnormal
     # either before the split or after scaling, even when x[1] is large.
     er = _raw_exponent(x[1])
-    e = er - ifelse(tiny, _shift, 0)
+    e = er - shift
     elo = _raw_exponent(x[2])
     emin = 1 - Base.exponent_bias(T)
     emax = Base.exponent_bias(T)
@@ -637,13 +653,17 @@ function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
         # inside the wide-poly window use t = x/(2 + x) directly: the
         # double-word division keeps every low bit of x, so nothing is
         # lost forming 1 + x
-        t = _mf_div(HILO(x), add_dddd_dd_(HILO(x), (T(2), zero(T))))
-        y = mul_dddd_dd_(mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t))), _ln_2(T))
-        return DoubleFloat{T}(y[1], y[2])
+        return _log1p_direct(x)
     end
     # elsewhere 1 + x carries full double-word relative accuracy;
     # +Inf passes through, x == -1 gives -Inf, x < -1 throws DomainError
     return log(x + one(x))
+end
+
+@inline function _log1p_direct(x::DoubleFloat{T}) where {T<:IEEEFloat}
+    t = _mf_div(HILO(x), add_dddd_dd_(HILO(x), (T(2), zero(T))))
+    y = mul_dddd_dd_(mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t))), _ln_2(T))
+    return DoubleFloat{T}(y...)
 end
 
 # expm1 series coefficients 1/j! as per-type (hi, lo) pairs
@@ -694,17 +714,114 @@ function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     abs(u) >= T(0.5) && return exp(x) - one(x)
     # scale exactly to |s| < 2^-8, run the Taylor series there, then undo the
     # scaling with expm1(2t) = expm1(t)·(expm1(t) + 2); at most 8 doublings
-    k = max(0, Base.exponent(u) + 9)
+    return _expm1_series(x, max(0, Base.exponent(u) + 9))
+end
+
+@inline function _expm1_series(x::DoubleFloat{T}, k::Int) where {T<:IEEEFloat}
     tw = _pow2(T, -k)
-    s = (u * tw, LO(x) * tw)
+    s = (HI(x) * tw, LO(x) * tw)
     c = _expm1_coeffs(T)
     p = c[end]
     for j in length(c)-1:-1:1
-        p = add_dddd_dd_(mul_dddd_dd_(p, s), c[j])
+        p = _expm1_horner(p, s, c[j])
     end
     e = mul_dddd_dd_(s, p)
     for _ in 1:k
-        e = mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
+        e = _expm1_double(e)
     end
     return DoubleFloat{T}(e[1], e[2])
 end
+
+@inline _expm1_horner(p, s, c) = add_dddd_dd_(mul_dddd_dd_(p, s), c)
+@inline _expm1_double(e::Tuple{T,T}) where {T} =
+    mul_dddd_dd_(e, add_dddd_dd_(e, (T(2), zero(T))))
+
+# Bounded batch exponentials. The absolute head bound of 32 also covers
+# signed exponents internal to hyperbolic functions. Even after multiplying
+# by log2(10) the reduced integral exponent is within ±107, far from
+# overflow and subnormal output. The public wrappers handle exact zero.
+@inline _batch_exp_range(x) =
+    _batch_bounded(x, -32.0, -0.001) | _batch_bounded(x, 0.001, 32.0)
+
+# With no base conversion the scalar ordinary branch admits a wider
+# interval. Leave a unit of headroom at either end so neither limb of
+# the input can push the high result into underflow or overflow.
+@inline _batch_exp2_range(x) =
+    _batch_bounded(x, -1021.0, -0.001) | _batch_bounded(x, 0.001, 1023.0)
+
+@inline _batch_exp2(x) = Double64(_exp2_ordinary(HILO(x), 0.0)...)
+
+@inline function _batch_converted_exp(x, constant)
+    h, l, t = _mf_mul3(two_prod_, HILO(x), constant)
+    return Double64(_exp2_ordinary((h, l), t)...)
+end
+
+@inline _batch_exp(x) = _batch_converted_exp(x, _log2_e3(Float64))
+@inline _batch_exp10(x) = _batch_converted_exp(x, _log2_10_3(Float64))
+
+_batch_kernel(::typeof(exp2), ::Type{Double64}, ::Type{Double64}) =
+    _BatchRepair(_BatchKernel(_batch_exp2_range, _batch_exp2), Double64(1.0))
+_batch_kernel(::typeof(exp), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(_batch_exp_range, _batch_exp)
+_batch_kernel(::typeof(exp10), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(_batch_exp_range, _batch_exp10)
+
+# The branch is selected by the head in the scalar kernel. Above the
+# tiny cutoff, table normalization uses the same low-word exponent guards
+# as the scalar method. The slab around one has its own polynomial.
+@inline _batch_log_direct_range(x) = _batch_bounded(x, nextfloat(0.9375), prevfloat(1.0625))
+@inline _batch_log_table_range(x) =
+    _batch_bounded(x, _log_tiny(Float64), 0.9375) | _batch_bounded(x, 1.0625, floatmax(Float64))
+@inline _batch_log2_direct(x) = Double64(_log2_direct(HILO(x))...)
+@inline _batch_log_direct(x) = Double64(mul_dddd_dd_(_log2_direct(HILO(x)), _ln_2(Float64))...)
+@inline _batch_log10_direct(x) = Double64(mul_dddd_dd_(_log2_direct(HILO(x)), _log10_2(Float64))...)
+@inline _batch_log2_table(x) = Double64(_log2_table(HILO(x), 0)...)
+@inline _batch_log_table(x) = Double64(mul_dddd_dd_(_log2_table(HILO(x), 0), _ln_2(Float64))...)
+@inline _batch_log10_table(x) = Double64(mul_dddd_dd_(_log2_table(HILO(x), 0), _log10_2(Float64))...)
+
+_batch_kernel(::typeof(log2), ::Type{Double64}, ::Type{Double64}) =
+    (_BatchKernel(_batch_log_direct_range, _batch_log2_direct),
+     _BatchKernel(_batch_log_table_range, _batch_log2_table))
+_batch_kernel(::typeof(log), ::Type{Double64}, ::Type{Double64}) =
+    (_BatchKernel(_batch_log_direct_range, _batch_log_direct),
+     _BatchKernel(_batch_log_table_range, _batch_log_table))
+_batch_kernel(::typeof(log10), ::Type{Double64}, ::Type{Double64}) =
+    (_BatchKernel(_batch_log_direct_range, _batch_log10_direct),
+     _BatchKernel(_batch_log_table_range, _batch_log10_table))
+
+_batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(x -> _batch_bounded(x, 0.005, 0.05), _log1p_direct)
+
+# (0.032, 0.06) is contained in one binade, so exponent(u) + 9 == 4.
+@inline function _batch_expm1_series(x)
+    s = (HI(x) * 0.0625, LO(x) * 0.0625)
+    c = _expm1_coeffs(Float64)
+    p = c[end]
+    Base.Cartesian.@nexprs 11 k -> (p = _expm1_horner(p, s, c[12 - k]))
+    e = mul_dddd_dd_(s, p)
+    Base.Cartesian.@nexprs 4 k -> (e = _expm1_double(e))
+    return Double64(e...)
+end
+@inline _batch_expm1_ordinary(x) = Double64(sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
+_batch_kernel(::typeof(expm1), ::Type{Double64}, ::Type{Double64}) =
+    (_BatchKernel(x -> _batch_bounded(x, 0.032, 0.06), _batch_expm1_series),
+     _BatchKernel(x -> _batch_bounded(x, 0.5, 32.0) | _batch_bounded(x, -32.0, -0.5),
+                  _batch_expm1_ordinary))
+
+@inline _batch_pow5_range(x, n) = _batch_bounded(x, 0.5, 1.5)
+@inline function _batch_pow5(x, n)
+    result = mul_dddd_dd_((1.0, 0.0), HILO(x))
+    x4 = square_dd_dd_(square_dd_dd_(HILO(x)))
+    return Double64(mul_dddd_dd_(result, x4)...)
+end
+
+# Test the scalar exponent once. Varying integer exponents use scalar power.
+@inline _batch_kernel(::typeof(^), ::Type{Double64}, ::Type{Double64}, n::Int) =
+    n == 5 ? _BatchKernel(_batch_pow5_range, _batch_pow5) : nothing
+
+# 0.2*log(1.1) < y*log(x) < 0.9*log(1.5), with ample room for
+# two-limb corrections. The exponent cannot take the integer branch.
+@inline _batch_pow_range(x, y) = _batch_bounded(x, 1.1, 1.5) & _batch_bounded(y, 0.2, 0.9)
+@inline _batch_pow(x, y) = _batch_exp(Double64(mul_dddd_dd_(HILO(y), HILO(_batch_log_table(x)))...))
+_batch_kernel(::typeof(^), ::Type{Double64}, ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(_batch_pow_range, _batch_pow)
