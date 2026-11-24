@@ -11,11 +11,12 @@ const EXPLOG = (exp2, exp, exp10, expm1, log2, log, log10, log1p)
 const COMPLEX = (square, abs2, exp, sin, cos, sinh, cosh, tan, cot, DF.csc, DF.sec,
                  tanh, coth, csch, sech, sqrt, log, REAL_ATAN..., INVHYP...)
 
-function sample(rng, interval, n)
+function sample(rng, interval, n, ::Type{D}=Double64) where {D}
     a, b = interval
+    T = typeof(HI(one(D)))
     return map(rand(rng, n)) do t
-        h = a + (b - a) * t
-        Double64(h, (rand(rng) - 0.5) * eps(h))
+        h = T(a + (b - a) * t)
+        D(h, (rand(rng, T) - T(0.5)) * eps(h))
     end
 end
 
@@ -24,10 +25,10 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
     rng = MersenneTwister(SEED)
     cases = NamedTuple[]
     function add(f, ranges...; scalar=nothing, label=string(f), wide=(0.25, 20.0),
-                 rejected=wide)
+                 rejected=wide, input_type=Double64)
         occursin(filter, label) || return
         args = if length(ranges) == 1
-            x = sample(rng, bounded ? only(ranges) : wide, n)
+            x = sample(rng, bounded ? only(ranges) : wide, n, input_type)
             (x,)
         else
             map(r -> sample(rng, r, n), ranges)
@@ -37,6 +38,11 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
             indices = clustered ? (1:count) : randperm(rng, n)[1:count]
             if label == "^/Double64 vector"
                 args[2][indices] = Double64.(rand(rng, 0:3, count))
+            elseif input_type === Double32
+                for i in indices
+                    h, l = HILO(args[1][i])
+                    args[1][i] = Double32(h, copysign(Float32(0x1p-90), l))
+                end
             else
                 args[1][indices] = sample(rng, rejected, count)
             end
@@ -127,6 +133,12 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
         add(expm1, (0.55, 16.0); label="expm1/ordinary", rejected=(0.07, 0.4))
         add(x -> x^5, (0.5, 1.5); label="^/literal closure")
     end
+    for (f, a, b) in ((exp, 0.25, 2.25), (exp2, 0.25, 2.25), (expm1, -0.5, 0.5),
+                      (log, 1.125, 2.25), (log2, 1.125, 2.25), (log1p, -0.0625, 0.0625),
+                      (atan, -1.0, 1.0), (tan, -0.5, 0.5), (sinh, -1.0, 1.0),
+                      (cosh, -1.0, 1.0), (tanh, -1.0, 1.0))
+        add(f, (a, b); label="$(f)/Double32", input_type=Double32)
+    end
     return cases
 end
 
@@ -149,7 +161,7 @@ function exceptional_fixtures(n)
     )
 end
 
-function scalar_loop!(f, dest, args, indices)
+function scalar_loop!(f::F, dest, args, indices) where {F}
     for i in indices
         @inbounds dest[i] = f(map(x -> x isa AbstractVector ? x[i] : x, args)...)
     end

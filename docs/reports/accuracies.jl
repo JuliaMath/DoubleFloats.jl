@@ -252,6 +252,27 @@ function matrix_rows(T)
     ]
 end
 
+function batch32_accuracy()
+    rng = MersenneTwister(0x32e1)
+    unit = BigFloat(eps(Double32))
+    cases = ((log2, 0.125f0, 0.875f0), (log2, 1.125f0, 8.0f0),
+             (log1p, -0.0625f0, 0.0625f0),
+             (atan, -1.0f0, 1.0f0), (tan, -0.5f0, 0.5f0),
+             (sinh, -1.0f0, 1.0f0), (tanh, -1.0f0, 1.0f0))
+    rows = map(cases) do (f, a, b)
+        x = map(1:4096) do i
+            h = a + (b - a) * rand(rng, Float32)
+            l = i % 8 == 0 ? copysign(Float32(0x1p-90), h) :
+                (rand(rng, Float32) - 0.5f0) * eps(h)
+            Double32(h, l)
+        end
+        y = DoubleFloats.simdmap!(f, similar(x), x)
+        errs = [ulps(got, f(BigFloat(t)), unit) for (got, t) in zip(y, x)]
+        accuracy_row(string(f), "($a, $b)", errs)
+    end
+    return join(rows, "\n")
+end
+
 # -------------------------------------------------------------- assemble --
 
 vinfo = string(VERSION)
@@ -328,7 +349,17 @@ available functions**.
 $double64_section
 
 $double32_section
+### Double32 vector kernels
 
+These rows use dense, disjoint vectors passed to `DoubleFloats.simdmap!`.
+The inputs are sampled by high word, with a low word of magnitude
+`2^-90` on every eighth element. The comparison includes both words
+of each input in the 512-bit reference. The
+[Technical Guide](technicalguide.md#Faster-Double32-elementary-kernels)
+describes the scalar and batch ranges.
+
+$hdr
+$(batch32_accuracy())
 """
 
 outpath = joinpath(@__DIR__, "accuracy_report.md")

@@ -124,6 +124,7 @@ include("math/elementary/archyptrig.jl")
 include("math/elementary/templated.jl")
 include("math/elementary/complex.jl")
 include("math/elementary/simd.jl")
+include("math/elementary/double32.jl")
 
 include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")

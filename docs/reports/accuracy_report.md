@@ -151,7 +151,7 @@ maximum over the listed samples.
 |:---------|:-------|--------:|--------------:|-------------:|
 | `exp` | (-100, 100) ordinary range | 204 | 0.02 | 0.12 |
 | `expm1` | (-1, 1) | 250 | 0.02 | 0.12 |
-| `exp2` | (-100, 100) ordinary range | 250 | 0.07 | 0.63 |
+| `exp2` | (-100, 100) ordinary range | 250 | 0.02 | 0.12 |
 | `log` | (0, 100) | 250 | 0.03 | 0.12 |
 | `log` | 1 ± 2⁻³¹ | 250 | 0.00 | 0.01 |
 | `log1p` | (-1, 1) | 250 | 0.02 | 0.11 |
@@ -269,3 +269,22 @@ An unavailable row indicates an error during that measurement.
 | `exp∘log roundtrip` | 8×8 | 25 | 1.59 | 3.06 |
 | `sqrt squared` | 8×8 | 25 | 1.54 | 2.97 |
 | `sin²+cos²−I` | 8×8 | 25 | 3.60 | 10.09 |
+
+### Double32 vector kernels
+
+These rows use dense, disjoint vectors passed to `DoubleFloats.simdmap!`.
+The inputs are sampled by high word, with a low word of magnitude
+`2^-90` on every eighth element. The comparison includes both words
+of each input in the 512-bit reference. The
+[Technical Guide](technicalguide.md#Faster-Double32-elementary-kernels)
+describes the scalar and batch ranges.
+
+| function | domain | samples | median (ulps) | worst (ulps) |
+|:---------|:-------|--------:|--------------:|-------------:|
+| `log2` | (0.125, 0.875) | 4096 | 0.06 | 0.49 |
+| `log2` | (1.125, 8.0) | 4096 | 0.04 | 0.41 |
+| `log1p` | (-0.0625, 0.0625) | 4096 | 0.13 | 0.87 |
+| `atan` | (-1.0, 1.0) | 4096 | 0.04 | 0.83 |
+| `tan` | (-0.5, 0.5) | 4096 | 0.03 | 0.34 |
+| `sinh` | (-1.0, 1.0) | 4096 | 0.03 | 0.35 |
+| `tanh` | (-1.0, 1.0) | 4096 | 0.04 | 0.43 |

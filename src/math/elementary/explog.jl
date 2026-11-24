@@ -467,6 +467,10 @@ const _DF64or32 = Union{Float64, Float32}
 function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
     input = HILO(x)
+    if T === Float32
+        y = _double32_exact(exp2, input...)
+        y === nothing || return _double32_split(exp2(y))
+    end
     p = T === Float64 && _exp2_fine_range(input[1]) ?
         _exp2_fine(input) : _exp2_clamped(input, zero(T), exp2, input)
     return DoubleFloat{T}(p[1], p[2])
@@ -484,10 +488,13 @@ function Base.exp(x::DoubleFloat{T}) where {T<:_DF64or32}
 end
 
 function Base.exp(x::Double32)
+    h, l = HILO(x)
+    y = _double32_exact(exp, h, l)
+    y === nothing || return _double32_split(exp(y))
     # Above -87 the result is normal in Float32. Preserve the promoted
     # method except in the low band, where rounding must target Float32.
-    if HI(x) <= -87.0f0
-        input = HILO(x)
+    if h <= -87.0f0
+        input = (h, l)
         y1, y2, y3 = _mf_mul3(input, _log2_e3(Float32))
         if y1 <= _exp2_min(Float32)
             p = _exp2_clamped((y1, y2), y3, exp, input)

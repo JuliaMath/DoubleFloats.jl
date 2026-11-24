@@ -16,7 +16,12 @@ depends on, including input corrections near roots and branch boundaries.
 2. **Compose existing functions.** The inverse hyperbolic functions
    use tools such as `log1p` and `sqrt`. Check the accuracy of the
    intermediate quantities in sensitive regions.
-3. **Convert through `Float128`.** The gamma and error functions use
+3. **Use a guarded wider scalar function.** The Double32 elementary
+   paths use Float64 in bounded regions when converting both words
+   preserves the exact input. Check that the result can be split back
+   into a useful head and low word. Keep a path that retains the
+   original representation for sensitive inputs and format limits.
+4. **Convert through `Float128`.** The gamma and error functions use
    this strategy. Its 113-bit significand can round away a small
    correction when converting a pair with widely separated components.
    Test the errors from input conversion, function evaluation, and
@@ -158,7 +163,10 @@ Leave room for the low component at branch boundaries, and verify
 that intermediates stay in range and divisors stay away from zero.
 Reuse the scalar coefficients and error-free transforms where possible.
 Keep the per-element evaluator type-stable and free of allocations,
-side effects, exceptions, and floating-point reassociation.
+side effects, exceptions, and floating-point reassociation. For native
+two-word Double32 arithmetic, the batch predicate can admit normalized
+pairs even when their sum would round in Float64. Keep the evaluator
+inlined so the compiler can see the arithmetic across elements.
 
 The driver checks axes and overlap before entering the dense route.
 A native loop runs only after the whole block passes its predicate.

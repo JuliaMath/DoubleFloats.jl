@@ -8,22 +8,25 @@ end
 
 # The dyadic centers reduce the argument to about ±1/32.
 const _ATAN_DYADIC, _ATAN_LOCAL_COEFFS = setprecision(BigFloat, 256) do
-    anchors = ntuple(i -> Double64(atan(BigFloat(i - 1) / 16)), 17)
+    anchors = ntuple(i -> HILO(Double64(atan(BigFloat(i - 1) / 16))), 17)
     coeffs = ntuple(i -> HILO(Double64((-1)^i / BigFloat(2i + 1))), 9)
     anchors, coeffs
 end
 
 @inline function _atan_unit(a::Double64)
-    k = unsafe_trunc(Int, round(16 * HI(a)))
-    c = k * 0.0625
-    h, l = HILO(a)
+    return Double64(_atan_unit_words(HILO(a)..., _ATAN_DYADIC, _ATAN_LOCAL_COEFFS, Val(5))...)
+end
+
+@inline function _atan_unit_words(h::T, l::T, anchors, coefficients, taper) where {T}
+    k = unsafe_trunc(Int, round(16 * h))
+    c = k * T(0.0625)
     numerator = two_hilo_sum_(h - c, l)
-    denominator = add_dddd_dd_((1.0, 0.0), mul_dddd_dd_((c, 0.0), (h, l)))
+    denominator = add_dddd_dd_((one(T), zero(T)), mul_dddd_dd_((c, zero(T)), (h, l)))
     p = dvi_dddd_dd_(numerator, denominator)
     z = square_dd_dd_(p)
-    correction = mul_dddd_dd_(mul_dddd_dd_(p, z), _tapered_poly(z, _ATAN_LOCAL_COEFFS, Val(5)))
+    correction = mul_dddd_dd_(mul_dddd_dd_(p, z), _tapered_poly(z, coefficients, taper))
     angle = add_dddd_dd_(p, correction)
-    return Double64(add_dddd_dd_(angle, HILO(@inbounds _ATAN_DYADIC[k + 1]))...)
+    return add_dddd_dd_(angle, @inbounds(anchors[k + 1]))
 end
 
 function atan(x::Double64)
@@ -37,7 +40,6 @@ function atan(x::Double64)
     return copysign(_atan_unit(a), x)
 end
 
-atan(x::Double32) = Double32(atan(Double64(x)))
 atan(x::Double16) = Double16(atan(Double64(x)))
 
 atan(y::Double64, x::Double64) = Double64(atan(Quadmath.Float128(y), Quadmath.Float128(x)))

@@ -206,6 +206,86 @@ the listed intervals and are throughput measurements.
 | `log2` | 0.25 to 2.25 | 25 → 19 ns | 5.7× → 4.2× |
 | `log1p` | −0.0625 to 0.0625 | 22 → 19 ns | 4.5× → 3.9× |
 
+## Faster Double32 elementary kernels
+
+A Double32 value consists of two Float32 words. For ordinary scalar
+calls on this format, a single Float64 evaluation provides additional
+working precision when the input conversion is exact. The guard
+bounds the head and the magnitude of the low word, then subtracts the
+head from the Float64 sum to check that this recovers the low word
+exactly. The output is split into a rounded Float32 head and its
+residual, rounded to Float32.
+
+| Scalar operations | Admitted heads |
+|:---|:---|
+| `exp` | −64 to 80 |
+| `exp2` | −96 to 112 |
+| `log`, `log2` | 0.125 to 0.875 or 1.125 to 8 |
+| `tan`, `expm1` | Magnitudes from `2^-40` to 0.5 |
+| `log1p` | Magnitudes from `2^-40` to 0.0625 |
+| `atan`, `sinh`, `cosh`, `tanh` | Magnitudes from `2^-40` to 1 |
+
+A sparse low word can determine the whole answer near a root. For
+example, converting `Double32(1.0f0, Float32(2^-60))` to Float64
+rounds it to one. The logarithm keeps the prior two-word path for that
+input. Exponential underflow and overflow use the existing format-limit
+paths. Exact zero arguments to the odd functions and `log1p` keep their
+stored sign.
+
+### Native Double32 batches
+
+The six native batch kernels use the same head ranges as their scalar
+counterparts. They operate directly on both Float32 words, including
+sparse low words that would be rounded away in a Float64 sum. `atan`
+reduces around the nearest dyadic center `j/16` and evaluates a short
+odd polynomial. `sinh` uses a tapered odd Taylor series. `tan` and
+`tanh` share a shortened continued fraction, with the sign of the
+squared argument distinguishing the two functions. `log2` reuses
+the existing Float32 table and returns exact integers on powers of two.
+`log1p` uses a compensated quotient `t = x/(2+x)` followed by a
+five-term odd series for the natural logarithm. Its short interval
+keeps `abs(t) < 0.033`, allowing the three highest coefficients to use
+single Float32 words.
+
+The shared driver uses a native loop on eligible dense blocks and scalar
+calls elsewhere. `expm1` benefits from the guarded scalar route in
+batches. A prototype using repeated Float32 doubling was slower and
+exceeded the 2.2-unit accuracy target. The
+[Accuracy Report](accuracy_report.md#Double32-vector-kernels) compares
+the six production kernels with high-precision references. The
+[implementation plan](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md)
+records the validation criteria.
+
+### Double32 benchmarks
+
+Times are median nanoseconds per element from warmed, preallocated
+loops on 65,536 seeded inputs with nonzero low words, using Julia 1.10.10
+on one i9-14900K thread. The baseline is revision `cfeee67e`.
+All batch calls used zero heap allocations after compilation. LLVM
+generated eight-lane Float32 arithmetic for the six native kernels.
+The gains apply to the input intervals and compiler target tested.
+
+| Operation | Sampled heads | Scalar before → after | Batch before → after |
+|:---|:---|---:|---:|
+| `exp` | 0.25 to 2.25 | 21.1 → 4.2 | 21.1 → 4.3 |
+| `exp2` | 0.25 to 2.25 | 12.8 → 4.3 | 12.6 → 4.4 |
+| `expm1` | −0.5 to 0.5 | 36.8 → 8.2 | 37.1 → 8.1 |
+| `log` | 1.125 to 2.25 | 21.7 → 5.6 | 21.6 → 5.7 |
+| `log2` | 1.125 to 2.25 | 21.4 → 5.7 | 21.5 → 5.5 |
+| `log1p` | −0.0625 to 0.0625 | 23.5 → 7.7 | 23.8 → 2.0 |
+| `atan` | −1 to 1 | 47.3 → 9.6 | 47.6 → 5.9 |
+| `tan` | −0.5 to 0.5 | 36.5 → 5.2 | 36.9 → 3.1 |
+| `sinh` | −1 to 1 | 30.2 → 5.6 | 30.3 → 2.8 |
+| `cosh` | −1 to 1 | 29.0 → 3.0 | 29.2 → 3.1 |
+| `tanh` | −1 to 1 | 36.3 → 8.1 | 36.7 → 3.0 |
+
+Replacing the low words of 1% of the inputs with much smaller values
+still admitted those inputs to the six native kernels. Their batch
+times stayed within 5% of the eligible-only runs or improved. The
+batch driver in `perf/bench_simd_elementary.jl` includes these intervals.
+Use `SIMD_FILTER=/Double32 SIMD_SIZE=65536 SIMD_MIXTURE=0,0.01` to
+measure dense inputs and inputs with sparse low words.
+
 ## [Elementary vector kernels](@id elementary-vector-kernels)
 
 The [User Guide](userguide.md#Elementwise-operations-on-vectors) describes
@@ -224,6 +304,7 @@ Vectors shorter than 64 elements take the scalar path.
 
 | Input type and operations | Native ranges and result |
 |:---|:---|
+| `Double32` `atan`, `tan`, `sinh`, `tanh`, `log2`, `log1p` | See [Native Double32 batches](#Native-Double32-batches) for the head ranges and arithmetic. |
 | `Double64` `exp2` | Heads on −966 to −0.001 or 0.001 to 1023. |
 | `Double64` `exp`, `exp10` | `exp` on −670 to −0.001 or 0.001 to 700. `exp10` uses three-limb base conversion on absolute heads from 0.001 to 300. |
 | `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Outside that interval, `log2` and `log` use the 128-center table for heads from `2^-500` to `2^500`. `log10` uses the 32-center table from `2^-915` through the largest finite head. |
@@ -254,7 +335,7 @@ assignments safe. Blocks containing a potential domain error go through
 the scalar loop before any element of the block is written.
 
 The pi-scaled trig functions, binary `atan` and `DoubleFloats.atanxy`,
-and the inverse circular functions other than unary `Double64` `atan`
+and the inverse circular functions other than unary `Double64` and `Double32` `atan`
 use the existing scalar algorithms inside the batch. The same applies
 to complex `sqrt`, `log`, and the inverse complex functions. This preserves
 special values, signed zeros, argument quadrants, and complex branch cuts.

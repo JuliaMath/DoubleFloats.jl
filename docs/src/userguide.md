@@ -33,12 +33,13 @@ rounding step dominates the relative working-precision score.
 See the [Technical Guide](technicalguide.md#Elementary-function-algorithms)
 for details and the [Benchmark Report](benchmark_report.md) for timings.
 
-The faster Double64 paths apply automatically in their input ranges.
-For example, small `sinh` and `tanh` arguments use direct
-approximations, while `tan` can use higher precision near poles to keep
-the contribution of a small input component. The
-[Technical Guide](technicalguide.md#Faster-Double64-elementary-kernels)
-describes the ranges and how the implementations preserve accuracy.
+The faster Double64 and Double32 paths apply automatically in their
+input ranges. Small Double64 `sinh` and `tanh` arguments use direct
+approximations. Ordinary Double32 arguments can use a single Float64
+evaluation when it retains the input's low component. See the
+technical sections on [Double64](technicalguide.md#Faster-Double64-elementary-kernels)
+and [Double32](technicalguide.md#Faster-Double32-elementary-kernels)
+for the ranges and how these paths handle sensitive inputs.
 
 ## Elementwise operations on vectors
 
@@ -102,9 +103,19 @@ ruled out.
 
 By default the operation is serial. If a scalar call or assignment throws,
 earlier elements have been written and later elements keep their original
-values. Dense, disjoint `Double64` and `ComplexDF64` vectors can use SIMD
-for supported operations and input ranges. Views, other precisions,
-unsupported result types, and out-of-range inputs use scalar methods.
+values. Dense, disjoint `Double64`, `ComplexDF64`, and `Double32` vectors
+can use SIMD for supported operations and input ranges. For example,
+dense `Double32` input with angles between 0.125 and 0.5 radians can use
+a native `tan` kernel.
+
+```julia
+angles32 = Double32.(range(0.125, 0.5; length=4096))
+tangents = DoubleFloats.simdmap!(tan, similar(angles32), angles32)
+```
+
+Views, other precisions, unsupported result types, and out-of-range
+blocks use scalar methods. A native kernel can round differently from
+the scalar call because it uses a different evaluation formula.
 
 Pass `threaded=true` to allow eligible operations to run on multiple Julia
 threads. Run Julia with multiple threads, for example `julia -t 4`. Threading

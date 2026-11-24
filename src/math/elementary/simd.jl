@@ -4,6 +4,7 @@
 Apply a scalar operation elementwise into `dest` and return it. All vector
 operands must have the same axes as `dest`. For power, `y` may also be a
 scalar exponent. Tuple results occupy one destination element.
+Dense vectors may use specialized kernels with their own rounding.
 
 Overlapping inputs are read from snapshots of their values at entry. By default,
 a scalar error leaves the preceding writes in index order. With
