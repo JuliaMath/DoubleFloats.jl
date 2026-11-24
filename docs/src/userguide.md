@@ -161,9 +161,9 @@ factorization; eigenvalues are sorted by `(real, imag)`.
 
 ## Functions of matrices
 
-`exp`, `log`, `sqrt`, and the trigonometric/hyperbolic families work on
-**every** square matrix, including defective (non-diagonalizable) ones,
-using dense Schur-based and scaling-and-squaring algorithms:
+`exp`, `log`, `sqrt`, and the circular and hyperbolic families handle
+defective (non-diagonalizable) square matrices within each function's
+domain. Here is the exponential of a Jordan block.
 
 ```julia
 julia> exp(Double64[1 1; 0 1])     # defective; diagonalization would fail
@@ -172,10 +172,18 @@ julia> exp(Double64[1 1; 0 1])     # defective; diagonalization would fail
  0.0      2.71828
 ```
 
-Real matrices give real results whenever the mathematical result is real
-(e.g. `exp` of any real matrix, `sqrt`/`log` of matrices without negative
-real eigenvalues).  A negative real eigenvalue makes `sqrt`/`log`
-genuinely complex, and the result type reflects that.
+The exponential of a real matrix is real. For `sqrt` and `log`,
+the result type follows the selected branch and can be complex for
+negative real eigenvalues. A singular matrix logarithm throws
+`SingularException`.
+
+Pass a dense matrix with exact triangular or diagonal structure to
+use the corresponding fast path. Eligible triangular `log` and `sqrt`
+skip Schur factorization. Larger eligible triangles also use packed
+products for `exp` and the trig and hyperbolic families. An exact
+half-power of an eligible nonsingular real triangle uses `sqrt`.
+See the [Technical Guide](@ref matrix-function-kernels) for the ranges
+and crossovers.
 
 The remaining families (`cbrt`, `sinpi`/`cospi`, and the inverse
 trigonometric/hyperbolic functions of matrices) use eigen-diagonalization

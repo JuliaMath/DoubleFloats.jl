@@ -277,33 +277,101 @@ routes dense factorizations through pure-Julia generic implementations:
   `LQPackedQ` materialization/multiplication kernels supplied for
   DoubleFloat element types.
 
-## Matrix functions
+## [Matrix functions](@id matrix-function-kernels)
 
-`src/math/linearalgebra/matfun.jl`; all correct for defective matrices:
+The dense implementations in `src/math/linearalgebra/matfun.jl` handle
+defective inputs within each function's domain. Structure checks apply
+to the stored matrix. For a skipped entry, both limbs of each component
+must be zero.
 
-- **exp**: scaling-and-squaring; scale to `‖A‖₁ ≤ 1`, a 34-term Taylor
-  approximant (truncation < 1/35! ≈ 1e-40) evaluated by
-  Paterson–Stockmeyer (≈ 11 matrix products), then repeated squaring.
-  Real input never leaves real arithmetic.
-- **sqrt**: complex Schur + the Björck–Hammarling recurrence on the
-  triangular factor; hermitian-PSD input shortcuts through `eigen`.
-- **log**: complex Schur + inverse scaling-and-squaring — repeated
-  triangular square roots until `‖T - I‖₁ ≤ ¼`, then the atanh series
-  (re-using `inv_oddint`), then multiply by `2^s`.
-- **trig/hyperbolic**: one shared-power series pair in `Y = B²` plus
-  double-angle recurrences (`cos(2X) = 2cos²X - I`, `sin(2X) = 2 sin X cos X`
-  — and the *same* formulas for cosh/sinh), entirely in the input's
-  arithmetic, so real matrices never touch complex intermediates.
-- **hermitian input** (exact `ishermitian`) short-circuits exp, trig, and
-  hyperbolic functions through one symmetric eigen-decomposition — the
-  orthonormal eigenvectors make that transform perfectly conditioned.
-- **triangular input** skips the Schur factorization entirely for
-  `sqrt`/`log` (the recurrences apply directly; `tril` maps to `triu`
-  through the transpose identity).
-- Real results that acquire ~`1e-32` imaginary roundoff dust from a
-  complex intermediate are stripped back to real (with a tolerance
-  guard), matching LAPACK-route behavior.
+- **Exponential and trig/hyperbolic families.** The exponential uses
+  scaling and squaring with a degree-34 Taylor polynomial evaluated by
+  Paterson–Stockmeyer. For ordinary real `Double64` input with a
+  positive one-norm up to `2^-7`, it uses degree 15. The circular and
+  hyperbolic pairs share their powers and apply double-angle formulas.
+  `cos` and `cosh` use the even polynomial alone.
+- **Triangular products.** For eligible dense `Double64` and
+  `ComplexDF64` triangles from size 64 and with input one-norm at most
+  8, the polynomial and reconstruction products skip structurally zero
+  entries. The products retain ascending accumulation order and check
+  both limbs before using the packed arithmetic. Lower triangles are
+  handled by transpose. `tan` and `tanh` also use triangular right
+  division when the computed denominator is triangular and its
+  distance from identity in the one-norm is at most 0.5.
+- **Square root.** A triangular input uses the Björck–Hammarling
+  recurrence on the original matrix. In the near-identity envelope
+  `‖T - I‖₁ ≤ 0.625`, eligible triangles from size 96 use blocks of
+  width 12. Rectangular updates pack directly from views, reusing
+  per-call buffers, and the off-diagonal blocks are obtained by
+  triangular Sylvester solves. The point recurrence handles small
+  and excluded cases.
+- **Logarithm.** The triangular route takes square roots until
+  `‖T - I‖₁ ≤ 1/4` or the iteration cap is reached. It forms
+  `G = (T - I)/(T + I)` by a triangular right solve and evaluates the
+  atanh series. For eligible triangles, products use dense packed
+  multiplication from size 24 and triangular packed multiplication
+  from size 64. The inverse scaling uses the blocked square root
+  whenever the current factor qualifies.
+- **Schur reconstruction.** General `sqrt` and `log` use complex
+  Schur factors. Eligible `ComplexDF64` factors from size 16 use a
+  materialized adjoint in the packed reconstruction. The real-input
+  result still goes through the usual imaginary-roundoff check.
+- **Diagonal and symmetric routes.** Ordinary real `Double64`
+  diagonal inputs use scalar diagonal evaluations for `exp`,
+  `sqrt`, `log`, and the sine/cosine and hyperbolic sine/cosine
+  families when the absolute diagonal heads are on `[2^-64, 8]`.
+  The `sqrt` and `log` diagonal routes require positive entries.
+  For ordinary real symmetric inputs from size 32 with
+  one-norm at most 0.875, `exp` and the same paired and single-output
+  trig and hyperbolic functions use the polynomial drivers.
+  Other eligible symmetric/Hermitian inputs use eigendecomposition.
+- **Fractional powers.** The usual `exp(p * log(A))` route can use
+  the triangular optimizations in both stages. For ordinary
+  nonsingular real `Double64` triangles in the near-identity
+  envelope above, an exact exponent of one-half uses `sqrt`
+  directly. The existing logarithm branch handles singular cases.
 
-`cbrt`, `sinpi`/`cospi`, and matrix inverse-trig/hyperbolic functions
-still use eigen-diagonalization (`matrixfunction`), which requires a
-diagonalizable argument and loses accuracy in proportion to `cond(V)`.
+The general routes retain the type and branch conventions for
+`sqrt`, `log`, and matrix powers. `cbrt`, `sinpi`/`cospi`, and the
+matrix inverse circular and hyperbolic functions still use
+eigen-diagonalization, which requires a diagonalizable argument.
+
+### Matrix benchmarks
+
+The table compares public calls against revision `58f7869c`. Timings
+are medians of seven warmed runs on Julia 1.10.10 on an Intel Core
+i9-14900K with native targeting, one Julia thread, and one BLAS
+thread. Timings include structure checks, packing, and allocation.
+
+| Operation and fixture | Before (ms) | After (ms) | Speedup |
+|:---|---:|---:|---:|
+| Real triangular `log`, 64×64 | 16.24 | 4.29 | 3.8× |
+| Complex triangular `log`, 64×64 | 36.94 | 8.66 | 4.3× |
+| General real `log`, 64×64 | 124.33 | 91.27 | 1.36× |
+| Real triangular `sqrt`, 256×256 | 29.44 | 6.97 | 4.2× |
+| Complex triangular `sqrt`, 256×256 | 65.33 | 18.29 | 3.6× |
+| Real triangular `exp`, 256×256 | 91.09 | 38.88 | 2.3× |
+| Real triangular `cos`, 256×256 | 66.07 | 22.30 | 3.0× |
+| Real triangular `A^0.25`, 256×256 | 1,038.49 | 169.49 | 6.1× |
+| Real triangular `A^0.5`, 256×256 | 1,039.39 | 7.83 | 133× |
+| Real symmetric `exp`, 64×64 | 10.30 | 2.47 | 4.2× |
+| Real symmetric `cos`, 64×64 | 10.24 | 1.46 | 7.0× |
+| Real diagonal `exp`, 64×64 | 4.276 | 0.0096 | 445× |
+
+Blocking uses additional temporary storage. The 256×256 complex root
+allocated 5.6 MB in the blocked path versus 2.1 MB in the point path.
+Packing directly from the block views reduced allocations from 52 MB
+in the first blocked implementation. On the general logarithm fixture,
+the complex Schur factorization still dominates the call.
+
+Run the reproducible driver from the package root. It also reports
+allocations and first-call time. Set `MAT_STAGES=1` for separate
+factorization, product, solve, and reconstruction timings.
+
+```sh
+MAT_SIZE=64,256 MAT_FILTER='upper/(log|sqrt|exp|cos|halfpower)' \
+    julia --project -t1 perf/bench_matrix_functions.jl
+```
+
+The repository's `docs/matbetter.md` records the rollout and the
+admission checks for these algorithms.

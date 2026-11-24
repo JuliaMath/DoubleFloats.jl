@@ -169,3 +169,100 @@ end
     @test eltype(P) == Double64                        # SPD => real power
     @test maximum(abs.(P * P - A^5)) < Double64(2.0)^-80
 end
+
+@testset "Structured matrix fast paths" begin
+    D = DoubleFloats
+    n = 97
+    eye = Matrix{Double64}(I, n, n)
+    N = zeros(Double64, n, n)
+    N[1,13] = Double64(0.125)
+    N[13,26] = Double64(-0.0625)
+    N[26,97] = Double64(0.125)
+    a = Double64(0.75)
+    A = a * eye + N
+    B = N / a
+    B2 = B * B
+    B3 = B2 * B
+    N2 = N * N
+    N3 = N2 * N
+    e = exp(a) * (eye + N + N2/2 + N3/6)
+    r = sqrt(a) * (eye + B/2 - B2/8 + B3/16)
+    l = log(a) * eye + B - B2/2 + B3/3
+    s = sin(a) * eye + cos(a) * N - sin(a) * N2/2 - cos(a) * N3/6
+    c = cos(a) * eye - sin(a) * N - cos(a) * N2/2 + sin(a) * N3/6
+    sh = sinh(a) * eye + cosh(a) * N + sinh(a) * N2/2 + cosh(a) * N3/6
+    ch = cosh(a) * eye + sinh(a) * N + cosh(a) * N2/2 + sinh(a) * N3/6
+
+    @test D._sqrt_uppertri_blocked(A, 12) !== nothing
+    @test D._mat_triangle(A) === :upper
+    @test D._mat_triangle(Matrix(transpose(A))) === :lower
+    @test maximum(abs, D._mat_tri_mul(A, A) - A*A) < MFEPS
+    for (f, reference) in ((sqrt, r), (log, l), (exp, e), (sin, s), (cos, c),
+                           (sinh, sh), (cosh, ch), (tan, s/c), (tanh, sh/ch))
+        for (input, expected, structural) in ((A, reference, istriu),
+                (Matrix(transpose(A)), transpose(reference), istril))
+            snapshot = copy(input)
+            actual = f(input)
+            @test actual isa Matrix{Double64}
+            @test structural(actual)
+            @test maximum(abs, actual - expected) < MFEPS
+            @test isequal(input, snapshot)
+        end
+    end
+    @test maximum(abs, A^Double64(0.5) - r) < MFEPS
+    @test maximum(abs, (A^Double64(0.25))^4 - A) < MFEPS
+    neighboring_exponent = Double64(0.5, 1e-22)
+    @test abs((A^neighboring_exponent)[1,1] - r[1,1]) > MFEPS
+
+    z = ComplexDF64(a, Double64(0.0625))
+    C = z * eye + im * N
+    R = sqrt(C)
+    L = log(C)
+    @test D._sqrt_uppertri_blocked(C, 12) !== nothing
+    @test R isa Matrix{ComplexDF64} && istriu(R)
+    @test maximum(abs, R*R - C) < MFEPS
+    @test maximum(abs, exp(L) - C) < MFEPS
+    @test maximum(abs, sqrt(Matrix(transpose(C))) - transpose(R)) < MFEPS
+    @test maximum(abs, log(Matrix(transpose(C))) - transpose(L)) < MFEPS
+    @test maximum(abs, D._mat_tri_mul(C, C) - C*C) < MFEPS
+
+    raw = copy(A)
+    raw[end,1] = Double64(0.0, 1.0)
+    @test D._mat_triangle(raw) === :general
+    @test D._mat_diagonal(exp, Double64[1 0; Double64(0.0, 1.0) 2]) === nothing
+    bad = copy(A)
+    bad[3,3] = zero(Double64)
+    for f in (log, x -> x^Double64(0.5))
+        @test_throws SingularException(3) f(bad)
+    end
+    @test sqrt(zeros(Double64, 2, 2)) == zeros(Double64, 2, 2)
+    @test any(isnan, sqrt(zeros(ComplexDF64, 2, 2)))
+    @test size(sqrt(zeros(ComplexDF64, 0, 0))) == (0, 0)
+    @test sqrt(Matrix(Diagonal(Double64[-1, 2]))) isa Matrix{ComplexDF64}
+
+    values = Double64[0.25, 0.5, 1.25]
+    diagonal = Matrix(Diagonal(values))
+    for f in (exp, sqrt, log, sin, cos, sinh, cosh)
+        @test f(diagonal) == Matrix(Diagonal(f.(values)))
+    end
+    S, C2 = sincos(diagonal)
+    @test S == sin(diagonal)
+    @test C2 == cos(diagonal)
+
+    H = Double64(0.5) * Matrix{Double64}(I, 40, 40)
+    H[1,2] = H[2,1] = Double64(0.125)
+    @test D._mat_hermitian_poly_norm(H) == opnorm(H, 1)
+    setprecision(256) do
+        for f in (exp, sin, cos, sinh, cosh)
+            plus, minus = f(big"0.625"), f(big"0.375")
+            X = f(H)
+            to_big(x) = BigFloat(HI(x)) + BigFloat(LO(x))
+            @test abs(to_big(X[1,1]) - (plus + minus)/2) < big(2.0)^(-95)
+            @test abs(to_big(X[1,2]) - (plus - minus)/2) < big(2.0)^(-95)
+        end
+        t = Double64(0.005)
+        small = t * eye + N/64
+        expected = Double64(exp(BigFloat(HI(t)) + BigFloat(LO(t))))
+        @test abs(exp(small)[1,1] - expected) < MFEPS
+    end
+end

@@ -53,16 +53,21 @@ eigenvalues are sorted by `(real, imag)`.
 - `sylvester(A, B, C)` -- solves `AX + XB + C = 0`
 - `lyap(A, C)` -- solves `AX + XA' + C = 0`
 
-## Functions of Matrices (any square matrix)
+## Functions that support defective matrices
 
-These use dense Schur-based and scaling-and-squaring algorithms, so they
-are correct for defective (non-diagonalizable) matrices too, and real
-matrices give real results whenever the mathematical result is real:
+These functions use matrix algorithms that handle non-diagonalizable
+square inputs within their domains.
 
 - `exp`, `expm1`, `log`, `log1p`, `log2`, `log10`, `sqrt`
 - `matrix^power`
 - `sin`, `cos`, `sincos`, `tan`, `csc`, `sec`, `cot`
 - `sinh`, `cosh`, `tanh`, `csch`, `sech`, `coth`
+
+Dense `Double64` and `ComplexDF64` matrices can use accelerated
+triangular paths when the stored entries have exact triangular
+structure. Ordinary real `Double64` diagonal matrices have direct
+paths for several functions. The algorithms and measured size ranges
+are in the [Technical Guide](@ref matrix-function-kernels).
 
 ## Functions of Matrices (diagonalizable & square only)
 
