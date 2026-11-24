@@ -1,6 +1,6 @@
 # Adding New Functions
 
-Use this guide when extending scalar or matrix operations. For the
+Use this guide when extending scalar, vector, or matrix operations. For the
 existing algorithms, see the [Technical Guide](technicalguide.md).
 Choose a formulation that preserves the small quantities the result
 depends on, including input corrections near roots and branch boundaries.
@@ -118,6 +118,110 @@ Sample every region with its own tolerance:
 
 Place tests in `test/` and wire the file into `test/runtests.jl`. The
 [Accuracy Report](accuracy_report.md) describes the existing sampled checks.
+
+## Vector functions
+
+Extend the scalar operation first. `DoubleFloats.simdmap!(f, dest, x)`
+and its two-input form already accept scalar callables, so an ordinary
+elementwise function needs no batch registration. Add a native kernel
+when a common input range admits a simpler evaluation that works across
+several elements at once. The
+[User Guide](userguide.md#Elementwise-operations-on-vectors) describes
+the public calling and mutation rules.
+
+### Register a bounded kernel
+
+Put the specialized code beside the scalar implementation. Register
+it with `_batch_kernel`, dispatching on the function, the destination
+element type, and the element type of each input vector. The scalar
+exponent accepted by `^` is passed by value, so its registration can
+select a kernel for one exponent. The generic registration returns
+`nothing`, which selects the scalar loop. Use the natural result type
+for the kernel, such as `Tuple{Double64,Double64}` for `sincos` or
+`ComplexDF64` for `cis` on finite real inputs.
+
+The reciprocal registration in `src/math/ops/op_db_db.jl` shows the
+pattern. `_BatchKernel` pairs an eligibility predicate with a per-element
+evaluator. Shared helpers and the loop are in `src/math/elementary/simd.jl`.
+
+```julia
+@inline _batch_inv_range(x) = _batch_abs_bounded(x, 0x1p-256, 0x1p256)
+
+_batch_kernel(::typeof(inv), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(_batch_inv_range, _batch_inv)
+```
+
+Check both components of each input. The bounded-input helpers check
+the high component against a chosen interval and bound the low
+component by half the spacing in the corresponding exponent band.
+Leave room for the low component at branch boundaries, and verify
+that intermediates stay in range and divisors stay away from zero.
+Reuse the scalar coefficients and error-free transforms where possible.
+Keep the per-element evaluator type-stable and free of allocations,
+side effects, exceptions, and floating-point reassociation.
+
+The driver checks axes and overlap before entering the dense route.
+A native loop runs only after the whole block passes its predicate.
+A rejected block normally runs scalar calls in index order, preserving
+special values, destination conversion, and the writes that precede
+an error. The driver also handles views, overlapping storage, and
+custom vectors. Keep those rules in the shared driver.
+
+Treat repair of isolated rejected elements as an optional optimization.
+The existing `_BatchRepair` handles unary `Double64` inputs. It evaluates
+eligible lanes and safe placeholder values in one loop, then overwrites
+the placeholders with scalar results. Use it only where the rejected
+lanes admitted by the driver's wider guard can be evaluated and assigned
+without error. Ordinary block fallback is the starting point.
+
+### Check results and measure the whole call
+
+This example exercises both an eligible block and scalar fallback in
+the same call. It compares stored components so small discrepancies and
+signed zeros remain visible.
+
+```@example adding_vector
+using DoubleFloats
+
+x = fill(Double64(1.125, -2.0^-58), 128)
+x[end] = zero(Double64)
+dest = similar(x)
+reference = inv.(x)
+
+@assert DoubleFloats.simdmap!(inv, dest, x) === dest
+@assert all(isequal.(HILO.(dest), HILO.(reference)))
+println("Checked reciprocal batch, including scalar fallback")
+```
+
+- Extend `test/simd_elementary.jl`. Test eligible inputs, mixed blocks,
+  boundary points with both signs of the low component, and lengths
+  around the 64-element minimum for the native route. Check the
+  operation's special values, branches, output conversions, and
+  exception order. Use the scalar result as the behavioral reference
+  and a higher-precision calculation where the arithmetic changes.
+- Measure warmed calls with reused destinations. The benchmark driver
+  in `perf/bench_simd_elementary.jl` can compare against preallocated
+  broadcast and check allocation and mixed-input costs. Use
+  `SIMD_LLVM` to dump the native loop's LLVM and check for vector
+  arithmetic. A SIMD annotation alone cannot establish that the
+  compiler vectorized the loop.
+- Evaluate threading separately. `_batch_thread_min` uses concrete
+  argument types and defaults to no threaded execution for unlisted
+  operations. Measure a size crossover before extending that allowlist
+  and check the destination types admitted by `_batch_thread_output`.
+  Exercise the new route with multiple Julia threads. A worker error
+  can surface after other chunks have written.
+
+Run the existing driver from the package root. This example compares
+two batch sizes with eligible inputs and with scattered exclusions.
+
+```sh
+SIMD_FILTER=inv SIMD_SIZE=4096,65536 SIMD_MIXTURE=0,0.01 \
+    julia --project -t4 perf/bench_simd_elementary.jl
+```
+
+Record published eligibility ranges and measured crossovers in the
+[Technical Guide](@ref elementary-vector-kernels).
 
 ## Matrix functions
 
