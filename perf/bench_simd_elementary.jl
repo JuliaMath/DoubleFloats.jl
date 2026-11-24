@@ -70,6 +70,7 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
              (0.01, 1.0), (1.01, 100.0)))
         add(f, interval; wide)
     end
+    add(expm1, (0.5, 1.0); label="expm1/central", wide=(-1.0, 1.0), rejected=(1.01, 2.0))
     for f in EXPLOG
         interval = f === expm1 ? (0.032, 0.06) : f === log1p ? (0.005, 0.05) :
                    f in (log, log2, log10) ? (0.95, 1.05) : (0.55, 16.0)
@@ -190,7 +191,7 @@ batch_specs(args) = map(x -> x isa Number ? x : eltype(x), args)
 
 function batch_regimes(k)
     if isdefined(DF, :_BatchAlternatives) && k isa DF._BatchAlternatives
-        return (k.preferred, k.secondary)
+        return (batch_regimes(k.preferred)..., batch_regimes(k.secondary)...)
     end
     return k isa Tuple ? k : (k,)
 end

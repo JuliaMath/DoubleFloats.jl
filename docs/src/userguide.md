@@ -26,7 +26,11 @@ see [Choosing and checking precision](appropriate.md).
 For `Double64`, `exp` overflows near an input of 709.78 and rounds
 to zero near −745.13. The exponential kernels account for subnormal
 rounding. Near a rounding midpoint they may use a higher-precision
-fallback. See the [Technical Guide](technicalguide.md#Elementary-function-algorithms)
+fallback. A `Double32` result can have a subnormal low component
+even when its high component is normal. The
+[Accuracy Report](accuracy_report.md) shows when this absolute
+rounding step dominates the relative working-precision score.
+See the [Technical Guide](technicalguide.md#Elementary-function-algorithms)
 for details and the [Benchmark Report](benchmark_report.md) for timings.
 
 ## Elementwise operations on vectors

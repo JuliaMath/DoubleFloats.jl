@@ -47,21 +47,25 @@ low word, as happens when taking the reciprocal of `Double64(3.0)`.
 
 ## Elementary function algorithms
 
-**Exponential functions** (`src/math/elementary/explog.jl`). The shared
-base-2 kernel reduces the exponent to `n + 8r` with `|r| ≲ 1/16`.
-It evaluates a tapered polynomial for `2^r` using fused Horner steps,
-squares three times, and reconstructs with a split power-of-two scale.
-`exp` and `exp10` use three-limb base conversion on the native path.
+**Exponential functions**. For ordinary results, the shared base-2 kernel
+in `src/math/elementary/explog.jl` reduces the exponent to `n + j/16 + r`.
+The high component chooses the index and both components contribute
+to `r`. Its magnitude is at most about `1/32`. The kernel evaluates
+a tapered polynomial for `2^r`, multiplies by the stored two-component
+`2^(j/16)`, and scales by `2^n`. This path serves scalar calls and
+eligible vector batches. The native `exp` and `exp10` kernels use
+three-component conversion to base 2.
 
-Inputs safely below the zero-rounding threshold bypass the polynomial.
-In the underflow band, both reduced limbs contribute to rounding on the
-target format's subnormal grid. If the error bound overlaps a rounding
-midpoint, the fallback evaluates the original input with directed MPFR
-rounding and increases precision until the bounds agree. An exact input
-sum lets one downward evaluation and its next representable MPFR value
-bound an inexact result. The fallback compiles on first use. Ordinary
-`Double32` calls to `exp` promote through `Double64`, with direct
-rounding to the `Float32` grid in the underflow band.
+Near the exponent limits, the fallback reduces to `n + 8r`, evaluates
+the polynomial over the wider interval, and squares three times. Inputs
+safely below the zero-rounding threshold skip the polynomial. In the
+underflow band, both components determine the nearest point on the
+underlying subnormal grid. Near a rounding midpoint, directed MPFR
+bounds refine the decision until both endpoints round to the same
+value. Ordinary `Double32 exp` still evaluates in `Double64` before
+narrowing. Its underflow path rounds directly to the `Float32` grid.
+The [Accuracy Report](accuracy_report.md) shows relative errors and
+lattice rounding separately.
 
 **Logarithms**. The `log2` kernel decomposes a positive input into an
 exponent and a mantissa. It uses 32 exact table centers `c` and a
@@ -73,9 +77,14 @@ This matters even when the low limb starts out normal. `log` and
 `log10` convert the `log2` result to their respective bases.
 
 **`log1p` and `expm1`**. Near zero, `log1p` uses
-`log(1+x) = 2·atanh(x/(2+x))`. `expm1` evaluates a Taylor series on
-a scaled argument and reconstructs with the doubling identity
-`expm1(2t) = expm1(t)·(expm1(t) + 2)`.
+`log(1+x) = 2·atanh(x/(2+x))`. Near zero, `expm1` evaluates a
+Taylor series on a scaled argument and reconstructs by doubling.
+When the `Double64` input head has magnitude from 0.5 through 1,
+the kernel evaluates the offset from one using the exponential
+polynomial with its constant term removed. Three fused updates
+`q ← 2q + q²` reconstruct the reduced offset. With `s = 2^n`,
+the final result is `(s - 1) + s*q`. For larger arguments the
+function evaluates `exp(x) - 1`.
 
 **Cube root and fused multiply-add**. Scalar `cbrt` returns a
 `DoubleFloat`. For extreme `Double64` inputs it scales both limbs by
@@ -139,7 +148,7 @@ Vectors shorter than 64 elements take the scalar path.
 | `Double64` `exp2` | Heads on −1021 to −0.001 or 0.001 to 1023, where the high word of the result stays normal. |
 | `Double64` `exp`, `exp10` | Absolute head from 0.001 to 700 for `exp` and from 0.001 to 300 for `exp10`, with three-limb base conversion. |
 | `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Table regime at or above `2^-915` outside the direct interval, up to the largest finite head. |
-| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings for absolute heads on `[2^-5, 2^-4)` and ordinary exponential subtraction on 0.5–700. |
+| `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings on `[2^-5, 2^-4)`, direct offset reconstruction on `[0.5, 1]`, and exponential subtraction on `(1, 700]`. These ranges refer to absolute heads. |
 | `Double64` power | Scalar `Int` exponent `5` with bases on 0.5–1.5, or vector `Double64` exponents on 0.2–0.9 with bases on 1.1–1.5. |
 | `Double64` `sin`, `cos`, `sincos` | Absolute head from 0.005 up to 6.28125 radians, exclusive of the upper bound. `sincos` writes a tuple. |
 | `Double64` `tan` | Same head interval, with a 0.11-radian exclusion around the heads of π/2 and 3π/2 in the absolute angle. |
@@ -157,8 +166,9 @@ Mixed blocks normally use the scalar loop, which preserves exception
 order. The circular kernels prefer the small-angle route and then
 try the wider circular reduction. The wider route reuses the three-limb
 π reductions and resolves the table sector using both input limbs.
-For `exp2`, `sin`, `cos`, `tan`, and wider `cis`, a block with at most one eighth
-of its lanes excluded can SIMD-evaluate safe substitute inputs and then
+For `exp2`, ordinary `expm1`, `sin`, `cos`, `tan`, and wider `cis`, a block
+with at most one eighth of its lanes excluded can evaluate safe
+substitute inputs with SIMD and then
 repair those lanes with the original scalar calls. This requires every
 excluded input to pass a wider check that makes the scalar calls and
 assignments safe. Blocks containing a potential domain error go through
@@ -230,6 +240,24 @@ this target. The wider circular pair and paired normalization also
 benefited from the checked arithmetic when LLVM emitted scalar loops.
 The `sin`, `cos`, and `sincos` fixtures on −100–100 ran near their
 previous throughput because few lanes fell within one circle.
+
+On the i9-14900K with Julia 1.10.10 and one Julia thread, five warmed
+timings of 65,536 eligible `Double64` inputs in 0.55–16 gave these
+serial batch medians before and after table reduction. All three
+revised paths allocated zero bytes in the warmed calls.
+
+| Operation | Previous batch | Table reduction |
+|:---|---:|---:|
+| `exp2` | 574 μs | 514 μs |
+| `exp` | 628 μs | 582 μs |
+| `exp10` | 637 μs | 592 μs |
+
+On the same setup, nine warmed timings for 65,536 `expm1` inputs in
+0.5–1 gave medians of 2488 and 2161 μs for broadcast before and after
+direct reconstruction. The serial batch medians were 677 and 689 μs,
+with overlapping timing ranges. On −100–100, sparse repair for the
+ordinary branch brought the serial batch median from 982 to 710 μs
+against the previous implementation. The warmed calls allocated zero bytes.
 
 Run the driver from the package root. Its output includes the measured
 range, storage, seed, Julia and CPU versions, CPU target, thread count,

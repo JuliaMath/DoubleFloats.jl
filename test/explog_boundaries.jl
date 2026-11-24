@@ -74,3 +74,49 @@ end
         @test (precision(BigFloat), rounding(BigFloat)) == (precision_before, rounding_before)
     end
 end
+
+@testset "Normal exponential reconstruction" begin
+    setprecision(BigFloat, 512) do
+        for (D, T) in ((Double64, Float64), (Double32, Float32))
+            tolerance = BigFloat(eps(D)) * BigFloat(1.25)
+            for (op, inverse) in ((exp2, log2), (exp, log), (exp10, log10))
+                # Probe all sixteen table cells, including negative indices
+                # and low components on both sides of each reduction boundary.
+                for k in -32:31
+                    boundary = inverse(exp2(BigFloat(2k + 1) / 32))
+                    hi = T(boundary)
+                    lo = T(boundary - hi)
+                    for low in (prevfloat(lo), lo, nextfloat(lo))
+                        x = D(hi, low)
+                        y = op(BigFloat(x))
+                        @test abs(BigFloat(op(x)) - y) <= tolerance * y
+                    end
+                end
+            end
+            for n in (exponent(floatmin(T)) + 1, -17, 0, 13, exponent(floatmax(T)))
+                @test HILO(exp2(D(T(n)))) == (ldexp(one(T), n), zero(T))
+            end
+        end
+    end
+end
+
+@testset "Direct central expm1 reconstruction" begin
+    setprecision(BigFloat, 512) do
+        tolerance = BigFloat(eps(Double64))
+        for sign in (1.0, -1.0), h in range(0.5, 1.0; length=257)
+            for l in (-eps(h) / 4, 0.0, eps(h) / 4)
+                x = Double64(sign * h, l)
+                y = expm1(BigFloat(x))
+                @test abs(BigFloat(expm1(x)) - y) <= tolerance * abs(y)
+            end
+        end
+        for edge in (-1.0, -0.5, 0.5, 1.0), head in (prevfloat(edge), edge, nextfloat(edge))
+            for tail in (-eps(head) / 4, eps(head) / 4)
+                x = Double64(head, tail)
+                y = expm1(BigFloat(x))
+                @test abs(BigFloat(expm1(x)) - y) <= 2 * tolerance * abs(y)
+            end
+        end
+        @test isequal(expm1(Double64(-0.0)), Double64(-0.0))
+    end
+end

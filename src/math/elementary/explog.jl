@@ -218,7 +218,7 @@ Tapered minimax approximations of `2^r` on `|r| ≤ 1/16`; coefficients
 (`exp.jl:68`). `Float32`: degree 7, 5 + 3 (`exp.jl:15`).
 =#
 
-@inline function _exp2_poly(r::Tuple{Float64,Float64})
+@inline function _exp2_poly_tail(r::Tuple{Float64,Float64})
     r1 = r[1]
     t = +0x1.816519F74C4AFp-0040                       # c14
     t = muladd(t, r1, +0x1.C3C1919538484p-0036)        # c13
@@ -233,11 +233,14 @@ Tapered minimax approximations of `2^r` on `|r| ≤ 1/16`; coefficients
     p = _horner_step_dd((+0x1.C6B08D704A0C0p-0005, -0x1.D3316275139AEp-0059), p, r)  # c4
     p = _horner_step_dd((+0x1.EBFBDFF82C58Fp-0003, -0x1.5E43A53E454F1p-0057), p, r)  # c3
     p = _horner_step_dd((+0x1.62E42FEFA39EFp-0001, +0x1.ABC9E3B39803Fp-0056), p, r)  # c2
-    p = _horner_step_dd((+0x1.0000000000000p+0000, +0x1.314BACF0323FFp-0113), p, r)  # c1
     return p
 end
 
-@inline function _exp2_poly(r::Tuple{Float32,Float32})
+@inline function _exp2_poly(r::Tuple{Float64,Float64})
+    return _horner_step_dd((+0x1.0000000000000p+0000, +0x1.314BACF0323FFp-0113), _exp2_poly_tail(r), r)
+end
+
+@inline function _exp2_poly_tail(r::Tuple{Float32,Float32})
     r1 = r[1]
     t = Float32(+0x1.FFD486p-017)                      # d8
     t = muladd(t, r1, Float32(+0x1.430E9Ep-013))       # d7
@@ -246,8 +249,11 @@ end
     p = _horner_step_dd((Float32(+0x1.C6B08Ep-005), Float32(-0x1.1F6B9Cp-030)), p, r)  # d4
     p = _horner_step_dd((Float32(+0x1.EBFBE0p-003), Float32(-0x1.F4DEB0p-033)), p, r)  # d3
     p = _horner_step_dd((Float32(+0x1.62E430p-001), Float32(-0x1.05C610p-029)), p, r)  # d2
-    p = _horner_step_dd((Float32(+0x1.000000p+000), Float32(-0x1.62C458p-059)), p, r)  # d1
     return p
+end
+
+@inline function _exp2_poly(r::Tuple{Float32,Float32})
+    return _horner_step_dd((Float32(+0x1.000000p+000), Float32(-0x1.62C458p-059)), _exp2_poly_tail(r), r)
 end
 
 ### Kernel and public methods
@@ -388,16 +394,75 @@ end
     return _exp2_ordinary(x, x3)
 end
 
-@inline function _exp2_ordinary(x, x3)
+# Split 2^(j/16), j = 0:15, into a rounded head and rounded residual.
+# Each entry was computed with 256-bit MPFR using the exact dyadic argument.
+const _EXP2_SIXTEENTHS_64 = (
+    (0x1p+0, 0x0p+0),
+    (0x1.0b5586cf9890fp+0, 0x1.8a62e4adc610bp-54),
+    (0x1.172b83c7d517bp+0, -0x1.19041b9d78a76p-55),
+    (0x1.2387a6e756238p+0, 0x1.9b07eb6c70573p-54),
+    (0x1.306fe0a31b715p+0, 0x1.6f46ad23182e4p-55),
+    (0x1.3dea64c123422p+0, 0x1.ada0911f09ebcp-55),
+    (0x1.4bfdad5362a27p+0, 0x1.d4397afec42e2p-56),
+    (0x1.5ab07dd485429p+0, 0x1.6324c054647adp-54),
+    (0x1.6a09e667f3bcdp+0, -0x1.bdd3413b26456p-54),
+    (0x1.7a11473eb0187p+0, -0x1.41577ee04992fp-55),
+    (0x1.8ace5422aa0dbp+0, 0x1.6e9f156864b27p-54),
+    (0x1.9c49182a3f09p+0, 0x1.c7c46b071f2bep-56),
+    (0x1.ae89f995ad3adp+0, 0x1.7a1cd345dcc81p-54),
+    (0x1.c199bdd85529cp+0, 0x1.11065895048ddp-55),
+    (0x1.d5818dcfba487p+0, 0x1.2ed02d75b3707p-55),
+    (0x1.ea4afa2a490dap+0, -0x1.e9c23179c2893p-54),
+)
+const _EXP2_SIXTEENTHS_32 = (
+    (Float32(0x1p+0), Float32(0x0p+0)),
+    (Float32(0x1.0b5586p+0), Float32(0x1.9f3122p-25)),
+    (Float32(0x1.172b84p+0), Float32(-0x1.c15742p-27)),
+    (Float32(0x1.2387a6p+0), Float32(0x1.ceac48p-25)),
+    (Float32(0x1.306fep+0), Float32(0x1.4636e2p-25)),
+    (Float32(0x1.3dea64p+0), Float32(0x1.824684p-25)),
+    (Float32(0x1.4bfdaep+0), Float32(-0x1.593abcp-25)),
+    (Float32(0x1.5ab07ep+0), Float32(-0x1.5bd5ecp-27)),
+    (Float32(0x1.6a09e6p+0), Float32(0x1.9fcef4p-26)),
+    (Float32(0x1.7a1148p+0), Float32(-0x1.829fdp-25)),
+    (Float32(0x1.8ace54p+0), Float32(0x1.15506ep-27)),
+    (Float32(0x1.9c4918p+0), Float32(0x1.51f848p-27)),
+    (Float32(0x1.ae89fap+0), Float32(-0x1.a94b14p-26)),
+    (Float32(0x1.c199bep+0), Float32(-0x1.3d56b2p-27)),
+    (Float32(0x1.d5818ep+0), Float32(-0x1.822dbcp-27)),
+    (Float32(0x1.ea4afap+0), Float32(0x1.52486cp-27)),
+)
+
+@inline _exp2_sixteenths(::Type{Float64}) = _EXP2_SIXTEENTHS_64
+@inline _exp2_sixteenths(::Type{Float32}) = _EXP2_SIXTEENTHS_32
+
+@inline function _exp2_normal(x::Tuple{T,T}, x3::T) where {T}
+    # k/16 is exact in this finite range. Choosing k from the head
+    # allows the tails to take r slightly beyond a cell's half width.
+    kf = round(T(16) * x[1])
+    k = unsafe_trunc(Int32, kf)
+    rh, rl = two_sum_(x[1] - T(0.0625) * kf, x[2])
+    r = rh, rl + x3
+    p = _horner_step_dd((one(T), zero(T)), _exp2_poly_tail(r), r)
+    tab = @inbounds _exp2_sixteenths(T)[(k & 15) + 1]
+    ph, pl = mul_dddd_dd_(tab, p)
+    # The normal-range guard keeps this single scale finite and normal.
+    scale = _pow2(T, k >> 4)
+    return scale * ph, scale * pl
+end
+
+@inline function _exp2_ordinary(x::Tuple{T,T}, x3::T) where {T}
+    # Retain the existing reconstruction adjacent to the clamps.
+    if _exp2_min(T) + one(T) <= x[1] <= floor(_exp2_max(T))
+        return _exp2_normal(x, x3)
+    end
     p, n = _exp2_reduced(x, x3)
     return _exp2_scale(p, n)
 end
 
 const _DF64or32 = Union{Float64, Float32}
 
-# x == 0 short-circuits: the polynomial's constant term carries minimax
-# low-limb dust (~2^-113), so the kernel would return 1 + 9e-34 instead of
-# the exact 1 that exp(±0.0) must produce.
+# Keep the public zero case exact and skip conversion and reduction.
 
 function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
@@ -440,10 +505,6 @@ end
 # exp2/exp10 are not in its list — cover them here the same way
 Base.exp2(x::Double16)  = Double16(exp2(Double64(x)))
 Base.exp10(x::Double16) = Double16(exp10(Double64(x)))
-
-# Guaranteed underflow is handled before the polynomial. Normal results
-# use split scaling. At the low end both limbs select the nearest target
-# value on the subnormal lattice, which we construct from its index.
 
 ## 4. The `log2` / `log` / `log10` family
 
@@ -710,11 +771,35 @@ end
 function Base.expm1(x::DoubleFloat{T}) where {T<:_DF64or32}
     u = HI(x)
     (isnan(u) | iszero(u)) && return x
-    # away from zero exp(x) - 1 does not cancel harmfully (exp(x) ∉ (0.6, 1.65))
-    abs(u) >= T(0.5) && return exp(x) - one(x)
+    if abs(u) >= T(0.5)
+        T === Float64 && abs(u) <= one(T) && return _expm1_central(x, two_prod)
+        return exp(x) - one(x)
+    end
     # scale exactly to |s| < 2^-8, run the Taylor series there, then undo the
     # scaling with expm1(2t) = expm1(t)·(expm1(t) + 2); at most 8 doublings
     return _expm1_series(x, max(0, Base.exponent(u) + 9))
+end
+
+# On the central outer interval the nearest integer n to x*log2(e)
+# is ±1. Carry 2^(x*log2(e)-n)-1 through reconstruction.
+@inline function _expm1_central(x::Double64, prod::F) where {F}
+    h, l, t = _mf_mul3(prod, HILO(x), _log2_e3(Float64))
+    n = copysign(1.0, h)
+    rh, rl = two_sum_(h - n, l)
+    r = 0.125 * rh, 0.125 * (rl + t)
+    q = mul_dddd_dd_(r, _exp2_poly_tail(r))
+    q = _expm1_double_fused(_expm1_double_fused(_expm1_double_fused(q)))
+    scale = ifelse(n > 0.0, 2.0, 0.5)
+    return Double64(add_dddd_dd_((scale - 1.0, 0.0), (scale * q[1], scale * q[2]))...)
+end
+
+@inline function _expm1_double_fused(q)
+    h, l = q
+    a = fma(h, h, 2h)
+    # On this interval 2h and a satisfy Sterbenz's condition. Their
+    # difference is exact, so the FMA recovers the leading residual.
+    b = fma(h, h, 2h - a)
+    return two_hilo_sum_(a, b + fma(h, 2l, 2l))
 end
 
 @inline function _expm1_series(x::DoubleFloat{T}, k::Int) where {T<:IEEEFloat}
@@ -738,10 +823,11 @@ end
 
 # The largest allowed magnitudes convert to less than 1010 (exp) or
 # 997 (exp10) in base 2, including both converted tails. This leaves
-# headroom from the scalar clamps and for ordinary split scaling.
+# headroom from the scalar clamps and keeps the table scale normal.
 @inline _batch_exp_range(x) = _batch_abs_bounded(x, 0.001, 700.0)
 @inline _batch_exp10_range(x) = _batch_abs_bounded(x, 0.001, 300.0)
-@inline _batch_expm1_ordinary_range(x) = _batch_abs_bounded(x, 0.5, 700.0)
+@inline _batch_expm1_central_range(x) = _batch_abs_bounded(x, 0.5, 1.0)
+@inline _batch_expm1_ordinary_range(x) = _batch_abs_bounded(x, nextfloat(1.0), 700.0)
 
 # With no base conversion the scalar ordinary branch admits a wider
 # interval. Leave a unit of headroom at either end so neither limb of
@@ -749,11 +835,11 @@ end
 @inline _batch_exp2_range(x) =
     _batch_bounded(x, -1021.0, -0.001) | _batch_bounded(x, 0.001, 1023.0)
 
-@inline _batch_exp2(x) = Double64(_exp2_ordinary(HILO(x), 0.0)...)
+@inline _batch_exp2(x) = Double64(_exp2_normal(HILO(x), 0.0)...)
 
 @inline function _batch_converted_exp(x, constant)
     h, l, t = _mf_mul3(two_prod_, HILO(x), constant)
-    return Double64(_exp2_ordinary((h, l), t)...)
+    return Double64(_exp2_normal((h, l), t)...)
 end
 
 @inline _batch_exp(x) = _batch_converted_exp(x, _log2_e3(Float64))
@@ -805,9 +891,16 @@ _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
     return Double64(e...)
 end
 @inline _batch_expm1_ordinary(x) = Double64(sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
+@inline _batch_expm1_central(x) = _expm1_central(x, two_prod_)
+
+# Repair isolated alternate regimes in an otherwise ordinary block.
+# The shared repair guard only admits finite normalized heads on [-128,128],
+# where scalar expm1 and the exact Double64 assignment cannot throw.
 _batch_kernel(::typeof(expm1), ::Type{Double64}, ::Type{Double64}) =
-    (_BatchKernel(_batch_expm1_series_range, _batch_expm1_series),
-     _BatchKernel(_batch_expm1_ordinary_range, _batch_expm1_ordinary))
+    _BatchAlternatives(_BatchKernel(_batch_expm1_series_range, _batch_expm1_series),
+        _BatchAlternatives(_BatchKernel(_batch_expm1_central_range, _batch_expm1_central),
+            _BatchRepair(_BatchKernel(_batch_expm1_ordinary_range, _batch_expm1_ordinary),
+                         Double64(2.0))))
 
 @inline _batch_pow5_range(x, n) = _batch_bounded(x, 0.5, 1.5)
 @inline function _batch_pow5(x, n)

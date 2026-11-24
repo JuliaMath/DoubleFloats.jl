@@ -129,8 +129,17 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
             compare_batch(f, vcat(bounded(first_head, last_head),
                                   Double64[0, -0.0, NaN, Inf, -Inf, -800, 800]))
         end
+        for (low, high) in ((0.5, 1.0), (-1.0, -0.5))
+            compare_batch(expm1, bounded(low, high))
+        end
         compare_batch(expm1, bounded(0x1p-5, prevfloat(0x1p-4)))
         compare_batch(expm1, bounded(-prevfloat(0x1p-4), -0x1p-5))
+        mixed = fill(Double64(2.0), 131)
+        mixed[2] = Double64(0.75)
+        mixed[35] = Double64(-0.05)
+        mixed[70] = Double64(Inf)
+        mixed[98:102] .= Double64(0.5)
+        compare_batch(expm1, mixed)
         setprecision(256) do
             for (f, factor, k) in ((exp, log(big(2.0)), 997), (exp10, log10(big(2.0)), 992))
                 midpoint = Double64(k * factor + factor / 2)

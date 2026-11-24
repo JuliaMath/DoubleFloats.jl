@@ -16,13 +16,62 @@ maximum over the listed samples.
 
 | function | domain | samples | median (ulps) | worst (ulps) |
 |:---------|:-------|--------:|--------------:|-------------:|
-| `exp` | (-100, 100) | 250 | 0.34 | 3.33 |
-| `expm1` | (-1, 1) | 250 | 0.34 | 4.46 |
-| `exp2` | (-100, 100) | 250 | 0.32 | 2.40 |
+| `exp` | (-100, 100) ordinary range | 250 | 0.08 | 0.43 |
+| `expm1` | (-1, 1) | 250 | 0.08 | 1.11 |
+| `exp2` | (-100, 100) ordinary range | 250 | 0.07 | 0.56 |
 | `log` | (0, 100) | 250 | 0.08 | 0.49 |
 | `log` | 1 ± 2⁻³¹ | 250 | 0.14 | 1.01 |
 | `log1p` | (-1, 1) | 250 | 0.09 | 0.58 |
 | `log2` | (0, 100) | 250 | 0.04 | 0.36 |
+
+### Exponential rounding near the format limits
+
+For `exp` and `exp2`, the main table reports relative working-precision
+units for finite results with reference at or above `Δ / eps(Double64)`.
+Here `Δ` is the smallest positive subnormal of the underlying float.
+The subnormal range lies below the underlying float's minimum normal.
+The quantization-limited normal range lies between that minimum and
+`Δ / eps(Double64)`.
+
+The lattice tables compare the sum of the two returned components with
+the nearest multiple of `Δ` in these two ranges. They also show absolute
+error and error measured in steps of `Δ`. Output outcome counts describe
+the returned values and can overlap the reference range counts. A zero
+or overflow disagreement compares the outcome with round-to-nearest
+thresholds for the underlying format. Targeted probes use 1536-bit
+references to resolve low components as small as the underlying
+subnormal spacing.
+
+#### Random samples from the main table
+
+| Function | Inputs | Subnormal | Grid-limited normal | Zero | Infinite | NaN | Outcome disagreements |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| `exp` | 250 | 0 | 0 | 0 | 0 | 0 | 0 |
+| `exp2` | 250 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+| Function | Reference range | Nearest lattice agreements | Worst lattice steps | Worst absolute error |
+|:---|:---|---:|---:|---:|
+| `exp` | Subnormal range | — | — | — |
+| `exp` | Quantization-limited normal range | — | — | — |
+| `exp2` | Subnormal range | — | — | — |
+| `exp2` | Quantization-limited normal range | — | — | — |
+
+
+#### Targeted midpoint, zero, and overflow probes
+
+| Function | Inputs | Subnormal | Grid-limited normal | Zero | Infinite | NaN | Outcome disagreements |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| `exp` | 23 | 16 | 6 | 2 | 1 | 0 | 0 |
+| `exp2` | 23 | 16 | 6 | 3 | 1 | 0 | 0 |
+
+| Function | Reference range | Nearest lattice agreements | Worst lattice steps | Worst absolute error |
+|:---|:---|---:|---:|---:|
+| `exp` | Subnormal range | 16/16 | 0.500000 | 2.4703e-324 |
+| `exp` | Quantization-limited normal range | 6/6 | 0.500000 | 2.4703e-324 |
+| `exp2` | Subnormal range | 16/16 | 0.500000 | 2.4703e-324 |
+| `exp2` | Quantization-limited normal range | 6/6 | 0.500000 | 2.4703e-324 |
+
+
 
 ### Trigonometric Functions
 
@@ -47,12 +96,12 @@ maximum over the listed samples.
 
 | function | domain | samples | median (ulps) | worst (ulps) |
 |:---------|:-------|--------:|--------------:|-------------:|
-| `sinh` | (-2, 2) | 250 | 0.41 | 3.51 |
-| `sinh` | (-9, 9) | 250 | 0.39 | 3.13 |
-| `cosh` | (-2, 2) | 250 | 0.22 | 3.13 |
-| `cosh` | (-9, 9) | 250 | 0.28 | 2.81 |
-| `tanh` | (-2, 2) | 250 | 0.16 | 2.97 |
-| `tanh` | (-9, 9) | 250 | 0.10 | 0.95 |
+| `sinh` | (-2, 2) | 250 | 0.11 | 0.99 |
+| `sinh` | (-9, 9) | 250 | 0.09 | 0.59 |
+| `cosh` | (-2, 2) | 250 | 0.07 | 0.43 |
+| `cosh` | (-9, 9) | 250 | 0.09 | 0.70 |
+| `tanh` | (-2, 2) | 250 | 0.12 | 0.82 |
+| `tanh` | (-9, 9) | 250 | 0.10 | 0.69 |
 | `asinh` | (-100, 100) | 250 | 0.08 | 0.43 |
 | `asinh` | ±2⁻⁴⁰ | 250 | 0.12 | 0.79 |
 | `acosh` | (1, 101) | 250 | 0.07 | 0.66 |
@@ -100,13 +149,62 @@ maximum over the listed samples.
 
 | function | domain | samples | median (ulps) | worst (ulps) |
 |:---------|:-------|--------:|--------------:|-------------:|
-| `exp` | (-100, 100) | 235 | 0.02 | 157483982232.15 |
+| `exp` | (-100, 100) ordinary range | 204 | 0.02 | 0.12 |
 | `expm1` | (-1, 1) | 250 | 0.02 | 0.12 |
-| `exp2` | (-100, 100) | 250 | 0.37 | 3.13 |
+| `exp2` | (-100, 100) ordinary range | 250 | 0.07 | 0.63 |
 | `log` | (0, 100) | 250 | 0.03 | 0.12 |
 | `log` | 1 ± 2⁻³¹ | 250 | 0.00 | 0.01 |
 | `log1p` | (-1, 1) | 250 | 0.02 | 0.11 |
 | `log2` | (0, 100) | 250 | 0.02 | 0.13 |
+
+### Exponential rounding near the format limits
+
+For `exp` and `exp2`, the main table reports relative working-precision
+units for finite results with reference at or above `Δ / eps(Double32)`.
+Here `Δ` is the smallest positive subnormal of the underlying float.
+The subnormal range lies below the underlying float's minimum normal.
+The quantization-limited normal range lies between that minimum and
+`Δ / eps(Double32)`.
+
+The lattice tables compare the sum of the two returned components with
+the nearest multiple of `Δ` in these two ranges. They also show absolute
+error and error measured in steps of `Δ`. Output outcome counts describe
+the returned values and can overlap the reference range counts. A zero
+or overflow disagreement compares the outcome with round-to-nearest
+thresholds for the underlying format. Targeted probes use 1536-bit
+references to resolve low components as small as the underlying
+subnormal spacing.
+
+#### Random samples from the main table
+
+| Function | Inputs | Subnormal | Grid-limited normal | Zero | Infinite | NaN | Outcome disagreements |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| `exp` | 250 | 18 | 13 | 0 | 15 | 0 | 0 |
+| `exp2` | 250 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+| Function | Reference range | Nearest lattice agreements | Worst lattice steps | Worst absolute error |
+|:---|:---|---:|---:|---:|
+| `exp` | Subnormal range | 18/18 | 0.475765 | 6.6669e-46 |
+| `exp` | Quantization-limited normal range | 13/13 | 0.495937 | 6.9496e-46 |
+| `exp2` | Subnormal range | — | — | — |
+| `exp2` | Quantization-limited normal range | — | — | — |
+
+
+#### Targeted midpoint, zero, and overflow probes
+
+| Function | Inputs | Subnormal | Grid-limited normal | Zero | Infinite | NaN | Outcome disagreements |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| `exp` | 23 | 16 | 6 | 2 | 1 | 0 | 0 |
+| `exp2` | 23 | 16 | 6 | 3 | 1 | 0 | 0 |
+
+| Function | Reference range | Nearest lattice agreements | Worst lattice steps | Worst absolute error |
+|:---|:---|---:|---:|---:|
+| `exp` | Subnormal range | 16/16 | 0.500000 | 7.0065e-46 |
+| `exp` | Quantization-limited normal range | 6/6 | 0.500000 | 7.0065e-46 |
+| `exp2` | Subnormal range | 16/16 | 0.500000 | 7.0065e-46 |
+| `exp2` | Quantization-limited normal range | 6/6 | 0.500000 | 7.0065e-46 |
+
+
 
 ### Trigonometric Functions
 
