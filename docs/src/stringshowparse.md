@@ -1,54 +1,42 @@
-# Show, String, Parse
+# Display and parse values
 
-## Show
-```julia
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-0.5773502691896257
+## Inspect a value
 
-julia> show(IOContext(Base.stdout,:compact=>false),x)
-5.7735026918962576450914878050194151e-01
+Compact display, as used for many array elements, shows the high
+component. To see more decimal digits, use `string(x)` or print those
+digits with `showall(x)`. Use `stringtyped(x)` or `showtyped(x)` to
+inspect the type and both components.
 
-julia> showall(x)
-0.5773502691896257645091487805019415
+```@example display_value
+using DoubleFloats
 
-julia> showtyped(x)
-Double64(0.5773502691896257, 3.3450280739356326e-17)
-
-julia> c = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
-1.4142135 + 1.4422495im
-
-julia> showall(c)
-1.414213562373095 + 1.442249570307406im
-
-julia> showtyped(c)
-ComplexDF32(Double32(1.4142135, 2.4203235e-8), Double32(1.4422495, 3.3793125e-8))
+x = sqrt(Double64(2))
+println(string(x))
+showtyped(x)
 ```
 
-## String
-```julia
-julia> using DoubleFloats
+These helpers also accept the complex counterparts. For exact access to
+the stored components of a real value, use `HILO(x)`. For a complex value,
+apply `HILO` to its real and imaginary parts separately.
 
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-0.5773502691896257
+## Read numeric text
 
-julia> string(x)
-"5.7735026918962576450914878050194151e-01"
+Use `Double64(text)` or `parse(Double64, text)` for a decimal number.
+Use `ComplexDF64(text)` for complex numeric text. The text passed to
+`parse` is a numeric literal. `stringtyped` instead returns Julia
+constructor syntax for inspection.
 
-julia> c = ComplexDF32(sqrt(df32"2"), cbrt(df32"3"))
-1.4142135 + 1.4422495im
+```@example parse_value
+using DoubleFloats
 
-julia> string(c)
-"1.414213562373094 + 1.442249570307406im"
-
-julia> stringtyped(c)
-"ComplexD32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
+x = parse(Double64, "0.125")
+z = ComplexDF64("0.125 - 0.25im")
+@assert real(z) == x
+@assert imag(z) == df64"-0.25"
+nothing
 ```
 
-## Parse
-```julia
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-0.5773502691896257
-
-julia> Meta.parse(stringtyped(x)
-:(Double64(0.5773502691896257, 3.3450280739356326e-17))
-```
+Decimal formatting is useful for human-readable output. When every stored
+component matters, keep the typed value or save the two components using a
+format that preserves each underlying float. See
+[Construct values](construction.md#Working-with-two-components).

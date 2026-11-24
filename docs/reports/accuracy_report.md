@@ -7,9 +7,10 @@ available functions**.
 
 ## Double64
 
-Errors are measured against a 512-bit `BigFloat` reference in units of the
-`Double64` working precision, **1 ulp = 2⁻¹⁰⁴ (about 4.9e-32) relative**.  A worst case of
-about 1 ulp means the function is as accurate as the format allows.
+Scalar errors are measured against a 512-bit `BigFloat` reference.
+For nonzero references, the tables divide relative error by the working
+precision unit, **1 ulp = 2⁻¹⁰⁴ (about 4.9e-32) relative**. Each worst value is the
+maximum over the listed samples.
 
 ### Exponentials and Logarithms
 
@@ -61,8 +62,8 @@ about 1 ulp means the function is as accurate as the format allows.
 
 ### Special Functions
 
-`erf`, `erfc`, and `gamma` are computed via `Float128`; its 113-bit
-significand caps their accuracy at roughly half an ulp of `Double64`.
+`erf`, `erfc`, and `gamma` are computed via `Float128` before conversion
+back to the tested type. The errors below include both steps.
 
 | function | domain | samples | median (ulps) | worst (ulps) |
 |:---------|:-------|--------:|--------------:|-------------:|
@@ -74,9 +75,11 @@ significand caps their accuracy at roughly half an ulp of `Double64`.
 
 ### Matrix Functions (identity residuals)
 
-Matrix routines are checked through their defining identities on random
-matrices, normalized per matrix dimension.  An unavailable row identifies a
-routine that cannot currently execute for that precision.
+The matrix rows measure how closely the results satisfy the listed
+identities on random matrices. Each residual uses the largest entry
+magnitude, divided by dimension and working epsilon. The logarithm
+and square root rows also divide by the largest input entry magnitude.
+An unavailable row indicates an error during that measurement.
 
 | identity | size | samples | median (ulps) | worst (ulps) |
 |:---------|:-----|--------:|--------------:|-------------:|
@@ -88,9 +91,10 @@ routine that cannot currently execute for that precision.
 
 ## Double32
 
-Errors are measured against a 512-bit `BigFloat` reference in units of the
-`Double32` working precision, **1 ulp = 2⁻⁴⁶ (about 1.4e-14) relative**.  A worst case of
-about 1 ulp means the function is as accurate as the format allows.
+Scalar errors are measured against a 512-bit `BigFloat` reference.
+For nonzero references, the tables divide relative error by the working
+precision unit, **1 ulp = 2⁻⁴⁶ (about 1.4e-14) relative**. Each worst value is the
+maximum over the listed samples.
 
 ### Exponentials and Logarithms
 
@@ -142,8 +146,8 @@ about 1 ulp means the function is as accurate as the format allows.
 
 ### Special Functions
 
-`erf`, `erfc`, and `gamma` are computed via `Float128`; its 113-bit
-significand caps their accuracy at roughly half an ulp of `Double64`.
+`erf`, `erfc`, and `gamma` are computed via `Float128` before conversion
+back to the tested type. The errors below include both steps.
 
 | function | domain | samples | median (ulps) | worst (ulps) |
 |:---------|:-------|--------:|--------------:|-------------:|
@@ -155,9 +159,11 @@ significand caps their accuracy at roughly half an ulp of `Double64`.
 
 ### Matrix Functions (identity residuals)
 
-Matrix routines are checked through their defining identities on random
-matrices, normalized per matrix dimension.  An unavailable row identifies a
-routine that cannot currently execute for that precision.
+The matrix rows measure how closely the results satisfy the listed
+identities on random matrices. Each residual uses the largest entry
+magnitude, divided by dimension and working epsilon. The logarithm
+and square root rows also divide by the largest input entry magnitude.
+An unavailable row indicates an error during that measurement.
 
 | identity | size | samples | median (ulps) | worst (ulps) |
 |:---------|:-----|--------:|--------------:|-------------:|
@@ -165,7 +171,3 @@ routine that cannot currently execute for that precision.
 | `exp∘log roundtrip` | 8×8 | 25 | 1.59 | 3.06 |
 | `sqrt squared` | 8×8 | 25 | 1.54 | 2.97 |
 | `sin²+cos²−I` | 8×8 | 25 | 3.60 | 10.09 |
-
-
-The unavailable Double32 matrix rows currently require a generic Schur path
-through `Complex{Double32}`, which is not supported.

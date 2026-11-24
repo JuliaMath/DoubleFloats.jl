@@ -31,20 +31,26 @@ makedocs(
     warnonly = [:missing_docs],
     pages = Any[
         "Overview" => "index.md",
-        "User Guide" => "userguide.md",
-        "Construction" => "construction.md",
-        "Characteristics" => "characteristics.md",
-        "Show, String, Parse" => "stringshowparse.md",
-        "Capabilities" => "capabilities.md",
-        "Special Functions" => "special.md",
-        "Linear Algebra" => "linearalgebra.md",
-        "Random Numbers" => "random.md",
-        "Appropriate Uses" => "appropriate.md",
-        "Technical Guide" => "technicalguide.md",
-        "Adding New Functions" => "addingfunctions.md",
-        "Benchmark Report" => "benchmark_report.md",
-        "Accuracy Report" => "accuracy_report.md",
-        "References" => "references.md"
+        "Getting started" => Any[
+            "Construct values" => "construction.md",
+            "Display and parse values" => "stringshowparse.md",
+            "Representation and precision" => "characteristics.md",
+        ],
+        "Computing" => Any[
+            "User Guide" => "userguide.md",
+            "Scalar operations" => "capabilities.md",
+            "Special Functions" => "special.md",
+            "Linear Algebra" => "linearalgebra.md",
+            "Random numbers" => "random.md",
+        ],
+        "Accuracy and implementation" => Any[
+            "Choosing and checking precision" => "appropriate.md",
+            "Accuracy Report" => "accuracy_report.md",
+            "Benchmark Report" => "benchmark_report.md",
+            "Technical Guide" => "technicalguide.md",
+            "Adding New Functions" => "addingfunctions.md",
+            "References" => "references.md",
+        ],
     ]
 )
 

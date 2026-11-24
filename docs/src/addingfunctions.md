@@ -1,57 +1,49 @@
 # Adding New Functions
 
-How to add a scalar function or a matrix function to DoubleFloats
-safely, correctly, and robustly.  The recurring theme: double-double
-accuracy is lost through *formulations*, not arithmetic — every addition
-of nearly-opposite quantities, every fixed tolerance, and every unbounded
-branch window is a place where 32 digits silently become 16.
+Use this guide when extending scalar or matrix operations. For the
+existing algorithms, see the [Technical Guide](technicalguide.md).
+Choose a formulation that preserves the small quantities the result
+depends on, including input corrections near roots and branch boundaries.
 
-## Part 1: scalar functions
+## Scalar functions
 
-### Step 0: choose the computation strategy
+### Choose the computation strategy
 
-In descending order of preference:
+1. **Native double-double arithmetic.** Use range reduction and a
+   polynomial, series, or recurrence with coefficients precise enough
+   for the error budget. Keep small offsets in their own variables when
+   they govern relative accuracy.
+2. **Compose existing functions.** The inverse hyperbolic functions
+   use tools such as `log1p` and `sqrt`. Check the accuracy of the
+   intermediate quantities in sensitive regions.
+3. **Convert through `Float128`.** The gamma and error functions use
+   this strategy. Its 113-bit significand can round away a small
+   correction when converting a pair with widely separated components.
+   Test the errors from input conversion, function evaluation, and
+   conversion back to the result type.
 
-1. **Native double-double** — series or recurrences evaluated in
-   `DoubleFloat` arithmetic with double-double coefficients, plus exact
-   argument reduction.  Fastest and most accurate; required when the
-   function must preserve relative accuracy at a sensitive point
-   (near a root or a fixed point), because no fixed-precision detour can.
-2. **Composition of existing accurate functions** — e.g. the inverse
-   hyperbolics are built from `log1p` and `sqrt`.  Correct *only* if the
-   composition avoids cancellation (see Step 2).
-3. **`Float128` route** — `DoubleFloat{T}(fn(Float128(x)))`, following
-   the pattern of `erf`/`gamma`.  Simple and accurate to ~0.5 ulp, but:
-   it cannot represent inputs finer than 113 bits (it fails for
-   arguments like `1 + 1e-25` where the interesting part lives in the
-   `lo` word), and it costs more than native code.  Good for functions
-   whose sensitive regions do not coincide with sub-`Float64`-ulp input
-   structure.
-
-### Step 1: place and wire the code
+### Wire the method
 
 - Implementation files live under `src/math/elementary/` (or
   `src/math/special/`), included from `src/DoubleFloats.jl`.
-- Extend the appropriate `Base`/`SpecialFunctions` function: check that
-  the name appears in the `import` lists at the top of
-  `src/DoubleFloats.jl` (and in `export` if it is package-specific like
-  `agm`).  A `function foo(...)` for a name that was *not* imported
-  creates a new local function that users will never reach.
+- When extending a `Base` or `SpecialFunctions` operation, import it
+  in `src/DoubleFloats.jl` or qualify the method definition. Export a
+  new package-specific function if callers should be able to use it
+  unqualified after `using DoubleFloats`.
 - Write for the generic signature
   `fn(x::DoubleFloat{T}) where {T<:IEEEFloat}`.  `Double32`/`Double16`
   variants of many functions are forwarded through `Double64` by
   `src/math/elementary/templated.jl`; add your function to its list if
   that treatment fits.
 
-### Step 2: preserve relative accuracy at sensitive points
+### Preserve relative accuracy at sensitive points
 
 Identify where the function's value is small while its argument is not
 degenerate — that is where naïve formulas collapse:
 
-- **Never compute `log(1 + small)` via `1 + small`.**  The addition
-  quantizes to the absolute floor `2⁻¹⁰⁴` and the logarithm inherits it
-  as *relative* error that blows up as the argument shrinks.  Use
-  `log1p` on an exactly-formed argument.
+- Use `log1p(small)` to keep the small argument available to the
+  logarithm. Forming `1 + small` first can round part or all of the
+  correction away, which matters when the result is of order `small`.
 - **Form differences exactly.**  `x - 1` is exact for
   `x ∈ [0.5, 2]` (Sterbenz); `(1-x)/x` has an exact numerator; algebraic
   rearrangement (`1 + 2/(x-1) == (x+1)/(x-1)`) can turn a cancelling
@@ -64,15 +56,17 @@ degenerate — that is where naïve formulas collapse:
   branch (`√(x²+1) → x` for `x ≥ 4/eps(T)` is exact at working
   precision).
 
-### Step 3: series and coefficients
+### Bound series and choose coefficients
 
 - Generate coefficients at higher precision and store them as
   `hi`/`lo` pairs when they need double-word precision. See
   `_expm1_coeffs` in `explog.jl` for generated pairs. The tapered
   exponential kernels use scalar coefficients in higher-order terms
   where their contribution to the total error is small.
-- Bound the truncation: with term ratio `r`, you need
-  `n·log2(1/r) ≥ 107` plus margin.  State the bound in a comment.
+- Bound truncation over the whole reduced interval. For a series with
+  tail term ratios bounded by `r < 1`, the first omitted term's
+  magnitude divided by `1-r` bounds the omitted tail. Allow margin
+  for evaluation and reconstruction errors.
 - Series windows and branch guards must be **bounded on both sides**.
   A cautionary tale: a `cos` fix once guarded a small-angle Taylor
   kernel with `x >= π/2 - π/32` — with no upper bound, everything in
@@ -80,7 +74,7 @@ degenerate — that is where naïve formulas collapse:
   costing 17 digits over a large interval while all existing tests
   passed.  Write the window as `lo ≤ x ≤ hi`.
 
-### Step 4: termination and special values
+### Handle termination and special values
 
 - Handle `NaN`, `±Inf`, `±0.0` (preserve the sign of zero), and domain
   errors (`DomainError` for out-of-domain reals, matching `Base`), and
@@ -100,10 +94,11 @@ degenerate — that is where naïve formulas collapse:
   internal intermediate with that problem contaminate a result that *is*
   representable (rescale by exact powers of two instead; see `log`).
 
-### Step 5: test against BigFloat, adversarially
+### Test against a higher-precision reference
 
-Compare with a ≥ 256-bit `BigFloat` reference, measuring **relative**
-error in units of `2⁻¹⁰⁴`:
+Compare with a `BigFloat` reference computed at 256 bits or more.
+For nonzero references, this snippet measures relative error in units
+of `2^-104`. Use absolute error for an expected zero.
 
 ```julia
 setprecision(BigFloat, 512)
@@ -121,9 +116,10 @@ Sample every region with its own tolerance:
 - extreme magnitudes: near `floatmax`, near `floatmin`, subnormals;
 - special values: `NaN`, `±Inf`, `±0.0`, and exact `DomainError` edges.
 
-Place tests in `test/` and wire the file into `test/runtests.jl`.
+Place tests in `test/` and wire the file into `test/runtests.jl`. The
+[Accuracy Report](accuracy_report.md) describes the existing sampled checks.
 
-## Part 2: matrix functions
+## Matrix functions
 
 ### Choose the algorithm class first
 
@@ -139,8 +135,9 @@ Place tests in `test/` and wire the file into `test/runtests.jl`.
   - functions with a triangular recurrence → complex Schur, operate on
     `T`, transform back (`sqrt`, `log`);
   - anything expressible through `exp`/`log`/`sqrt` → compose
-    (`sincos` from `exp(iA)`, `tanh` from `exp(±A)`, powers from
-    `exp(p·log(A))`).
+    when domains and branches agree. Matrix powers use
+    `exp(p * log(A))` in the general case. The circular and
+    hyperbolic families share polynomial and reconstruction code.
 
 ### Correctness rules
 
@@ -169,13 +166,13 @@ Random-matrix identity residuals alone are not enough; include:
 - **defective matrices with closed forms**: `exp([1 1; 0 1]) = e·[1 1; 0 1]`,
   `sqrt([1 1; 0 1]) = [1 ½; 0 1]`, nilpotent `exp([0 1; 0 0]) = I + N`;
 - **identity residuals**: `sqrt(A)² ≈ A`, `exp(log(A)) ≈ A`,
-  `sin²+cos² = I` (they hold for *every* square matrix);
+  `sin²+cos² = I`, using inputs in the functions' domains;
 - **branch cases**: negative real eigenvalues (complex results),
   exactly singular `log`;
 - **convention checks**: result eltype for real input; symmetric input
   giving (numerically) symmetric output — compare with a tolerance, not
   `ishermitian`, which tests exact equality;
-- **scale**: a matrix with `‖A‖ ~ 100` to exercise deep
+- **Scale.** A matrix with `‖A‖ ~ 100` to exercise deep
   scaling/squaring.  Avoid identities with intrinsic cancellation
   amplification (`exp(A)·exp(-A) = I` fails at `e^{‖A‖}`-ish
   amplification for any correct implementation); compare against an

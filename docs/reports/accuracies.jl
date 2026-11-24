@@ -3,8 +3,7 @@
 # Run from anywhere:  julia docs/reports/accuracies.jl
 # Every function is compared against a 512-bit BigFloat reference over
 # random in-domain samples.  Errors are reported in units of the tested type's
-# working precision ("ulps" below): 1 ulp means the result is as accurate as
-# the format allows.  Not every exported function is measured.
+# working precision ("ulps" below). The report covers a subset of the API.
 
 import Pkg
 Pkg.activate(joinpath(@__DIR__, "..", ".."))
@@ -154,9 +153,10 @@ function accuracy_section(name, ulptext, explog, trig, arctrig, hyp, special, ma
     return """
 ## $name
 
-Errors are measured against a 512-bit `BigFloat` reference in units of the
-`$name` working precision, **1 ulp = $ulptext relative**.  A worst case of
-about 1 ulp means the function is as accurate as the format allows.
+Scalar errors are measured against a 512-bit `BigFloat` reference.
+For nonzero references, the tables divide relative error by the working
+precision unit, **1 ulp = $ulptext relative**. Each worst value is the
+maximum over the listed samples.
 
 ### Exponentials and Logarithms
 
@@ -180,17 +180,19 @@ $(join(hyp, "\n"))
 
 ### Special Functions
 
-`erf`, `erfc`, and `gamma` are computed via `Float128`; its 113-bit
-significand caps their accuracy at roughly half an ulp of `Double64`.
+`erf`, `erfc`, and `gamma` are computed via `Float128` before conversion
+back to the tested type. The errors below include both steps.
 
 $hdr
 $(join(special, "\n"))
 
 ### Matrix Functions (identity residuals)
 
-Matrix routines are checked through their defining identities on random
-matrices, normalized per matrix dimension.  An unavailable row identifies a
-routine that cannot currently execute for that precision.
+The matrix rows measure how closely the results satisfy the listed
+identities on random matrices. Each residual uses the largest entry
+magnitude, divided by dimension and working epsilon. The logarithm
+and square root rows also divide by the largest input entry magnitude.
+An unavailable row indicates an error during that measurement.
 
 $mhdr
 $(join(matrix, "\n"))
@@ -212,8 +214,6 @@ $double64_section
 
 $double32_section
 
-The unavailable Double32 matrix rows currently require a generic Schur path
-through `Complex{Double32}`, which is not supported.
 """
 
 outpath = joinpath(@__DIR__, "accuracy_report.md")

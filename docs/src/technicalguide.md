@@ -4,7 +4,7 @@ How DoubleFloats represents numbers and which algorithms sit behind the
 public functions.  For guidance on extending the package, see
 [Adding New Functions](addingfunctions.md).
 
-## Representation: unevaluated sums
+## Representation as an unevaluated sum
 
 A `DoubleFloat{T}` holds two floats, `hi` and `lo`, whose *unevaluated
 sum* is the represented value:
@@ -14,13 +14,15 @@ value = hi + lo,   with   |lo| ≤ ulp(hi)/2
 ```
 
 `hi` is the value rounded to `T`; `lo` is the leading part of the
-rounding error.  For `Double64` this yields a 106-bit significand
-(2 × 53), about 32 decimal digits, with one ulp ≈ `2⁻¹⁰⁴` relative.
+rounding error.  For `Double64` this gives a nominal 106-bit significand
+(2 × 53), about 32 decimal digits. The reports use `2^-104` as a
+relative working-precision unit. See
+[Representation and precision](characteristics.md) for the supported types.
 
 Two structural consequences matter throughout the package:
 
 - **The exponent range is that of `T`.**  Overflow and underflow happen
-  where `Float64` overflows and underflows.
+  on the scale of the underlying type.
 - **Precision degrades near the bottom of the range.**  When
   `|value| < ~4e-292`, the `lo` word is subnormal and the effective
   precision tapers below 106 bits; below `~1e-308` only `Float64`
@@ -30,18 +32,18 @@ Two structural consequences matter throughout the package:
 
 ## Error-free transformations
 
-All arithmetic reduces to a handful of exact building blocks
-(`src/math/errorfree.jl`):
+Scalar arithmetic uses building blocks from `src/math/errorfree.jl`.
+Their error-free identities assume finite inputs and representable
+intermediate results and residuals.
 
 - `two_sum(a, b)` / `two_hilo_sum(a, b)`: `hi + lo == a + b` exactly.
 - `two_prod(a, b)`: `hi + lo == a * b` exactly, using `fma`.
 - Division and square root use these plus one Newton-like correction
-  (`src/math/ops/`), giving faithfully rounded (≤ 1 ulp) results.
+  (`src/math/ops/`) to recover low bits. Operations returning one
+  DoubleFloat can still round.
 
-A subtlety worth knowing: a **zero `lo` word does not mean a value is
-exact**, and no fast path may skip the correction step because of it
-(`inv` once did, and silently returned `Float64`-quality reciprocals for
-inputs like `Double64(3.0)`).
+A zero low word describes the input pair. The output can still need a
+low word, as happens when taking the reciprocal of `Double64(3.0)`.
 
 ## Elementary function algorithms
 
@@ -135,7 +137,7 @@ Vectors shorter than 64 elements take the scalar path.
 | Input type and operations | Native ranges and result |
 |:---|:---|
 | `Double64` `exp2` | Heads on −1021 to −0.001 or 0.001 to 1023, where the high word of the result stays normal. |
-| `Double64` `exp`, `exp10` | Absolute head from 0.001 to 700 for `exp` and from 0.001 to 300 for `exp10), with three-limb base conversion. |
+| `Double64` `exp`, `exp10` | Absolute head from 0.001 to 700 for `exp` and from 0.001 to 300 for `exp10`, with three-limb base conversion. |
 | `Double64` `log2`, `log`, `log10` | Direct regime strictly between 15/16 and 17/16. Table regime at or above `2^-915` outside the direct interval, up to the largest finite head. |
 | `Double64` `log1p`, `expm1` | `log1p` on 0.005–0.05. `expm1` uses four doublings for absolute heads on `[2^-5, 2^-4)` and ordinary exponential subtraction on 0.5–700. |
 | `Double64` power | Scalar `Int` exponent `5` with bases on 0.5–1.5, or vector `Double64` exponents on 0.2–0.9 with bases on 1.1–1.5. |
@@ -279,8 +281,9 @@ routes dense factorizations through pure-Julia generic implementations:
 
 ## [Matrix functions](@id matrix-function-kernels)
 
-The dense implementations in `src/math/linearalgebra/matfun.jl` handle
-defective inputs within each function's domain. Structure checks apply
+See [Linear Algebra](linearalgebra.md#Functions-of-whole-matrices) for
+function domains and a worked example. The dedicated implementations in
+`src/math/linearalgebra/matfun.jl` can handle defective inputs. Structure checks apply
 to the stored matrix. For a skipped entry, both limbs of each component
 must be zero.
 

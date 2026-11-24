@@ -1,121 +1,85 @@
 # User Guide
 
-This guide covers everyday use of DoubleFloats: creating values, what
-accuracy to expect, and how the elementary, special, and matrix functions
-behave.  For how things work internally, see the Technical Guide.
+Start with [Construct values](construction.md) if you are preparing inputs.
+This guide moves from operations on one value to elementwise operations
+on vectors and functions of whole matrices.
 
-## The types
+## Scalar calculations
 
-| type | built from | significand | decimal digits | exponent range |
-|:-----|:-----------|------------:|---------------:|:---------------|
-| `Double64` | two `Float64` | 106 bits | ~32 | same as `Float64` |
-| `Double32` | two `Float32` | 48 bits  | ~14 | same as `Float32` |
-| `Double16` | two `Float16` | 22 bits  | ~6  | same as `Float16` |
+Use ordinary Julia arithmetic and functions with the extended types.
+[Scalar operations](capabilities.md) summarizes available operations and
+[Special Functions](special.md) covers Bessel, gamma, and other functions.
 
-`ComplexDF64`, `ComplexDF32`, `ComplexDF16` are the complex counterparts.
-
-`Double64` is the recommended type.  It is faster and more precise than
-`Double32`/`Double16` (which mainly exist for completeness), and much
-faster than `BigFloat` at comparable precision in typical workloads.
-The values are immutable bitstypes, and ordinary scalar arithmetic
-does not allocate.
-
-## Constructing values
-
-```julia
+```@example scalar_functions
 using DoubleFloats
 
-Double64(2)          # exact: integers convert exactly
-Double64(2) / 10     # 0.2 to full Double64 precision
-df64"0.2"            # string literal: 0.2 to full Double64 precision
-Double64(0.2)        # NOT 1/5: 0.2 is rounded to Float64 *first*
+x = df64"1e-20"
+println("log1p(x) = ", string(log1p(x)))
+println("expm1(x) = ", string(expm1(x)))
 ```
 
-The last line is the most common pitfall: a decimal literal like `0.2`
-is already a `Float64` approximation before `Double64` sees it.  Use
-integer ratios or the string macros (`df64"..."`, `df32"..."`, `df16"..."`)
-whenever a decimal constant must be exact to full precision.
+Use `log1p(x)` for `log(1 + x)` and `expm1(x)` for `exp(x) - 1`
+when `x` is small. These scalar functions avoid rounding away the
+small difference in the intermediate result. For a worked validation,
+see [Choosing and checking precision](appropriate.md).
 
-`showtyped`, `stringtyped`, and `parse` round-trip values exactly:
-
-```julia
-julia> x = sqrt(Double64(2));
-julia> showtyped(x)
-Double64(1.4142135623730951, -9.667293313452913e-17)
-julia> parse(Double64, stringtyped(x)) === x
-true
-```
-
-## What accuracy to expect
-
-One unit in the last place (ulp) of `Double64` is about `2⁻¹⁰⁴ ≈ 4.9e-32`
-relative. The elementary functions generally deliver working-precision
-accuracy. In the [Accuracy Report](accuracy_report.md), the sampled
-maximum error varies by function and input range. For example, the
-sampled worst case for `exp` on `(-100, 100)` is about 3.3 ulps.
-
-Boundary behavior worth knowing:
-
-- For `Double64`, `exp(x)` overflows near `x ≈ 709.78` and rounds
-  to zero near `x ≈ -745.13`. As the result approaches zero its low
-  limb eventually runs out of representable bits. Subnormal results
-  from `exp`, `exp2`, and `exp10` on `Double64` and `Double32`
-  round to the nearest value on the underlying float's subnormal grid.
-  For example, `exp2(Double64(-1075.0))` rounds to zero, while
-  `exp2(Double64(-1075.0, 1e-30))` returns the smallest positive
-  `Float64` subnormal as a `Double64`.
-- A finite positive logarithm argument can have a tiny low limb, even
-  when its high limb is far from zero. Mantissa normalization accounts
-  for low limbs that would become subnormal during scaling.
-- Scalar `cbrt` returns the same double-word type as its argument.
-  `Double64` cube roots retain working precision at extreme magnitudes
-  through scaling before refinement.
-- `sinh`/`cosh` stay finite through `x ≈ 710.47`.
-- Relative accuracy near the zeros of `sin`/`cos` is limited by the
-  condition of the function itself; absolute accuracy stays at the
-  `2⁻¹⁰⁴` level.
-
-## Elementary and special functions
-
-All the familiar functions are available; see Capabilities for the full
-list.  Special functions include `erf`, `erfc`, `gamma`, `loggamma`,
-Bessel functions `besselj0/j1/y0/y1`, `besselj(n, x)`, `bessely(n, x)`,
-the arithmetic-geometric mean `agm(a, b)` / `agm1(x)`, and the complete
-elliptic integral `ellipk(m)` (accurate over the whole domain `0 ≤ m < 1`,
-including arbitrarily close to `m = 1`).
-
-`erf`, `erfc`, `gamma`, and the Bessel functions are computed through
-`Float128` (113-bit) arithmetic, which caps them at roughly half a
-`Double64` ulp — in practice, full accuracy.
+For `Double64`, `exp` overflows near an input of 709.78 and rounds
+to zero near −745.13. The exponential kernels account for subnormal
+rounding. Near a rounding midpoint they may use a higher-precision
+fallback. See the [Technical Guide](technicalguide.md#Elementary-function-algorithms)
+for details and the [Benchmark Report](benchmark_report.md) for timings.
 
 ## Elementwise operations on vectors
 
-Use `DoubleFloats.simdmap!` to apply a scalar function to preallocated
-vectors. The call returns the destination. For example, `sincos` stores
-one `(sin, cos)` tuple per element, and `^` can reuse a scalar exponent
-across the batch.
+Ordinary Julia broadcasting applies a scalar function to each element.
+Use `y = sin.(x)` to allocate a result, or `y .= sin.(x)` to write into
+an existing array. For vector batches try `DoubleFloats.simdmap!`, which
+reuses a destination and can use specialized kernels. It returns the
+destination.
 
-```julia
+### Evaluate a batch of angles
+
+The broadcast version produces one tuple per angle. The batch version
+writes those tuples into a reusable vector. The grid uses exactly
+representable binary fractions at its endpoints.
+
+```@example evaluate_angles
 using DoubleFloats
 
-x = Double64.(range(0.25, 2; length=4096))
-y = similar(x)
-DoubleFloats.simdmap!(sin, y, x)
+angles = Double64.(range(0.25, 2; length=4096))
+reference = sincos.(angles)
 
-pairs = Vector{Tuple{Double64,Double64}}(undef, length(x))
-DoubleFloats.simdmap!(sincos, pairs, x)
+pairs = Vector{Tuple{Double64,Double64}}(undef, length(angles))
+DoubleFloats.simdmap!(sincos, pairs, angles)
 
-DoubleFloats.simdmap!(^, y, x, 5)
-DoubleFloats.simdmap!(atan, y, x, reverse(x))
+max_error = maximum(zip(pairs, reference)) do (got, want)
+    max(abs(got[1] - want[1]), abs(got[2] - want[2]))
+end
 
-z = reverse(x)
-DoubleFloats.simdmap!(hypot, y, x, z)
-DoubleFloats.simdmap!(DoubleFloats.normalize, pairs, x, z)
+@assert max_error < df64"1e-29"
+println("Processed ", length(angles), " angles")
 ```
 
-Every vector must have the same axes as the destination. A mismatch throws
-`DimensionMismatch` before any writes. The operation uses elementwise
-indexing without broadcast expansion. Paired normalization stores one
+### Inputs, outputs, and execution order
+
+The batch API takes one or two input vectors. Power also accepts a
+single scalar exponent for the whole batch. With `angles` and `pairs`
+from above, related calls include these.
+
+```@example evaluate_angles
+values = similar(angles)
+other = reverse(angles)
+
+DoubleFloats.simdmap!(^, values, angles, 5)
+DoubleFloats.simdmap!(atan, values, angles, other)
+DoubleFloats.simdmap!(hypot, values, angles, other)
+DoubleFloats.simdmap!(DoubleFloats.normalize, pairs, angles, other)
+nothing
+```
+
+Every vector must have the same axes (valid indices) as the destination.
+A mismatch throws `DimensionMismatch` before any writes. The operation
+uses elementwise indexing without broadcast expansion. Paired normalization stores one
 `(x/h, z/h)` tuple per element for ordinary finite inputs, using the
 pair's hypotenuse `h`. Assignment uses the destination's
 usual conversion rules. For example, a `cis` call on a real NaN produces
@@ -142,58 +106,15 @@ when the order of writes on failure matters.
 See the [Technical Guide](@ref elementary-vector-kernels) for SIMD coverage
 and measured performance.
 
-## Linear algebra
+## Work with matrices
 
-```julia
-using DoubleFloats, LinearAlgebra
-```
+Load `LinearAlgebra` for standard operations such as `norm`, `eigen`,
+and matrix factorizations. Use `A \ b` to solve a system and `A * B`
+for matrix multiplication.
 
-Everything routine works with `Double64`/`ComplexDF64` matrices:
-`lu`, `qr` (plain and pivoted), `lq`, `cholesky`, `svd`, `eigen`,
-`schur`, `hessenberg`, `bunchkaufman`, `\` (square and least squares),
-`det`, `inv`, `pinv`, `nullspace`, `rank`, `cond`, `opnorm`,
-`sylvester`, and `lyap`.
-
-`eigen` follows the same conventions as the LAPACK route for `Float64`:
-symmetric/Hermitian input yields real eigenvalues and orthonormal
-vectors; a real matrix whose spectrum is entirely real yields a real
-factorization; eigenvalues are sorted by `(real, imag)`.
-
-## Functions of matrices
-
-`exp`, `log`, `sqrt`, and the circular and hyperbolic families handle
-defective (non-diagonalizable) square matrices within each function's
-domain. Here is the exponential of a Jordan block.
-
-```julia
-julia> exp(Double64[1 1; 0 1])     # defective; diagonalization would fail
-2×2 Matrix{Double64}:
- 2.71828  2.71828
- 0.0      2.71828
-```
-
-The exponential of a real matrix is real. For `sqrt` and `log`,
-the result type follows the selected branch and can be complex for
-negative real eigenvalues. A singular matrix logarithm throws
-`SingularException`.
-
-Pass a dense matrix with exact triangular or diagonal structure to
-use the corresponding fast path. Eligible triangular `log` and `sqrt`
-skip Schur factorization. Larger eligible triangles also use packed
-products for `exp` and the trig and hyperbolic families. An exact
-half-power of an eligible nonsingular real triangle uses `sqrt`.
-See the [Technical Guide](@ref matrix-function-kernels) for the ranges
-and crossovers.
-
-The remaining families (`cbrt`, `sinpi`/`cospi`, and the inverse
-trigonometric/hyperbolic functions of matrices) use eigen-diagonalization
-and require a diagonalizable argument.
-
-## Performance
-
-See the [Benchmark Report](benchmark_report.md) for representative
-timings. Exponential inputs guaranteed to round to zero skip the
-polynomial. A subnormal result close enough to a rounding midpoint can
-require a higher-precision fallback, which takes longer and allocates.
-Near-cancelling `Double64` `fma` and `muladd` calls also do more
-work than ordinary calls, using an allocation-free refinement.
+A dot changes the operation. `exp.(A)` applies the scalar exponential
+to each entry, while `exp(A)` computes the exponential of the matrix
+using matrix algebra. For example, `exp.(A)` replaces every zero entry
+with one, while the matrix exponential of a triangular matrix retains
+its triangular structure. See [Linear Algebra](linearalgebra.md) for a
+worked example and the supported function families.
