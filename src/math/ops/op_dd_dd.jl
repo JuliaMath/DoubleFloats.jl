@@ -82,7 +82,26 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 =#
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    isnan(HI(a)) && return a
+    hi, lo = a
+    isnan(hi) && return a
+    (iszero(hi) || isinf(hi)) && return (hi, zero(T))
+    # Across this window the input square and the inverse-square seed's
+    # cube are well inside the Float64 exponent range.
+    if T === Float64 && !(0x1p-256 <= abs(hi) <= 0x1p256)
+        return _cbrt_rescaled(hi, lo)
+    end
+    return _cbrt_newton(a)
+end
+
+@noinline function _cbrt_rescaled(hi::Float64, lo::Float64)
+    k = fld(exponent(abs(hi)), 3)
+    # The scaled head has magnitude in [1, 8). Scale the limbs directly
+    # because the normalizing factor itself can exceed floatmax.
+    rh, rl = _cbrt_newton((ldexp(hi, -3k), ldexp(lo, -3k)))
+    return ldexp(rh, k), ldexp(rl, k)
+end
+
+function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
@@ -134,6 +153,6 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
 
     ax = add_dddd_dd(ax, amax3)
 
-    isnan(HI(ax)) && return (cbrt(HI(a)), zero(T))  # subnormal numbers
+    T !== Float64 && isnan(HI(ax)) && return (cbrt(HI(a)), zero(T))
     return ax
 end

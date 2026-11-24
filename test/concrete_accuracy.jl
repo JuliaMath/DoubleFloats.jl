@@ -65,6 +65,26 @@ end
     end
 end
 
+@testset "Cube root across the Float64 exponent range" begin
+    setprecision(BigFloat, 512) do
+        for x in (Double64(nextfloat(0.0)), Double64(prevfloat(floatmin(Float64))),
+                  Double64(0x1p-1020, nextfloat(0.0)),
+                  Double64(0x1p600, 0x1p545), Double64(0x1p600, -0x1p545),
+                  Double64(prevfloat(0x1p-256)), Double64(0x1p-256),
+                  Double64(0x1p256), Double64(nextfloat(0x1p256)), floatmax(Double64),
+                  Double64(0x1p-769), Double64(0x1p-768), Double64(0x1p-767))
+            for arg in (x, -x)
+                actual = cbrt(arg)
+                reference = cbrt(BigFloat(arg))
+                @test actual isa Double64
+                @test abs(BigFloat(actual) - reference) <= 8 * BigFloat(eps(Double64)) * abs(reference)
+            end
+        end
+    end
+    @test signbit(cbrt(Double64(-0.0)))
+    @test cbrt(Double64(-Inf)) == Double64(-Inf)
+end
+
 @testset "Subnormal numbers" begin
     for (F, D) in (
         (Float64, Double64),

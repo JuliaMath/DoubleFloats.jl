@@ -61,6 +61,7 @@ include("arithmetic.jl")
 include("fma.jl")
 include("modrem.jl")
 include("functions.jl")
+include("explog_boundaries.jl")
 include("matmul.jl")
 include("complex.jl")
 

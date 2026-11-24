@@ -7,7 +7,9 @@ for F in (# :mod2pi, :square, :cube, :sqrt,
           :sinh, :cosh, :tanh, :csch, :sech, :coth,
           :asinh, :acosh, :atanh, :acsch, :asech, :acoth)
   @eval begin
-    $F(x::Double32) = Double32($F(Double64(x)))
+    if $(F !== :exp)
+      $F(x::Double32) = Double32($F(Double64(x)))
+    end
     $F(x::Double16) = Double16($F(Double64(x)))
     $F(x::DoubleFloat{Double32}) = DoubleFloat{Double32}($F(DoubleFloat{Double64}(x)))
     $F(x::DoubleFloat{Double16}) = DoubleFloat{Double16}($F(DoubleFloat{Double64}(x)))

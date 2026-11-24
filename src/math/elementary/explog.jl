@@ -4,14 +4,8 @@
 # Addition, multiplication, and squaring use the branch-free hot-path kernels
 # from math/ops (add_dddd_dd_ / mul_dddd_dd_ / square_dd_dd_), which are the
 # same algorithms without the saturating `!isfinite` guard of the public
-# EFTs.  Every caller in this file either keeps its operands well inside the
-# exponent range (series arguments |r| <= 1/16, reduced mantissas in [1, 2),
-# table centers, exponents as floats) or routes non-finite input around the
-# kernel with a post-hoc select — _exp2_clamped for the exp family,
-# _log_special for the log family.  Nothing here can newly overflow, so the
-# guard is dead weight: dropping it (together with the fused Horner step
-# below) takes exp2(::Double64) from 384 branches and 2979 lines of LLVM IR
-# to 3 and 205, and leaves the remaining straight-line code vectorizable.
+# EFTs. Polynomial operands stay in a reduced range. The public exp/log
+# paths handle overflow, underflow, and other special values separately.
 #
 # Division keeps a local kernel: _mf_div is reciprocal-based
 # (Karp–Markstein, one division) where ops' dvi_dddd_dd divides twice; it is
@@ -49,6 +43,8 @@ end
     return Int(biased) - Base.exponent_bias(T)
 end
 
+# Both source and destination exponent fields must be finite and normal.
+# Zero is also accepted.
 @inline function _uldexp(x::T, k::Integer) where {T<:IEEEFloat}
     U = Base.uinttype(T)
     shifted = reinterpret(U, x) + (k % U) << Base.significand_bits(T)
@@ -97,9 +93,10 @@ end
 # twice and throws away the exact product bits in between; keeping them costs
 # a third of the flops and a much shorter dependency chain.
 #
-# REQUIRES |c[1]| >= |hi(p*r)|, as _horner_step does.  In the series below
-# the coefficient ratio |c_{k+1}/c_k| stays under 3/4 and the argument is
-# bounded by 1/16, so the incoming term is at most |c[1]|/16.
+# Both overloads require the coefficient head to dominate the rounded
+# product head, and the sum head to dominate the final correction. The
+# exp coefficients decrease with degree and |r| is near or below 1/16.
+# The log coefficients also decrease with degree, with |r| <= (1/31)^2.
 @inline function _horner_step_dd(c::Tuple{T,T}, p::Tuple{T,T},
                                  r::Tuple{T,T}) where {T<:IEEEFloat}
     th, tl = two_prod_(p[1], r[1])
@@ -190,12 +187,10 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
 # |y2| <= ulp(y1) and |y3| ~ |y|*2^-105: keeps the product bits a plain
 # double-word multiply would discard.
 #
-# The three products keep the guarded two_prod: they are the only place a
-# raw (possibly huge or infinite) x reaches a multiply, and the saturating
-# (Inf, 0) convention is what lets exp(+Inf) reconstruct to +Inf downstream.
-# Every sum below is fed by those already-saturated values and by quantities
-# bounded by ulp(p1), so none can newly overflow — the branch-free EFTs
-# apply, leaving the three products as the only branches here.
+# Keep the guarded products because x can be huge or infinite. For
+# in-range inputs the corrections are small relative to the leading
+# product. The clamps inspect the converted head before reconstruction
+# and discard the trailing values when that head is infinite or NaN.
 @inline function _mf_mul3(x::Tuple{T,T}, c::Tuple{T,T,T}) where {T<:IEEEFloat}
     p1, e1 = two_prod(x[1], c[1])
     p2, e2 = two_prod(x[1], c[2])
@@ -205,8 +200,8 @@ const inv_oddint_lo  = map(x -> LO(x), inv_oddint)
     t = fma(x[1], c[3], fma(x[2], c[2], e2 + e3))
     s, u = two_sum_(p2, p3)
     m, v = two_sum_(e1, s)
-    # every second-order term is a full limb below p1 (|c2| <= ulp(c1) and
-    # |x2| <= ulp(x1)), so |m| <= 2^-51*|p1| and the ordered sum applies
+    # For a normal, finite leading product, the low limbs and product
+    # residual contribute only a few ulps of p1, so p1 dominates m.
     y1, w = two_hilo_sum_(p1, m)
     return y1, w, (u + v) + t
 end
@@ -253,11 +248,11 @@ end
 
 ### Kernel and public methods
 
-@inline function _exp2_kernel(x::Tuple{T,T}, x3::T = zero(T)) where {T<:IEEEFloat}
+@inline function _exp2_reduced(x::Tuple{T,T}, x3::T) where {T<:IEEEFloat}
     _half   = T(0.5)
     _eighth = T(0.125)
-    # reduction: x = n + 8r, n integer, |r| ≤ 1/16              (exact)
-    # trunc-based nearest-integer: reproducible across CPU/GPU backends
+    # Reduce x to n + 8r. Choose n from the head, so the trailing limbs
+    # can move r slightly past ±1/16 at an endpoint.
     n_float = trunc(x[1] + copysign(_half, x[1]))
     # x₁ and n_float share x₁'s ulp grid and differ by ≤ 1/2, so the
     # subtraction is exact; one two_sum replaces the full add_dddd_dd_.  Both
@@ -268,8 +263,11 @@ end
     # kernel: 2^(x-n) = (2^r)^8
     p = _exp2_poly(r)
     p = square_dd_dd_(square_dd_dd_(square_dd_dd_(p)))
-    # reconstruction: · 2^n in two exact halves (avoids over/underflow)
-    n = unsafe_trunc(_int_type(T), n_float)
+    return p, unsafe_trunc(_int_type(T), n_float)
+end
+
+@inline function _exp2_scale(p::Tuple{T,T}, n::Integer) where {T<:IEEEFloat}
+    # Split the scale into two finite normal powers of two.
     h = n >> 1
     s1 = _pow2(T, h)
     s2 = _pow2(T, n - h)
@@ -278,19 +276,113 @@ end
     return p
 end
 
-@inline function _exp2_clamped(x::Tuple{T,T}, x3::T = zero(T)) where {T<:IEEEFloat}
-    p = _exp2_kernel(x, x3)
-    # gradual underflow needs no shifted re-run of the kernel: down to
-    # _exp2_zero the split exponents h and n-h stay well above the normal
-    # limit, so p·s1 is an exact normal scaling and the final ·s2 is the
-    # one multiply that rounds correctly into the subnormals (Base.ldexp
-    # truncates there).  The low limb is meaningless at subnormal
-    # magnitudes and is dropped.  Below _exp2_zero and above _exp2_max the
-    # kernel output is garbage (n overflows its exponent field or the
-    # integer type) — the selects override it, keeping this branch-free.
-    p = ifelse(x[1] < _exp2_min(T), (p[1], zero(T)), p)
-    p = ifelse(x[1] < _exp2_zero(T), (zero(T), zero(T)), p)
-    return ifelse(x[1] > _exp2_max(T), (T(Inf), T(Inf)), p)
+# Absolute error bounds for ph + pl before 2^n scaling in the low band.
+# On |r| <= 1/16 + 2^-16, summing the absolute coefficient differences
+# from Taylor plus its remainder bounds polynomial error by 2^-95 / 2^-49
+# (Float64 / Float32). The scalar taper contributes less than 2^-100 /
+# 2^-48 after weighting by its outer powers. Each double-word Horner step
+# and square has local error below 32u^2 (u = eps(T)/2) in this range:
+# the rounded cross products and sums are of size O(u), and the leading
+# product and sum use error-free transforms. Propagating through the
+# Horner multipliers (each below 0.063) and three squares (each with
+# slope below 2.4) contributes less than 1024u^2. The low-band conversion
+# has |input*log2(base)| < 1081; the omitted triple-limb terms are of
+# order 1081u^3. The final reduction adds the third limb to a residual
+# of magnitude at most u. The bounds below include these errors.
+@inline _exp2_reduced_error(::Type{Float64}) = 0x1p-80
+@inline _exp2_reduced_error(::Type{Float32}) = Float32(0x1p-36)
+
+for (f, mpfr_func) in ((:exp2, :mpfr_exp2), (:exp, :mpfr_exp), (:exp10, :mpfr_exp10))
+    @eval function _exp_mpfr!(::typeof($f), value::BigFloat, rounding)
+        ccall(($(QuoteNode(mpfr_func)), Base.MPFR.libmpfr), Cint,
+              (Ref{BigFloat}, Ref{BigFloat}, Base.MPFR.MPFRRoundingMode),
+              value, value, rounding)
+    end
+end
+
+# Direct MPFR conversion avoids an intermediate Float64 rounding for Float32.
+_exp_mpfr_round(::Type{Float64}, value) =
+    ccall((:mpfr_get_d, Base.MPFR.libmpfr), Cdouble,
+          (Ref{BigFloat}, Base.MPFR.MPFRRoundingMode), value, Base.MPFR.MPFRRoundNearest)
+_exp_mpfr_round(::Type{Float32}, value) =
+    ccall((:mpfr_get_flt, Base.MPFR.libmpfr), Cfloat,
+          (Ref{BigFloat}, Base.MPFR.MPFRRoundingMode), value, Base.MPFR.MPFRRoundNearest)
+
+@noinline function _exp_subnormal_refine(op::F, input::Tuple{T,T}) where {F,T}
+    # Only exp2 can land exactly on a dyadic midpoint here, and its
+    # integer zero midpoint is resolved before this call. The directed
+    # endpoints therefore eventually round to the same target value.
+    precision = 128
+    while true
+        # Both input limbs are exact at this precision. Reuse them and the
+        # destination when evaluating the two directed endpoints.
+        input_hi = BigFloat(Float64(input[1]), RoundNearest; precision)
+        input_lo = BigFloat(Float64(input[2]), RoundNearest; precision)
+        value = BigFloat(; precision)
+        down = Base.MPFR.MPFRRoundDown
+        exact_input = iszero(_exp_mpfr_add!(value, input_hi, input_lo, down))
+        exact_result = iszero(_exp_mpfr!(op, value, down))
+        lo = _exp_mpfr_round(T, value)
+        if exact_input
+            exact_result && return lo
+            # A downward-rounded result and its MPFR successor bracket
+            # the exact value when the input sum itself was exact.
+            ccall((:mpfr_nextabove, Base.MPFR.libmpfr), Cvoid, (Ref{BigFloat},), value)
+        else
+            up = Base.MPFR.MPFRRoundUp
+            _exp_mpfr_add!(value, input_hi, input_lo, up)
+            _exp_mpfr!(op, value, up)
+        end
+        hi = _exp_mpfr_round(T, value)
+        lo == hi && return lo
+        precision *= 2
+    end
+end
+
+function _exp_mpfr_add!(value::BigFloat, hi::BigFloat, lo::BigFloat, rounding)
+    ccall((:mpfr_add, Base.MPFR.libmpfr), Cint,
+          (Ref{BigFloat}, Ref{BigFloat}, Ref{BigFloat}, Base.MPFR.MPFRRoundingMode),
+          value, hi, lo, rounding)
+end
+
+@inline function _exp2_subnormal(p::Tuple{T,T}, n, op::F, input) where {T,F}
+    scale = _pow2(T, n - Int(_exp2_min(T)) + Base.significand_bits(T))
+    hi = p[1] * scale
+    lo = p[2] * scale
+    k = round(hi)
+    residual = (hi - k) + lo
+    # The head subtraction is exact. Pad the scaled error bound for the
+    # residual and midpoint-distance roundings.
+    distance = abs(abs(residual) - T(0.5))
+    if distance <= muladd(scale, _exp2_reduced_error(T), eps(T))
+        # Compile the arbitrary-precision path on its first use rather
+        # than when compiling the native kernel.
+        return Base.inferencebarrier(_exp_subnormal_refine)(op, input)::T
+    end
+    if abs(residual) > T(0.5)
+        k += copysign(one(T), residual)
+    end
+    # The IEEE encoding is the lattice index from zero through the first
+    # normal binade. Construct it directly to avoid subnormal multiplication.
+    U = Base.uinttype(T)
+    return reinterpret(T, unsafe_trunc(U, k))
+end
+
+@noinline function _exp2_low(x::Tuple{T,T}, x3::T, op::F, input::Tuple{T,T}) where {T,F}
+    if op === exp2 && x[1] == _exp2_min(T) - T(Base.significand_bits(T) + 1)
+        return (x[2] > zero(T) ? nextfloat(zero(T)) : zero(T), zero(T))
+    end
+    p, n = _exp2_reduced(x, x3)
+    return (_exp2_subnormal(p, n, op, input), zero(T))
+end
+
+@inline function _exp2_clamped(x::Tuple{T,T}, x3::T, op::F, input::Tuple{T,T}) where {T,F}
+    x[1] < _exp2_zero(T) && return (zero(T), zero(T))
+    x[1] > _exp2_max(T) && return (T(Inf), T(Inf))
+    isnan(x[1]) && return (T(NaN), T(NaN))
+    x[1] <= _exp2_min(T) && return _exp2_low(x, x3, op, input)
+    p, n = _exp2_reduced(x, x3)
+    return _exp2_scale(p, n)
 end
 
 const _DF64or32 = Union{Float64, Float32}
@@ -301,21 +393,38 @@ const _DF64or32 = Union{Float64, Float32}
 
 function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
-    p = _exp2_clamped(HILO(x))
+    input = HILO(x)
+    p = _exp2_clamped(input, zero(T), exp2, input)
     return DoubleFloat{T}(p[1], p[2])
 end
 
 function Base.exp(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
-    y1, y2, y3 = _mf_mul3(HILO(x), _log2_e3(T))
-    p = _exp2_clamped((y1, y2), y3)
+    input = HILO(x)
+    y1, y2, y3 = _mf_mul3(input, _log2_e3(T))
+    p = _exp2_clamped((y1, y2), y3, exp, input)
     return DoubleFloat{T}(p[1], p[2])
+end
+
+function Base.exp(x::Double32)
+    # Above -87 the result is normal in Float32. Preserve the promoted
+    # method except in the low band, where rounding must target Float32.
+    if HI(x) <= -87.0f0
+        input = HILO(x)
+        y1, y2, y3 = _mf_mul3(input, _log2_e3(Float32))
+        if y1 <= _exp2_min(Float32)
+            p = _exp2_clamped((y1, y2), y3, exp, input)
+            return Double32(p[1], p[2])
+        end
+    end
+    return Double32(exp(Double64(x)))
 end
 
 function Base.exp10(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
-    y1, y2, y3 = _mf_mul3(HILO(x), _log2_10_3(T))
-    p = _exp2_clamped((y1, y2), y3)
+    input = HILO(x)
+    y1, y2, y3 = _mf_mul3(input, _log2_10_3(T))
+    p = _exp2_clamped((y1, y2), y3, exp10, input)
     return DoubleFloat{T}(p[1], p[2])
 end
 
@@ -324,19 +433,9 @@ end
 Base.exp2(x::Double16)  = Double16(exp2(Double64(x)))
 Base.exp10(x::Double16) = Double16(exp10(Double64(x)))
 
-#=
-Behavioral notes:
-
-- NaN propagates through `n_float` and the polynomial naturally; `-Inf`
-  hits the low clamp → `0.0`; `+Inf` hits the high clamp →
-  `inf(DoubleFloat{T})`. No explicit guards needed.
-- Subnormal outputs (`exp2` arguments in `[-1074, -1022)` for `Double64`,
-  `[-149, -126)` for `Double32`) are produced by a shifted kernel plus a
-  correctly-rounded `ldexp`; the low limb is zero there, matching what a
-  subnormal-`hi` double-double can represent.
-- `exp2` is exact-reduction throughout and is the most accurate of the
-  three; `exp`/`exp10` add one inexact constant multiplication up front.
-=#
+# Guaranteed underflow is handled before the polynomial. Normal results
+# use split scaling. At the low end both limbs select the nearest target
+# value on the subnormal lattice, which we construct from its index.
 
 ## 4. The `log2` / `log` / `log10` family
 
@@ -475,18 +574,16 @@ end
     tiny = abs(x[1]) < _log_tiny(T)
     _scale = _pow2(T, _shift)
     x = ifelse(tiny, (_scale * x[1], _scale * x[2]), x)
-    # the rescale above normalizes any nonzero low limb (the smallest
-    # subnormal clears floatmin after 2^_shift), but a low limb can be
-    # subnormal for *any* leading limb — Double64(2.0^100, 1e-320) is a legal
-    # double-word.  Beyond the _log_tiny band such a limb lies below the
-    # 2^-2p the format carries, so dropping it is exact to within the
-    # representable precision, whereas feeding it to _uldexp would wrap the
-    # exponent field and fabricate a large mantissa correction.
-    x = ifelse(abs(x[2]) < floatmin(T), (x[1], _zero), x)
-    # exact split: x = 2^er · m,  m₁ ∈ [1, 2)
+    # Exact split: x = 2^er · m. A tiny low limb can be subnormal
+    # either before the split or after scaling, even when x[1] is large.
     er = _raw_exponent(x[1])
     e = er - ifelse(tiny, _shift, 0)
-    m = (_uldexp(x[1], -er), _uldexp(x[2], -er))
+    elo = _raw_exponent(x[2])
+    emin = 1 - Base.exponent_bias(T)
+    emax = Base.exponent_bias(T)
+    normal_lo = (emin <= elo <= emax) & (emin <= elo - er <= emax)
+    lo = ifelse(normal_lo, x[2], _zero)
+    m = (_uldexp(x[1], -er), _uldexp(lo, -er))
     i = _log2_index(x[1]) + 1
     c = @inbounds _log2_centers(T)[i]
     v = @inbounds _log2_values(T)[i]
