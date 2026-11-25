@@ -229,7 +229,7 @@ import Base:
 
 import Quadmath: Float128
 
-include("Double.jl")   # Double64, Double32, Double16
+include("core/type.jl")   # Double64, Double32, Double16
 
 include("eft/errorfree.jl")
 include("eft/quotients.jl")
@@ -239,18 +239,18 @@ include("doubletriple/triple.jl")
 include("doubletriple/triple_consts.jl")
 include("doubletriple/triple_pi.jl")
 
-include("type/constructors.jl")
+include("core/constructors.jl")
 include("type/promote.jl")
 include("type/convert.jl")
 include("type/compare.jl")
-include("type/predicates.jl")
-include("type/specialvalues.jl")
+include("core/predicates.jl")
+include("core/specialvalues.jl")
 include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
 include("type/quadmath.jl")
 
-include("math/prearith/prearith.jl")
+include("core/reflection.jl")
 include("math/prearith/floorceiltrunc.jl")
 include("math/prearith/divrem.jl")
 
