@@ -234,10 +234,10 @@ include("core/type.jl")   # Double64, Double32, Double16
 include("eft/errorfree.jl")
 include("eft/quotients.jl")
 
-include("doubletriple/double_consts.jl")
-include("doubletriple/triple.jl")
-include("doubletriple/triple_consts.jl")
-include("doubletriple/triple_pi.jl")
+include("constants/double.jl")
+include("constants/triple.jl")
+include("constants/triple_consts.jl")
+include("constants/triple_pi.jl")
 
 include("core/constructors.jl")
 include("type/promote.jl")
@@ -261,7 +261,7 @@ include("math/arithmetic/mixedarith.jl")
 include("math/arithmetic/complex/pow.jl")
 include("math/ops.jl")
 
-include("math/elementary/sequences.jl")
+include("constants/tables.jl")
 include("math/elementary/explog.jl")
 include("math/elementary/trig.jl")
 include("math/elementary/arctrig.jl")
