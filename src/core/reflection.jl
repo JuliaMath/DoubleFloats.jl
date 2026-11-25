@@ -152,15 +152,38 @@ function fracpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return unsafe_double(T, fhi, flo)
 end
 
+"""
+    modf(x::DoubleFloat)
+
+The fractional and integer parts of `x`, as `Base.modf` defines them: both
+carry the sign of `x`, the fraction is less than one in magnitude, and their
+sum is `x` exactly.
+"""
 function Base.modf(x::DoubleFloat{T}) where {T<:IEEEFloat}
     hi, lo = HILO(x)
+    isnan(hi) && return (x, x)
+    signedzero = unsafe_double(T, copysign(zero(T), hi), zero(T))
+    isinf(hi) && return (signedzero, x)
     fhi, ihi = modf(hi)
-    flo, ilo = modf(lo)
-    ihi, ilo = two_sum(ihi, ilo)
-    fhi, flo = two_sum(fhi, flo)
-    i = DoubleFloat(ihi, ilo)
-    f = DoubleFloat(fhi, flo)
-    return f, i
+    if !iszero(fhi)
+        # The fraction begins in the high word; the low word is all fraction
+        # and smaller than the fraction of the high word.
+        f = DoubleFloat{T}(fhi, lo)
+        i = unsafe_double(T, ihi, zero(T))
+    else
+        flo, ilo = modf(lo)
+        if !iszero(flo) && signbit(flo) != signbit(hi)
+            # The high word is an integer and the low word pulls the value
+            # just inside it: move one unit from the integer part.
+            unit = copysign(one(T), hi)
+            f = DoubleFloat{T}(unit, flo)
+            i = DoubleFloat{T}(hi, ilo - unit)
+        else
+            f = unsafe_double(T, flo, zero(T))
+            i = DoubleFloat{T}(hi, ilo)
+        end
+    end
+    return (iszero(HI(f)) ? signedzero : f, iszero(HI(i)) ? signedzero : i)
 end
 
 function fmod(fpart::DoubleFloat{T}, ipart::DoubleFloat{T}) where {T<:IEEEFloat}

@@ -18,6 +18,11 @@ Each entry is one line of the upgrade guide: what changed, and what to do.
   value with a zero low word: `Double64(Inf, NaN)` is `Inf`.
 - `parse(Double16, s)` returns a normalized pair. A few values had a low
   word larger than half a unit of the high word; their sum is unchanged.
+- `modf(x)` follows `Base.modf`: both parts carry the sign of `x`, and the
+  fraction is always less than one in magnitude. Before, a value just below
+  an integer, such as `Double64(1.0, -1.0e-17)`, gave the integer `1` and a
+  negative fraction, and the integer part of a negative fraction was `0.0`
+  where `Base` gives `-0.0`.
 
 ### Added
 

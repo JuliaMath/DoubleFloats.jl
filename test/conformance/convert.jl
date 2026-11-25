@@ -49,9 +49,38 @@
         property("convert/rationalize honours tol/" * name) do
             rationalize(T(F(0.333)); tol = 0.01) == 1 // 3
         end
-        property("convert/modf keeps the sign of a zero integer part/" * name) do
-            f, i = modf(T(F(-0.25)))
-            f == F(-0.25) && iszero(i) && signbit(HI(i)) && modf(T(F(2.5))) == (F(0.5), F(2))
+        property("convert/modf splits exactly, with the signs Base gives/" * name) do
+            xs = filter(x -> isfinite(HI(x)), ordervalues(T))
+            append!(
+                xs,
+                [
+                    words(T, 3, -eps(F)),
+                    words(T, -3, eps(F)),
+                    T(F(2.5)),
+                    T(F(-2.5)),
+                    T(F(-0.25)),
+                    words(T, F(2)^precision(F), 0.25),
+                ],
+            )
+            all(xs) do x
+                f, i = modf(x)
+                exact(f) + exact(i) == exact(x) &&
+                    isinteger(exact(i)) &&
+                    abs(exact(f)) < 1 &&
+                    signbit(HI(f)) == signbit(HI(x)) &&
+                    signbit(HI(i)) == signbit(HI(x))
+            end
+        end
+        property("convert/modf of non-finite values/" * name) do
+            f, i = modf(T(F(Inf)))
+            g, j = modf(T(F(-Inf)))
+            iszero(f) &&
+                !signbit(HI(f)) &&
+                i == Inf &&
+                iszero(g) &&
+                signbit(HI(g)) &&
+                j == -Inf &&
+                all(isnan, modf(T(F(NaN))))
         end
         property("convert/Bool/" * name) do
             Bool(T(1)) === true && Bool(T(0)) === false && throws(() -> Bool(T(2)), InexactError)

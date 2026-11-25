@@ -18,9 +18,6 @@ convert/Int64 of a fraction throws InexactError/Double64
 convert/convert(Int, x) of a fraction throws InexactError/Double16
 convert/convert(Int, x) of a fraction throws InexactError/Double32
 convert/convert(Int, x) of a fraction throws InexactError/Double64
-convert/modf keeps the sign of a zero integer part/Double16
-convert/modf keeps the sign of a zero integer part/Double32
-convert/modf keeps the sign of a zero integer part/Double64
 convert/rationalize finds 1//3/Double16
 convert/rationalize finds 1//3/Double64
 convert/round rounds ties to even/Double16
