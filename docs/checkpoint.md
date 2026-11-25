@@ -6,10 +6,13 @@ design is `apothecary.md`. Updated at the end of each work item.
 ## State
 
 - Date: 2026-11-25
-- Branch: `stage0`, draft pull request #328 against `main`
+- Branches: `stage0` (draft pull request #328 against `main`, all checks
+  green) and `stage1`, stacked on it
 - `main`: 1.13.3 (pull request #327 merged as `9c61406a`)
 - `release-1.13`: `b186e440`, the 1.13.3 baseline
-- Registration of 1.13.3: requested, JuliaRegistries/General#177768, not yet merged when last checked
+- Registration of 1.13.3: JuliaRegistries/General#177768 is open and
+  blocked. AutoMerge objects that 1.13.3 skips 1.13.0. It merges if the
+  package author comments `[merge approved]` there.
 
 ## Stage 0 — ground
 
@@ -25,6 +28,34 @@ design is `apothecary.md`. Updated at the end of each work item.
 | W0.8 Sealed constructor | done | this commit range | Corpus identical; suite passes; benchmark ratios 0.98 to 1.06 against `release-1.13` |
 | W0.9 Explicit imports | done; type loops deferred | `492b93fa`, `96beebb2` | Corpus identical; suite passes on Julia 1.12 and 1.13; four ExplicitImports checks pass; shadowed names unchanged; benchmark ratios 0.95 to 1.10 |
 | W0.10 Contributor guide | done | this commit | `CONTRIBUTING.md` |
+
+**Gate 0 holds.** On #328: nine test jobs (Julia 1.12.0, 1.13.4, 1.14 beta
+on Linux, ARM macOS, Windows), docs, invalidations, and the benchmark
+comparison all pass. The corpus is identical to 1.13.3 on all nine.
+
+## Stage 1 — correctness
+
+Conformance: 275 properties, 172 hold, 103 listed in
+`test/conformance/broken.txt`. The stage is done when no Stage 1 key is
+left in that file.
+
+| Item | Status | Commits | Evidence |
+|:--|:--|:--|:--|
+| W1.1 Conformance suite | done | `86911e12` | 266 properties written; 112 did not hold |
+| W1.3a Pair constructor normalizes | done | `9e2f00b4` | Nine properties now hold; corpus changed on four subjects, each explained; benchmarks 0.94 to 1.07 |
+| modf (found on the way) | done | `4f6f1288` | Three properties now hold; corpus changed on `modf` only |
+| W1.3b Exact construction from integers, rationals, `BigFloat` | next | | |
+| W1.3c Nested-type methods | | | |
+| W1.2a Comparison on one type | | | |
+| W1.4a `decompose`, `Rational` | | | |
+| W1.4b `hash` | | | |
+| W1.2b Exact mixed comparison | | | |
+| W1.6a Integer conversion throws | | | |
+| W1.6b `rationalize` | | | |
+| W1.5 Parsing | | | |
+| W1.8 Promotion | | | |
+| W1.7 `isapprox`, random numbers, macros | | | |
+| W1.9 Aqua, ambiguities, piracy | | | |
 
 ## Findings so far
 
@@ -131,16 +162,47 @@ design is `apothecary.md`. Updated at the end of each work item.
   Each is a way for a Julia release to break the package. Not checked in
   CI yet; to be reduced, then checked, in W1.9.
 
+- The constructor as first designed was wrong. `two_sum(-0.0, 0.0)` is
+  `0.0`, so normalizing with `two_sum` alone lost negative zero; the corpus
+  changed on 125 subjects. The constructor now leaves the words as given
+  when the low word is zero. `apothecary.md` §3.3 said "identity on a
+  normalized pair (verified)"; it was not verified on signed zeros. It is
+  corrected.
+- Internal code passes a meaningless low word with a non-finite high word
+  (`Double64(big(Inf))` built `(Inf, NaN)`). A constructor that summed the
+  words turned `parse(Double64, "Inf")` into `NaN`. The rule is now the one
+  D1 states for readers: a high word that is not finite is the value.
+- Defects the conformance suite found that were in no earlier list:
+  `round(Double64(2.5))` is 3, not 2 (ties do not go to even);
+  `isapprox(x, y)` uses a default tolerance near `eps^(1/4)`, far looser
+  than `sqrt(eps)`; `isapprox(NaN, NaN)` is `true`; `NaN <= NaN` is `true`;
+  `modf` split a value just below an integer the wrong way (fixed);
+  `parse(Double64, "1.000…0001")` with sixty zeros drops the low word when
+  a failed parse earlier in the session has changed the global `BigFloat`
+  precision.
+- That last one made an existing unit test fail when the conformance suite
+  ran before it: a bad parse lowered the global precision and
+  `Int128(Double64(a))` then lost bits. Each conformance property now
+  restores the precision. The defect itself is C4, due in W1.5.
+- `Int128(Double64(n)) == n` fails for about 18% of random 128-bit
+  integers that fit in 106 bits (F4, due in W1.3b).
+
 ## Open
 
-- Registration of 1.13.3 to be confirmed merged; then tag `v1.13.3` appears.
-- *Confirm* items still open: the `5u²` multiplication bound; a target
-  without hardware FMA.
-- Julia 1.10 was installed locally (juliaup channel `1.10`) to test 1.13.3.
+Decisions that are the maintainer's:
+
+1. Registration of 1.13.3. Either comment `[merge approved]` on
+   JuliaRegistries/General#177768, or register the release as 1.13.0.
+2. Merging #328 (`stage0`) into `main`, which makes `main` the 2.0
+   development line (R5). Gate 0 holds.
+
+Still to confirm: the `5u²` multiplication bound; a target without
+hardware FMA.
+
+Installed locally during this work: juliaup channels `1.10` and `1.12`.
 
 ## Next
 
-Gate 0: confirm on CI that the corpus is identical to 1.13.3 on every
-platform and Julia version of the matrix and that no benchmark regresses.
-Then Stage 1, beginning with W1.1: the conformance suite, every Stage 1
-property written first as `@test_broken`.
+W1.3b: exact construction from `Integer`, `Rational`, and `BigFloat`, by
+one method per argument kind in place of the per-type copies and the
+`@eval` loop in `core/type.jl`.

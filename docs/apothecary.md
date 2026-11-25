@@ -115,7 +115,7 @@ non-finite values bitwise; the manual says so.
 
 | Form | Behaviour |
 |:--|:--|
-| `DoubleFloat(hi::F, lo::F)`, `Double64(hi, lo)` | Normalize with `two_sum`. Identity on a normalized pair (*verified*). |
+| `DoubleFloat(hi::F, lo::F)`, `Double64(hi, lo)` | Normalize with `two_sum`, except that a zero low word leaves the pair as given (so `-0.0` survives) and a high word that is not finite is the value, with the low word stored as zero. Bit-for-bit identity on a normalized pair, checked by the golden corpus. |
 | `DoubleFloat{F}(x::Real)` | Exact if representable, else correctly rounded pair: `hi = F(x)`, `lo = F(x − hi)` evaluated exactly |
 | `unsafe_double(F, hi, lo)` | Internal. No check. For kernels that have established `𝒩`. |
 | `isnormalized(x)` | Public predicate |
