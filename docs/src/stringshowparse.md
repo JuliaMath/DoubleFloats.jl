@@ -2,8 +2,7 @@
 
 ## Inspect a value
 
-Compact display, as used for many array elements, shows the high
-component. To see more decimal digits, use `string(x)` or print those
+Compact display, as used for many array elements, shows the [high component](glossary.md#glossary-components). To see more decimal digits, use `string(x)` or print those
 digits with `showall(x)`. Use `stringtyped(x)` or `showtyped(x)` to
 inspect the type and both components.
 
@@ -16,14 +15,14 @@ showtyped(x)
 ```
 
 These helpers also accept the complex counterparts. For exact access to
-the stored components of a real value, use `HILO(x)`. For a complex value,
-apply `HILO` to its real and imaginary parts separately.
+the stored components of a real value, use [`HILO(x)`](glossary.md#glossary-components). For a complex value,
+apply `HILO` to its [real and imaginary parts](glossary.md#glossary-complex) separately.
 
 ## Read numeric text
 
-Use `Double64(text)` or `parse(Double64, text)` for a decimal number.
+Use `Double64(text)` or [`parse(Double64, text)`](glossary.md#glossary-construction) for a decimal number.
 Use `ComplexDF64(text)` for complex numeric text. The text passed to
-`parse` is a numeric literal. `stringtyped` instead returns Julia
+`parse` is a [numeric literal](glossary.md#glossary-construction). `stringtyped` instead returns Julia
 constructor syntax for inspection.
 
 ```@example parse_value

@@ -135,17 +135,18 @@ function exponential_rounding_section(D, random_exp, random_exp2)
 ### Exponential rounding near the format limits
 
 For `exp` and `exp2`, the main table reports relative working-precision
-units for finite results with reference at or above `Δ / eps($D)`.
-Here `Δ` is the smallest positive subnormal of the underlying float.
+units for finite results with reference at or above
+[`Δ`](../src/glossary.md#glossary-rounding-grid) divided by [`eps(D)`](../src/glossary.md#glossary-eps) for type D.
+The threshold here is `Δ / eps($D)`.
+The [least positive subnormal](../src/glossary.md#glossary-subnormal) of the underlying float is Δ.
 The subnormal range lies below the underlying float's minimum normal.
-The quantization-limited normal range lies between that minimum and
+The [quantization-limited normal range](../src/glossary.md#glossary-grid-limited) lies between that minimum and
 `Δ / eps($D)`.
 
 The lattice tables compare the sum of the two returned components with
-the nearest multiple of `Δ` in these two ranges. They also show absolute
-error and error measured in steps of `Δ`. Output outcome counts describe
+the nearest multiple of `Δ` in these two ranges. They also show [absolute error](../src/glossary.md#glossary-absolute-error) and error measured in steps of `Δ`. Output outcome counts describe
 the returned values and can overlap the reference range counts. A zero
-or overflow disagreement compares the outcome with round-to-nearest
+or overflow disagreement compares the outcome with [round-to-nearest](../src/glossary.md#glossary-rounding)
 thresholds for the underlying format. Targeted probes use 1536-bit
 references to resolve low components as small as the underlying
 subnormal spacing.
@@ -287,9 +288,10 @@ function accuracy_section(name, ulptext, explog, trig, arctrig, hyp, special, ro
     return """
 ## $name
 
-Scalar errors are measured against a 512-bit `BigFloat` reference.
-For nonzero references, the tables divide relative error by the working
-precision unit, **1 ulp = $ulptext relative**. Each worst value is the
+Scalar errors use a 512-bit [`BigFloat`](../src/glossary.md#glossary-bigfloat)
+[reference](../src/glossary.md#glossary-reference-result).
+For nonzero references, divide [relative error](../src/glossary.md#glossary-relative-error)
+by the [working-precision unit](../src/glossary.md#glossary-working-unit), **1 ulp = $ulptext relative**. Each worst value is the
 maximum over the listed samples.
 
 ### Exponentials and Logarithms
@@ -316,7 +318,8 @@ $(join(hyp, "\n"))
 
 ### Special Functions
 
-`erf`, `erfc`, and `gamma` are computed via `Float128` before conversion
+[`erf`](../src/glossary.md#glossary-erf), `erfc`, and [`gamma`](../src/glossary.md#glossary-gamma)
+are computed via [`Float128`](../src/glossary.md#glossary-float128) before conversion
 back to the tested type. The errors below include both steps.
 
 $hdr
@@ -324,7 +327,8 @@ $(join(special, "\n"))
 
 ### Matrix Functions (identity residuals)
 
-The matrix rows measure how closely the results satisfy the listed
+The [eigen residual `AV−VΛ`](../src/glossary.md#glossary-eigen-residual) compares
+each computed eigenpair with its defining equation. The matrix rows measure how closely the results satisfy the listed
 identities on random matrices. Each residual uses the largest entry
 magnitude, divided by dimension and working epsilon. The logarithm
 and square root rows also divide by the largest input entry magnitude.

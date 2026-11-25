@@ -9,3 +9,4 @@ deps/deps.jl
 docs/src/accuracy_report.md
 docs/src/benchmark_report.md
 docs/src/multifulcrum.md
+docs/src/assets/glossary-definitions.js

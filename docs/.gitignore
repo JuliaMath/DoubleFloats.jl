@@ -1,7 +1,10 @@
 build/*
 !build/multifulcrum.html
+!build/glossary.html
 !build/assets/
 build/assets/*
 !build/assets/sidebar-subsections.css
 !build/assets/sidebar-subsections.js
+!build/assets/glossary-*.js
+!build/assets/glossary-tooltips.css
 Manifest.toml

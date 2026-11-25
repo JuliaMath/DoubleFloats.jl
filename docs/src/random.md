@@ -1,10 +1,10 @@
 # Random numbers
 
-Use `rand(T)` for a uniform sample on the unit interval and
+Use `rand(T)` for a [uniform sample](glossary.md#glossary-random) on the unit interval and
 `rand(T, n)` for a vector of samples. The complex sampler draws
 the real and imaginary parts separately.
 
-For real DoubleFloats, `randn(T)` draws a standard normal sample.
+For real DoubleFloats, `randn(T)` draws a [standard normal sample](glossary.md#glossary-random).
 `randpm(T)` applies a random sign to a uniform sample. For complex
 values, `randpm` applies signs to the two components independently.
 
@@ -21,6 +21,6 @@ signed = randpm(rng, ComplexDF64, 4)
 nothing
 ```
 
-An explicit RNG makes the example independent of the session's default
+An [explicit RNG](glossary.md#glossary-random) makes the example independent of the session's default
 generator. For `randpm`, the explicit RNG methods accept
-`MersenneTwister`.
+[`MersenneTwister`](glossary.md#glossary-random).

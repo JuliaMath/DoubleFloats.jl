@@ -3,15 +3,15 @@
 Use this guide when extending scalar, vector, or matrix operations. For the
 existing algorithms, see the [Technical Guide](technicalguide.md).
 Choose a formulation that preserves the small quantities the result
-depends on, including input corrections near roots and branch boundaries.
+depends on, including input corrections near [roots](glossary.md#glossary-sensitive-points) and [branch boundaries](glossary.md#glossary-domain).
 
 ## Scalar functions
 
 ### Choose the computation strategy
 
-1. **Native double-double arithmetic.** Use range reduction and a
-   polynomial, series, or recurrence with coefficients precise enough
-   for the error budget. Keep small offsets in their own variables when
+1. **Native [double-double arithmetic](glossary.md#glossary-doublefloat).** Use [range reduction](glossary.md#glossary-range-reduction) and a
+   [polynomial](glossary.md#glossary-series), series, or [recurrence](glossary.md#glossary-recurrence) with coefficients precise enough
+   for the [error budget](glossary.md#glossary-error-budget). Keep small offsets in their own variables when
    they govern relative accuracy.
 2. **Compose existing functions.** The inverse hyperbolic functions
    use tools such as `log1p` and `sqrt`. Check the accuracy of the
@@ -21,8 +21,8 @@ depends on, including input corrections near roots and branch boundaries.
    preserves the exact input. Check that the result can be split back
    into a useful head and low word. Keep a path that retains the
    original representation for sensitive inputs and format limits.
-4. **Convert through `Float128`.** The gamma and error functions use
-   this strategy. Its 113-bit significand can round away a small
+4. **Convert through [`Float128`](glossary.md#glossary-float128).** The gamma and error functions use
+   this strategy. Its [113-bit significand](glossary.md#glossary-significand) can round away a small
    correction when converting a pair with widely separated components.
    Test the errors from input conversion, function evaluation, and
    conversion back to the result type.
@@ -50,8 +50,8 @@ degenerate — that is where naïve formulas collapse:
   logarithm. Forming `1 + small` first can round part or all of the
   correction away, which matters when the result is of order `small`.
 - **Form differences exactly.**  `x - 1` is exact for
-  `x ∈ [0.5, 2]` (Sterbenz); `(1-x)/x` has an exact numerator; algebraic
-  rearrangement (`1 + 2/(x-1) == (x+1)/(x-1)`) can turn a cancelling
+  [`x ∈ [0.5, 2]`](glossary.md#glossary-relations) ([Sterbenz](glossary.md#glossary-sterbenz)); `(1-x)/x` has an exact numerator; algebraic
+  rearrangement (`1 + 2/(x-1) == (x+1)/(x-1)`) can turn a [cancelling](glossary.md#glossary-cancellation)
   formulation into an exact one.  The inverse hyperbolics in
   `archyptrig.jl` are worked examples.
 - **Beware `inv` and squaring as information destroyers**: `1/x - 1`
@@ -64,15 +64,16 @@ degenerate — that is where naïve formulas collapse:
 ### Bound series and choose coefficients
 
 - Generate coefficients at higher precision and store them as
-  `hi`/`lo` pairs when they need double-word precision. See
-  `_expm1_coeffs` in `explog.jl` for generated pairs. The tapered
+  [`hi`/`lo` pairs](glossary.md#glossary-components) when they need double-word precision. See
+  `_expm1_coeffs` in `explog.jl` for generated pairs. The [tapered](glossary.md#glossary-minimax)
   exponential kernels use scalar coefficients in higher-order terms
   where their contribution to the total error is small.
-- Bound truncation over the whole reduced interval. For a series with
+- [Horner evaluation](glossary.md#glossary-horner) can reuse the reduced argument throughout a polynomial.
+- Bound [truncation](glossary.md#glossary-series) over the whole reduced interval. For a series with
   tail term ratios bounded by `r < 1`, the first omitted term's
   magnitude divided by `1-r` bounds the omitted tail. Allow margin
   for evaluation and reconstruction errors.
-- Series windows and branch guards must be **bounded on both sides**.
+- Series windows and [branch guards](glossary.md#glossary-kernel) must be **bounded on both sides**.
   A cautionary tale: a `cos` fix once guarded a small-angle Taylor
   kernel with `x >= π/2 - π/32` — with no upper bound, everything in
   `(π/2 + π/32, π)` also fell into a kernel valid only for `|r| ≤ π/32`,
@@ -81,10 +82,10 @@ degenerate — that is where naïve formulas collapse:
 
 ### Handle termination and special values
 
-- Handle `NaN`, `±Inf`, `±0.0` (preserve the sign of zero), and domain
-  errors (`DomainError` for out-of-domain reals, matching `Base`), and
+- Handle [`NaN`](glossary.md#glossary-nan), [`±Inf`](glossary.md#glossary-infinity), [`±0.0`](glossary.md#glossary-signed-zero) (preserve the sign of zero), and domain
+  errors ([`DomainError`](glossary.md#glossary-domain) for out-of-domain reals, matching `Base`), and
   the exact endpoints, *before* the general path.
-- **No fixed convergence tolerances derived from inputs.**  An
+- **No fixed [convergence tolerances](glossary.md#glossary-convergence) derived from inputs.**  An
   iteration's achievable floor depends on the *result's* scale; a
   tolerance computed from the initial operands can be unattainable and
   loop forever (`agm` once did).  Prefer structural stopping rules: stop
@@ -92,18 +93,18 @@ degenerate — that is where naïve formulas collapse:
 - Comparisons used to exit loops must be NaN-safe: every comparison with
   NaN is false, so `while err > tol` exits on NaN but
   `stop when dnew >= d` does not.  Check `isnan` explicitly if an
-  intermediate can overflow.
+  intermediate can [overflow](glossary.md#glossary-overflow).
 - Respect representation limits honestly: if the result's `lo` word
-  would be subnormal (result magnitude below ~`4e-292` for `Double64`),
+  would be [subnormal](glossary.md#glossary-subnormal) (result magnitude below ~`4e-292` for `Double64`),
   full precision is impossible — do not chase it, and do not let an
   internal intermediate with that problem contaminate a result that *is*
   representable (rescale by exact powers of two instead; see `log`).
 
 ### Test against a higher-precision reference
 
-Compare with a `BigFloat` reference computed at 256 bits or more.
-For nonzero references, this snippet measures relative error in units
-of `2^-104`. Use absolute error for an expected zero.
+Compare with a [`BigFloat`](glossary.md#glossary-bigfloat) reference computed at 256 bits or more.
+For nonzero references, this snippet measures [relative error](glossary.md#glossary-relative-error) in units
+of [`2^-104`](glossary.md#glossary-working-unit). Use [absolute error](glossary.md#glossary-absolute-error) for an expected zero.
 
 ```julia
 setprecision(BigFloat, 512)
@@ -115,7 +116,7 @@ Sample every region with its own tolerance:
 
 - random points across the whole domain;
 - dense probes at each *branch boundary* (both sides);
-- the sensitive points: roots, fixed points, domain endpoints —
+- the sensitive points: roots, [fixed points](glossary.md#glossary-sensitive-points), domain endpoints —
   including inputs whose structure lives below one `Float64` ulp, e.g.
   `Double64(1.0, 1e-25)`;
 - extreme magnitudes: near `floatmax`, near `floatmin`, subnormals;
@@ -161,14 +162,14 @@ the high component against a chosen interval and bound the low
 component by half the spacing in the corresponding exponent band.
 Leave room for the low component at branch boundaries, and verify
 that intermediates stay in range and divisors stay away from zero.
-Reuse the scalar coefficients and error-free transforms where possible.
-Keep the per-element evaluator type-stable and free of allocations,
+Reuse the scalar coefficients and [error-free transforms](glossary.md#glossary-error-free) where possible.
+Keep the per-element evaluator [type-stable](glossary.md#glossary-dispatch) and free of allocations,
 side effects, exceptions, and floating-point reassociation. For native
 two-word Double32 arithmetic, the batch predicate can admit normalized
 pairs even when their sum would round in Float64. Keep the evaluator
 inlined so the compiler can see the arithmetic across elements.
 
-The driver checks axes and overlap before entering the dense route.
+The driver checks [axes](glossary.md#glossary-axes) and overlap before entering the dense route.
 A native loop runs only after the whole block passes its predicate.
 A rejected block normally runs scalar calls in index order, preserving
 special values, destination conversion, and the writes that precede
@@ -213,7 +214,7 @@ println("Checked reciprocal batch, including scalar fallback")
   `SIMD_LLVM` to dump the native loop's LLVM and check for vector
   arithmetic. A SIMD annotation alone cannot establish that the
   compiler vectorized the loop.
-- Evaluate threading separately. `_batch_thread_min` uses concrete
+- Evaluate [threading](glossary.md#glossary-threading) separately. `_batch_thread_min` uses concrete
   argument types and defaults to no threaded execution for unlisted
   operations. Measure a size crossover before extending that allowlist
   and check the destination types admitted by `_batch_thread_output`.
@@ -235,16 +236,16 @@ Record published eligibility ranges and measured crossovers in the
 
 ### Choose the algorithm class first
 
-- **Eigen-diagonalization** (`matrixfunction(fn, m)`) is one line, but
-  it *fails for defective matrices* and loses accuracy in proportion to
+- **[Eigen-diagonalization](glossary.md#glossary-jordan)** (`matrixfunction(fn, m)`) is one line, but
+  it *fails for [defective matrices](glossary.md#glossary-jordan)* and loses accuracy in proportion to
   `cond(V)` for nearly-defective ones — silently.  Acceptable for
   functions of practically-always-diagonalizable inputs, or as a
   starting point clearly documented as such.
 - **Dense algorithms** are required for robustness:
-  - series-friendly functions → scaling/squaring + Paterson–Stockmeyer
+  - series-friendly functions → [scaling/squaring](glossary.md#glossary-scaling-squaring) + [Paterson–Stockmeyer](glossary.md#glossary-paterson-stockmeyer)
     (`_matexp` in `matfun.jl` is the template: scale to `‖A‖₁ ≤ 1`,
     evaluate, square back);
-  - functions with a triangular recurrence → complex Schur, operate on
+  - functions with a triangular recurrence → complex [Schur](glossary.md#glossary-schur), operate on
     `T`, transform back (`sqrt`, `log`);
   - anything expressible through `exp`/`log`/`sqrt` → compose
     when domains and branches agree. Matrix powers use
@@ -255,16 +256,16 @@ Record published eligibility ranges and measured crossovers in the
 
 - **Respect type conventions.**  Real input whose mathematical result is
   real must return a real matrix.  Either stay in real arithmetic
-  throughout (best: `exp`), take a hermitian shortcut when applicable,
+  throughout (best: `exp`), take a [hermitian](glossary.md#glossary-adjoint) shortcut when applicable,
   or strip imaginary roundoff dust with a tolerance guard
   (`_strip_imag_dust`) — never unconditionally `real.()`, which would
   corrupt genuinely complex results such as `sqrt` of a matrix with a
   negative eigenvalue.
-- **Series bounds are norm bounds.**  The scalar truncation argument
+- **Series bounds are [norm bounds](glossary.md#glossary-norm).**  The scalar truncation argument
   carries over with `|x|` replaced by `‖A‖`; scale first so the bound is
   small, and remember squaring steps amplify error — keep the
   approximant's truncation well below `2⁻¹⁰⁴`.
-- **Triangular recurrences divide by `Tᵢᵢ + Tⱼⱼ`-type quantities**; an
+- **[Triangular recurrences](glossary.md#glossary-recurrence) divide by `Tᵢᵢ + Tⱼⱼ`-type quantities**; an
   exactly-singular case should throw (`SingularException`), a
   nearly-singular one will honestly produce large entries — match what
   the `Float64` route does.
@@ -273,7 +274,7 @@ Record published eligibility ranges and measured crossovers in the
 
 ### Testing matrix functions
 
-Random-matrix identity residuals alone are not enough; include:
+Random-matrix [identity residuals](glossary.md#glossary-residual) alone are not enough; include:
 
 - **defective matrices with closed forms**: `exp([1 1; 0 1]) = e·[1 1; 0 1]`,
   `sqrt([1 1; 0 1]) = [1 ½; 0 1]`, nilpotent `exp([0 1; 0 0]) = I + N`;

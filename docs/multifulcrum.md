@@ -18,24 +18,24 @@ scalar baseline. [Technical Guide benchmarks](src/technicalguide.md#double32-ben
 
 ## Reading the measurements
 
-The matched run used revision `2d860805`, Julia 1.10.10 with a native
-CPU target, and one thread on an Intel i9-14900K. Each case used
-32,768 inputs and preallocated outputs. Times are medians of
+The matched run used revision `2d860805`, Julia 1.10.10 with a [native CPU target](src/glossary.md#glossary-compiler-target), and one thread on an Intel i9-14900K. Each case used
+32,768 inputs and [preallocated outputs](src/glossary.md#glossary-destination). Times are medians of
 nine interleaved timing samples, with eight calls per sample.
 The scalar loop calls the public function on each input. The batch
-uses serial `DoubleFloats.simdmap!` on dense, disjoint vectors and
-includes eligibility checks and fallback. A ratio close to 1× means
+uses serial `DoubleFloats.simdmap!` on [dense, disjoint vectors](src/glossary.md#glossary-dense-storage) and
+includes eligibility checks and [fallback](src/glossary.md#glossary-kernel). A ratio close to 1× means
 the measured times were close. For example, the Double32 `exp2`
 dense scalar and batch medians differ by 0.066 ns per element, while
-the batch's interquartile range spans 0.139 ns per element. Treat
+the batch's [interquartile range](src/glossary.md#glossary-iqr) spans 0.139 ns per element. Treat
 small differences of this size as timing-sensitive.
 
-For a finite, nonzero reference $y$, the score is
+For a finite, nonzero reference [$y$](src/glossary.md#glossary-reported-error) and computed value
+[$\widehat y$](src/glossary.md#glossary-reported-error), the score [$E$](src/glossary.md#glossary-reported-error) is
 $E=|\widehat y-y|/(|y|\epsilon_D)$. The working-precision unit
-$\epsilon_D$ is $2^{-104}$ for Double64 and $2^{-46}$ for Double32,
+[$\epsilon_D$](src/glossary.md#glossary-working-unit) is $2^{-104}$ for Double64 and $2^{-46}$ for Double32,
 so compare their scores to targets in their respective units.
-The reference uses both input words and 512-bit BigFloat arithmetic.
-The tables show the 99th percentile (p99) and the maximum of each
+The reference uses both input words and 512-bit [BigFloat](src/glossary.md#glossary-bigfloat) arithmetic.
+The tables show the [99th percentile](src/glossary.md#glossary-percentile) (p99) and the maximum of each
 sample. Tuple results use the largest component score per input.
 Complex results use the complex magnitude. A sampled maximum gives
 evidence for the tested inputs. A domain-wide bound requires further
@@ -63,8 +63,7 @@ Double64. The error columns describe the current scalar method.
 
 The largest gains come from doing less arithmetic in a range where
 a simpler evaluation is accurate enough. Double64 uses fine tables
-and short reductions for the exponentials and logarithms, dyadic
-anchors for `atan`, and bounded direct approximations for `tan` and
+and [short reductions](src/glossary.md#glossary-range-reduction) for the exponentials and logarithms, [dyadic anchors](src/glossary.md#glossary-dyadic) for `atan`, and bounded direct approximations for `tan` and
 the hyperbolic functions. The measured Double64 `sinh` maximum fell
 from 2.322 to 0.397 units, and `tan` fell from 1.229 to 0.358, while
 both got faster. For `exp` and `exp2`, the faster methods raised the
@@ -74,7 +73,7 @@ from 0.901 to 1.073. A tail-percentile target and a maximum target
 therefore give different assessments of that change.
 [Scalar implementation details](src/technicalguide.md#faster-double64-elementary-kernels)
 
-For Double32, widening is fast when the sum of the words is exactly
+For Double32, [widening](src/glossary.md#glossary-widening) is fast when the sum of the words is exactly
 representable in Float64 and the result is in a safe range for splitting
 back into two Float32 words. All eleven dense fixtures admitted
 32,103 of 32,768 inputs to this scalar route. Some low words were too
@@ -84,8 +83,8 @@ The `exp2` maximum nevertheless fell from 0.911 to 0.614 units on the
 matched inputs. Its p99 fell from 0.442 to 0.113.
 
 The same input conversion error can matter much more near a root.
-If rounding the input changes $x$ by $\delta$, the first-order relative
-change in $f(x)$ is about $|f'(x)/f(x)|\,|\delta|$ when $f(x)\ne0$.
+If rounding the input changes $x$ by [$\delta$](src/glossary.md#glossary-delta), the first-order relative
+change in [$f(x)$](src/glossary.md#glossary-function-notation) is about $|f'(x)/f(x)|\,|\delta|$ when $f(x)\ne0$.
 For `exp` the factor $|f'(x)/f(x)|$ is one. For `log` and `log2` it
 grows as $1/|x-1|$ near one. For example,
 `Double32(1.0f0, Float32(2^-60))` has a logarithm of approximately
@@ -100,10 +99,10 @@ explicit. `expm1` carries the offset from one through reconstruction.
 `sinh` keeps $x$ as its leading term. The local `tan` and `tanh`
 formulas carry a small correction to $x$. The `tan` fallback pays for
 more accurate phase reduction near poles. For `cosh`, an even expansion
-or guarded widening makes ordinary scalar evaluation cheap.
+or [guarded](src/glossary.md#glossary-kernel) widening makes ordinary scalar evaluation cheap.
 [Elementary function algorithms](src/technicalguide.md#elementary-function-algorithms)
 
-At exponential underflow, the least positive subnormal $\Delta$ sets
+At exponential [underflow](src/glossary.md#glossary-underflow), the least positive subnormal [$\Delta$](src/glossary.md#glossary-rounding-grid) sets
 the spacing that can be represented in the result. Half a grid step
 corresponds to $\Delta/(2|y|\epsilon_D)$ in relative working-precision
 units. This quantity grows as the reference shrinks. Use nearest-grid
@@ -194,7 +193,7 @@ are listed with the registered kernels.
 ## Comparing accuracy and speed together
 
 Start with requirements that every candidate must satisfy. These
-may include signed zero, domain behavior, assignment order, overlap,
+may include [signed zero](src/glossary.md#glossary-signed-zero), [domain behavior](src/glossary.md#glossary-domain), assignment order, [overlap](src/glossary.md#glossary-aliasing),
 and a hard accuracy ceiling. The measurements give a sample-based
 screen for the numerical requirements. At a 1.52-unit maximum, all
 six native Double32 kernels pass the dense sampled screen. Double64
@@ -207,7 +206,7 @@ execution route gives the same sampled error.
 
 Use the hard ceiling to rule out any route that misses it. If a
 remaining route is faster with equal or smaller error, it can be
-chosen directly for the measured workload. A weighted crossover
+chosen directly for the measured workload. A weighted [crossover](src/glossary.md#glossary-model-weight)
 helps when one route is faster and the other is more accurate.
 Test sensitive regions and input layouts separately before applying
 that choice to a broader workload.
@@ -218,6 +217,15 @@ range, input arrangement, storage, and target.
 
 #### Normalizing time and error
 
+For candidate [$k$](src/glossary.md#glossary-model-feasibility), compare its
+normalized time [$q_k$](src/glossary.md#glossary-model-scores) with its
+normalized error [$a_k$](src/glossary.md#glossary-model-scores).
+
+Let [$T_s$](src/glossary.md#glossary-model-time) denote the scalar baseline time, [$T_k$](src/glossary.md#glossary-model-time) the candidate time,
+and [$\sigma$](src/glossary.md#glossary-model-time) the requested speedup. The two errors [$E_{99,k}$](src/glossary.md#glossary-model-targets)
+and [$E_{\max,k}$](src/glossary.md#glossary-model-targets) are the candidate's p99 and maximum. The corresponding
+targets are [$\tau_{99}$](src/glossary.md#glossary-model-targets) and [$\tau_{\max}$](src/glossary.md#glossary-model-targets).
+
 ```math
 \begin{aligned}
 q_k &= \frac{\sigma T_k}{T_s}, \\
@@ -226,24 +234,21 @@ a_k &= \max \left\{\frac{E_{99,k}}{\tau_{99}},
 \end{aligned}
 ```
 
-Here $T_s$ is the scalar baseline time, $T_k$ is the candidate time,
-and $\sigma$ is the requested speedup. The two errors $E_{99,k}$
-and $E_{\max,k}$ are the candidate's p99 and maximum. The corresponding
-targets are $\tau_{99}$ and $\tau_{\max}$.
-
 The speed and accuracy grades $1/(1+q_k)$ and $1/(1+a_k)$ reach
 one half when the candidate meets the corresponding target exactly.
-For workload $c$, use the smallest grade across requirements.
+For workload [$c$](src/glossary.md#glossary-model-feasibility), the joint
+grade [$Q(c,k)$](src/glossary.md#glossary-model-grade) takes the minimum
+across requirements. The indicator [$I$](src/glossary.md#glossary-model-feasibility)
+marks candidates that pass the hard screen. The optional grade
+[$\mu_C$](src/glossary.md#glossary-model-grade) measures coverage.
 
 ```math
 Q(c,k) = \min \left\{I(c,k), \frac{1}{1+q_k},
                        \frac{1}{1+a_k}, \mu_C(c,k)\right\}.
 ```
 
-The indicator $I$ is one for a candidate that passes the hard screen
-and zero otherwise. Set the coverage grade $\mu_C$ to one for
-ordinary timing comparisons, since coverage already affects the
-measured time. An explicit coverage requirement can grade candidates
+Set the coverage grade to one for ordinary timing comparisons, since
+coverage already affects the measured time. An explicit coverage requirement can grade candidates
 separately. Taking $\max_k Q(c,k)$ gives the best joint grade for
 that workload.
 These grades express chosen preferences and have no probability
@@ -261,10 +266,10 @@ of about 1.0735.
 A faster candidate with the same sampled error already wins on the
 time axis. When the faster route spends some accuracy margin, an
 explicit preference can resolve the choice. Give accuracy a weight
-$w$ between zero and one and minimize
-$L_w(k)=(1-w)\log q_k+w\log a_k$. Use a common positive floor for zero
-scores. A graded preference for $v$ over $s$ is
-$[1+\exp(L_w(v)-L_w(s))]^{-1}$. With $T_v<T_s$ and $a_v>a_s$, its midpoint is
+[$w$](src/glossary.md#glossary-model-weight) between zero and one and minimize the weighted log cost [$L_w(k)$](src/glossary.md#glossary-model-weight).
+Its value is $L_w(k)=(1-w)\log q_k+w\log a_k$. Use a common positive floor for zero
+scores. A graded preference for [$v$](src/glossary.md#glossary-model-candidates) over [$s$](src/glossary.md#glossary-model-candidates) is
+$[1+\exp(L_w(v)-L_w(s))]^{-1}$. With [$T_v$](src/glossary.md#glossary-model-time) below the scalar time and $a_v>a_s$, its midpoint is [$w^*$](src/glossary.md#glossary-model-weight).
 
 ```math
 w^*=\frac{\log(T_s/T_v)}
@@ -343,10 +348,10 @@ alternatives. The library selects its kernels using the input guards.
 
 ### How block coverage moves the crossover
 
-If lanes are independent and each is eligible with probability $p$,
-a whole block of width $m$ is eligible with probability $b=p^m$.
+If lanes are independent and each is eligible with probability [$p$](src/glossary.md#glossary-model-blocks),
+a whole block of width [$m$](src/glossary.md#glossary-model-blocks) has eligibility probability [$b$](src/glossary.md#glossary-model-blocks) equal to $p^m$.
 If each block needs one common regime, with disjoint regime
-probabilities $p_j$, then $b=\sum_j p_j^m$. Under that model,
+probabilities [$p_j$](src/glossary.md#glossary-model-blocks), then $b=\sum_j p_j^m$. Under that model,
 a 50/50 mix of two Double64 logarithm regimes gives $2^{1-32}$
 for a 32-element block. Grouping those inputs into homogeneous blocks
 can restore the native path almost everywhere.
@@ -358,8 +363,8 @@ the end of that array, only 11 blocks would contain misses, leaving
 1,013 of 1,024 blocks eligible. The arrangement can therefore
 change native coverage from 72.3% to 98.9% at the same miss count.
 This is a block count, so the clustered speedup still needs to be
-measured. Sparse repair changes the condition to
-$K\le\lfloor m/8\rfloor$, where $K$ is the number of rejected lanes.
+measured. Sparse repair allows [$K$](src/glossary.md#glossary-model-blocks) rejected lanes
+when [$K\le\lfloor m/8\rfloor$](src/glossary.md#glossary-model-blocks).
 Every rejected lane must also pass the repair safety check.
 Double64 `exp2` and `tan` admitted all 512 blocks of width 64
 in their mixed fixtures, with 245 using repair. Their speedups
@@ -369,8 +374,8 @@ left the native kernels eligible. The source of a guard failure
 therefore matters alongside its frequency.
 [Batch benchmark fixtures](src/technicalguide.md#batch-benchmarks)
 
-For a rough prediction, let $N$ and $S$ be the fully eligible
-batch and fallback times per element. Let $H$ cover extra mixed
+For a rough prediction, let [$N$](src/glossary.md#glossary-model-costs) and [$S$](src/glossary.md#glossary-model-costs) be the fully eligible
+batch and fallback times per element. Let [$H$](src/glossary.md#glossary-model-costs) cover extra mixed
 execution overhead. If $N<S$, the condition for a speedup of
 at least $\sigma$ is approximately
 
@@ -387,10 +392,10 @@ at width 32, that allows about 0.72% missed lanes. The actual mixed
 run reached 1.70×. Expensive outliers and repair can change the
 per-block cost, so measure them separately when they are common.
 
-The error distribution also changes with coverage. If $\pi$ is the
-fraction of actual lanes that took native arithmetic and $F_n$ and
-$F_s$ are the conditional error distributions for native and scalar
-evaluation, then the fraction meeting an error threshold $e$ is
+The error distribution also changes with coverage. If [$\pi$](src/glossary.md#glossary-model-distributions) is the
+fraction of actual lanes that took native arithmetic and [$F_n$](src/glossary.md#glossary-model-distributions) and
+[$F_s$](src/glossary.md#glossary-model-distributions) are the conditional error distributions for native and scalar
+evaluation, then [$F_E(e)$](src/glossary.md#glossary-model-distributions) gives the fraction meeting an error threshold $e$.
 
 ```math
 F_E(e) = \pi F_n(e) + (1-\pi)F_s(e).

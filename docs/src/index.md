@@ -1,10 +1,10 @@
 # DoubleFloats.jl
 
-DoubleFloats adds real and complex floating-point types for Julia. Start
-with `Double64` when `Float64` loses too many digits in a calculation and
-the values fit within the `Float64` exponent range. `Double64` represents
-a number using two `Float64` components and provides about 32 decimal
-digits of working precision in ordinary ranges.
+DoubleFloats adds real and [complex](glossary.md#glossary-complex) [floating-point types](glossary.md#glossary-floating-point) for Julia. Start
+with [`Double64`](glossary.md#glossary-doublefloat) when [`Float64`](glossary.md#glossary-binary-formats) loses too many digits in a calculation and
+the values fit within the `Float64` [exponent range](glossary.md#glossary-exponent). `Double64` represents
+a number using two `Float64` [components](glossary.md#glossary-components) and provides about 32 decimal
+digits of [working precision](glossary.md#glossary-precision) in ordinary ranges.
 
 ## Install and try it
 
@@ -15,7 +15,7 @@ using Pkg
 Pkg.add("DoubleFloats")
 ```
 
-Use a decimal string literal to create the number directly at the working
+Use a [decimal string literal](glossary.md#glossary-construction) to create the number directly at the working
 precision. Here `string` exposes the extra digits of the square root.
 
 ```@example first_value
@@ -33,9 +33,9 @@ string(sqrt(x))
 - [Compute with scalars, vectors, and matrices](userguide.md) shows how to apply
   functions, reuse output arrays, and choose between `exp(A)` and `exp.(A)`.
 - [Choose a precision and check your results](appropriate.md) explains how to
-  measure error and includes a reference calculation with `BigFloat`.
+  measure error and includes a reference calculation with [`BigFloat`](glossary.md#glossary-bigfloat).
 - [Read the implementation and performance details](technicalguide.md) for
-  algorithm choices, SIMD and matrix eligibility, and measured timings.
+  algorithm choices, [SIMD](glossary.md#glossary-simd) and matrix eligibility, and measured timings.
 
 ## Questions and contributions
 
