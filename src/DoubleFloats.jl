@@ -240,15 +240,15 @@ include("constants/triple_consts.jl")
 include("constants/triple_pi.jl")
 
 include("core/constructors.jl")
-include("type/promote.jl")
-include("type/convert.jl")
-include("type/compare.jl")
+include("contract/promote.jl")
+include("contract/convert.jl")
+include("contract/compare.jl")
 include("core/predicates.jl")
 include("core/specialvalues.jl")
 include("type/string.jl")
 include("type/show.jl")
 include("type/parse.jl")
-include("type/quadmath.jl")
+include("contract/quadmath.jl")
 
 include("core/reflection.jl")
 include("math/prearith/floorceiltrunc.jl")
@@ -276,7 +276,7 @@ include("math/linearalgebra/support.jl")
 include("math/linearalgebra/matrixfunction.jl")
 
 include("extras/random.jl")
-include("extras/misc.jl")
+include("contract/approx.jl")
 include("extras/macros.jl")
 
 import SpecialFunctions: erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
