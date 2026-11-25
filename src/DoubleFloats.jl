@@ -280,6 +280,6 @@ include("contract/approx.jl")
 include("extras/macros.jl")
 
 import SpecialFunctions: erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
-include("math/special/specialfunctions.jl")
+include("special/specialfunctions.jl")
 
 end # module DoubleFloats
