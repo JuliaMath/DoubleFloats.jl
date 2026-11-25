@@ -1,10 +1,13 @@
 # Technical Guide
 
-How DoubleFloats represents numbers and which algorithms sit behind the
-public functions.  For guidance on extending the package, see
-[Adding New Functions](addingfunctions.md).
+The guide starts with the two-word representation and arithmetic,
+then follows that arithmetic into scalar functions, vector evaluation,
+and linear algebra. See [Adding New Functions](addingfunctions.md) for
+guidance on extending the package.
 
-## Representation as an unevaluated sum
+## Number representation and arithmetic
+
+### Representation as an unevaluated sum
 
 A `DoubleFloat{T}` holds two floats, `hi` and `lo`, whose *unevaluated
 sum* is the represented value. In a normalized pair, the low word
@@ -32,7 +35,7 @@ Two structural consequences matter throughout the package:
   example, in `exp(x)` for `x < -670` — and no algorithm returning a
   `Double64` can beat it.
 
-## Error-free transformations
+### Error-free transformations
 
 Scalar arithmetic uses building blocks from `src/math/errorfree.jl`.
 Their error-free identities assume finite inputs and representable
@@ -47,9 +50,13 @@ intermediate results and residuals.
 A zero low word describes the input pair. The output can still need a
 low word, as happens when taking the reciprocal of `Double64(3.0)`.
 
-## Elementary function algorithms
+## Scalar functions
 
-**Exponential and logarithmic functions**. The guarded Double64 paths
+### Elementary function algorithms
+
+#### Exponential and logarithmic functions
+
+The guarded Double64 paths
 are described [below](#Faster-Double64-elementary-kernels). The wider
 exponential paths use either the 16-entry base-2 table or the original
 reduction with three squarings near the exponent limits. Arguments
@@ -68,7 +75,9 @@ base-2 kernel and converts its result to base ten.
 The [Accuracy Report](accuracy_report.md) presents ordinary error and
 lattice rounding separately.
 
-**Cube root and fused multiply-add**. Scalar `cbrt` returns a
+#### Cube root and fused multiply-add
+
+Scalar `cbrt` returns a
 `DoubleFloat`. For extreme `Double64` inputs it scales both limbs by
 `2^(-3k)` before Newton refinement and scales the root by `2^k`
 afterward. This keeps intermediate products in range and retains the
@@ -77,19 +86,23 @@ input's low-limb contribution at working precision. Near cancellation,
 with an allocation-free expansion. Its tuple capacity grows one slot
 at a time as product and addend terms are inserted.
 
-**Trigonometric functions** (`trig.jl`): argument reduction by `mod2pi`,
-then circle-splitting into `[0, π/32]` segments with tabulated
-`sin`/`cos` anchor values and short Taylor kernels.  Reductions near the
-roots (`x - π/2`, `x - π`) carry a triple-double π so cancellation does
-not eat the low word.  Branch windows must be *bounded*: each Taylor
-kernel is only valid for `|r| ≤ π/32`.
+#### Trigonometric functions
 
-**Hyperbolics**: from `exp(±x)`; `sinh`/`cosh` switch to a `Float128`
-route above 709 where `exp` alone would overflow although they remain
-finite (through `ln(2·floatmax) ≈ 710.476`).
+The scalar kernels in `trig.jl` reduce arguments with `mod2pi` and
+split the circle into `[0, π/32]` segments with tabulated `sin` and
+`cos` anchors and short Taylor kernels. Reductions near the roots
+(`x - π/2`, `x - π`) carry a triple-double π to preserve the low word.
+Each Taylor kernel has a bounded interval `|r| ≤ π/32`.
 
-**Inverse hyperbolics** (`archyptrig.jl`): formulated to keep relative
-precision at their sensitive points, and to avoid squaring overflow:
+#### Hyperbolic and inverse hyperbolic functions
+
+The general hyperbolic kernels use `exp(±x)`. The `sinh` and `cosh`
+kernels switch to a `Float128` route above 709. Their results remain
+finite through `ln(2·floatmax) ≈ 710.476`, beyond the overflow
+threshold of the intermediate `exp`.
+
+The inverse hyperbolic kernels in `archyptrig.jl` preserve relative
+precision near sensitive points and avoid squaring large arguments.
 
 | function | small/near-1 form | large-argument form (`≥ 4/eps`) |
 |:---------|:------------------|:--------------------------------|
@@ -101,13 +114,14 @@ precision at their sensitive points, and to avoid squaring overflow:
 (e.g. `acoth = ½·log1p(2/(x-1))`), never through a bare `inv(x)` where
 that would lose `1/x - 1`.
 
-**agm / ellipk** (`src/math/special/`): the AGM iteration stops when the
-gap `|a-b|` *stops shrinking* — its quadratic convergence ends exactly at
-the roundoff floor — rather than testing a fixed tolerance, which cannot
-be chosen correctly in advance for all operand scales.
+#### Special functions
 
-**erf, erfc, gamma, Bessel**: computed via `Float128` (Quadmath), whose
-113-bit significand slightly exceeds `Double64` working precision.
+For `agm` and `ellipk` in `src/math/special/`, the AGM iteration
+stops when the gap `|a-b|` stops shrinking. This stopping rule tracks
+the roundoff floor at the operand scale.
+
+The error, gamma, and Bessel functions use `Float128` from Quadmath.
+Its 113-bit significand exceeds `Double64` working precision.
 
 ### Faster Double64 elementary kernels
 
@@ -116,6 +130,8 @@ approximation. The extra speed comes from fewer double-word operations
 and less reconstruction. Near a root, pole, or format limit, the
 accuracy of the reduced argument or the available output spacing
 determines which path is appropriate.
+
+#### Exponentials and logarithms
 
 **`exp` and `exp2`** use two-component values of `2^(j/128)`.
 For `exp`, a high-word estimate selects the integer index. A three-part
@@ -158,6 +174,8 @@ narrower taper gave measurable errors. Forming `x` or `x - 1` directly
 also lets the natural logarithm return the first-order term when it is
 too small to halve without losing representable bits.
 
+#### Trigonometric and hyperbolic approximations
+
 **`atan`** reduces by reciprocal for magnitudes above one and uses
 17 dyadic anchors at `j/16` on the unit interval. The tangent
 subtraction formula leaves a reduced argument of magnitude about
@@ -190,6 +208,8 @@ grid for the tested quantized results. These checks and the
 describes the review decisions and the basis for the performance
 comparisons.
 
+#### Double64 scalar benchmarks
+
 On an i9-14900K with Julia 1.10.10, warmed scalar-call loops processed
 20,000 seeded inputs per operation. The Double64 inputs included a
 populated low component. The Float64 baseline used the corresponding
@@ -210,7 +230,7 @@ the listed intervals and are throughput measurements.
 | `log2` | 0.25 to 2.25 | 25 → 19 ns | 5.7× → 4.2× |
 | `log1p` | −0.0625 to 0.0625 | 22 → 19 ns | 4.5× → 3.9× |
 
-## Faster Double32 elementary kernels
+### Faster Double32 elementary kernels
 
 A Double32 value consists of two Float32 words. For ordinary scalar
 calls on this format, a single Float64 evaluation provides additional
@@ -234,63 +254,12 @@ example, converting `Double32(1.0f0, Float32(2^-60))` to Float64
 rounds it to one. The logarithm keeps the prior two-word path for that
 input. Exponential underflow and overflow use the existing format-limit
 paths. Exact zero arguments to the odd functions and `log1p` keep their
-stored sign.
+stored sign. The [native Double32 batches](#Native-Double32-batches)
+use the same head ranges and work directly on both Float32 words.
 
-### Native Double32 batches
+## Vector evaluation
 
-The six native batch kernels use the same head ranges as their scalar
-counterparts. They operate directly on both Float32 words, including
-sparse low words that would be rounded away in a Float64 sum. `atan`
-reduces around the nearest dyadic center `j/16` and evaluates a short
-odd polynomial. `sinh` uses a tapered odd Taylor series. `tan` and
-`tanh` share a shortened continued fraction, with the sign of the
-squared argument distinguishing the two functions. `log2` reuses
-the existing Float32 table and returns exact integers on powers of two.
-`log1p` uses a compensated quotient `t = x/(2+x)` followed by a
-five-term odd series for the natural logarithm. Its short interval
-keeps `abs(t) < 0.033`, allowing the three highest coefficients to use
-single Float32 words.
-
-The shared driver uses a native loop on eligible dense blocks and scalar
-calls elsewhere. `expm1` benefits from the guarded scalar route in
-batches. A prototype using repeated Float32 doubling was slower and
-exceeded the 2.2-unit accuracy target. The
-[Accuracy Report](accuracy_report.md#Double32-vector-kernels) compares
-the six production kernels with high-precision references. The
-[implementation plan](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md)
-records the validation criteria.
-
-### Double32 benchmarks
-
-Times are median nanoseconds per element from warmed, preallocated
-loops on 65,536 seeded inputs with nonzero low words, using Julia 1.10.10
-on one i9-14900K thread. The baseline is revision `cfeee67e`.
-All batch calls used zero heap allocations after compilation. LLVM
-generated eight-lane Float32 arithmetic for the six native kernels.
-The gains apply to the input intervals and compiler target tested.
-
-| Operation | Sampled heads | Scalar before → after | Batch before → after |
-|:---|:---|---:|---:|
-| `exp` | 0.25 to 2.25 | 21.1 → 4.2 | 21.1 → 4.3 |
-| `exp2` | 0.25 to 2.25 | 12.8 → 4.3 | 12.6 → 4.4 |
-| `expm1` | −0.5 to 0.5 | 36.8 → 8.2 | 37.1 → 8.1 |
-| `log` | 1.125 to 2.25 | 21.7 → 5.6 | 21.6 → 5.7 |
-| `log2` | 1.125 to 2.25 | 21.4 → 5.7 | 21.5 → 5.5 |
-| `log1p` | −0.0625 to 0.0625 | 23.5 → 7.7 | 23.8 → 2.0 |
-| `atan` | −1 to 1 | 47.3 → 9.6 | 47.6 → 5.9 |
-| `tan` | −0.5 to 0.5 | 36.5 → 5.2 | 36.9 → 3.1 |
-| `sinh` | −1 to 1 | 30.2 → 5.6 | 30.3 → 2.8 |
-| `cosh` | −1 to 1 | 29.0 → 3.0 | 29.2 → 3.1 |
-| `tanh` | −1 to 1 | 36.3 → 8.1 | 36.7 → 3.0 |
-
-Replacing the low words of 1% of the inputs with much smaller values
-still admitted those inputs to the six native kernels. Their batch
-times stayed within 5% of the eligible-only runs or improved. The
-batch driver in `perf/bench_simd_elementary.jl` includes these intervals.
-Use `SIMD_FILTER=/Double32 SIMD_SIZE=65536 SIMD_MIXTURE=0,0.01` to
-measure dense inputs and inputs with sparse low words.
-
-## [Elementary vector kernels](@id elementary-vector-kernels)
+### [Elementary vector kernels](@id elementary-vector-kernels)
 
 The [User Guide](userguide.md#Elementwise-operations-on-vectors) describes
 `DoubleFloats.simdmap!`, including axes, overlapping inputs, and exceptions.
@@ -348,7 +317,33 @@ eligible from 4,096 elements. For `Double64`, `hypot` and paired
 `normalize` are eligible from 16,384 elements. Reciprocal and integer
 power use a 65,536-element threshold.
 
+### Native Double32 batches
+
+The six native batch kernels use the same head ranges as their scalar
+counterparts. They operate directly on both Float32 words, including
+sparse low words that would be rounded away in a Float64 sum. `atan`
+reduces around the nearest dyadic center `j/16` and evaluates a short
+odd polynomial. `sinh` uses a tapered odd Taylor series. `tan` and
+`tanh` share a shortened continued fraction, with the sign of the
+squared argument distinguishing the two functions. `log2` reuses
+the existing Float32 table and returns exact integers on powers of two.
+`log1p` uses a compensated quotient `t = x/(2+x)` followed by a
+five-term odd series for the natural logarithm. Its short interval
+keeps `abs(t) < 0.033`, allowing the three highest coefficients to use
+single Float32 words.
+
+The shared driver uses a native loop on eligible dense blocks and scalar
+calls elsewhere. `expm1` benefits from the guarded scalar route in
+batches. A prototype using repeated Float32 doubling was slower and
+exceeded the 2.2-unit accuracy target. The
+[Accuracy Report](accuracy_report.md#Double32-vector-kernels) compares
+the six production kernels with high-precision references. The
+[implementation plan](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md)
+records the validation criteria.
+
 ### Batch benchmarks
+
+#### Double64 and complex benchmarks
 
 The table reports median microseconds per 4,096 elements from 11 interleaved
 measurements. It uses the bounded fixtures in `perf/bench_simd_elementary.jl`,
@@ -449,6 +444,36 @@ whole block fails its checks.
 The repository's `docs/vecbetter.md` records the phased rollout and the
 numerical results for binary `atan`.
 
+#### Double32 benchmarks
+
+Times are median nanoseconds per element from warmed, preallocated
+loops on 65,536 seeded inputs with nonzero low words, using Julia 1.10.10
+on one i9-14900K thread. The baseline is revision `cfeee67e`.
+All batch calls used zero heap allocations after compilation. LLVM
+generated eight-lane Float32 arithmetic for the six native kernels.
+The gains apply to the input intervals and compiler target tested.
+
+| Operation | Sampled heads | Scalar before → after | Batch before → after |
+|:---|:---|---:|---:|
+| `exp` | 0.25 to 2.25 | 21.1 → 4.2 | 21.1 → 4.3 |
+| `exp2` | 0.25 to 2.25 | 12.8 → 4.3 | 12.6 → 4.4 |
+| `expm1` | −0.5 to 0.5 | 36.8 → 8.2 | 37.1 → 8.1 |
+| `log` | 1.125 to 2.25 | 21.7 → 5.6 | 21.6 → 5.7 |
+| `log2` | 1.125 to 2.25 | 21.4 → 5.7 | 21.5 → 5.5 |
+| `log1p` | −0.0625 to 0.0625 | 23.5 → 7.7 | 23.8 → 2.0 |
+| `atan` | −1 to 1 | 47.3 → 9.6 | 47.6 → 5.9 |
+| `tan` | −0.5 to 0.5 | 36.5 → 5.2 | 36.9 → 3.1 |
+| `sinh` | −1 to 1 | 30.2 → 5.6 | 30.3 → 2.8 |
+| `cosh` | −1 to 1 | 29.0 → 3.0 | 29.2 → 3.1 |
+| `tanh` | −1 to 1 | 36.3 → 8.1 | 36.7 → 3.0 |
+
+Replacing the low words of 1% of the inputs with much smaller values
+still admitted those inputs to the six native kernels. Their batch
+times stayed within 5% of the eligible-only runs or improved. The
+batch driver in `perf/bench_simd_elementary.jl` includes these intervals.
+Use `SIMD_FILTER=/Double32 SIMD_SIZE=65536 SIMD_MIXTURE=0,0.01` to
+measure dense inputs and inputs with sparse low words.
+
 ### To be well-balanced
 
 Choose the error measure for the part of the domain you care about.
@@ -528,6 +553,8 @@ for choosing different speed and accuracy targets.
 
 ## Linear algebra
 
+### Factorizations and matrix equations
+
 LAPACK covers only `Float32/64` and their complexes, so DoubleFloats
 routes dense factorizations through pure-Julia generic implementations:
 
@@ -548,13 +575,15 @@ routes dense factorizations through pure-Julia generic implementations:
   `LQPackedQ` materialization/multiplication kernels supplied for
   DoubleFloat element types.
 
-## [Matrix functions](@id matrix-function-kernels)
+### [Matrix functions](@id matrix-function-kernels)
 
 See [Linear Algebra](linearalgebra.md#Functions-of-whole-matrices) for
 function domains and a worked example. The dedicated implementations in
 `src/math/linearalgebra/matfun.jl` can handle defective inputs. Structure checks apply
 to the stored matrix. For a skipped entry, both limbs of each component
 must be zero.
+
+#### Polynomial evaluation and triangular structure
 
 - **Exponential and trig/hyperbolic families.** The exponential uses
   scaling and squaring with a degree-34 Taylor polynomial evaluated by
@@ -570,6 +599,9 @@ must be zero.
   handled by transpose. `tan` and `tanh` also use triangular right
   division when the computed denominator is triangular and its
   distance from identity in the one-norm is at most 0.5.
+
+#### Square roots, logarithms, and powers
+
 - **Square root.** A triangular input uses the Björck–Hammarling
   recurrence on the original matrix. In the near-identity envelope
   `‖T - I‖₁ ≤ 0.625`, eligible triangles from size 96 use blocks of
@@ -588,27 +620,30 @@ must be zero.
   Schur factors. Eligible `ComplexDF64` factors from size 16 use a
   materialized adjoint in the packed reconstruction. The real-input
   result still goes through the usual imaginary-roundoff check.
-- **Diagonal and symmetric routes.** Ordinary real `Double64`
-  diagonal inputs use scalar diagonal evaluations for `exp`,
-  `sqrt`, `log`, and the sine/cosine and hyperbolic sine/cosine
-  families when the absolute diagonal heads are on `[2^-64, 8]`.
-  The `sqrt` and `log` diagonal routes require positive entries.
-  For ordinary real symmetric inputs from size 32 with
-  one-norm at most 0.875, `exp` and the same paired and single-output
-  trig and hyperbolic functions use the polynomial drivers.
-  Other eligible symmetric/Hermitian inputs use eigendecomposition.
 - **Fractional powers.** The usual `exp(p * log(A))` route can use
   the triangular optimizations in both stages. For ordinary
   nonsingular real `Double64` triangles in the near-identity
   envelope above, an exact exponent of one-half uses `sqrt`
   directly. The existing logarithm branch handles singular cases.
 
+#### Diagonal and symmetric matrices
+
+Ordinary real `Double64` diagonal inputs use scalar diagonal
+evaluations for `exp`, `sqrt`, `log`, and the sine/cosine and
+hyperbolic sine/cosine families when the absolute diagonal heads
+are on `[2^-64, 8]`.
+The `sqrt` and `log` diagonal routes require positive entries.
+For ordinary real symmetric inputs from size 32 with
+one-norm at most 0.875, `exp` and the same paired and single-output
+trig and hyperbolic functions use the polynomial drivers.
+Other eligible symmetric/Hermitian inputs use eigendecomposition.
+
 The general routes retain the type and branch conventions for
 `sqrt`, `log`, and matrix powers. `cbrt`, `sinpi`/`cospi`, and the
 matrix inverse circular and hyperbolic functions still use
 eigen-diagonalization, which requires a diagonalizable argument.
 
-### Matrix benchmarks
+#### Matrix benchmarks
 
 The table compares public calls against revision `58f7869c`. Timings
 are medians of seven warmed runs on Julia 1.10.10 on an Intel Core

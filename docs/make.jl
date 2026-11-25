@@ -49,7 +49,10 @@ makedocs(
     # Directory-style URLs rely on a web server to resolve `page/` to
     # `page/index.html`.  Use direct HTML links for locally opened builds,
     # while retaining pretty URLs for hosted CI deployments.
-    format = Documenter.HTML(prettyurls = get(ENV, "CI", "false") == "true"),
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", "false") == "true",
+        assets = ["assets/sidebar-subsections.css", "assets/sidebar-subsections.js"],
+    ),
     build = get(ENV, "DOCS_BUILD_DIR", "build"),
     # internal helpers carry docstrings that are deliberately not in the
     # manual; report them without failing the build

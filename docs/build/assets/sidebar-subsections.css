@@ -1,0 +1,7 @@
+.docs-sidebar .docs-menu ul.internal ul.docs-subsections {
+  padding-inline-start: 1rem;
+}
+
+.docs-sidebar .docs-menu ul.internal ul.docs-subsections .tocitem::before {
+  content: "–";
+}

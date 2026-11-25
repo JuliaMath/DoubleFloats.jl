@@ -1,3 +1,7 @@
 build/*
 !build/multifulcrum.html
+!build/assets/
+build/assets/*
+!build/assets/sidebar-subsections.css
+!build/assets/sidebar-subsections.js
 Manifest.toml
