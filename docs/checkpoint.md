@@ -18,10 +18,10 @@ design is `apothecary.md`. Updated at the end of each work item.
 | W0.1 Branches, version, compat | done | `21ea3bcd` | Suite passes from a fresh resolve on Julia 1.13.3; lowest admitted dependency versions load |
 | W0.2 CI matrix | done | `88ba4035`, `9ec52ac5` | Nine test jobs pass on #328: Julia 1.12, current, pre-release on Linux, macOS (ARM), Windows |
 | W0.3 Test layout and support | done | `4f7ae0d5`, `cb13130f`, `327f5cb3` | Same 140 test sets with the same counts as before, plus `test support` |
-| W0.4 Golden corpus | done locally; CI pending | `0ea66d94`, `067ffaa4` | 484 subjects recorded from `release-1.13`. Identical on Julia 1.12.7, 1.13.3, 1.15-DEV locally; identical on Linux, macOS ARM, Windows with Julia 1.13.4 in CI (first version of the corpus) |
-| W0.5 Benchmark suite | done locally; CI pending | `acab47e4` | 179 benchmarks; `release-1.13` against the working tree: every ratio between 0.95 and 1.06 |
-| W0.6 Formatting commit | next | | |
-| W0.7 Source tree | | | |
+| W0.4 Golden corpus | done | `0ea66d94`, `067ffaa4`, `cb79391c` | 483 subjects recorded from `release-1.13`. CI: identical on Linux, macOS ARM, Windows with Julia 1.12.0, 1.13.4, 1.14 beta (one subject removed, see findings) |
+| W0.5 Benchmark suite | done | `acab47e4`, benchmark fix | 179 benchmarks; `release-1.13` against the working tree: every ratio between 0.95 and 1.05. CI job passes |
+| W0.6 Line endings and formatting | done | `e01825b1`, `00d5f7bc`, `53da9379` | Corpus and suite unchanged; benchmark ratios 0.95 to 1.05 |
+| W0.7 Source tree | next | | |
 | W0.8 Sealed constructor | | | |
 | W0.9 Explicit imports | | | |
 | W0.10 Contributor guide | | | |
@@ -64,6 +64,19 @@ design is `apothecary.md`. Updated at the end of each work item.
 - Julia 1.12 was installed locally (juliaup channel `1.12`) to diagnose
   the corpus.
 
+- `sqrt` of a `ComplexDF64` is computed through `Float128`
+  (`ComplexDF64ComplexF128`). On ARM macOS with Julia 1.12.0 its bits
+  differ from every other platform and version in the matrix. This is a
+  seventh `Float128` path in the core, not listed in apothecary F18, and
+  direct evidence for R3: a result that depends on the platform's
+  libquadmath cannot carry a bound. Removed from the corpus; to be added to
+  the R3 list.
+- With one evaluation per sample, sub-microsecond benchmarks showed ±25%
+  on identical source. The comparison now calibrates evaluations.
+  `tune!` was tried and took more than ten minutes.
+- The formatter leaves a trailing `;` where two statements shared a line.
+  To be cleaned by hand as files are touched in W0.7 and W0.9.
+
 ## Open
 
 - Registration of 1.13.3 to be confirmed merged; then tag `v1.13.3` appears.
@@ -73,5 +86,5 @@ design is `apothecary.md`. Updated at the end of each work item.
 
 ## Next
 
-W0.6: one line-ending convention and one formatter configuration, each
-applied in its own commit, with the corpus unchanged.
+W0.7: rearrange the source tree to the layout of `apothic.md` §3.1, one
+commit per destination directory, corpus unchanged after each.
