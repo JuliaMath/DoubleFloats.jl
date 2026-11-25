@@ -251,13 +251,13 @@ include("io/parse.jl")
 include("contract/quadmath.jl")
 
 include("core/reflection.jl")
-include("math/prearith/floorceiltrunc.jl")
-include("math/prearith/divrem.jl")
+include("arith/rounding.jl")
+include("arith/divrem.jl")
 
-include("math/arithmetic/fma.jl")
+include("arith/fma.jl")
 include("math/arithmetic/modpi.jl")
-include("math/arithmetic/normalize_hypot.jl")
-include("math/arithmetic/mixedarith.jl")
+include("arith/hypot.jl")
+include("arith/mixed.jl")
 include("math/arithmetic/complex/pow.jl")
 include("math/ops.jl")
 
