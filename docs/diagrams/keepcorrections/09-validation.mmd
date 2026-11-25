@@ -1,0 +1,14 @@
+flowchart TD
+    task["Specify tolerance, domain, rounding, and required agreement before choosing a route"] --> model["Build references from exact text, integers, or decoded binary words"]
+    model --> exact{"Is exact arithmetic practical for this reference?"}
+    exact -->|Yes| exactref["Use exact dyadic or rational arithmetic for conversions and basic arithmetic"]
+    exact -->|No| wideref["Use directed enclosures where supported; otherwise refine a wider reference and record its evidential limits"]
+    exactref --> fixtures["Exercise cancellation, sparse low words, ties, subnormals, overflow, and exceptional values"]
+    wideref --> fixtures
+    fixtures --> endtoend["Exercise scalar and batch agreement, alias and layout constraints, matrix branches, and serialization round trips"]
+    endtoend --> verify["Check results with the required metric; distinguish proof, enclosure, and sampled evidence"]
+    verify --> pass{"Does the route satisfy the declared contract?"}
+    pass -->|No| fix["Repair intake, formula, guard, rounding, or fallback where the correction was lost"]
+    fix --> fixtures
+    pass -->|Yes| timing["Compare complete routes on matching inputs, including conversions and retries"]
+    timing --> choose["Use the fastest route that satisfies that contract on the target workload"]

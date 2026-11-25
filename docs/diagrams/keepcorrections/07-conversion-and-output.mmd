@@ -1,0 +1,16 @@
+flowchart TD
+    start["Receive exact value, certified enclosure, or approximate result with stated evidence"] --> classes{"Which numerical class applies?"}
+    classes -->|Class or range undecided| more
+    classes -->|Zero, infinity, NaN, or out of range| classify["Apply the documented signed-zero, exceptional-value, or overflow policy"]
+    classes -->|Finite and within range| target{"What will consume the result?"}
+    target -->|Pair value| pair["For standalone compression, round hi to nearest even, round the residual to lo, and renormalize"]
+    pair --> paircheck["For bounded input, check both rounding decisions or the represented sum against its error budget"]
+    target -->|One base float| single["Round the represented value under the destination rule; make loss an explicit conversion"]
+    single --> singlecheck["For exact conversion, compare exact values; for bounded rounding, check the destination decision"]
+    target -->|Lossless storage| store["Encode component type, class, and both word bit patterns in a versioned format"]
+    paircheck --> certain{"Does the evidence establish the requested rounding or tolerance?"}
+    singlecheck --> certain
+    certain -->|Yes| accept["Return with the documented conversion semantics"]
+    certain -->|No| more["Tighten the enclosure from retained data if possible, or report loss or uncertainty"]
+    store --> accept
+    classify --> accept

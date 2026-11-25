@@ -1,0 +1,20 @@
+flowchart TD
+    input["Read input with an explicit source kind"] --> kind{"What was supplied?"}
+    kind -->|Decimal text or fraction| rational["Parse sign, digits, and exponent or numerator and denominator"]
+    rational --> retain["Retain exact rational data or a justified enclosure"]
+    kind -->|Integer| integer["Capture exactly before any conversion to a component float"]
+    integer --> retain
+    kind -->|Existing binary float| binary["Capture the already-rounded binary value exactly"]
+    binary --> retain
+    kind -->|Pair or base plus correction| dyadic["Decode both words as exact dyadics, or keep the two source operands"]
+    dyadic --> retain
+    kind -->|Complex| components["Apply the same input rules to real and imaginary parts"]
+    components --> retain
+    retain --> check{"Valid syntax, supported source size, and allowed numeric class?"}
+    check -->|No| sourceerror["Return the appropriate input, size, or domain error"]
+    check -->|Yes| split["Split into a normalized pair using the output rounding procedure"]
+    split --> fits{"Exact, or within the input error budget?"}
+    fits -->|Yes| keep["Keep the pair and retain original data for any required retry"]
+    fits -->|No| wider["Keep a wider representation if allowed, or report input loss"]
+    keep --> compute["Pass the preserved value into the computation"]
+    wider -->|Wider value available| compute

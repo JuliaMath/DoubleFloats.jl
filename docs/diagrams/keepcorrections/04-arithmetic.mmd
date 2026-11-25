@@ -1,0 +1,18 @@
+flowchart TD
+    args["Finite normalized pair operands and operation"] --> safe{"Do range, rounding mode, and hardware satisfy the kernel assumptions?"}
+    safe -->|No| alt["Rescale exactly if safe, or evaluate in certified wider or exact arithmetic"]
+    safe -->|Yes| op{"Operation"}
+    op -->|Addition or subtraction| sum["Use TwoSum on the signed high words; carry its residual and both low words"]
+    op -->|Product| product["Form high product p and recover fma(a_hi, b_hi, -p); accumulate cross terms and low product as accuracy requires"]
+    op -->|Division| div["Estimate quotient; form residual a minus q times b from both words; use residual to correct quotient"]
+    op -->|Square root| root["Estimate root; form residual a minus s squared; correct using residual over 2s where safe"]
+    op -->|Reduction| reduce["Accumulate the correction in pair arithmetic or a wider accumulator; define accumulation order if required"]
+    sum --> combine["Accumulate retained terms before compressing to the target pair"]
+    product --> combine
+    div --> combine
+    root --> combine
+    reduce --> combine
+    combine --> enough{"Do the approximation and discarded terms fit the error budget?"}
+    enough -->|Yes| pack["Normalize and round under the pair format policy"]
+    enough -->|No or undecidable| alt
+    alt --> pack

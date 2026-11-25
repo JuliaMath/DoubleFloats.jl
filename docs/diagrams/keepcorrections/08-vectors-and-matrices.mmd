@@ -1,0 +1,19 @@
+flowchart TD
+    data["Construct each element with both words before building the array"] --> family{"Elementwise batch or matrix operation?"}
+    family -->|Elementwise batch| shape["Check element and destination types, axes, overlap, and exception order"]
+    shape --> eligible{"Does the batch route meet the scalar or tolerance agreement requirement?"}
+    eligible -->|Yes| native["Use eligible blocks; send other lanes or blocks through correction-aware scalar evaluation"]
+    eligible -->|No| loop["Use the selected scalar method in the required write order"]
+    native --> lanes["Store results in a pair-typed destination"]
+    loop --> lanes
+    family -->|Matrix operation| structure["Retain both words when checking structural zeros, diagonal values, and domain or branch conditions"]
+    structure --> methods["Use the applicable structured method or a general method meeting the operation's contract"]
+    methods --> residual["Evaluate residual on retained data, or check a wider reference if branch or forward accuracy matters"]
+    residual --> decision{"Does the check support the requirement?"}
+    decision -->|Yes| assemble["Return pairs and preserve any supported structure"]
+    decision -->|No| original["Recompute using retained or original data in a route with stronger evidence"]
+    lanes --> destination["Narrow only at an explicit consumer boundary"]
+    assemble --> destination
+    original --> recheck{"Does the stronger route meet the requirement?"}
+    recheck -->|Yes| destination
+    recheck -->|No| unresolved["Report the limitation under the selected policy"]

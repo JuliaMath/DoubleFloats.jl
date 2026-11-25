@@ -1,0 +1,17 @@
+flowchart TD
+    interface["Standalone Julia API: typed constructors, arithmetic, explicit conversions"] --> repr["Immutable PairFloat of component type T: hi and lo denote their mathematical sum"]
+    interface --> policy["Explicit policies: rounding, numeric class, error target, and wider fallback"]
+    repr --> model["Start with Float64 and Float32 word pairs; validate Float16 separately"]
+    repr --> complex["Represent complex values as two component pairs; define branch and signed-zero behavior"]
+    model --> base["Implement normalized construction and checked conversion before arithmetic"]
+    base --> primitive["Implement TwoSum and FMA product residual with explicit preconditions"]
+    primitive --> ordinary["Build add, subtract, multiply, divide, and square root with retained residuals"]
+    primitive --> exceptional["Scale with exact powers of two when safe; otherwise use a conservative kernel or wider arithmetic"]
+    ordinary --> derived["Build expm1, log1p, cancellation-aware sums and dots, and structured operations"]
+    exceptional --> derived
+    policy --> derived
+    complex --> derived
+    derived --> engine["Select an eligible kernel; validate classes and any requested result bound"]
+    engine --> wrapper["Offer batch and matrix entry points over the same representation and documented semantics"]
+    engine --> export["Return a normalized pair or explicitly convert at the consumer boundary"]
+    wrapper --> export

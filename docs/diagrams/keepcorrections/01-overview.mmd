@@ -1,0 +1,15 @@
+flowchart TD
+    source["Inputs with known origin: text, integers, binary floats, or pairs"] --> capture["Capture the supplied value before arithmetic can erase a correction"]
+    capture --> contract["Choose output format, error measure, range and domain behavior"]
+    contract --> architecture{"How will the computation be built?"}
+    architecture -->|Standalone| own["Own the pair type, conversion rules, and correction-aware kernels"]
+    architecture -->|With DoubleFloats| adapter["Reuse public types and methods behind checked boundaries"]
+    own --> evaluate["Evaluate using both words where they affect the answer"]
+    adapter --> evaluate
+    evaluate --> qualify{"Can this route establish the requested result?"}
+    qualify -->|Yes| output["Return a pair, or round once at an explicit output boundary"]
+    qualify -->|Insufficient evidence or range| retry["Retry from the retained inputs with wider or exact arithmetic"]
+    retry --> outcome{"Result established within the configured policy?"}
+    outcome -->|Yes| output
+    outcome -->|No| report["Report a range, domain, or unresolved accuracy condition"]
+    output --> consumer["Retain the pair for subsequent work, or audit the exported value"]
