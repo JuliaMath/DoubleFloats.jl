@@ -31,14 +31,17 @@ What is there, stated plainly.
 
 - **Core.** `DoubleFloat{T}` is an immutable pair `(hi, lo)` of `IEEEFloat`s
   whose value is the unevaluated sum. About 8,300 lines of source, 2,900 of
-  tests, 68 public names.
+  tests, 67 exported names.
 - **Arithmetic.** Error-free transformations (`two_sum`, `two_prod` via `fma`)
   under double-word kernels that cite Joldes, Muller, and Popescu (2017) in
   source comments: addition below `3u²`, multiplication at most `7u²`.
+  Division is a variant with no cited bound.
 - **Elementary functions.** Table-driven reductions with double-word
   coefficients generated at load time from 256-bit `BigFloat`. Guarded fast
   routes for bounded head ranges, wider fallbacks, and MPFR-assisted rounding
-  at the underflow lattice.
+  at the underflow lattice. `Float128` from Quadmath carries `asin`, `acos`,
+  two-argument `atan`, `sinpi`, `cospi`, `sin` and `cos` for `|x| ≥ 6.28125`,
+  the top band of `sinh` and `cosh`, and `string`.
 - **Batches.** `DoubleFloats.simdmap!` (not exported) selects per-block among
   native kernels, sparse lane repair, and the scalar loop. Selection is
   already data: `_BatchKernel(eligible, evaluate)`.
@@ -98,12 +101,40 @@ first. `Double64(big(2)^70 + 1)` is exact because `BigInt` takes the generic
 `Real` path. The same number is exact or inexact depending on its integer type.
 
 **F5. `floatmin` names a point where the contract no longer holds.**
-`floatmin(Double64)` returns `floatmin(Float64)`. Full 106-bit precision
-requires the low word's grid to sit above the subnormal spacing `Δ`. The
-Accuracy Report uses the threshold `Δ / eps(Double64) = 2^-970` (about
-`1e-292`); the Technical Guide quotes about `4e-292`. Either way it is some
-sixteen decimal orders above `floatmin`, and the type's own reflection
-functions do not expose it.
+`floatmin(Double64)` returns `floatmin(Float64) = 2^-1022`. A value with
+leading bit `2^e` has its 106th bit at `2^(e-105)`, which is on the `Float64`
+grid only when `e - 105 ≥ -1074`. Full precision therefore requires
+`|x| ≥ 2^-969 = floatmin(Float64) · 2^53` (about `2.0e-292`). The package
+states this threshold three ways: the Technical Guide says about `4e-292`,
+the Accuracy Report uses `Δ / eps(Double64) = 2^-970`, and the type's
+reflection functions do not expose it at all.
+
+**F13. `NaN == NaN` is `true`.**
+`Double64(NaN) == Double64(NaN)` returns `true` and `!=` returns `false`.
+`==` compares components with `===`, which is bitwise. IEEE 754 and `Base`
+require `false`.
+
+**F14. `isless` and `isequal` do not follow `Base`.**
+`isless(Double64(1), Double64(NaN))` is `false` (`Base`: `true`, NaN sorts
+last). `isequal(Double64(-0.0), Double64(0.0))` is `true` and `isless` of
+the same pair is `false` (`Base`: `false` and `true`). Consequence:
+`sort([1, NaN, 0, -1])` as `Double64` returns `[1.0, NaN, -1.0, 0.0]`.
+
+**F15. Comparison with `Rational` is inexact.**
+`Double64(1)/3 == 1//3` is `true`. `Base` compares floats with rationals
+exactly (`1/3 == 1//3` is `false`). The method converts the rational to
+`Double64` first.
+
+**F16. `Base.decompose` is defined and broken.**
+`Base.decompose(::Double64)` calls an unqualified `decompose` and throws
+`UndefVarError`. The `Double32` and `Double16` method goes through `Float64`
+and is inexact for a sparse low word. `decompose` is what `Base`'s generic
+`hash(::Real)` and exact rational conversion rely on.
+
+**F17. Non-finite values have no canonical form.**
+`Double64(Inf)` stores `(Inf, Inf)`; `floatmax(Double64) * 2` stores
+`(Inf, 0.0)`. `==` special-cases infinities, which hides the difference;
+hashing and `reinterpret` do not.
 
 ### 4.2 Structural tensions
 
@@ -141,9 +172,15 @@ precompile on Julia 1.13 (method overwrite during precompilation).
 **F11. Support levels are implicit.** `Double16` and most `Double32`
 elementary functions are computed in `Double64` and rounded
 (`templated.jl`). Methods exist for `DoubleFloat{Double32}`, a nested type
-that no constructor produces. Special functions for all three types pass
+that no constructor produces; `convert` to a nested type overflows the stack. Special functions for all three types pass
 through `Float128`. None of this is wrong, but the manual's type table
 presents the three types as equals.
+
+**F18. Quadmath sits on core paths.** The functions listed in §2 and
+`string` itself call `Float128`. Removing Quadmath from the core is therefore
+not a packaging change: it requires native kernels or `BigFloat` fallbacks
+for each of them. `Float128(x)` also rounds away a sparse low word, so these
+routes do not honour the full input.
 
 **F12. Minor.** A comment for a different algorithm is fused into a code
 line in `sub_dddd_dd`. `test/README.md` is a list of empty headings.
@@ -154,22 +191,30 @@ Six mechanisms. Each removes a class of finding rather than one instance.
 
 ### M1. Make the invariant a fact of the type
 
-Define normalization once:
+Define normalization once, for finite values:
 
 ```math
-\mathcal{N}(h, l):\quad h = \mathrm{RN}(h + l)
-\quad\text{for finite } h,\, l;\qquad l = h \text{ or } l = \mathrm{NaN} \text{ when } h \text{ is not finite.}
+\mathcal{N}(h, l):\quad h = \mathrm{RN}(h + l).
 ```
 
-- The only public constructors establish `𝒩`. The raw pair constructor
-  becomes internal, with a name that says so (`unsafe_double`), used by
-  kernels that have already proved `𝒩`.
-- `isnormalized(x)` is exported for users who build values from stored pairs.
-- A debug mode (`DoubleFloats.checked(true)`) asserts `𝒩` on the output of
-  every kernel during testing.
+When `h` is not finite the value is `h` and `l` is ignored: equality,
+ordering, hashing, and display read only `h`. This matches what arithmetic
+already produces (F17) without an extra canonicalizing branch on hot paths.
+A zero value keeps the sign of `h`.
 
-Resolves F2. Makes every later bound well-posed, since each published bound
-assumes `𝒩` on inputs.
+- Every public constructor establishes `𝒩`. `Double64(hi, lo)` normalizes;
+  on an already normalized pair `two_sum` returns the same two words, so
+  valid stored data is unaffected.
+- The raw pair constructor becomes internal (`unsafe_double`, on the
+  precedent of `Base.unsafe_rational`, which likewise skips normalization).
+  Kernels that have established `𝒩` use it.
+- `isnormalized(x)` is public for clients who build values from stored pairs.
+- `𝒩` is asserted on kernel outputs by the test suite, for every route, not
+  by a run-time mode in the library. A global checking switch would put
+  mutable state on hot paths.
+
+Resolves F2 and F17. Makes every later bound well-posed, since each
+published bound assumes `𝒩` on inputs.
 
 ### M2. Three tiers of guarantee
 
@@ -178,58 +223,100 @@ Every public operation is assigned exactly one tier per route.
 | Tier | Meaning | Statement form | Examples |
 |:--|:--|:--|:--|
 | **E** exact | Result equals the mathematical value | `hi + lo = a ∘ b` | `two_sum`, `two_prod`, `add2`, `mul2`, conversion from `Float64` |
-| **B** bounded | Relative error has a proved bound under `𝒩` and no over/underflow | `\|ŷ − y\| ≤ c·u²·\|y\|` with a citation or proof | `+`, `−` (`c = 3`); `*` (`c = 7` as coded) |
-| **S** sampled | Bound observed on a stated sample; no proof | `max ≤ m ε_D` on `n` points of a named distribution | elementary functions, matrix functions |
+| **B** bounded | Relative error has a proved bound | `\|ŷ − y\| ≤ c·u²·\|y\|` with a citation or proof | `+`, `−`, `*` |
+| **S** sampled | Bound observed on a stated sample; no proof | `max ≤ m` in a named metric on `n` points of a named distribution | `/`, elementary functions, matrix functions |
+
+Preconditions for tiers E and B, stated once: inputs satisfy `𝒩`, rounding
+is to nearest, no intermediate overflows, and no intermediate underflows
+(for `two_prod`, the exponents of the factors sum to at least
+`e_min + p − 1`). Outside these the operation is still defined; the tier
+does not apply.
+
+Constants as coded, to be confirmed against the papers before publication:
+
+| Operation | Kernel | Algorithm in Joldes, Muller, Popescu (2017) | Bound | In units of `ε_D` |
+|:--|:--|:--|:--|:--|
+| `+`, `−` | `add_dddd_dd` | Algorithm 6, AccurateDWPlusDW | `3u² + 13u³` | 0.75 |
+| `*` | `mul_dddd_dd` | Algorithm 10, DWTimesDW1 | `7u²`; reported tightened to `5u²` by Muller and Rideau (2022) | 1.75, or 1.25 |
+| `/` | `dvi_dddd_dd` | A variant; not the published DWDivDW2 | none | tier S until proved |
+| `sqrt` | to be identified | | | |
+
+The source comment for addition says "`< 3u²`"; the published bound is
+`3u²/(1 − 4u)`, slightly larger.
 
 Rules that keep the tiers honest:
 
 1. A tier-B constant must name the algorithm in the cited paper and the
    line of code that implements it. A kernel that deviates from the published
-   algorithm drops to tier S until re-proved.
-2. A tier-S statement carries its sample size and distribution. With `n`
-   independent samples and no failures, the one-sided 95% bound on the
-   failure probability is `3/n`. For `n = 250` that is 1.2%, so the report
-   should either say so or raise `n` until the claim is the one intended
-   (`n = 10⁶` gives `3·10⁻⁶`).
-3. Tier-S routes add structured adversarial points to the random ones:
-   reduction boundaries, table midpoints, both signs of `lo` at each branch
-   switch. The boundary tests already do this for `exp` and `log`; the
-   mechanism makes it uniform.
-4. Composite operations inherit the weakest tier of their parts.
+   algorithm is tier S until proved. Division is the present example.
+2. A tier-S statement carries its metric, sample size, and distribution.
+   The reports already use three metrics and they are not interchangeable:
+   forward relative error in units of `ε_D`; absolute error in steps of the
+   underflow lattice `Δ`; and identity residuals for matrix functions.
+3. A sampled maximum is not a worst case. With `n` independent draws from a
+   distribution and none above a level `m`, the 95% upper confidence bound
+   on the probability that a further draw from the same distribution
+   exceeds `m` is `3/n`: 1.2% for `n = 250`, `3·10⁻⁶` for `n = 10⁶`. It says
+   nothing about inputs the distribution does not reach.
+4. Tier-S routes therefore add structured adversarial points to the random
+   ones: reduction boundaries, table midpoints, both signs of `lo` at each
+   branch switch. The boundary tests already do this for `exp` and `log`.
+5. Composite operations inherit the weakest tier of their parts.
 
 Resolves F7. Converts the test threshold of `2.2 ε_D` from a private
-constant into the published tier-S ceiling for scalar elementary functions.
+constant into the published tier-S ceiling for scalar elementary functions
+in the forward-error metric.
 
 ### M3. A route registry
 
-A route is a record:
+A route is a concretely typed, immutable record:
 
 ```julia
-struct Route{F,P,K}
-    op::F              # exp, log, ...
-    types::Type        # Double64, Double32, ComplexDF64
-    shape::Symbol      # :scalar, :batch, :matrix
-    admits::P          # predicate on inputs; cheap, branch-free where batched
-    valid::Interval    # where the kernel is mathematically valid
-    measured::Interval # where evidence exists; measured ⊆ valid
+@enum Tier exact bounded sampled
+@enum Metric forward lattice residual
+
+struct Route{A,K}
+    name::String                  # "128-entry table, degree 9"
+    admits::A                     # predicate on inputs; branch-free where batched
     kernel::K
-    tier::Symbol       # :E, :B, :S
-    bound::Float64     # in units of ε_D
-    fallback           # next route
+    valid::NTuple{2,Float64}      # heads on which the kernel is mathematically valid
+    measured::NTuple{2,Float64}   # heads on which evidence exists; within `valid`
+    tier::Tier
+    metric::Metric
+    bound::Float64                # in units of the metric
+    identical::Bool               # batch kernels: same bits as the scalar route
 end
 ```
 
-The existing `_BatchKernel(eligible, evaluate)` is this record with five
-fields missing. Generalize it rather than invent a new thing.
+The registry is a function, not a table. Each operation declares its chain
+as a tuple, most specific route first, fallback last:
+
+```julia
+routes(::typeof(exp), ::Type{Double64}) = (EXP_TABLE128, EXP_TABLE16, EXP_WIDE)
+
+@inline evaluate(rs::Tuple{Route}, x) = first(rs).kernel(x)
+@inline evaluate(rs::Tuple, x) =
+    first(rs).admits(x) ? first(rs).kernel(x) : evaluate(Base.tail(rs), x)
+
+Base.exp(x::Double64) = evaluate(routes(exp, Double64), x)
+```
+
+Tuple recursion over concrete types compiles to the same guarded branch
+chain that is written by hand today: a three-route prototype inlines fully,
+with no calls and no allocation. There is no global mutable table, no
+`@generated` function reading one, and no run-time lookup. The existing
+`_BatchKernel(eligible, evaluate)` is this record with the metadata
+missing; batch routes are a second method, `routes(f, T, Batch())`.
 
 One registry, four consumers:
 
-- **Dispatch.** Scalar routes compile to the same guarded branches as today
-  (the registry is consulted at definition time through `@generated` or
-  macro expansion, so there is no run-time table lookup).
+- **Dispatch.** `evaluate(routes(f, T), x)`, as above. Each converted
+  function is benchmarked against its hand-written form before the old code
+  is removed.
 - **Tests.** For each route: sample inside `measured`, probe both sides of
   each endpoint of `admits`, assert the result is within `bound` and that
-  `𝒩` holds. A route without a passing fixture cannot be registered.
+  `𝒩` holds. The suite iterates over every `routes` method, so a route
+  without metadata or with a failing fixture fails CI.
 - **Manual.** The admission tables in the Technical Guide are printed from
   the registry. They cannot drift.
 - **Benchmarks.** Fixtures are drawn from `measured`, so the benchmark and
@@ -256,25 +343,51 @@ one call.
 ### M4. Base-contract conformance suite
 
 A test file that states the `AbstractFloat` contract as properties and runs
-them over all three types, including non-finite and subnormal values:
+them over all three types, including non-finite, zero, and subnormal values.
 
-- `isequal(a, b) ⇒ hash(a, h) == hash(b, h)` across `DoubleFloat`, `Float64`,
-  `BigFloat`, `Rational`, and integers.
-- `T(x)` is exact whenever `x` is representable in `T`, for every `Real`
-  subtype (catches F4).
-- `==`, `<`, `isless` form a total order on normalized values and agree with
-  the exact order of `hi + lo` in `BigFloat`.
-- `parse(T, string(x)) == x`; `nextfloat(x) > x`; `prevfloat(nextfloat(x)) == x`.
-- Every keyword-accepting method is called with each keyword (catches F3).
+- **Equality.** `NaN != NaN`; `-0.0 == 0.0`; infinities equal by sign
+  whatever their low word (F13, F17).
+- **Order.** `isless` is a strict total order with `-0.0` before `0.0` and
+  NaN last; `isequal` distinguishes the zeros and equates NaNs; `sort`
+  agrees with sorting the exact values (F14).
+- **Mixed comparison is exact.** `x == y` and `x < y` against `Rational`,
+  `BigFloat`, and integers agree with comparing exact values (F15).
+- **Hash.** `isequal(a, b) ⇒ hash(a, h) == hash(b, h)` across `DoubleFloat`,
+  `Float64`, `BigFloat`, `Rational`, and integers (F1).
+- **Construction.** `T(x)` is exact whenever `x` is representable in `T`,
+  for every `Real` subtype (F4).
+- **Round trips.** `parse(T, string(x)) == x`; `nextfloat(x) > x`;
+  `prevfloat(nextfloat(x)) == x`.
+- **Keywords.** Every keyword-accepting method is called with each keyword
+  (F3).
 
-The correct hash: when `lo == 0`, return `hash(hi, h)`; otherwise fall
-through to `Base`'s generic `hash(::Real, h)`, which uses `decompose` and
-therefore agrees with `BigFloat` and `Rational`. `decompose` is already
-defined for `Double64`.
+Reference definitions, verified against the cases above:
 
-For F5, add `floatmin_full(T) = nextfloat(zero(F)) / eps(T)` (`2^-970` for
-`Double64`, the threshold the Accuracy Report already uses) and document
-`floatmin` as the smallest normal head.
+```julia
+==(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T} =
+    (x.hi == y.hi) & ((x.lo == y.lo) | !isfinite(x.hi))
+
+isequal(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T} =
+    isequal(x.hi, y.hi) & ((x.lo == y.lo) | !isfinite(x.hi))
+
+isless(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T} =
+    isless(x.hi, y.hi) | (isequal(x.hi, y.hi) & isfinite(x.hi) & (x.lo < y.lo))
+```
+
+The hash must agree with `Base`'s generic `hash(::Real, h)`, which is built
+on `decompose`. That requires two repairs, in order:
+
+1. Make `decompose` exact (F16). For finite `x`, combine the integer
+   decompositions of `hi` and `lo` on their common power of two, using
+   `BigInt` when the exponent gap exceeds 64 bits; for non-finite `x`,
+   return `decompose(x.hi)`.
+2. Define `hash(x, h)` as `hash(x.hi, h)` when `lo` is zero or `hi` is not
+   finite, and otherwise defer to the generic method. Delete the three
+   current methods, two of which belong to the unconstructible nested type.
+
+For F5, add `floatmin_full(T) = floatmin(F) * 2^precision(F)` (`2^-969` for
+`Double64`), document `floatmin` as the smallest normal head, and use the
+one threshold in the Technical Guide and the Accuracy Report.
 
 ### M5. Sculpt the dependency surface
 
@@ -285,7 +398,19 @@ For F5, add `floatmin_full(T) = nextfloat(zero(F)) / eps(T)` (`2^-970` for
 | Extension: special functions | `erf`, `gamma`, Bessel | SpecialFunctions, Quadmath |
 
 Julia 1.10 supports package extensions, so the declared minimum already
-permits this. It is a breaking change for users who rely on `gamma` or
+permits this. The core row is only true once Quadmath is off the core
+paths (F18). That needs, in the core and without `Float128`: digit
+generation for `string`; a rescaled `exp` for the top band of `sinh` and
+`cosh`; exact reduction modulo 2 for `sinpi` and `cospi`; `asin`, `acos`,
+and two-argument `atan` composed from the existing `atan` and `sqrt`
+kernels; and a large-argument reduction for `sin` and `cos`, by `BigFloat`
+(which is part of `Base`) until a native one exists.
+
+An extension cannot add exports to its parent. That is harmless here:
+`erf`, `gamma`, and the Bessel names belong to SpecialFunctions, and `eigen`
+and `schur` to LinearAlgebra, so a client who loads those packages has the
+names. A `Double64` matrix passed to `eigen` without the extension loaded
+should produce an error hint naming the packages to load. It is a breaking change for users who rely on `gamma` or
 `eigen` arriving with `using DoubleFloats`, so it belongs to 2.0, with an
 upgrade-guide entry naming the package to load for each function. It also
 removes the class of failure in F10, where a transitive package breaks
@@ -326,8 +451,8 @@ Resolves F8, F9, F11.
 
 The contract layer is new. The other three exist and are re-sorted. The
 current "Adding New Functions" page becomes "Adding a route": a new function
-is a registry entry plus a kernel plus a fixture, and the checklist is what
-the registry refuses to accept.
+is a route plus a kernel plus a fixture, and the checklist is what CI
+rejects.
 
 The first page changes its opening claim from capability to contract:
 
@@ -343,7 +468,7 @@ src/
   core/        type, invariant, constructors, conversion, comparison, hash
   eft/         error-free transformations (tier E)
   arith/       double-word kernels with cited bounds (tier B)
-  routes/      Route type, registry, dispatch generation
+  routes/      Route type, `routes` methods, `evaluate`
   elementary/  kernels only; guards live in the registry
   batch/       driver, block selection, repair
   io/          string, show, parse
@@ -364,14 +489,15 @@ so that each is reviewable on its own and later stages build on earlier ones.
 
 | Step | Work | 2.0 stage | Resolves |
 |:--|:--|:--|:--|
-| 1 | Conformance suite; fix `hash`, mixed `isapprox`, integer construction | alpha 1 | F1, F3, F4 |
-| 2 | Raw constructor internal; `isnormalized`; checked mode | alpha 1 | F2 |
+| 1 | Conformance suite; equality, order, hash, `decompose`, mixed `isapprox`, exact construction and rational comparison | alpha 1 | F1, F3, F4, F13–F16 |
+| 2 | Normalizing constructors; raw constructor internal; non-finite rule; `isnormalized`; delete nested-type methods | alpha 1 | F2, F11, F17 |
 | 3 | CI on `main`, on Julia 1.10 and current; tighten compat; untrack build output | alpha 1 | F9, F10 |
-| 4 | Tier labels and bounds on reports; raise sample sizes; add `floatmin_full` | beta 1 | F5, F7 |
-| 5 | Route registry for batch kernels (extend `_BatchKernel`); generate the batch admission table | beta 1 | F6 (batch) |
-| 6 | Scalar routes into the registry; seam and totality tests | beta 1 | F6, F8 |
+| 4 | Tier, metric, and bound on reports; raise sample sizes; one `floatmin_full` | beta 1 | F5, F7 |
+| 5 | Route type; batch kernels converted; batch admission table generated | beta 1 | F6 (batch) |
+| 6 | Scalar routes converted, each benchmarked against its predecessor; seam and totality tests | beta 1 | F6, F8 |
 | 7 | Manual re-layered; history to `NEWS.md` | beta 1 | F8, F9, F11 |
-| 8 | Extensions for linear algebra and special functions | beta 2 | M5 |
+| 8 | Quadmath off core paths: native or `BigFloat` routes for the functions in F18 | beta 2 | F18 |
+| 9 | Extensions for linear algebra and special functions, with error hints | beta 2 | M5 |
 
 The invariant (step 2) moves ahead of the registry because every bound the
 registry records assumes normalized inputs. Stage names match the migration
@@ -381,7 +507,8 @@ table in `apotheosis_from_fable52.md`, whose alpha 2 stage covers display.
 
 The apotheosis is reached when each of these is mechanically true.
 
-1. No public call can return a finite value violating `𝒩`.
+1. No public constructor accepts an unnormalized pair without normalizing
+   it, and every route's test asserts `𝒩` on its outputs.
 2. The conformance suite passes for `Double64`, `Double32`, and `Double16`.
 3. Every exported operation has a tier and a bound in a generated table,
    and a test that fails if the bound is exceeded.
@@ -389,7 +516,27 @@ The apotheosis is reached when each of these is mechanically true.
 5. Every route boundary has a seam test, and every route chain is total.
 6. Each report names one toolchain, one revision, one seed, and its sample
    sizes.
-7. `using DoubleFloats` loads no package outside the standard library.
+7. `using DoubleFloats` loads no package outside the standard library, and
+   no core route calls `Float128`.
 8. CI exercises the oldest declared Julia version.
 
 All eight are release criteria for 2.0.
+
+## 9. Revision record
+
+This document was reviewed against the code after first writing. Changes:
+
+| Item | Was | Now |
+|:--|:--|:--|
+| Hash remedy (M4) | Relied on `decompose`, "already defined" | `decompose` is broken (F16); repair it first |
+| Comparison (M4) | Listed total order as a property to test | Three verified violations added (F13–F15) with reference definitions |
+| Invariant (M1) | Required `lo = hi` or NaN for non-finite values | Non-finite low word is ignored; matches both stored forms (F17) |
+| Checked mode (M1) | Run-time global switch | Removed; `𝒩` is asserted by route tests |
+| Route record (M3) | Abstract fields, an undefined `Interval`, dispatch through `@generated` | Concrete record, `routes` as a method, tuple recursion; prototype verified to inline |
+| Tier B constants (M2) | `c = 3`, `c = 7` | Published forms, preconditions, division reclassified, items to confirm marked |
+| Sampling rule (M2) | "Bound on the failure probability" | States what `3/n` does and does not bound; metrics named |
+| Full-precision threshold (F5) | `2^-969`, then `2^-970` | `2^-969`, derived; the package's three inconsistent statements noted |
+| Dependencies (M5) | Core described as free of numerical dependencies | Quadmath is on core paths (F18); the required kernels are listed |
+| Export count (§2) | 68 | 67 (the module name was counted) |
+| Nested types (F11) | Unused methods | Also a stack overflow in `convert` |
+

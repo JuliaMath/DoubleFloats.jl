@@ -147,8 +147,10 @@ The digits in the table are illustrative; the rules below determine them.
 Rules:
 
 1. **Shortest round-trip digits.** Emit the fewest decimal digits `d` such
-   that `parse(T, digits) === x`. For a 106-bit value that is at most 33
-   significant digits in the ordinary case, and 16 for `Double32` (C7).
+   that `parse(T, digits) === x`. Measured on random `Double64` values that is
+   29 to 37 significant digits, mean 33, and about 16 for `Double32` (C7).
+   The count is not fixed because a normalized pair can carry more than 106
+   bits.
    A sparse low word needs more digits; the search continues until the
    round trip holds, so C6 cannot occur.
 2. **`repr` is honest.** Outside a typed container, two-argument `show`
