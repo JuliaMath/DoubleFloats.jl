@@ -1,4 +1,4 @@
-# Run from the package root with julia --project -t4 perf/bench_simd_elementary.jl.
+# Run from the package root with julia --project -t4 benchmark/studies/bench_simd_elementary.jl.
 using DoubleFloats, InteractiveUtils, Random, Printf, Statistics
 
 const DF = DoubleFloats

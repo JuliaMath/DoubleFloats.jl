@@ -4,7 +4,7 @@ using DoubleFloats
 try
     using BenchmarkTools
 catch err
-    error("BenchmarkTools is required to run perf/bench_lowlevel.jl in the active Julia environment")
+    error("BenchmarkTools is required to run benchmark/studies/bench_lowlevel.jl in the active Julia environment")
 end
 
 Random.seed!(1)

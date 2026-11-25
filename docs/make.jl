@@ -41,8 +41,8 @@ write(joinpath(@__DIR__, "src", "multifulcrum.md"), replace(comparison,
     "](worstulps.md)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/worstulps.md)",
     "](double32better.md#validation-results)" =>
         "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md#validation-results)",
-    "](../perf/bench_simd_elementary.jl)" =>
-        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/perf/bench_simd_elementary.jl)",
+    "](../benchmark/studies/bench_simd_elementary.jl)" =>
+        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/benchmark/studies/bench_simd_elementary.jl)",
 ))
 
 

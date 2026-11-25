@@ -4,7 +4,7 @@ This guide records the original implementation plan and prototype
 measurements. The implemented API, dispatch ranges, and checked
 measurements are in the [User Guide](src/userguide.md#elementwise-operations-on-vectors)
 and [Technical Guide](src/technicalguide.md#elementary-vector-kernels).
-The repeatable driver is [perf/bench_simd_elementary.jl](../perf/bench_simd_elementary.jl).
+The repeatable driver is [benchmark/studies/bench_simd_elementary.jl](../benchmark/studies/bench_simd_elementary.jl).
 The [follow-up guide](vecbetter.md) records the wider ranges and new
 vector operations added after this rollout.
 

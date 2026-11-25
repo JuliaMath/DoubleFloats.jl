@@ -1,4 +1,4 @@
-# Run from the package root with julia --project perf/bench_matrix_functions.jl.
+# Run from the package root with julia --project benchmark/studies/bench_matrix_functions.jl.
 using DoubleFloats, LinearAlgebra, Random, Statistics, Printf
 
 const DF = DoubleFloats

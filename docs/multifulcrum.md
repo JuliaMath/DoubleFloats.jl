@@ -493,7 +493,7 @@ x[randperm(rng, n)[1:328]] .= Double32(replacement)
 println("mixed  ", compare(tanh, x))
 ```
 
-The [benchmark driver](../perf/bench_simd_elementary.jl) supports
+The [benchmark driver](../benchmark/studies/bench_simd_elementary.jl) supports
 varying input mixtures, storage, sizes, and threading. Keep input
 cohorts comparable. The local Double32 `tan` call took about 6 ns
 here. The broad benchmark report measured about 116 ns on a

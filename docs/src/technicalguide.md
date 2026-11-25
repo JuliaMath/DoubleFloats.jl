@@ -346,7 +346,7 @@ records the validation criteria.
 #### Double64 and complex benchmarks
 
 The table reports median microseconds per 4,096 elements from 11 interleaved
-measurements. It uses the bounded fixtures in `perf/bench_simd_elementary.jl`,
+measurements. It uses the bounded fixtures in `benchmark/studies/bench_simd_elementary.jl`,
 seed `0x5eed`, Julia 1.13.3, and native AVX2/FMA targeting on an Intel Core
 i9-14900K. The baseline is [preallocated](glossary.md#glossary-destination) scalar broadcast from revision
 `d68a1c0c`. The batch column includes dispatch and [lane](glossary.md#glossary-batch) checks.
@@ -425,10 +425,10 @@ pre-change comparison, run the same driver with `--baseline` and the
 older checkout as the active project.
 
 ```sh
-julia --project -t4 perf/bench_simd_elementary.jl
-SIMD_RANGE=general SIMD_SIZE=65536 julia --project -t4 perf/bench_simd_elementary.jl
+julia --project -t4 benchmark/studies/bench_simd_elementary.jl
+SIMD_RANGE=general SIMD_SIZE=65536 julia --project -t4 benchmark/studies/bench_simd_elementary.jl
 SIMD_MIXTURE=0,0.01,0.1,0.5,1 SIMD_FILTER='^(sin|exp2|log)$' \
-    julia --project perf/bench_simd_elementary.jl
+    julia --project benchmark/studies/bench_simd_elementary.jl
 ```
 
 Set `SIMD_CLUSTERED=1` for clustered mixtures, `SIMD_LOG_REGIMES=1` for
@@ -470,7 +470,7 @@ The gains apply to the input intervals and compiler target tested.
 Replacing the low words of 1% of the inputs with much smaller values
 still admitted those inputs to the six native kernels. Their batch
 times stayed within 5% of the eligible-only runs or improved. The
-batch driver in `perf/bench_simd_elementary.jl` includes these intervals.
+batch driver in `benchmark/studies/bench_simd_elementary.jl` includes these intervals.
 Use `SIMD_FILTER=/Double32 SIMD_SIZE=65536 SIMD_MIXTURE=0,0.01` to
 measure dense inputs and inputs with sparse low words.
 
@@ -677,7 +677,7 @@ factorization, product, solve, and reconstruction timings.
 
 ```sh
 MAT_SIZE=64,256 MAT_FILTER='upper/(log|sqrt|exp|cos|halfpower)' \
-    julia --project -t1 perf/bench_matrix_functions.jl
+    julia --project -t1 benchmark/studies/bench_matrix_functions.jl
 ```
 
 The repository's `docs/matbetter.md` records the rollout and the

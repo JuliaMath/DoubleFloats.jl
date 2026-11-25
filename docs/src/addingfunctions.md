@@ -209,7 +209,7 @@ println("Checked reciprocal batch, including scalar fallback")
   exception order. Use the scalar result as the behavioral reference
   and a higher-precision calculation where the arithmetic changes.
 - Measure warmed calls with reused destinations. The benchmark driver
-  in `perf/bench_simd_elementary.jl` can compare against preallocated
+  in `benchmark/studies/bench_simd_elementary.jl` can compare against preallocated
   broadcast and check allocation and mixed-input costs. Use
   `SIMD_LLVM` to dump the native loop's LLVM and check for vector
   arithmetic. A SIMD annotation alone cannot establish that the
@@ -226,7 +226,7 @@ two batch sizes with eligible inputs and with scattered exclusions.
 
 ```sh
 SIMD_FILTER=inv SIMD_SIZE=4096,65536 SIMD_MIXTURE=0,0.01 \
-    julia --project -t4 perf/bench_simd_elementary.jl
+    julia --project -t4 benchmark/studies/bench_simd_elementary.jl
 ```
 
 Record published eligibility ranges and measured crossovers in the
