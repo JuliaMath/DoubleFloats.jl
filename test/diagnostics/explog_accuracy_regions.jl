@@ -3,10 +3,10 @@
 # the ~2^-104 (double-double) relative-precision floor.
 #
 # Run from the package root with:
-#   julia --project=. test/explog_accuracy_regions.jl
+#   julia --project=. test/diagnostics/explog_accuracy_regions.jl
 
 import Pkg
-Pkg.activate(joinpath(@__DIR__, ".."))
+Pkg.activate(joinpath(@__DIR__, "..", ".."))
 
 using DoubleFloats
 using Random
