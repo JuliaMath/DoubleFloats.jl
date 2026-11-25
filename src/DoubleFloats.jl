@@ -275,9 +275,9 @@ include("elementary/double32.jl")
 include("linalg/support.jl")
 include("linalg/matrixfunction.jl")
 
-include("extras/random.jl")
+include("random/rand.jl")
 include("contract/approx.jl")
-include("extras/macros.jl")
+include("macros.jl")
 
 import SpecialFunctions: erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
 include("special/specialfunctions.jl")
