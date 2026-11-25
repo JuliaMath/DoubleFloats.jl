@@ -269,7 +269,7 @@ include("elementary/hyperbolic.jl")
 include("elementary/archyperbolic.jl")
 include("elementary/widened.jl")
 include("elementary/complex.jl")
-include("math/elementary/simd.jl")
+include("batch/simdmap.jl")
 include("elementary/double32.jl")
 
 include("math/linearalgebra/support.jl")
