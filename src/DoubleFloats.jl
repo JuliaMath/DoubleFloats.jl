@@ -229,58 +229,79 @@ import Base:
 
 import Quadmath: Float128
 
-include("core/type.jl")   # Double64, Double32, Double16
+# Layers, in dependency order. A file may use only what is loaded above it.
+# test/layering.jl checks the functions; Julia checks the rest.
 
+# 1. Error-free transformations on machine floats
 include("eft/errorfree.jl")
 include("eft/quotients.jl")
 
+# 2. The value
+include("core/type.jl")
+include("core/constructors.jl")
+include("core/predicates.jl")
+include("core/specialvalues.jl")
+include("core/reflection.jl")
+
+# 3. Routes: the records that describe a kernel
+include("routes/batchrecords.jl")
+
+# 4. Arithmetic
+include("arith/nonfinite.jl")
+include("arith/kernels.jl")
+include("arith/batchops.jl")
+include("arith/operators.jl")
+include("arith/mixed.jl")
+include("arith/fma.jl")
+include("arith/rounding.jl")
+include("arith/divrem.jl")
+include("arith/hypot.jl")
+
+# 5. The Base contract
+include("contract/promote.jl")
+include("contract/convert.jl")
+include("contract/compare.jl")
+include("contract/approx.jl")
+include("contract/quadmath.jl")
+
+# 6. Constants and coefficient tables
 include("constants/double.jl")
 include("constants/triple.jl")
 include("constants/triple_consts.jl")
 include("constants/triple_pi.jl")
-
-include("core/constructors.jl")
-include("contract/promote.jl")
-include("contract/convert.jl")
-include("contract/compare.jl")
-include("core/predicates.jl")
-include("core/specialvalues.jl")
-include("io/string.jl")
-include("io/show.jl")
-include("io/parse.jl")
-include("contract/quadmath.jl")
-
-include("core/reflection.jl")
-include("arith/rounding.jl")
-include("arith/divrem.jl")
-
-include("arith/fma.jl")
-include("elementary/reduce.jl")
-include("arith/hypot.jl")
-include("arith/mixed.jl")
-include("elementary/complexpow.jl")
-include("arith/nonfinite.jl")
-include("arith/kernels.jl")
-include("arith/operators.jl")
-
 include("constants/tables.jl")
+
+# 7. Elementary functions
+include("elementary/reduce.jl")
 include("elementary/explog.jl")
 include("elementary/trig.jl")
 include("elementary/arctrig.jl")
 include("elementary/hyperbolic.jl")
 include("elementary/archyperbolic.jl")
 include("elementary/widened.jl")
-include("elementary/complex.jl")
-include("batch/simdmap.jl")
 include("elementary/double32.jl")
+include("elementary/complexpow.jl")
+include("elementary/complex.jl")
 
+# 8. Batch evaluation
+include("batch/simdmap.jl")
+include("batch/double32.jl")
+
+# 9. Text
+include("io/string.jl")
+include("io/show.jl")
+include("io/parse.jl")
+
+# 10. Random numbers
+include("random/rand.jl")
+
+# 11. Matrices
 include("linalg/support.jl")
 include("linalg/matrixfunction.jl")
 
-include("random/rand.jl")
-include("contract/approx.jl")
 include("macros.jl")
 
+# Special functions, to become an extension
 import SpecialFunctions: erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
 include("special/specialfunctions.jl")
 

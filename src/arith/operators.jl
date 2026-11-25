@@ -312,3 +312,9 @@ efficient as first converting to `DoubleFloat{T}` and then dividing.
 This is the inline version of [`div2`](@ref) and written as ``\\oslash``.
 """
 ⊘(x::T, y::T) where {T<:IEEEFloat} = div2(x, y)
+
+# --- cube root of a word, as a pair ------------------------------------
+
+function two_cbrt(a::T) where {T<:FloatWithFMA}
+    return HILO(DoubleFloat{T}(a, zero(T))^(one(T)/3))
+end

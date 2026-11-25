@@ -66,40 +66,6 @@ end
     return dest
 end
 
-struct _BatchKernel{P,F}
-    eligible::P
-    evaluate::F
-end
-
-struct _BatchRepair{K}
-    kernel::K
-    placeholder::Double64
-end
-
-struct _BatchAlternatives{P,S}
-    preferred::P
-    secondary::S
-end
-
-_batch_kernel(f, result, types...) = nothing
-const _BATCH_BLOCK = 64
-# Shorter blocks retain more eligible lanes when a mixed block needs
-# scalar evaluation. Repair uses the full width of its UInt64 mask.
-_batch_width(k) = 32
-_batch_width(k::_BatchRepair) = _BATCH_BLOCK
-_batch_width(k::_BatchAlternatives) = _batch_width(k.preferred)
-
-# A normalized input in the bounded interval. Check the low limb against
-# half a binade ulp without exponent extraction that assumes normal inputs.
-# The callers choose normal head bounds and leave slack at branch boundaries.
-@inline function _batch_bounded(x::Double64, lower, upper)
-    h, l = HILO(x)
-    binade = reinterpret(Float64, reinterpret(UInt64, h) & 0x7ff0000000000000)
-    return (lower <= h <= upper) & (abs(l) <= 0x1p-53 * binade)
-end
-
-@inline _batch_abs_bounded(x::Double64, lower, upper) = _batch_bounded(Double64(abs(HI(x)), LO(x)), lower, upper)
-
 # Only called with dense vector arguments after their axes are checked.
 @inline _batch_eligible(k, args::Tuple{Any}, i) = @inbounds k.eligible(_batch_arg(args[1], i))
 @inline _batch_eligible(k, args::Tuple{Any,Any}, i) =
@@ -311,29 +277,4 @@ _batch_same_axis(axis, x::AbstractVector) = axes(x, 1) == axis
     end
     sources = map(x -> _batch_source(dest, x), args)
     return _batch_scalar!(f, dest, sources, axis)
-end
-
-# These compositions use the same transforms as the scalar arithmetic
-# wrappers. Their callers bound all operands and keep divisors away from zero.
-@inline _batch_add(x, y) = Double64(add_dddd_dd_(HILO(x), HILO(y))...)
-@inline _batch_sub(x, y) = Double64(sub_dddd_dd_(HILO(x), HILO(y))...)
-@inline _batch_mul(x, y) = Double64(mul_dddd_dd_(HILO(x), HILO(y))...)
-@inline _batch_div(x, y) = Double64(dvi_dddd_dd_(HILO(x), HILO(y))...)
-@inline _batch_inv(x) = Double64(unsafe_inv_dd_dd_(HILO(x)...)...)
-@inline _batch_square(x) = Double64(square_dd_dd_(HILO(x))...)
-@inline _batch_sqrt(x) = Double64(_sqrt_positive(HILO(x), Core.Intrinsics.sqrt_llvm)...)
-@inline _batch_neg(x) = Double64(-HI(x), ifelse(iszero(LO(x)), LO(x), -LO(x)))
-@inline _batch_abs(x) = ifelse(signbit(x), _batch_neg(x), x)
-# For finite nonnegative heads, numeric equality also agrees with the
-# bitwise head equality used by DoubleFloat's scalar ordering.
-@inline function _batch_positive_less(x, y)
-    return (HI(x) < HI(y)) | ((HI(x) == HI(y)) & (LO(x) < LO(y)))
-end
-@inline _batch_add(x::Float64, y::Double64) = Double64(two_sum3_(x, HI(y), LO(y))...)
-@inline _batch_sub(x::Double64, y::Float64) = Double64(two_sum3_(HI(x), LO(x), -y)...)
-
-@inline function _batch_sub(x::Float64, y::Double64)
-    s, t = two_diff_(-HI(y), LO(y))
-    h, l = two_sum_(x, s)
-    return Double64(two_sum_(h, l + t)...)
 end
