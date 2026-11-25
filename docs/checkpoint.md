@@ -23,8 +23,8 @@ design is `apothecary.md`. Updated at the end of each work item.
 | W0.6 Line endings and formatting | done | `e01825b1`, `00d5f7bc`, `53da9379` | Corpus and suite unchanged; benchmark ratios 0.95 to 1.05 |
 | W0.7 Source tree | done, with two splits deferred (below) | `66f38363` through `c3c90aef` (15 commits) | Corpus identical after every commit; suite passes; layering lint reports no upward use |
 | W0.8 Sealed constructor | done | this commit range | Corpus identical; suite passes; benchmark ratios 0.98 to 1.06 against `release-1.13` |
-| W0.9 Explicit imports | next | | |
-| W0.10 Contributor guide | | | |
+| W0.9 Explicit imports | done; type loops deferred | `492b93fa`, `96beebb2` | Corpus identical; suite passes on Julia 1.12 and 1.13; four ExplicitImports checks pass; shadowed names unchanged; benchmark ratios 0.95 to 1.10 |
+| W0.10 Contributor guide | done | this commit | `CONTRIBUTING.md` |
 
 ## Findings so far
 
@@ -112,6 +112,25 @@ design is `apothecary.md`. Updated at the end of each work item.
 - A mistake of mine worth recording: I killed my own shell twice with
   `pkill -f` on a pattern that matched the command line.
 
+- W0.9: 336 definitions qualified, the module file fell from 308 lines to
+  about 200. Deferred: replacing `@eval` loops over the three types with
+  parametric methods. Most of them are constructors and conversions that
+  W1.3 rewrites.
+- `csc` and `sec` are this package's own functions, not methods of
+  `Base.csc` and `Base.sec`: the old import list did not name them. A
+  caller's `csc(x)` reaches Base's generic method, not the package's. Kept
+  as found (a `move` must not change it); to be made Base methods as a
+  `fix` in Stage 1.
+- `normalize` shadows `LinearAlgebra.normalize` in the same way.
+- `ispositive` and `isnegative` are Base functions only from Julia 1.13.
+  The conditional import stays, and their definitions stay unqualified.
+- The package uses 33 names that are not public in their modules, among
+  them `Base.decompose`, `Base._cpow`, `Base.lerpi`, `Base.rtoldefault`,
+  `Base.mightalias`, `Base.uinttype`, `Base.MPFR.libmpfr`,
+  `Printf.ini_dec`, `Printf.fix_dec`, and several LinearAlgebra types.
+  Each is a way for a Julia release to break the package. Not checked in
+  CI yet; to be reduced, then checked, in W1.9.
+
 ## Open
 
 - Registration of 1.13.3 to be confirmed merged; then tag `v1.13.3` appears.
@@ -121,7 +140,7 @@ design is `apothecary.md`. Updated at the end of each work item.
 
 ## Next
 
-W0.9: methods defined as `Base.name(...)` at the point of definition in
-place of the sixty-line `import Base:` list; every imported name explicit;
-`@eval` loops over the three types replaced by parametric methods where
-that leaves the corpus unchanged.
+Gate 0: confirm on CI that the corpus is identical to 1.13.3 on every
+platform and Julia version of the matrix and that no benchmark regresses.
+Then Stage 1, beginning with W1.1: the conformance suite, every Stage 1
+property written first as `@test_broken`.
