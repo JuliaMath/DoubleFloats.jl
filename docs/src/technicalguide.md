@@ -37,14 +37,14 @@ Two structural consequences matter throughout the package:
 
 ### Error-free transformations
 
-Scalar arithmetic uses building blocks from `src/math/errorfree.jl`.
+Scalar arithmetic uses building blocks from `src/eft/errorfree.jl`.
 Their error-free identities assume finite inputs and representable
 intermediate results and residuals.
 
 - [`two_sum(a, b)`](glossary.md#glossary-error-free) / `two_hilo_sum(a, b)`: `hi + lo == a + b` exactly.
 - [`two_prod(a, b)`](glossary.md#glossary-error-free): `hi + lo == a * b` exactly, using [`fma`](glossary.md#glossary-fma).
 - Division and square root use these plus one [Newton-like correction](glossary.md#glossary-newton)
-  (`src/math/ops/`) to recover low bits. Operations returning one
+  (`src/arith/`) to recover low bits. Operations returning one
   DoubleFloat can still round.
 
 A zero low word describes the input pair. The output can still need a
@@ -116,7 +116,7 @@ that would lose `1/x - 1`.
 
 #### Special functions
 
-For `agm` and `ellipk` in `src/math/special/`, the [AGM iteration](glossary.md#glossary-agm)
+For `agm` and `ellipk` in `src/special/`, the [AGM iteration](glossary.md#glossary-agm)
 stops when the gap `|a-b|` stops shrinking. This stopping rule tracks
 the [roundoff floor](glossary.md#glossary-roundoff-floor) at the operand scale.
 
@@ -562,7 +562,7 @@ routes dense [factorizations](glossary.md#glossary-factorization) through pure-J
 - `lu`, `qr`, `\`: LinearAlgebra's generic kernels.
 - [`eigen`](glossary.md#glossary-eigen), `eigvals`, [`schur`](glossary.md#glossary-schur), `hessenberg`: [GenericSchur](glossary.md#glossary-schur) (QR iteration).
   DoubleFloats owns explicit `eigen`/`eigvals` methods
-  (`src/math/linearalgebra/eigen.jl`) that pin this routing, detect
+  (`src/linalg/eigen.jl`) that pin this routing, detect
   hermitian input (tridiagonalization + symmetric QR: real eigenvalues,
   orthonormal vectors), and normalize output conventions to match the
   LAPACK route (real `Eigen` for a real spectrum, `(real, imag)` sorting,
@@ -580,7 +580,7 @@ routes dense [factorizations](glossary.md#glossary-factorization) through pure-J
 
 See [Linear Algebra](linearalgebra.md#Functions-of-whole-matrices) for
 function domains and a worked example. The dedicated implementations in
-`src/math/linearalgebra/matfun.jl` can handle [defective inputs](glossary.md#glossary-jordan). Structure checks apply
+`src/linalg/matfun.jl` can handle [defective inputs](glossary.md#glossary-jordan). Structure checks apply
 to the stored matrix. For a skipped entry, both limbs of each component
 must be zero.
 
