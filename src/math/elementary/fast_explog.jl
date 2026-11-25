@@ -2,29 +2,28 @@
 # absorbs the tapered tail before the terms that need both words.
 @inline function _tapered_poly(r, coefficients, ::Val{M}) where {M}
     tail = coefficients[end][1]
-    for i in length(coefficients)-1:-1:M+1
+    for i in (length(coefficients) - 1):-1:(M + 1)
         tail = fma(tail, r[1], coefficients[i][1])
     end
     p = _horner_step_dd(coefficients[M], tail, r)
-    for i in M-1:-1:1
+    for i in (M - 1):-1:1
         p = _horner_step_dd(coefficients[i], p, r)
     end
     return p
 end
 
-const _EXP2_128, _EXP_FINE_COEFFS, _EXP2_FINE_COEFFS, _EXP_FINE_REDUCTION =
-    setprecision(BigFloat, 256) do
-        ln2 = log(BigFloat(2))
-        step = ln2 / 128
-        # A 32-bit head times any admitted index is exact in Float64.
-        h = reinterpret(Float64, reinterpret(UInt64, Float64(step)) & (~UInt64(0) << 21))
-        m = Float64(step - h)
-        l = Float64(step - h - m)
-        table = ntuple(i -> HILO(Double64(exp2(BigFloat(i - 1) / 128))), 128)
-        natural = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(i - 1)))))), 10)
-        binary = ntuple(i -> HILO(Double64(ln2^(i - 1) / factorial(big(i - 1)))), 10)
-        table, natural, binary, (Float64(inv(step)), h, m, l)
-    end
+const _EXP2_128, _EXP_FINE_COEFFS, _EXP2_FINE_COEFFS, _EXP_FINE_REDUCTION = setprecision(BigFloat, 256) do
+    ln2 = log(BigFloat(2))
+    step = ln2 / 128
+    # A 32-bit head times any admitted index is exact in Float64.
+    h = reinterpret(Float64, reinterpret(UInt64, Float64(step)) & (~UInt64(0) << 21))
+    m = Float64(step - h)
+    l = Float64(step - h - m)
+    table = ntuple(i -> HILO(Double64(exp2(BigFloat(i - 1) / 128))), 128)
+    natural = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(i - 1)))))), 10)
+    binary = ntuple(i -> HILO(Double64(ln2^(i - 1) / factorial(big(i - 1)))), 10)
+    table, natural, binary, (Float64(inv(step)), h, m, l)
+end
 
 # This guard keeps both the output head and its final scale normal
 # and leaves headroom above the relative-accuracy floor at the low end.
@@ -58,24 +57,23 @@ end
     return h * scale, l * scale
 end
 
-const _LOG_FINE_COEFFS, _LOG2_FINE_COEFFS, _LOG_FINE_TABLE, _LOG2_FINE_TABLE =
-    setprecision(BigFloat, 256) do
-        ln2 = log(BigFloat(2))
-        centers = ntuple(i -> 1 + BigFloat(2i - 1) / 256, 128)
-        natural = ntuple(i -> HILO(Double64(BigFloat(2) / (2i - 1))), 11)
-        binary = ntuple(i -> HILO(Double64(2 / ((2i - 1) * ln2))), 11)
-        table = map(centers) do c
-            # Store log(c/2) in the upper part of the binade. This
-            # avoids subtracting a full log(2) from a near-one answer.
-            lc = log(c >= 1.5 ? c / 2 : c)
-            Float64(c), HILO(Double64(lc))
-        end
-        table2 = map(centers) do c
-            lc = log2(c >= 1.5 ? c / 2 : c)
-            Float64(c), HILO(Double64(lc))
-        end
-        natural, binary, table, table2
+const _LOG_FINE_COEFFS, _LOG2_FINE_COEFFS, _LOG_FINE_TABLE, _LOG2_FINE_TABLE = setprecision(BigFloat, 256) do
+    ln2 = log(BigFloat(2))
+    centers = ntuple(i -> 1 + BigFloat(2i - 1) / 256, 128)
+    natural = ntuple(i -> HILO(Double64(BigFloat(2) / (2i - 1))), 11)
+    binary = ntuple(i -> HILO(Double64(2 / ((2i - 1) * ln2))), 11)
+    table = map(centers) do c
+        # Store log(c/2) in the upper part of the binade. This
+        # avoids subtracting a full log(2) from a near-one answer.
+        lc = log(c >= 1.5 ? c / 2 : c)
+        Float64(c), HILO(Double64(lc))
     end
+    table2 = map(centers) do c
+        lc = log2(c >= 1.5 ? c / 2 : c)
+        Float64(c), HILO(Double64(lc))
+    end
+    natural, binary, table, table2
+end
 
 # The wider log1p interval avoids losing low bits to the rounding of
 # 1+x while the condition number of that addition is still significant.
@@ -121,8 +119,7 @@ end
     # leading quotient approximates the entire numerator.
     dh, dl = two_sum_(mh, c)
     t = _mf_div(two_hilo_sum_(mh - c, ml), (dh, dl + ml))
-    v = mul_dddd_dd_(t, _tapered_poly(square_dd_dd_(t),
-                       B ? _LOG2_FINE_SHORT : _LOG_FINE_SHORT, Val(3)))
+    v = mul_dddd_dd_(t, _tapered_poly(square_dd_dd_(t), B ? _LOG2_FINE_SHORT : _LOG_FINE_SHORT, Val(3)))
     e = Float64(ex + (c >= 1.5))
     if B
         return add_dddd_dd_(add_dddd_dd_(anchor, (e, 0.0)), v)
@@ -132,7 +129,7 @@ end
     return add_dddd_dd_(add_dddd_dd_(anchor, (p, fma(e, b, q))), v)
 end
 
-@inline function _log_near_regular(nh, nl, dh, dl, l, coefficients, taper=Val(5))
+@inline function _log_near_regular(nh, nl, dh, dl, l, coefficients, taper = Val(5))
     dl, dt = two_sum_(dl, l)
     reciprocal = inv(dh)
     qh = nh * reciprocal

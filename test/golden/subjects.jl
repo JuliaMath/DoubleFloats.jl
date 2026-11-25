@@ -34,8 +34,31 @@ const STRUCTURED_HEADS = let
     heads = Float64[0.0, -0.0, Inf, -Inf, NaN, pi, exp(1.0), 0.1, 1 / 3, 10.0, 100.0, 1.0e-5, 1.0e5]
     append!(heads, ldexp(1.0, k) for k in -12:12)
     # Magnitudes at or near where the package changes route.
-    for v in (0.005, 0.045, 0.09817477042468103, 0.25, 0.36, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0,
-              5.0, 6.28125, 8.0, 11.0, 16.0, 32.0, 64.0, 88.0, 89.0, 709.0, 710.0, 745.0)
+    for v in (
+        0.005,
+        0.045,
+        0.09817477042468103,
+        0.25,
+        0.36,
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        2.0,
+        3.0,
+        5.0,
+        6.28125,
+        8.0,
+        11.0,
+        16.0,
+        32.0,
+        64.0,
+        88.0,
+        89.0,
+        709.0,
+        710.0,
+        745.0,
+    )
         append!(heads, (prevfloat(v), v, nextfloat(v)))
     end
     vcat(heads, -heads[6:end])
@@ -50,8 +73,17 @@ function structured(::Type{T}) where {T}
             push!(xs, pair(T, hi, lowword(hi, fraction, shift)))
         end
     end
-    for hi in (floatmin(F), -floatmin(F), nextfloat(zero(F)), floatmax(F), -floatmax(F),
-               floatmax(F) / 2, eps(F), prevfloat(one(F)), nextfloat(one(F)))
+    for hi in (
+        floatmin(F),
+        -floatmin(F),
+        nextfloat(zero(F)),
+        floatmax(F),
+        -floatmax(F),
+        floatmax(F) / 2,
+        eps(F),
+        prevfloat(one(F)),
+        nextfloat(one(F)),
+    )
         push!(xs, pair(T, hi, lowword(hi, 0.0, 0)))
         push!(xs, pair(T, hi, lowword(hi, 0.6, 0)))
     end
@@ -158,27 +190,101 @@ end
 # Subjects.
 
 const UNARY = (
-    :exp, :exp2, :exp10, :expm1, :log, :log2, :log10, :log1p,
-    :sin, :cos, :tan, :cot, :sincos, :sinpi, :cospi, :tanpi,
-    :asin, :acos, :atan, :acsc, :asec, :acot,
-    :sinh, :cosh, :tanh, :csch, :sech, :coth,
-    :asinh, :acosh, :atanh, :acsch, :asech, :acoth,
-    :sqrt, :cbrt, :inv, :abs, :abs2, :-, :square, :cube,
-    :floor, :ceil, :trunc, :round, :modf, :intpart, :fracpart,
-    :significand, :exponent, :eps, :ulp, :nextfloat, :prevfloat,
-    :sign, :signbit, :iszero, :isone, :isnan, :isinf, :isfinite, :isinteger, :issubnormal,
-    :Float64, :Float32, :BigFloat, :string,
+    :exp,
+    :exp2,
+    :exp10,
+    :expm1,
+    :log,
+    :log2,
+    :log10,
+    :log1p,
+    :sin,
+    :cos,
+    :tan,
+    :cot,
+    :sincos,
+    :sinpi,
+    :cospi,
+    :tanpi,
+    :asin,
+    :acos,
+    :atan,
+    :acsc,
+    :asec,
+    :acot,
+    :sinh,
+    :cosh,
+    :tanh,
+    :csch,
+    :sech,
+    :coth,
+    :asinh,
+    :acosh,
+    :atanh,
+    :acsch,
+    :asech,
+    :acoth,
+    :sqrt,
+    :cbrt,
+    :inv,
+    :abs,
+    :abs2,
+    :-,
+    :square,
+    :cube,
+    :floor,
+    :ceil,
+    :trunc,
+    :round,
+    :modf,
+    :intpart,
+    :fracpart,
+    :significand,
+    :exponent,
+    :eps,
+    :ulp,
+    :nextfloat,
+    :prevfloat,
+    :sign,
+    :signbit,
+    :iszero,
+    :isone,
+    :isnan,
+    :isinf,
+    :isfinite,
+    :isinteger,
+    :issubnormal,
+    :Float64,
+    :Float32,
+    :BigFloat,
+    :string,
 )
 
-const BINARY = (:+, :-, :*, :/, :^, :hypot, :atan, :rem, :mod, :min, :max,
-                :(==), :<, :<=, :isless, :isequal)
+const BINARY = (:+, :-, :*, :/, :^, :hypot, :atan, :rem, :mod, :min, :max, :(==), :<, :<=, :isless, :isequal)
 
-const COMPLEX_UNARY = (:exp, :log, :sqrt, :sin, :cos, :tan, :sinh, :cosh, :tanh,
-                       :asin, :acos, :atan, :abs, :inv)
+const COMPLEX_UNARY = (:exp, :log, :sqrt, :sin, :cos, :tan, :sinh, :cosh, :tanh, :asin, :acos, :atan, :abs, :inv)
 
-const BATCH_UNARY = (:exp, :exp2, :exp10, :expm1, :log, :log2, :log10, :log1p,
-                     :sin, :cos, :tan, :atan, :sinh, :cosh, :tanh,
-                     :asinh, :acosh, :atanh, :sqrt)
+const BATCH_UNARY = (
+    :exp,
+    :exp2,
+    :exp10,
+    :expm1,
+    :log,
+    :log2,
+    :log10,
+    :log1p,
+    :sin,
+    :cos,
+    :tan,
+    :atan,
+    :sinh,
+    :cosh,
+    :tanh,
+    :asinh,
+    :acosh,
+    :atanh,
+    :sqrt,
+)
 
 resolve(name::Symbol) = isdefined(Base, name) ? getfield(Base, name) : getfield(DoubleFloats, name)
 

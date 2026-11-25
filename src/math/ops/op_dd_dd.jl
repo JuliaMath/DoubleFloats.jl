@@ -1,36 +1,36 @@
 # inv corrected to handle zero and nonfinite values
 # (a zero low word does NOT mean the reciprocal is exact -- the correction
 #  in unsafe_inv_dd_dd handles yₗₒ == 0 properly, so it must not be skipped)
-@inline function inv_dd_dd(y::Tuple{T, T}) where {T<:IEEEFloat}
-   yₕᵢ, yₗₒ = y
+@inline function inv_dd_dd(y::Tuple{T,T}) where {T<:IEEEFloat}
+    yₕᵢ, yₗₒ = y
     tₕᵢ = inv(yₕᵢ)
     if !isfinite(tₕᵢ) || !isfinite(yₕᵢ) || !isfinite(yₗₒ)
-          zero_error_result(tₕᵢ)
-   else
-      unsafe_inv_dd_dd(yₕᵢ, yₗₒ)
-   end
+        zero_error_result(tₕᵢ)
+    else
+        unsafe_inv_dd_dd(yₕᵢ, yₗₒ)
+    end
 end
 
 # inv using Algorithms 17 and 18 from Tight and rigorous error bounds
 @inline function unsafe_inv_dd_dd(yₕᵢ::T, yₗₒ::T) where {T<:IEEEFloat}
-   tₕᵢ = inv(yₕᵢ)
-   rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
-   rₗₒ = -(yₗₒ * tₕᵢ)
-   eₕᵢ, eₗₒ = two_hilo_sum(rₕᵢ, rₗₒ)
-   dₕᵢ, dₗₒ = mul_ddfp_dd((eₕᵢ, eₗₒ), tₕᵢ)
-   zₕᵢ, zₗₒ = add_ddfp_dd((dₕᵢ, dₗₒ), tₕᵢ)
-   return zₕᵢ, zₗₒ
+    tₕᵢ = inv(yₕᵢ)
+    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
+    rₗₒ = -(yₗₒ * tₕᵢ)
+    eₕᵢ, eₗₒ = two_hilo_sum(rₕᵢ, rₗₒ)
+    dₕᵢ, dₗₒ = mul_ddfp_dd((eₕᵢ, eₗₒ), tₕᵢ)
+    zₕᵢ, zₗₒ = add_ddfp_dd((dₕᵢ, dₗₒ), tₕᵢ)
+    return zₕᵢ, zₗₒ
 end
 
 # branch-free hot-path variant; bit-identical for finite results.
 @inline function unsafe_inv_dd_dd_(yₕᵢ::T, yₗₒ::T) where {T<:IEEEFloat}
-   tₕᵢ = inv(yₕᵢ)
-   rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
-   rₗₒ = -(yₗₒ * tₕᵢ)
-   eₕᵢ, eₗₒ = two_hilo_sum_(rₕᵢ, rₗₒ)
-   dₕᵢ, dₗₒ = mul_ddfp_dd_((eₕᵢ, eₗₒ), tₕᵢ)
-   zₕᵢ, zₗₒ = add_ddfp_dd_((dₕᵢ, dₗₒ), tₕᵢ)
-   return zₕᵢ, zₗₒ
+    tₕᵢ = inv(yₕᵢ)
+    rₕᵢ = fma(yₕᵢ, -tₕᵢ, one(T))
+    rₗₒ = -(yₗₒ * tₕᵢ)
+    eₕᵢ, eₗₒ = two_hilo_sum_(rₕᵢ, rₗₒ)
+    dₕᵢ, dₗₒ = mul_ddfp_dd_((eₕᵢ, eₗₒ), tₕᵢ)
+    zₕᵢ, zₗₒ = add_ddfp_dd_((dₕᵢ, dₗₒ), tₕᵢ)
+    return zₕᵢ, zₗₒ
 end
 
 @inline function square_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
@@ -69,7 +69,7 @@ end
     d = fma(-s, s, ahi)    # ahi=s*s+d,  same order of magnitude than alo, so we can add alo safely below:
     d += alo               #  ahi+alo = s*s+d = s*s*(1+d/(s*s))   ==> sqrt(ahi+alo) = s*sqrt(1+d/s2) approx= s*(1+d/(2s2)) = s + d/(2*s)
     d = d/(s+s)
-    return s,d
+    return s, d
 end
 
 #=
@@ -107,7 +107,7 @@ end
 end
 
 function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
-    a2 = mul_dddd_dd(a,a)
+    a2 = mul_dddd_dd(a, a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
 
@@ -116,7 +116,7 @@ function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
     # initial approximation to a^(-2/3)
     x = mul_fpfp_dd(tmp, tmp)
 
-    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x, x)
     x3 = mul_dddd_dd(x3, x)
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)
@@ -125,7 +125,7 @@ function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
 
     x = add_dddd_dd(x, x3)
 
-    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x, x)
     x3 = mul_dddd_dd(x3, x)
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)
@@ -134,7 +134,7 @@ function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
 
     x = add_dddd_dd(x, x3)
 
-    x3 = mul_dddd_dd(x,x)
+    x3 = mul_dddd_dd(x, x)
     x3 = mul_dddd_dd(x3, x)
     x3 = mul_dddd_dd(x3, a2)
     x3 = sub_fpdd_dd(one1, x3)

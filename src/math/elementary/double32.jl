@@ -2,8 +2,7 @@
 # exponential bounds also keep the result away from the Float32 limits.
 @inline _double32_range(::typeof(exp), h) = -64.0f0 <= h <= 80.0f0
 @inline _double32_range(::typeof(exp2), h) = -96.0f0 <= h <= 112.0f0
-@inline _double32_range(::Union{typeof(log),typeof(log2)}, h) =
-    (0.125f0 <= h <= 0.875f0) | (1.125f0 <= h <= 8.0f0)
+@inline _double32_range(::Union{typeof(log),typeof(log2)}, h) = (0.125f0 <= h <= 0.875f0) | (1.125f0 <= h <= 8.0f0)
 @inline _double32_range(::Union{typeof(tan),typeof(expm1)}, h) = Float32(0x1p-40) <= abs(h) <= 0.5f0
 @inline _double32_range(::typeof(log1p), h) = Float32(0x1p-40) <= abs(h) <= 0.0625f0
 @inline _double32_range(::Union{typeof(atan),typeof(sinh),typeof(cosh),typeof(tanh)}, h) =
@@ -50,24 +49,22 @@ end
 
 @inline (k::_Double32Batch)(x) = @inline _double32_batch(k.op, x)
 
-const _Double32BatchOps = Union{typeof(tan),typeof(tanh),typeof(sinh),
-                               typeof(atan),typeof(log2),typeof(log1p)}
+const _Double32BatchOps = Union{typeof(tan),typeof(tanh),typeof(sinh),typeof(atan),typeof(log2),typeof(log1p)}
 
 @inline _batch_kernel(f::_Double32BatchOps, ::Type{Double32}, ::Type{Double32}) =
     _BatchKernel(x -> _double32_bounded(f, HILO(x)...), _Double32Batch(f))
 
-const _SINH32_COEFFS, _ATAN32_ANCHORS, _ATAN32_COEFFS, _LOG1P32_COEFFS,
-      _TAN32_CORRECTION, _TAN32_DENOMINATOR = setprecision(BigFloat, 256) do
-    pack(v) = HILO(Double32(v))
-    sinh_coeffs = ntuple(i -> pack(inv(BigFloat(factorial(big(2i + 1))))), 9)
-    anchors = ntuple(i -> pack(atan(BigFloat(i - 1) / 16)), 17)
-    atan_coeffs = ntuple(i -> pack((-1)^i / BigFloat(2i + 1)), 5)
-    log_coeffs = ntuple(i -> pack(BigFloat(2) / (2i - 1)), 5)
-    numerator, denominator, scale = _tan_fraction(8)
-    tan_coeffs(xs) = Tuple(pack(BigFloat(n) / scale) for n in xs)
-    sinh_coeffs, anchors, atan_coeffs, log_coeffs,
-        tan_coeffs(numerator), tan_coeffs(denominator)
-end
+const _SINH32_COEFFS, _ATAN32_ANCHORS, _ATAN32_COEFFS, _LOG1P32_COEFFS, _TAN32_CORRECTION, _TAN32_DENOMINATOR =
+    setprecision(BigFloat, 256) do
+        pack(v) = HILO(Double32(v))
+        sinh_coeffs = ntuple(i -> pack(inv(BigFloat(factorial(big(2i + 1))))), 9)
+        anchors = ntuple(i -> pack(atan(BigFloat(i - 1) / 16)), 17)
+        atan_coeffs = ntuple(i -> pack((-1)^i / BigFloat(2i + 1)), 5)
+        log_coeffs = ntuple(i -> pack(BigFloat(2) / (2i - 1)), 5)
+        numerator, denominator, scale = _tan_fraction(8)
+        tan_coeffs(xs) = Tuple(pack(BigFloat(n) / scale) for n in xs)
+        sinh_coeffs, anchors, atan_coeffs, log_coeffs, tan_coeffs(numerator), tan_coeffs(denominator)
+    end
 
 @inline function _double32_batch(::typeof(sinh), x)
     p = HILO(x)
@@ -77,15 +74,13 @@ end
 end
 
 @inline function _double32_batch(f::Union{typeof(tan),typeof(tanh)}, x)
-    return Double32(_tan_local_words(HILO(x), Val(f === tan),
-                                     _TAN32_CORRECTION, _TAN32_DENOMINATOR)...)
+    return Double32(_tan_local_words(HILO(x), Val(f === tan), _TAN32_CORRECTION, _TAN32_DENOMINATOR)...)
 end
 
 @inline function _double32_batch(::typeof(atan), x)
     h, l = HILO(x)
     neg = signbit(h)
-    a, b = _atan_unit_words(abs(h), ifelse(neg, -l, l), _ATAN32_ANCHORS,
-                            _ATAN32_COEFFS, Val(3))
+    a, b = _atan_unit_words(abs(h), ifelse(neg, -l, l), _ATAN32_ANCHORS, _ATAN32_COEFFS, Val(3))
     return Double32(ifelse(neg, -a, a), ifelse(neg, -b, b))
 end
 

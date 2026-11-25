@@ -6,17 +6,42 @@
 
 =#
 
-function Base.isapprox(x::DoubleFloat{T}, y::Real; atol::Real=0.0, rtol::Real=Base.rtoldefault(HI(x),y,atol), nans::Bool=false) where {T<:IEEEFloat}
-    return isapprox(x, DoubleFloat{T}(y), atol=atol, rtol=rtol, nans=nans)
+function Base.isapprox(
+    x::DoubleFloat{T},
+    y::Real;
+    atol::Real = 0.0,
+    rtol::Real = Base.rtoldefault(HI(x), y, atol),
+    nans::Bool = false,
+) where {T<:IEEEFloat}
+    return isapprox(x, DoubleFloat{T}(y), atol = atol, rtol = rtol, nans = nans)
 end
-function Base.isapprox(x::Real, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=Base.rtoldefault(x,HI(y),atol), nans::Bool=false) where {T<:IEEEFloat}
-    return isapprox(DoubleFloat{T}(x), y, atol=atol, rtol=rtol, nans=nans)
+function Base.isapprox(
+    x::Real,
+    y::DoubleFloat{T};
+    atol::Real = 0.0,
+    rtol::Real = Base.rtoldefault(x, HI(y), atol),
+    nans::Bool = false,
+) where {T<:IEEEFloat}
+    return isapprox(DoubleFloat{T}(x), y, atol = atol, rtol = rtol, nans = nans)
 end
-function Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{T}; atol::Real=0.0, rtol::Real=Base.rtoldefault(HI(x),HI(y),atol), nans::Bool=false) where {T<:IEEEFloat}
-    HI(x) === HI(y) || (isfinite(x) && isfinite(y) && abs(x-y) <= max(max(1.0e-32, atol), rtol*max(abs(x), abs(y)))) || (nans && isnan(x) && isnan(y))
+function Base.isapprox(
+    x::DoubleFloat{T},
+    y::DoubleFloat{T};
+    atol::Real = 0.0,
+    rtol::Real = Base.rtoldefault(HI(x), HI(y), atol),
+    nans::Bool = false,
+) where {T<:IEEEFloat}
+    HI(x) === HI(y) ||
+        (isfinite(x) && isfinite(y) && abs(x-y) <= max(max(1.0e-32, atol), rtol*max(abs(x), abs(y)))) ||
+        (nans && isnan(x) && isnan(y))
 end
-Base.isapprox(x::DoubleFloat{T}, y::DoubleFloat{F}; atol::Real=0.0, rtol::Real=Base.rtoldefault(HI(x),HI(y),atol), nans::Bool=false) where {T<:IEEEFloat, F<:IEEEFloat} =
-    isapprox(promote(x, y)..., atol=atol, rtol=rtol, nans=nans, norm=norm)
+Base.isapprox(
+    x::DoubleFloat{T},
+    y::DoubleFloat{F};
+    atol::Real = 0.0,
+    rtol::Real = Base.rtoldefault(HI(x), HI(y), atol),
+    nans::Bool = false,
+) where {T<:IEEEFloat,F<:IEEEFloat} = isapprox(promote(x, y)..., atol = atol, rtol = rtol, nans = nans, norm = norm)
 
 function Base.lerpi(j::Integer, d::Integer, a::DoubleFloat{T}, b::DoubleFloat{T}) where {T}
     t = DoubleFloat{T}(j)/d
@@ -25,19 +50,19 @@ function Base.lerpi(j::Integer, d::Integer, a::DoubleFloat{T}, b::DoubleFloat{T}
 end
 
 function Base.clamp(x::DoubleFloat{T}, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
-     lo <= x <= hi && return x
-     lo <= x && return hi
-     return lo
+    lo <= x <= hi && return x
+    lo <= x && return hi
+    return lo
 end
 function Base.clamp(x::DoubleFloat{T}, lo::T, hi::T) where {T}
-     lo <= x <= hi && return x
-     lo <= x && return hi
-     return lo
+    lo <= x <= hi && return x
+    lo <= x && return hi
+    return lo
 end
 function Base.clamp(x::T, lo::DoubleFloat{T}, hi::DoubleFloat{T}) where {T}
-     lo <= x <= hi && return x
-     lo <= x && return hi
-     return lo
+    lo <= x <= hi && return x
+    lo <= x && return hi
+    return lo
 end
 
 # for compatibility with old or unrevised outside linalg functions

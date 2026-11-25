@@ -38,10 +38,12 @@ const MFEPS = Double64(2.0)^-90       # comfortably above working precision
 end
 
 @testset "lq" begin
-    for A in (Double64[1 2 3; 4 5 6],                 # wide
-              Double64[1 2; 3 4; 5 6],                # tall
-              Double64[1 2; 3 4],                     # square
-              Complex{Double64}[1+1im 2 0; 3 4-2im 1im])
+    for A in (
+        Double64[1 2 3; 4 5 6],                 # wide
+        Double64[1 2; 3 4; 5 6],                # tall
+        Double64[1 2; 3 4],                     # square
+        Complex{Double64}[1+1im 2 0; 3 4-2im 1im],
+    )
         F = lq(A)
         @test F isa LinearAlgebra.LQ
         L, Q = F                                       # destructuring
@@ -154,8 +156,7 @@ end
     # the cos branch that fixes cancellation near pi/2 must not swallow
     # the rest of (pi/2, pi) -- its Taylor kernel needs |x - pi/2| <= pi/32
     setprecision(BigFloat, 256) do
-        for x in (1.4, 1.47, 1.5, Float64(pi)/2, 1.65, 1.7, 2.0, 2.5, 3.0,
-                  3.1, 3.14, Float64(pi), 3.2, 4.0, 5.0, 6.0)
+        for x in (1.4, 1.47, 1.5, Float64(pi)/2, 1.65, 1.7, 2.0, 2.5, 3.0, 3.1, 3.14, Float64(pi), 3.2, 4.0, 5.0, 6.0)
             d = Double64(x)
             @test abs(BigFloat(cos(d)) - cos(BigFloat(d))) < 1.0e-30
             @test abs(BigFloat(sin(d)) - sin(BigFloat(d))) < 1.0e-30
@@ -175,9 +176,9 @@ end
     n = 97
     eye = Matrix{Double64}(I, n, n)
     N = zeros(Double64, n, n)
-    N[1,13] = Double64(0.125)
-    N[13,26] = Double64(-0.0625)
-    N[26,97] = Double64(0.125)
+    N[1, 13] = Double64(0.125)
+    N[13, 26] = Double64(-0.0625)
+    N[26, 97] = Double64(0.125)
     a = Double64(0.75)
     A = a * eye + N
     B = N / a
@@ -197,10 +198,10 @@ end
     @test D._mat_triangle(A) === :upper
     @test D._mat_triangle(Matrix(transpose(A))) === :lower
     @test maximum(abs, D._mat_tri_mul(A, A) - A*A) < MFEPS
-    for (f, reference) in ((sqrt, r), (log, l), (exp, e), (sin, s), (cos, c),
-                           (sinh, sh), (cosh, ch), (tan, s/c), (tanh, sh/ch))
-        for (input, expected, structural) in ((A, reference, istriu),
-                (Matrix(transpose(A)), transpose(reference), istril))
+    for (f, reference) in
+        ((sqrt, r), (log, l), (exp, e), (sin, s), (cos, c), (sinh, sh), (cosh, ch), (tan, s/c), (tanh, sh/ch))
+        for (input, expected, structural) in
+            ((A, reference, istriu), (Matrix(transpose(A)), transpose(reference), istril))
             snapshot = copy(input)
             actual = f(input)
             @test actual isa Matrix{Double64}
@@ -212,7 +213,7 @@ end
     @test maximum(abs, A^Double64(0.5) - r) < MFEPS
     @test maximum(abs, (A^Double64(0.25))^4 - A) < MFEPS
     neighboring_exponent = Double64(0.5, 1e-22)
-    @test abs((A^neighboring_exponent)[1,1] - r[1,1]) > MFEPS
+    @test abs((A ^ neighboring_exponent)[1, 1] - r[1, 1]) > MFEPS
 
     z = ComplexDF64(a, Double64(0.0625))
     C = z * eye + im * N
@@ -227,11 +228,11 @@ end
     @test maximum(abs, D._mat_tri_mul(C, C) - C*C) < MFEPS
 
     raw = copy(A)
-    raw[end,1] = Double64(0.0, 1.0)
+    raw[end, 1] = Double64(0.0, 1.0)
     @test D._mat_triangle(raw) === :general
     @test D._mat_diagonal(exp, Double64[1 0; Double64(0.0, 1.0) 2]) === nothing
     bad = copy(A)
-    bad[3,3] = zero(Double64)
+    bad[3, 3] = zero(Double64)
     for f in (log, x -> x^Double64(0.5))
         @test_throws SingularException(3) f(bad)
     end
@@ -250,19 +251,19 @@ end
     @test C2 == cos(diagonal)
 
     H = Double64(0.5) * Matrix{Double64}(I, 40, 40)
-    H[1,2] = H[2,1] = Double64(0.125)
+    H[1, 2] = H[2, 1] = Double64(0.125)
     @test D._mat_hermitian_poly_norm(H) == opnorm(H, 1)
     setprecision(256) do
         for f in (exp, sin, cos, sinh, cosh)
             plus, minus = f(big"0.625"), f(big"0.375")
             X = f(H)
             to_big(x) = BigFloat(HI(x)) + BigFloat(LO(x))
-            @test abs(to_big(X[1,1]) - (plus + minus)/2) < big(2.0)^(-95)
-            @test abs(to_big(X[1,2]) - (plus - minus)/2) < big(2.0)^(-95)
+            @test abs(to_big(X[1, 1]) - (plus + minus)/2) < big(2.0)^(-95)
+            @test abs(to_big(X[1, 2]) - (plus - minus)/2) < big(2.0)^(-95)
         end
         t = Double64(0.005)
         small = t * eye + N/64
         expected = Double64(exp(BigFloat(HI(t)) + BigFloat(LO(t))))
-        @test abs(exp(small)[1,1] - expected) < MFEPS
+        @test abs(exp(small)[1, 1] - expected) < MFEPS
     end
 end

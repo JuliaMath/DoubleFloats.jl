@@ -17,8 +17,10 @@ include("golden/subjects.jl")
     for key in sort!(collect(keys(expected)))
         haskey(actual, key) || continue
         if actual[key] != expected[key]
-            blocks = findall(i -> get(actual[key], i, "") != get(expected[key], i, ""),
-                             1:max(length(actual[key]), length(expected[key])))
+            blocks = findall(
+                i -> get(actual[key], i, "") != get(expected[key], i, ""),
+                1:max(length(actual[key]), length(expected[key])),
+            )
             push!(different, string(key, " blocks ", join(blocks, ",")))
         end
     end

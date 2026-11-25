@@ -7,20 +7,22 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Doubl
         end
         hi, lo = lo, hi
     end
-    frlo, xplo  = frexp(lo)
-    xplo = Base.exponent(hi) - min(1, fld(xplo,4)) - abs(Base.exponent(eps(hi)))
+    frlo, xplo = frexp(lo)
+    xplo = Base.exponent(hi) - min(1, fld(xplo, 4)) - abs(Base.exponent(eps(hi)))
     lo = ldexp(frlo, xplo)
     lo = rand(rng, Bool) ? lo : -lo
 
     DoubleFloat(hi, lo)
 end
 
-function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Complex{DoubleFloat{T}}}}) where {T<:IEEEFloat}
+function rand(
+    rng::AbstractRNG,
+    ::Random.SamplerTrivial{Random.CloseOpen01{Complex{DoubleFloat{T}}}},
+) where {T<:IEEEFloat}
     re = rand(rng, DoubleFloat{T})
     im = rand(rng, DoubleFloat{T})
     return Complex{DoubleFloat{T}}(re, im)
 end
-
 
 function randpm(rng::MersenneTwister, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     r = rand(rng, DoubleFloat{T})
@@ -56,11 +58,11 @@ function randpm(::Type{Complex{DoubleFloat{T}}}, n::Int) where {T<:IEEEFloat}
     res = rand(DoubleFloat{T}, n)
     ims = rand(DoubleFloat{T}, n)
     o = ones(n)
-    rsgns = o .- (2 .* rand(Bool,n))
-    isgns = o .- (2 .* rand(Bool,n))
+    rsgns = o .- (2 .* rand(Bool, n))
+    isgns = o .- (2 .* rand(Bool, n))
     res = res .* rsgns
     ims = ims .* isgns
-    return map((re,im)->Complex{DoubleFloat{T}}(re,im), res, ims)
+    return map((re, im)->Complex{DoubleFloat{T}}(re, im), res, ims)
 end
 
 function randpm(rng::MersenneTwister, ::Type{DoubleFloat{T}}, n::Int) where {T<:IEEEFloat}
@@ -73,11 +75,11 @@ function randpm(rng::MersenneTwister, ::Type{Complex{DoubleFloat{T}}}, n::Int) w
     res = rand(rng, DoubleFloat{T}, n)
     ims = rand(rng, DoubleFloat{T}, n)
     o = ones(n)
-    rsgns = o .- (2 .* rand(rng, Bool,n))
-    isgns = o .- (2 .* rand(rng, Bool,n))
+    rsgns = o .- (2 .* rand(rng, Bool, n))
+    isgns = o .- (2 .* rand(rng, Bool, n))
     res = res .* rsgns
     ims = ims .* isgns
-    return map((re,im)->Complex{DoubleFloat{T}}(re,im), res, ims)
+    return map((re, im)->Complex{DoubleFloat{T}}(re, im), res, ims)
 end
 
 # normal variates
@@ -95,6 +97,6 @@ function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
         (s >= 1 | iszero(s)) || break
     end
 
-    s = sqrt( -log(s) / s )
+    s = sqrt(-log(s) / s)
     return (urand1 + urand2) * s
 end

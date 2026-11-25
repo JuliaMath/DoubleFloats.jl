@@ -22,7 +22,7 @@
 # avoids the "GenericSchur does not currently provide alg=..." warning that
 # LinearAlgebra's default algorithm choice triggers on recent Julia versions.
 
-const DoubleFloatHermSym{T} = LinearAlgebra.RealHermSymComplexHerm{DoubleFloat{T}, <:AbstractMatrix}
+const DoubleFloatHermSym{T} = LinearAlgebra.RealHermSymComplexHerm{DoubleFloat{T},<:AbstractMatrix}
 
 # a matrix with an all-real spectrum has eigenvectors that GenericSchur
 # phase-normalizes to be real up to roundoff; drop the imaginary dust so the
@@ -31,60 +31,70 @@ const DoubleFloatHermSym{T} = LinearAlgebra.RealHermSymComplexHerm{DoubleFloat{T
 function _realeigen(E::LinearAlgebra.Eigen{Complex{DoubleFloat{T}}}) where {T<:IEEEFloat}
     all(v -> iszero(imag(v)), E.values) || return E
     tol = sqrt(eps(DoubleFloat{T})) * size(E.vectors, 1)
-    maximum(abs, imag.(E.vectors); init=zero(DoubleFloat{T})) <= tol || return E
+    maximum(abs, imag.(E.vectors); init = zero(DoubleFloat{T})) <= tol || return E
     return LinearAlgebra.Eigen(real.(E.values), real.(E.vectors))
 end
 
-function LinearAlgebra.eigen(A::StridedMatrix{DoubleFloat{T}};
-                             permute::Bool=true, scale::Bool=true,
-                             sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
+function LinearAlgebra.eigen(
+    A::StridedMatrix{DoubleFloat{T}};
+    permute::Bool = true,
+    scale::Bool = true,
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
     LinearAlgebra.checksquare(A)
     if ishermitian(A)
-        return GenericSchur.geigen!(Hermitian(Matrix(A)),
-                                    LinearAlgebra.QRIteration(); sortby=sortby)
+        return GenericSchur.geigen!(Hermitian(Matrix(A)), LinearAlgebra.QRIteration(); sortby = sortby)
     end
-    E = LinearAlgebra.eigen!(Matrix(A); permute=permute, scale=scale, sortby=sortby)
+    E = LinearAlgebra.eigen!(Matrix(A); permute = permute, scale = scale, sortby = sortby)
     return _realeigen(E)
 end
 
-function LinearAlgebra.eigen(A::StridedMatrix{Complex{DoubleFloat{T}}};
-                             permute::Bool=true, scale::Bool=true,
-                             sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
+function LinearAlgebra.eigen(
+    A::StridedMatrix{Complex{DoubleFloat{T}}};
+    permute::Bool = true,
+    scale::Bool = true,
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
     LinearAlgebra.checksquare(A)
     if ishermitian(A)
-        return GenericSchur.geigen!(Hermitian(Matrix(A)),
-                                    LinearAlgebra.QRIteration(); sortby=sortby)
+        return GenericSchur.geigen!(Hermitian(Matrix(A)), LinearAlgebra.QRIteration(); sortby = sortby)
     end
-    return LinearAlgebra.eigen!(Matrix(A); permute=permute, scale=scale, sortby=sortby)
+    return LinearAlgebra.eigen!(Matrix(A); permute = permute, scale = scale, sortby = sortby)
 end
 
-function LinearAlgebra.eigen(A::DoubleFloatHermSym{T};
-                             alg::LinearAlgebra.Algorithm=LinearAlgebra.QRIteration(),
-                             sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
-    return GenericSchur.geigen!(copy(A), alg; sortby=sortby)
+function LinearAlgebra.eigen(
+    A::DoubleFloatHermSym{T};
+    alg::LinearAlgebra.Algorithm = LinearAlgebra.QRIteration(),
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
+    return GenericSchur.geigen!(copy(A), alg; sortby = sortby)
 end
 
-function LinearAlgebra.eigvals(A::StridedMatrix{DoubleFloat{T}};
-                               permute::Bool=true, scale::Bool=true,
-                               sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
+function LinearAlgebra.eigvals(
+    A::StridedMatrix{DoubleFloat{T}};
+    permute::Bool = true,
+    scale::Bool = true,
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
     LinearAlgebra.checksquare(A)
     if ishermitian(A)
-        return GenericSchur.geigvals!(Hermitian(Matrix(A)),
-                                      LinearAlgebra.QRIteration(); sortby=sortby)
+        return GenericSchur.geigvals!(Hermitian(Matrix(A)), LinearAlgebra.QRIteration(); sortby = sortby)
     end
-    vals = LinearAlgebra.eigvals!(Matrix(A); permute=permute, scale=scale, sortby=sortby)
+    vals = LinearAlgebra.eigvals!(Matrix(A); permute = permute, scale = scale, sortby = sortby)
     return all(v -> iszero(imag(v)), vals) ? real.(vals) : vals
 end
 
-function LinearAlgebra.eigvals(A::StridedMatrix{Complex{DoubleFloat{T}}};
-                               permute::Bool=true, scale::Bool=true,
-                               sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
+function LinearAlgebra.eigvals(
+    A::StridedMatrix{Complex{DoubleFloat{T}}};
+    permute::Bool = true,
+    scale::Bool = true,
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
     LinearAlgebra.checksquare(A)
     if ishermitian(A)
-        return GenericSchur.geigvals!(Hermitian(Matrix(A)),
-                                      LinearAlgebra.QRIteration(); sortby=sortby)
+        return GenericSchur.geigvals!(Hermitian(Matrix(A)), LinearAlgebra.QRIteration(); sortby = sortby)
     end
-    return LinearAlgebra.eigvals!(Matrix(A); permute=permute, scale=scale, sortby=sortby)
+    return LinearAlgebra.eigvals!(Matrix(A); permute = permute, scale = scale, sortby = sortby)
 end
 
 # Double16's precision is too coarse for QR iteration to converge at its
@@ -107,22 +117,28 @@ function LinearAlgebra.eigvals(A::StridedMatrix{Complex{Double16}}; kwargs...)
     return _demote16(eigvals(Matrix{Complex{Double64}}(A); kwargs...))
 end
 
-function LinearAlgebra.eigvals(A::DoubleFloatHermSym{T};
-                               alg::LinearAlgebra.Algorithm=LinearAlgebra.QRIteration(),
-                               sortby=LinearAlgebra.eigsortby) where {T<:IEEEFloat}
-    return GenericSchur.geigvals!(copy(A), alg; sortby=sortby)
+function LinearAlgebra.eigvals(
+    A::DoubleFloatHermSym{T};
+    alg::LinearAlgebra.Algorithm = LinearAlgebra.QRIteration(),
+    sortby = LinearAlgebra.eigsortby,
+) where {T<:IEEEFloat}
+    return GenericSchur.geigvals!(copy(A), alg; sortby = sortby)
 end
 
 # symmetric QR at Double16 precision is also unreliable; the dense Matrix
 # methods above already promote, so route the wrappers through them
-function LinearAlgebra.eigen(A::DoubleFloatHermSym{Float16};
-                             alg::LinearAlgebra.Algorithm=LinearAlgebra.QRIteration(),
-                             sortby=LinearAlgebra.eigsortby)
+function LinearAlgebra.eigen(
+    A::DoubleFloatHermSym{Float16};
+    alg::LinearAlgebra.Algorithm = LinearAlgebra.QRIteration(),
+    sortby = LinearAlgebra.eigsortby,
+)
     M = Matrix(A)   # exactly hermitian, so the promoted path takes the
-    return eigen(M; sortby=sortby)      # hermitian shortcut in Double64
+    return eigen(M; sortby = sortby)      # hermitian shortcut in Double64
 end
-function LinearAlgebra.eigvals(A::DoubleFloatHermSym{Float16};
-                               alg::LinearAlgebra.Algorithm=LinearAlgebra.QRIteration(),
-                               sortby=LinearAlgebra.eigsortby)
-    return eigvals(Matrix(A); sortby=sortby)
+function LinearAlgebra.eigvals(
+    A::DoubleFloatHermSym{Float16};
+    alg::LinearAlgebra.Algorithm = LinearAlgebra.QRIteration(),
+    sortby = LinearAlgebra.eigsortby,
+)
+    return eigvals(Matrix(A); sortby = sortby)
 end

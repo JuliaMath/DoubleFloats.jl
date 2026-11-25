@@ -19,13 +19,13 @@ end
 function rem(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (!isfinite(x) || isnan(y)) && return nan(DoubleFloat{T})
     !isfinite(y) && return x
-    return x - div(x,y) * y
+    return x - div(x, y) * y
 end
 
 function mod(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (!isfinite(x) || isnan(y)) && return nan(DoubleFloat{T})
     !isfinite(y) && return x
-    return x - fld(x,y) * y
+    return x - fld(x, y) * y
 end
 
 function divrem(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}

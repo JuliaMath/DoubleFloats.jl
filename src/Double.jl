@@ -8,23 +8,20 @@ A pair of magnitude-ordered, non-overlapping Floats of type `T`.
 `DoubleFloat{Float64}`, respectively.
 """
 struct DoubleFloat{T} <: MultipartFloat
+    hi::T
+    lo::T
 
-   hi::T
-   lo::T
+    # this form ensure hi, lo are canonically valued
+    function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
+        hi, lo = two_sum(hi, lo)
+        return new{T}(hi, lo)
+    end
 
-   # this form ensure hi, lo are canonically valued
-   function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
-       hi, lo = two_sum(hi, lo)
-       return new{T}(hi, lo)
-   end
-
-   # this form does not alter hi, lo
-   function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
-       return new{T}(hi, lo)
-   end
-
+    # this form does not alter hi, lo
+    function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
+        return new{T}(hi, lo)
+    end
 end
-
 
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
@@ -34,14 +31,13 @@ const ComplexDF64 = Complex{DoubleFloat{Float64}}
 const ComplexDF32 = Complex{DoubleFloat{Float32}}
 const ComplexDF16 = Complex{DoubleFloat{Float16}}
 
-
-DoubleFloat(x::T1, y::T2) where {T1<:Real, T2<:Real} = DoubleFloat(promote(x, y)...)
+DoubleFloat(x::T1, y::T2) where {T1<:Real,T2<:Real} = DoubleFloat(promote(x, y)...)
 DoubleFloat(x::T, y::T) where {T<:Integer} = DoubleFloat{Float64}(BigFloat(x) + BigFloat(y))
 
 DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
 DoubleFloat{T}(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
-function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat, T2<:IEEEFloat}
-    hi,lo = two_sum(T1(HI(x)), T1(LO(x)))
+function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat,T2<:IEEEFloat}
+    hi, lo = two_sum(T1(HI(x)), T1(LO(x)))
     return DoubleFloat{T1}(hi, lo)
 end
 
@@ -49,27 +45,25 @@ ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
 ComplexDF32(x::T) where {T<:Real} = ComplexDF32(x, zero(T))
 ComplexDF16(x::T) where {T<:Real} = ComplexDF16(x, zero(T))
 
-
 @inline HI(x::T) where {T<:IEEEFloat} = x
 @inline LO(x::T) where {T<:IEEEFloat} = zero(x)
 @inline HILO(x::T) where {T<:IEEEFloat} = x, zero(x)
 
-@inline HI(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi
-@inline LO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.lo
-@inline HILO(x::T) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x.hi, x.lo
+@inline HI(x::T) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x.hi
+@inline LO(x::T) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x.lo
+@inline HILO(x::T) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x.hi, x.lo
 
 @inline HI(x::Tuple{T,T}) where {T<:IEEEFloat} = x[1]
 @inline LO(x::Tuple{T,T}) where {T<:IEEEFloat} = x[2]
 @inline HILO(x::Tuple{T,T}) where {T<:IEEEFloat} = x
 
-@inline HI(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x[1]
-@inline LO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x[2]
-@inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat, T<:DoubleFloat{F}} = x
+@inline HI(x::Tuple{T,T}) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x[1]
+@inline LO(x::Tuple{T,T}) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x[2]
+@inline HILO(x::Tuple{T,T}) where {F<:IEEEFloat,T<:DoubleFloat{F}} = x
 
 @inline HI(x::Tuple{T1,T2}) where {T1,T2} = x[1]
 @inline LO(x::Tuple{T1,T2}) where {T1,T2} = x[2]
 @inline HILO(x::Tuple{T1,T2}) where {T1,T2} = x
-
 
 """
     Double64(x::Tuple{Float64, Float64})
@@ -162,17 +156,18 @@ Promote `hi` to a `Float16` then convert to `Double16`.
 """
 @inline Double16(hi::T) where {T<:Integer} = Double16(Float16(hi))
 
-for (F,D,U) in ((:Float64, :Double64, :(Union{Float32, Float16})),
-                (:Float32, :Double32, :(Union{Float64, Float16})),
-                (:Float16, :Double16, :(Union{Float64, Float32})))
-  @eval begin
-    @inline $D(hi::T, lo::T) where {T<:$U} = $D($F(hi), $F(lo))
-    @inline $D(hi::T, lo::I) where {T<:$U, I<:Integer} = $D($F(hi), $F(lo))
-    @inline $D(hi::I, lo::T) where {T<:$U, I<:Integer} = $D($F(hi), $F(lo))
-    @inline $D(hi::I, lo::I) where {I<:Integer} = $D($F(hi), $F(lo))
-  end
+for (F, D, U) in (
+    (:Float64, :Double64, :(Union{Float32,Float16})),
+    (:Float32, :Double32, :(Union{Float64,Float16})),
+    (:Float16, :Double16, :(Union{Float64,Float32})),
+)
+    @eval begin
+        @inline $D(hi::T, lo::T) where {T<:$U} = $D($F(hi), $F(lo))
+        @inline $D(hi::T, lo::I) where {T<:$U,I<:Integer} = $D($F(hi), $F(lo))
+        @inline $D(hi::I, lo::T) where {T<:$U,I<:Integer} = $D($F(hi), $F(lo))
+        @inline $D(hi::I, lo::I) where {I<:Integer} = $D($F(hi), $F(lo))
+    end
 end
-
 
 DoubleFloat{T}(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat(y))
 DoubleFloat{T}(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat(x), y)
@@ -214,7 +209,9 @@ DoubleFloat(x::Int32) = Double32(x, zero(Int32))
 DoubleFloat(x::Int16) = Double16(x, zero(Int16))
 
 # overload Base._precision_with_base_2 or Base._precision to support the base keyword in Julia 1.8
-let precision = isdefined(Base, :_precision_with_base_2) ? :_precision_with_base_2 : isdefined(Base, :_precision) ? :_precision : :precision
+let precision =
+        isdefined(Base, :_precision_with_base_2) ? :_precision_with_base_2 :
+        isdefined(Base, :_precision) ? :_precision : :precision
     @eval Base.$precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*Base.$precision(T)
 end
 
@@ -225,18 +222,15 @@ eltype(x::Double64) = Double64
 eltype(x::Double32) = Double32
 eltype(x::Double16) = Double16
 
-
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} =
-    hash(z.hi, h) ⊻ hash(z.lo)
+@inline hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} = hash(z.hi, h) ⊻ hash(z.lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, T<:DoubleFloat{F}} =
-    hash(z.hi) ⊻ hash(z.lo)
+@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,T<:DoubleFloat{F}} = hash(z.hi) ⊻ hash(z.lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat, G<:DoubleFloat{F}, T<:DoubleFloat{G}} =
+@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,G<:DoubleFloat{F},T<:DoubleFloat{G}} =
     hash(z.hi) ⊻ hash(z.lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)

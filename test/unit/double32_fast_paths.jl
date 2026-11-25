@@ -5,12 +5,19 @@ using DoubleFloats: simdmap!
 
 const DF = DoubleFloats
 
-const CASES = ((exp, (-64.0f0, 80.0f0)), (exp2, (-96.0f0, 112.0f0)),
-    (expm1, (Float32(0x1p-40), 0.5f0)), (log, (0.125f0, 0.875f0), (1.125f0, 8.0f0)),
+const CASES = (
+    (exp, (-64.0f0, 80.0f0)),
+    (exp2, (-96.0f0, 112.0f0)),
+    (expm1, (Float32(0x1p-40), 0.5f0)),
+    (log, (0.125f0, 0.875f0), (1.125f0, 8.0f0)),
     (log2, (0.125f0, 0.875f0), (1.125f0, 8.0f0)),
-    (log1p, (Float32(0x1p-40), 0.0625f0)), (atan, (Float32(0x1p-40), 1.0f0)),
-    (tan, (Float32(0x1p-40), 0.5f0)), (sinh, (Float32(0x1p-40), 1.0f0)),
-    (cosh, (Float32(0x1p-40), 1.0f0)), (tanh, (Float32(0x1p-40), 1.0f0)))
+    (log1p, (Float32(0x1p-40), 0.0625f0)),
+    (atan, (Float32(0x1p-40), 1.0f0)),
+    (tan, (Float32(0x1p-40), 0.5f0)),
+    (sinh, (Float32(0x1p-40), 1.0f0)),
+    (cosh, (Float32(0x1p-40), 1.0f0)),
+    (tanh, (Float32(0x1p-40), 1.0f0)),
+)
 
 function within(f, x, actual, units)
     exact = f(BigFloat(x))
@@ -27,8 +34,7 @@ end
             signed_range = !(f in (exp, exp2, log, log2))
             x = map(1:128) do i
                 h = (signed_range && iseven(i) ? -1 : 1) * (a + (b - a) * rand(rng, Float32))
-                l = iszero(i % 7) ? copysign(Float32(0x1p-110), h) :
-                    (rand(rng, Float32) - 0.5f0) * eps(h)
+                l = iszero(i % 7) ? copysign(Float32(0x1p-110), h) : (rand(rng, Float32) - 0.5f0) * eps(h)
                 Double32(h, l)
             end
             signs = signed_range ? (-1, 1) : (1,)
@@ -65,11 +71,12 @@ end
 
         # Exercise both sides of each atan anchor choice and each
         # log2 mantissa table entry, including a spaced low word.
-        for (f, heads) in ((atan, (Float32(2j + 1) / 32 for j in 0:15)),
-                           (log2, (2.0f0 + Float32(j) / 16 for j in 0:31)))
-            x = [Double32(h, l) for center in heads
-                 for h in (prevfloat(center), center, nextfloat(center))
-                 for l in (-eps(h) / 2, Float32(0x1p-85), eps(h) / 2)]
+        for (f, heads) in
+            ((atan, (Float32(2j + 1) / 32 for j in 0:15)), (log2, (2.0f0 + Float32(j) / 16 for j in 0:31)))
+            x = [
+                Double32(h, l) for center in heads for h in (prevfloat(center), center, nextfloat(center)) for
+                l in (-eps(h) / 2, Float32(0x1p-85), eps(h) / 2)
+            ]
             y = simdmap!(f, similar(x), x)
             @test all(within(f, t, r, 2.2 * unit) for (t, r) in zip(x, y))
         end
@@ -88,7 +95,7 @@ end
         for n in (63, 64, 65, 4099)
             x = fill(Double32(0.3125f0, Float32(0x1p-65)), n)
             r = tanh.(x)
-            y = simdmap!(tanh, similar(x), x; threaded=true)
+            y = simdmap!(tanh, similar(x), x; threaded = true)
             @test all(within(tanh, t, v, 2.2 * unit) for (t, v) in zip(x, y))
             @test simdmap!(tanh, x, x) === x
             @test all(isequal.(HILO.(x), HILO.(r)))

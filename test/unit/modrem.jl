@@ -1,6 +1,5 @@
 @testset "modpi" begin
-
-    @test mod2pi(Double64(-13)) ≈ mod2pi(big(-13.)) atol = 1e-31
+    @test mod2pi(Double64(-13)) ≈ mod2pi(big(-13.0)) atol = 1e-31
 
     x=cbrt(41)*sqrt(Double64(pi))
 

@@ -1,11 +1,11 @@
 @testset "Concrete Accuracy" begin
     zero_accurate = Double64(0.0)
-    one_accurate  = Double64(1.0)
+    one_accurate = Double64(1.0)
 
-    pi_accurate   = Double64(pi)
-    phi_accurate  = Double64(phi)
+    pi_accurate = Double64(pi)
+    phi_accurate = Double64(phi)
 
-    @test pi_accurate   == DoubleFloat{Float64}(pi)
+    @test pi_accurate == DoubleFloat{Float64}(pi)
 
     @test abs(inv(inv(pi_accurate)) - pi_accurate) <= eps(LO(pi_accurate))
     @test abs(phi_accurate - (phi_accurate*phi_accurate - 1.0)) <= 3eps(LO(phi_accurate))
@@ -26,7 +26,6 @@
     @test (a/c).hi == (b/d).hi
     @test (a/c).lo == (b/d).lo
 
-
     @test zero(Double64) == Double64(0.0, 0.0)
     @test one(Double64) == Double64(1.0, 0.0)
     @test zero(Double32) == Double32(0.0f0, 0.0f0)
@@ -39,8 +38,8 @@
     @test typemax(Double64) == Double64(typemax(Float64))
     @test floatmin(Double32) == Double32(floatmin(Float32))
 
-    @test isnan( nan(Double64) )
-    @test isinf( inf(Double16) )
+    @test isnan(nan(Double64))
+    @test isinf(inf(Double16))
 
     @test typeof(rand(Double64)) == Double64
     @test typeof(rand(Double32)) == Double32
@@ -67,12 +66,21 @@ end
 
 @testset "Cube root across the Float64 exponent range" begin
     setprecision(BigFloat, 512) do
-        for x in (Double64(nextfloat(0.0)), Double64(prevfloat(floatmin(Float64))),
-                  Double64(0x1p-1020, nextfloat(0.0)),
-                  Double64(0x1p600, 0x1p545), Double64(0x1p600, -0x1p545),
-                  Double64(prevfloat(0x1p-256)), Double64(0x1p-256),
-                  Double64(0x1p256), Double64(nextfloat(0x1p256)), floatmax(Double64),
-                  Double64(0x1p-769), Double64(0x1p-768), Double64(0x1p-767))
+        for x in (
+            Double64(nextfloat(0.0)),
+            Double64(prevfloat(floatmin(Float64))),
+            Double64(0x1p-1020, nextfloat(0.0)),
+            Double64(0x1p600, 0x1p545),
+            Double64(0x1p600, -0x1p545),
+            Double64(prevfloat(0x1p-256)),
+            Double64(0x1p-256),
+            Double64(0x1p256),
+            Double64(nextfloat(0x1p256)),
+            floatmax(Double64),
+            Double64(0x1p-769),
+            Double64(0x1p-768),
+            Double64(0x1p-767),
+        )
             for arg in (x, -x)
                 actual = cbrt(arg)
                 reference = cbrt(BigFloat(arg))
@@ -86,11 +94,7 @@ end
 end
 
 @testset "Subnormal numbers" begin
-    for (F, D) in (
-        (Float64, Double64),
-        (Float32, Double32),
-        (Float16, Double16),
-    )
+    for (F, D) in ((Float64, Double64), (Float32, Double32), (Float16, Double16))
         # NOTE: using `prevfloat(floatmin(F))` doesn't expose `sqrt(D(sn))` returning a `NaN`
         sn = D(floatmin(F) / 10)
 

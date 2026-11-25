@@ -40,7 +40,9 @@ end
 
 function environment(spec)
     env = mktempdir()
-    run(`$(Base.julia_cmd()) --project=$env -e "using Pkg; $(addcommand(spec)); Pkg.add(\"BenchmarkTools\"; io = devnull)"`)
+    run(
+        `$(Base.julia_cmd()) --project=$env -e "using Pkg; $(addcommand(spec)); Pkg.add(\"BenchmarkTools\"; io = devnull)"`,
+    )
     return env
 end
 
@@ -61,8 +63,19 @@ function driver(a, b, threshold, rounds)
         measure!(besta, enva)
         measure!(bestb, envb)
     end
-    println("A: `", a, "`. B: `", b, "`. Julia ", VERSION, ", ", Sys.CPU_NAME, ". Minimum of ", rounds,
-            " rounds; times are for one pass over each benchmark's inputs.\n")
+    println(
+        "A: `",
+        a,
+        "`. B: `",
+        b,
+        "`. Julia ",
+        VERSION,
+        ", ",
+        Sys.CPU_NAME,
+        ". Minimum of ",
+        rounds,
+        " rounds; times are for one pass over each benchmark's inputs.\n",
+    )
     println("| Benchmark | A (μs) | B (μs) | B/A | |")
     println("|:--|--:|--:|--:|:--|")
     slower = String[]
@@ -70,12 +83,30 @@ function driver(a, b, threshold, rounds)
         ratio = bestb[key] / besta[key]
         mark = ratio > threshold ? "slower" : ratio < 1 / threshold ? "faster" : ""
         ratio > threshold && push!(slower, key)
-        println("| ", key, " | ", round(besta[key] / 1000; digits = 2), " | ", round(bestb[key] / 1000; digits = 2),
-                " | ", round(ratio; digits = 2), " | ", mark, " |")
+        println(
+            "| ",
+            key,
+            " | ",
+            round(besta[key] / 1000; digits = 2),
+            " | ",
+            round(bestb[key] / 1000; digits = 2),
+            " | ",
+            round(ratio; digits = 2),
+            " | ",
+            mark,
+            " |",
+        )
     end
     for key in sort!(collect(symdiff(keys(besta), keys(bestb))))
-        println("| ", key, " | ", haskey(besta, key) ? "present" : "absent", " | ",
-                haskey(bestb, key) ? "present" : "absent", " | | |")
+        println(
+            "| ",
+            key,
+            " | ",
+            haskey(besta, key) ? "present" : "absent",
+            " | ",
+            haskey(bestb, key) ? "present" : "absent",
+            " | | |",
+        )
     end
     println("\n", length(slower), " benchmarks slower than ", threshold, " times A.")
     isempty(slower) || exit(1)
@@ -84,8 +115,12 @@ end
 if length(ARGS) == 2 && ARGS[1] == "--worker"
     worker(ARGS[2])
 elseif length(ARGS) >= 2
-    driver(ARGS[1], ARGS[2], length(ARGS) >= 3 ? parse(Float64, ARGS[3]) : 1.2,
-           length(ARGS) >= 4 ? parse(Int, ARGS[4]) : 2)
+    driver(
+        ARGS[1],
+        ARGS[2],
+        length(ARGS) >= 3 ? parse(Float64, ARGS[3]) : 1.2,
+        length(ARGS) >= 4 ? parse(Int, ARGS[4]) : 2,
+    )
 else
     println("usage: julia benchmark/compare.jl A B [THRESHOLD] [ROUNDS]")
 end

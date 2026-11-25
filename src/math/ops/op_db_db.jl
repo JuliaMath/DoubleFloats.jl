@@ -3,8 +3,7 @@
     thi = inv(yhi)
     # NB: ylo == 0 does NOT make the reciprocal exact; unsafe_inv_dd_dd_
     #     handles it properly and must not be skipped
-    (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) &&
-        return DoubleFloat{T}(zero_error_result(thi)...)
+    (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) && return DoubleFloat{T}(zero_error_result(thi)...)
     zhi, zlo = unsafe_inv_dd_dd_(yhi, ylo)
     isfinite(zhi) || return DoubleFloat{T}(unsafe_inv_dd_dd(yhi, ylo)...)
     return DoubleFloat{T}(zhi, zlo)
@@ -37,5 +36,4 @@ end
 # finite fast path in inv_db_db applies throughout the window.
 @inline _batch_inv_range(x) = _batch_abs_bounded(x, 0x1p-256, 0x1p256)
 
-_batch_kernel(::typeof(inv), ::Type{Double64}, ::Type{Double64}) =
-    _BatchKernel(_batch_inv_range, _batch_inv)
+_batch_kernel(::typeof(inv), ::Type{Double64}, ::Type{Double64}) = _BatchKernel(_batch_inv_range, _batch_inv)

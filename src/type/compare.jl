@@ -1,15 +1,13 @@
-@inline posnegzeros(x::Float64, y::Float64) = 
-    (reinterpret(UInt64, x) | reinterpret(UInt64, y))  === 0x8000_0000_0000_0000
-@inline posnegzeros(x::Float32, y::Float32) = 
-    (reinterpret(UInt32, x) | reinterpret(UInt32, y))  === 0x8000_0000
-@inline posnegzeros(x::Float16, y::Float16) = 
-    (reinterpret(UInt16, x) | reinterpret(UInt16, y))  === 0x8000
+@inline posnegzeros(x::Float64, y::Float64) =
+    (reinterpret(UInt64, x) | reinterpret(UInt64, y)) === 0x8000_0000_0000_0000
+@inline posnegzeros(x::Float32, y::Float32) = (reinterpret(UInt32, x) | reinterpret(UInt32, y)) === 0x8000_0000
+@inline posnegzeros(x::Float16, y::Float16) = (reinterpret(UInt16, x) | reinterpret(UInt16, y)) === 0x8000
 
 @inline function (==)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     if isinf(HI(x)) && isinf(HI(y))
         return signbit(HI(x)) == signbit(HI(y))
     end
-    return (LO(x) === LO(y)) && (HI(x) === HI(y) || posnegzeros(HI(x),HI(y)))
+    return (LO(x) === LO(y)) && (HI(x) === HI(y) || posnegzeros(HI(x), HI(y)))
 end
 @inline function (<)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     return (HI(x) < HI(y)) || (HI(x) === HI(y) && LO(x) < LO(y))
@@ -25,38 +23,37 @@ end
     return x < y
 end
 
-
-@inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function (==)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,F<:AbstractFloat}
     return (==)(x, DoubleFloat{T}(y))
 end
-@inline function (==)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function (==)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,F<:AbstractFloat}
     return (==)(DoubleFloat{T}(x), y)
 end
 
-@inline function (<)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function (<)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,F<:AbstractFloat}
     return (<)(x, DoubleFloat{T}(y))
 end
-@inline function (<)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function (<)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,F<:AbstractFloat}
     return (<)(DoubleFloat{T}(x), y)
 end
-@inline function (<=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
-        return (<=)(x, DoubleFloat{T}(y))
+@inline function (<=)(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,F<:AbstractFloat}
+    return (<=)(x, DoubleFloat{T}(y))
 end
-@inline function (<=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function (<=)(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,F<:AbstractFloat}
     return (<=)(DoubleFloat{T}(x), y)
 end
 
-@inline function isequal(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function isequal(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,F<:AbstractFloat}
     return isequal(x, DoubleFloat{T}(y))
 end
-@inline function isequal(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function isequal(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,F<:AbstractFloat}
     return isequal(DoubleFloat{T}(x), y)
 end
 
-@inline function isless(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function isless(x::DoubleFloat{T}, y::F) where {T<:IEEEFloat,F<:AbstractFloat}
     return isless(x, DoubleFloat{T}(y))
 end
-@inline function isless(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat, F<:AbstractFloat}
+@inline function isless(x::F, y::DoubleFloat{T}) where {T<:IEEEFloat,F<:AbstractFloat}
     return isless(DoubleFloat{T}(x), y)
 end
 
@@ -119,8 +116,6 @@ end
     yy = DoubleFloat{T}(numerator(y)) / denominator(y)
     return isless(x, yy)
 end
-
-
 
 @inline function (==)(x::Rational, y::DoubleFloat{T}) where {T<:IEEEFloat}
     xx = DoubleFloat{T}(numerator(x)) / denominator(x)

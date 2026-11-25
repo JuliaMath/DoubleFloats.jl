@@ -11,12 +11,20 @@
                 @test abs(actual - expected) <= BigFloat(2.2) * unit * abs(expected)
             end
         end
-        for (f, a, b) in ((atan, -1.0, 1.0), (tan, -0.5, 0.5),
-                (sinh, -1.0, 1.0), (cosh, -1.0, 1.0), (tanh, -1.0, 1.0),
-                (exp, -670.0, 700.0), (exp2, -966.0, 1023.0),
-                (expm1, -1.0, 1.0), (log, 0.9375, 1.0625),
-                (log2, 0.9375, 1.0625), (log1p, -0.125, 0.125))
-            for h in range(a, b; length=193), t in (-0.5, 0.5)
+        for (f, a, b) in (
+            (atan, -1.0, 1.0),
+            (tan, -0.5, 0.5),
+            (sinh, -1.0, 1.0),
+            (cosh, -1.0, 1.0),
+            (tanh, -1.0, 1.0),
+            (exp, -670.0, 700.0),
+            (exp2, -966.0, 1023.0),
+            (expm1, -1.0, 1.0),
+            (log, 0.9375, 1.0625),
+            (log2, 0.9375, 1.0625),
+            (log1p, -0.125, 0.125),
+        )
+            for h in range(a, b; length = 193), t in (-0.5, 0.5)
                 check(f, Double64(h, t * eps(h)))
             end
         end
@@ -25,10 +33,13 @@
             # Finer table entry switches, with both sides exercised in each
             # exponent on either side of one.
             abscissa = (2j + 1) / 256
-            for (f, x) in ((exp, Double64(BigFloat(abscissa) * log(big"2.0"))),
-                           (exp2, Double64(abscissa)),
-                           (log, Double64(1 + j / 128)), (log, Double64((1 + j / 128) / 2)),
-                           (log2, Double64(1 + j / 128)))
+            for (f, x) in (
+                (exp, Double64(BigFloat(abscissa) * log(big"2.0"))),
+                (exp2, Double64(abscissa)),
+                (log, Double64(1 + j / 128)),
+                (log, Double64((1 + j / 128) / 2)),
+                (log2, Double64(1 + j / 128)),
+            )
                 h, l = HILO(x)
                 for tail in (prevfloat(l), l, nextfloat(l))
                     check(f, Double64(h, tail))

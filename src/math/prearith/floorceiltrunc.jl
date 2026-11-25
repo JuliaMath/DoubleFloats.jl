@@ -54,7 +54,6 @@ trunc(::Type{Int32}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int32(trunc(x))
 trunc(::Type{Int16}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(trunc(x))
 trunc(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(trunc(x))
 
-
 function round(x::DoubleFloat{T}) where {T<:IEEEFloat}
     trunc(x + copysign(0.5, x))
 end
@@ -64,7 +63,6 @@ round(::Type{Int64}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int64(round(x))
 round(::Type{Int32}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int32(round(x))
 round(::Type{Int16}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int16(round(x))
 round(::Type{Integer}, x::DoubleFloat{T}) where {T<:IEEEFloat} = Int(round(x))
-
 
 function round(x::DoubleFloat{T}, ::RoundingMode{:Up}) where {T<:IEEEFloat}
     return ceil(x)
@@ -109,12 +107,12 @@ function spread(x::DoubleFloat{T}) where {T<:IEEEFloat}
     (!isfinite(x) || isinteger(x)) && return x
     if isinteger(HI(x))
         if signbit(LO(x))
-              signbit(HI(x)) ? DoubleFloat{T}(HI(x)-one(T), zero(T)) : DoubleFloat{T}(HI(x), zero(T))
+            signbit(HI(x)) ? DoubleFloat{T}(HI(x)-one(T), zero(T)) : DoubleFloat{T}(HI(x), zero(T))
         else
-              signbit(HI(x)) ? DoubleFloat{T}(HI(x), zero(T)) : DoubleFloat{T}(HI(x)+one(T), zero(T))
+            signbit(HI(x)) ? DoubleFloat{T}(HI(x), zero(T)) : DoubleFloat{T}(HI(x)+one(T), zero(T))
         end
     else
-        signbit(HI(x)) ? DoubleFloat{T}(floor(HI(x)), zero(T)) :  DoubleFloat{T}(ceil(HI(x)), zero(T))
+        signbit(HI(x)) ? DoubleFloat{T}(floor(HI(x)), zero(T)) : DoubleFloat{T}(ceil(HI(x)), zero(T))
     end
 end
 
@@ -132,10 +130,11 @@ tld(x::T, y::T) where {T<:IEEEFloat} = trunc(x/y)
 """
     sld(x, y)
 Spread the result of x/y.
-""" sld
+"""
+sld
 sld(x::T, y::T) where {T<:IEEEFloat} = spread(x/y)
 
-for (F,G) in ((:tld, :trunc), (:sld, :spread))
+for (F, G) in ((:tld, :trunc), (:sld, :spread))
     @eval begin
         function $F(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
             z = x / y
@@ -144,13 +143,13 @@ for (F,G) in ((:tld, :trunc), (:sld, :spread))
     end
 end
 
-for (F,G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
+for (F, G) in ((:fld, :floor), (:cld, :ceil), (:tld, :trunc), (:sld, :spread))
     @eval begin
-        function $F(x::DoubleFloat{T}, y::T1) where {T<:IEEEFloat, T1<:IEEEFloat}
+        function $F(x::DoubleFloat{T}, y::T1) where {T<:IEEEFloat,T1<:IEEEFloat}
             z = x / y
             return $G(z)
         end
-        function $F(x::T1, y::DoubleFloat{T}) where {T<:IEEEFloat, T1<:IEEEFloat}
+        function $F(x::T1, y::DoubleFloat{T}) where {T<:IEEEFloat,T1<:IEEEFloat}
             z = x / y
             return $G(z)
         end

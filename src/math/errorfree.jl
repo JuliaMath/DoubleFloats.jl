@@ -9,7 +9,7 @@ the implemented version benchmarked slightly better under a variety of inputs (j
 end
 =#
 
-const FloatWithFMA = Union{Float64, Float32, Float16}
+const FloatWithFMA = Union{Float64,Float32,Float16}
 
 @noinline zero_error_result(x::T) where {T<:AbstractFloat} = (x, zero(T))
 
@@ -59,8 +59,8 @@ two_sum(a::Real, b::Real) = two_sum(float(promote(a, b))...)
 
 Computes `hi = fl(a+b+c)` and `md = err(a+b+c), lo = err(md)`.
 """
-function three_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum(a,  b)
+function three_sum(a::T, b::T, c::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a, b)
     hi, t2 = two_sum(t0, c)
     md, lo = two_sum(t2, t1)
     hi, md = two_hilo_sum(hi, md)
@@ -72,15 +72,15 @@ end
     
 Computes `hi = fl(a+b+c+d)` and `hm = err(a+b+c+d), ml = err(hm), lo = err(ml)`.
 """
-function four_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum(a,  b)
-    t2, t3 = two_sum(c,  d)
+function four_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a, b)
+    t2, t3 = two_sum(c, d)
     hi, t4 = two_sum(t0, t2)
     t5, lo = two_sum(t1, t3)
     hm, ml = two_sum(t4, t5)
     ml, lo = two_hilo_sum(ml, lo)
     hm, ml = two_hilo_sum(hm, ml)
-    hi, hm = two_hilo_sum(hi,hm)
+    hi, hm = two_hilo_sum(hi, hm)
     return hi, hm, ml, lo
 end
 
@@ -89,8 +89,8 @@ end
 
 Computes `hi = fl(a+b+c)` and `lo = err(a+b+c)`.
 """
-function two_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum(a,  b)
+function two_sum(a::T, b::T, c::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a, b)
     hi, t2 = two_sum(t0, c)
     lo = t2 + t1
     hi, lo = two_hilo_sum(hi, lo)
@@ -103,24 +103,23 @@ end
 Computes `hi = fl(a+b+c+d)` and `lo = err(a+b+c+d)`.
 """
 function two_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum(a ,  b)
-    t0, t2 = two_sum(t0,  c)
-    a,  t3 = two_sum(t0,  d)
-    t0  = t1 + t2
-    b   = t0 + t3
+    t0, t1 = two_sum(a, b)
+    t0, t2 = two_sum(t0, c)
+    a, t3 = two_sum(t0, d)
+    t0 = t1 + t2
+    b = t0 + t3
     return a, b
 end
 
-function three_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum(a ,  b)
-    t0, t2 = two_sum(t0,  c)
-    hi, t3 = two_sum(t0,  d)
+function three_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_sum(a, b)
+    t0, t2 = two_sum(t0, c)
+    hi, t3 = two_sum(t0, d)
     t0, t1 = two_sum(t1, t2)
     hm, t2 = two_sum(t0, t3) # here, t0 >= t3
-    ml     = t1 + t2
+    ml = t1 + t2
     return hi, hm, ml
 end
-
 
 """
     two_diff(a, b)
@@ -146,11 +145,11 @@ Computes `hi = fl(a-b-c)` and `lo = err(a-b-c)`.
 function two_diff(a::T, b::T, c::T) where {T<:FloatWithFMA}
     s, t = two_diff(-b, c)
     x, u = two_sum(a, s)
-       y = u + t
+    y = u + t
     x, y = two_sum(x, y)
     return x, y
 end
-        
+
 """
     two_hilo_sum(a, b)
 
@@ -227,14 +226,13 @@ two_hilo_sum(a::AbstractFloat, b::AbstractFloat) = two_hilo_sum(promote(a, b)...
 # Non-float reals: promote to Float64.
 two_hilo_sum(a::Real, b::Real) = two_hilo_sum(float(promote(a, b))...)
 
-
 """
     three_hilo_sum(a, b, c)
     
 *unchecked* requirement `|a| ≥ |b| ≥ |c|`
 Computes `s = fl(a+b+c)` and `e1 = err(a+b+c), e2 = err(e1)`.
 """
-function three_hilo_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
+function three_hilo_sum(a::T, b::T, c::T) where {T<:FloatWithFMA}
     s, t = two_hilo_sum(b, c)
     x, u = two_hilo_sum(a, s)
     y, z = two_hilo_sum(u, t)
@@ -248,10 +246,10 @@ end
 *unchecked* requirement `|a| ≥ |b| ≥ |c|`
 Computes `s = fl(a+b+c)` and `e1 = err(a+b+c)`.
 """
-function two_hilo_sum(a::T,b::T,c::T) where {T<:FloatWithFMA}
+function two_hilo_sum(a::T, b::T, c::T) where {T<:FloatWithFMA}
     s, t = two_hilo_sum(b, c)
     x, u = two_hilo_sum(a, s)
-    y    = u + t
+    y = u + t
     x, y = two_hilo_sum(x, y)
     return x, y
 end
@@ -262,10 +260,10 @@ end
 *unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
 Computes `s = fl(a+b+c+d)` and `e1 = err(a+b+c+d), e2 = err(e1), e3 = err(e2)`.
 """
-function four_hilo_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_hilo_sum(a ,  b)
-    t0, t2 = two_hilo_sum(t0,  c)
-    hi, t3 = two_hilo_sum(t0,  d)
+function four_hilo_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_hilo_sum(a, b)
+    t0, t2 = two_hilo_sum(t0, c)
+    hi, t3 = two_hilo_sum(t0, d)
     t0, t1 = two_hilo_sum(t1, t2)
     hm, t2 = two_hilo_sum(t0, t3) # here, t0 >= t3
     ml, lo = two_hilo_sum(t1, t2)
@@ -278,16 +276,15 @@ end
 *unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
 Computes `s = fl(a+b+c+d)` and `e1 = err(a+b+c+d), e2 = err(e1)`.
 """
-function three_hilo_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_hilo_sum(a ,  b)
-    t0, t2 = two_hilo_sum(t0,  c)
-    hi, t3 = two_hilo_sum(t0,  d)
+function three_hilo_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_hilo_sum(a, b)
+    t0, t2 = two_hilo_sum(t0, c)
+    hi, t3 = two_hilo_sum(t0, d)
     t0, t1 = two_hilo_sum(t1, t2)
     md, t2 = two_hilo_sum(t0, t3) # here, t0 >= t3
-    lo     = t1 + t2
+    lo = t1 + t2
     return hi, md, lo
 end
-
 
 """
     two_hilo_sum(a, b, c, d)
@@ -295,15 +292,14 @@ end
 *unchecked* requirement `|a| ≥ |b| ≥ |c| ≥ |d|`
 Computes `s = fl(a+b+c+d)` and `e1 = err(a+b+c+d)`.
 """
-function two_hilo_sum(a::T,b::T,c::T,d::T) where {T<:FloatWithFMA}
-    t0, t1 = two_hilo_sum(a ,  b)
-    t0, t2 = two_hilo_sum(t0,  c)
-    hi, t3 = two_hilo_sum(t0,  d)
-    t0     = t1 + t2
-    lo     = t0 + t3
+function two_hilo_sum(a::T, b::T, c::T, d::T) where {T<:FloatWithFMA}
+    t0, t1 = two_hilo_sum(a, b)
+    t0, t2 = two_hilo_sum(t0, c)
+    hi, t3 = two_hilo_sum(t0, d)
+    t0 = t1 + t2
+    lo = t0 + t3
     return hi, lo
 end
-
 
 @inline function two_prod(a::T, b::T) where {T<:FloatWithFMA}
     s = a * b
@@ -356,7 +352,7 @@ end
 end
 
 @inline function two_sum3_(a::T, b::T, c::T) where {T<:FloatWithFMA}
-    t0, t1 = two_sum_(a,  b)
+    t0, t1 = two_sum_(a, b)
     hi, t2 = two_sum_(t0, c)
     lo = t2 + t1
     hi, lo = two_hilo_sum_(hi, lo)

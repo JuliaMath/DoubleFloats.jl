@@ -22,11 +22,9 @@ function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     print(io, str)
 end
 
-
 show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
 show(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(Base.stdout, x)
-
 
 function showtyped(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     str = stringtyped(x)
@@ -45,7 +43,6 @@ showtyped(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = showtyped(Base.stdo
 showall(x::DoubleFloat{T}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
 
 showall(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = print(Base.stdout, string(x))
-
 
 fix_dec(x::Double64, n::Int, digits) = fix_dec(Float64(x), n, digits)
 fix_dec(x::Double32, n::Int, digits) = fix_dec(Float64(x), n, digits)

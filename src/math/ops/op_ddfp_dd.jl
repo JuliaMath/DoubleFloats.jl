@@ -11,7 +11,7 @@ end
 end
 
 # Algorithm 12 from Tight and rigourous error bounds.  relative error <= 5u²
-@inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where T<:IEEEFloat
+@inline function mul_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
     xhi, xlo = x
     hi, lo = two_prod(xhi, y)
     t = fma(xlo, y, lo)
@@ -26,7 +26,7 @@ end
     return hi, lo
 end
 
-@inline function mul_ddfp_dd_(x::Tuple{T,T}, y::T) where T<:IEEEFloat
+@inline function mul_ddfp_dd_(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
     xhi, xlo = x
     hi, lo = two_prod_(xhi, y)
     t = fma(xlo, y, lo)
@@ -35,13 +35,13 @@ end
 end
 
 @inline function dvi_ddfp_dd(x::Tuple{T,T}, y::T) where {T<:IEEEFloat}
-    xhi, xlo = x    
+    xhi, xlo = x
     hi = xhi / y
     if !isfinite(hi)
         return zero_error_result(hi)
     end
     uh, ul = two_prod(hi, y)
     lo = ((((xhi - uh) - ul) + xlo))/y
-    hi,lo = two_hilo_sum(hi, lo)
+    hi, lo = two_hilo_sum(hi, lo)
     return hi, lo
 end

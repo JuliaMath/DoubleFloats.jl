@@ -6,8 +6,7 @@ using Documenter, DoubleFloats, Markdown
 # activates the package's root project itself, so it runs in a separate
 # julia process to leave this docs environment untouched), then copy the
 # current version into the documentation source.
-for (script, report) in (("benchmarks.jl", "benchmark_report.md"),
-                         ("accuracies.jl", "accuracy_report.md"))
+for (script, report) in (("benchmarks.jl", "benchmark_report.md"), ("accuracies.jl", "accuracy_report.md"))
     scriptpath = joinpath(@__DIR__, "reports", script)
     reportpath = joinpath(@__DIR__, "reports", report)
     if !isfile(reportpath) || mtime(reportpath) < mtime(scriptpath)
@@ -21,30 +20,27 @@ end
 # Keep the repository report as the source for the manual's report page.
 # Documenter uses case-sensitive heading IDs and links to its rendered reports.
 comparison = read(joinpath(@__DIR__, "multifulcrum.md"), String)
-write(joinpath(@__DIR__, "src", "multifulcrum.md"), replace(comparison,
-    "](src/technicalguide.md#to-be-well-balanced)" => "](technicalguide.md#To-be-well-balanced)",
-    "](src/technicalguide.md#double32-benchmarks)" => "](technicalguide.md#Double32-benchmarks)",
-    "](src/technicalguide.md#faster-double64-elementary-kernels)" =>
-        "](technicalguide.md#Faster-Double64-elementary-kernels)",
-    "](src/technicalguide.md#faster-double32-elementary-kernels)" =>
-        "](technicalguide.md#Faster-Double32-elementary-kernels)",
-    "](src/technicalguide.md#elementary-function-algorithms)" =>
-        "](technicalguide.md#Elementary-function-algorithms)",
-    "](src/technicalguide.md#elementary-vector-kernels)" => "](technicalguide.md#elementary-vector-kernels)",
-    "](src/technicalguide.md#batch-benchmarks)" => "](technicalguide.md#Batch-benchmarks)",
-    "](src/glossary.md#" => "](glossary.md#",
-    "[Zadeh (1965)](src/references.md#zadeh-1965)" => "[Zadeh (1965)](@ref \"Zadeh (1965)\")",
-    "](src/userguide.md#elementwise-operations-on-vectors)" =>
-        "](userguide.md#Elementwise-operations-on-vectors)",
-    "](reports/accuracy_report.md)" => "](accuracy_report.md)",
-    "](reports/benchmark_report.md#elementary-functions-1)" => "](benchmark_report.md#Elementary-Functions-2)",
-    "](worstulps.md)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/worstulps.md)",
-    "](double32better.md#validation-results)" =>
-        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md#validation-results)",
-    "](../benchmark/studies/bench_simd_elementary.jl)" =>
-        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/benchmark/studies/bench_simd_elementary.jl)",
-))
-
+write(
+    joinpath(@__DIR__, "src", "multifulcrum.md"),
+    replace(
+        comparison,
+        "](src/technicalguide.md#to-be-well-balanced)" => "](technicalguide.md#To-be-well-balanced)",
+        "](src/technicalguide.md#double32-benchmarks)" => "](technicalguide.md#Double32-benchmarks)",
+        "](src/technicalguide.md#faster-double64-elementary-kernels)" => "](technicalguide.md#Faster-Double64-elementary-kernels)",
+        "](src/technicalguide.md#faster-double32-elementary-kernels)" => "](technicalguide.md#Faster-Double32-elementary-kernels)",
+        "](src/technicalguide.md#elementary-function-algorithms)" => "](technicalguide.md#Elementary-function-algorithms)",
+        "](src/technicalguide.md#elementary-vector-kernels)" => "](technicalguide.md#elementary-vector-kernels)",
+        "](src/technicalguide.md#batch-benchmarks)" => "](technicalguide.md#Batch-benchmarks)",
+        "](src/glossary.md#" => "](glossary.md#",
+        "[Zadeh (1965)](src/references.md#zadeh-1965)" => "[Zadeh (1965)](@ref \"Zadeh (1965)\")",
+        "](src/userguide.md#elementwise-operations-on-vectors)" => "](userguide.md#Elementwise-operations-on-vectors)",
+        "](reports/accuracy_report.md)" => "](accuracy_report.md)",
+        "](reports/benchmark_report.md#elementary-functions-1)" => "](benchmark_report.md#Elementary-Functions-2)",
+        "](worstulps.md)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/worstulps.md)",
+        "](double32better.md#validation-results)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md#validation-results)",
+        "](../benchmark/studies/bench_simd_elementary.jl)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/benchmark/studies/bench_simd_elementary.jl)",
+    ),
+)
 
 # Ship the first paragraph of each entry with the site so hover definitions
 # work for local HTML files as well as the hosted manual.
@@ -74,8 +70,10 @@ makedocs(
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", "false") == "true",
         assets = [
-            "assets/sidebar-subsections.css", "assets/sidebar-subsections.js",
-            "assets/glossary-tooltips.css", "assets/glossary-definitions.js",
+            "assets/sidebar-subsections.css",
+            "assets/sidebar-subsections.js",
+            "assets/glossary-tooltips.css",
+            "assets/glossary-definitions.js",
             "assets/glossary-tooltips.js",
         ],
     ),
@@ -107,10 +105,7 @@ makedocs(
             "Glossary" => "glossary.md",
             "References" => "references.md",
         ],
-    ]
+    ],
 )
 
-deploydocs(
-    repo = "github.com/JuliaMath/DoubleFloats.jl.git",
-    target = "build"
-)
+deploydocs(repo = "github.com/JuliaMath/DoubleFloats.jl.git", target = "build")

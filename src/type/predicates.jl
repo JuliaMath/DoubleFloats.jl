@@ -49,79 +49,62 @@ Returns `true` if `abs(x) < one(x)`.
 """
 isfractional(x::T) where {T<:AbstractFloat} = abs(x) < one(T)
 
+iszero(x::DoubleFloat{T}) where {T<:IEEEFloat} = iszero(HI(x)) # && iszero(LO(x))
 
-iszero(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    iszero(HI(x)) # && iszero(LO(x))
+isnonzero(x::DoubleFloat{T}) where {T<:IEEEFloat} = !iszero(HI(x)) # || !iszero(LO(x))
 
-isnonzero(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    !iszero(HI(x)) # || !iszero(LO(x))
-
-isone(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isone(HI(x)) && iszero(LO(x))
+isone(x::DoubleFloat{T}) where {T<:IEEEFloat} = isone(HI(x)) && iszero(LO(x))
 
 """
     ispositive(x)
 
 Returns `true` if `!isnegative(x)` and `isnonzero(x)`.
 """
-ispositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    !signbit(HI(x)) && !iszero(HI(x))
+ispositive(x::DoubleFloat{T}) where {T<:IEEEFloat} = !signbit(HI(x)) && !iszero(HI(x))
 
 """
     isnegative(x)
 
 Return `true` if `signbit(HI(x))` is `true`.
 """
-isnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    signbit(HI(x))
+isnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} = signbit(HI(x))
 
-isnonnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    !signbit(HI(x))
+isnonnegative(x::DoubleFloat{T}) where {T<:IEEEFloat} = !signbit(HI(x))
 
-isnonpositive(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    signbit(HI(x)) || iszero(HI(x))
+isnonpositive(x::DoubleFloat{T}) where {T<:IEEEFloat} = signbit(HI(x)) || iszero(HI(x))
 
-isfinite(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isfinite(HI(x))
+isfinite(x::DoubleFloat{T}) where {T<:IEEEFloat} = isfinite(HI(x))
 
-isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isinf(HI(x))
+isinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x))
 
 """
     isposinf(x)
 
 Tests whether a number is positive and infinite.
 """
-isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isinf(HI(x)) && !signbit(HI(x))
+isposinf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x)) && !signbit(HI(x))
 
 """
     isneginf(x)
 
 Tests whether a number is negative and infinite.
 """
-isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isinf(HI(x)) && signbit(HI(x))
+isneginf(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinf(HI(x)) && signbit(HI(x))
 
-isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isnan(HI(x))
+isnan(x::DoubleFloat{T}) where {T<:IEEEFloat} = isnan(HI(x))
 
-issubnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    issubnormal(LO(x)) || issubnormal(HI(x))
+issubnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} = issubnormal(LO(x)) || issubnormal(HI(x))
 
 """
     isnormal(x)
 
 Tests whether a floating point number is normal.
 """
-isnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
+isnormal(x::DoubleFloat{T}) where {T<:IEEEFloat} = isfinite(HI(x)) && !iszero(x) && (abs(x) >= floatmin(T))
 
-@inline isinteger(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    isinteger(HI(x)) && isinteger(LO(x))
+@inline isinteger(x::DoubleFloat{T}) where {T<:IEEEFloat} = isinteger(HI(x)) && isinteger(LO(x))
 
-isfractional(x::DoubleFloat{T}) where {T<:IEEEFloat} =
-    !isinteger(LO(x)) || !isinteger(HI(x))
+isfractional(x::DoubleFloat{T}) where {T<:IEEEFloat} = !isinteger(LO(x)) || !isinteger(HI(x))
 
 isodd(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     if isinteger(x)

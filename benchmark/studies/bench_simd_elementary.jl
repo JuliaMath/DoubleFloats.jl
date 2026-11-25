@@ -8,10 +8,29 @@ const REAL_ATAN = (atan, asin, acos, acsc, asec, acot)
 const HYP = (sinh, cosh, tanh, csch, sech, coth)
 const INVHYP = (asinh, acosh, atanh, acsch, asech, acoth)
 const EXPLOG = (exp2, exp, exp10, expm1, log2, log, log10, log1p)
-const COMPLEX = (square, abs2, exp, sin, cos, sinh, cosh, tan, cot, DF.csc, DF.sec,
-                 tanh, coth, csch, sech, sqrt, log, REAL_ATAN..., INVHYP...)
+const COMPLEX = (
+    square,
+    abs2,
+    exp,
+    sin,
+    cos,
+    sinh,
+    cosh,
+    tan,
+    cot,
+    DF.csc,
+    DF.sec,
+    tanh,
+    coth,
+    csch,
+    sech,
+    sqrt,
+    log,
+    REAL_ATAN...,
+    INVHYP...,
+)
 
-function sample(rng, interval, n, ::Type{D}=Double64) where {D}
+function sample(rng, interval, n, ::Type{D} = Double64) where {D}
     a, b = interval
     T = typeof(HI(one(D)))
     return map(rand(rng, n)) do t
@@ -20,12 +39,18 @@ function sample(rng, interval, n, ::Type{D}=Double64) where {D}
     end
 end
 
-function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
-                  log_regimes="")
+function fixtures(n; bounded = true, mixture = 0.0, clustered = false, filter = r"", log_regimes = "")
     rng = MersenneTwister(SEED)
     cases = NamedTuple[]
-    function add(f, ranges...; scalar=nothing, label=string(f), wide=(0.25, 20.0),
-                 rejected=wide, input_type=Double64)
+    function add(
+        f,
+        ranges...;
+        scalar = nothing,
+        label = string(f),
+        wide = (0.25, 20.0),
+        rejected = wide,
+        input_type = Double64,
+    )
         occursin(filter, label) || return
         args = if length(ranges) == 1
             x = sample(rng, bounded ? only(ranges) : wide, n, input_type)
@@ -48,58 +73,69 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
             end
         end
         observed_ranges = !bounded && length(ranges) == 1 ? (wide,) : ranges
-        push!(cases, (; label, f, ranges=observed_ranges, args=scalar === nothing ? args : (args..., scalar)))
+        push!(cases, (; label, f, ranges = observed_ranges, args = scalar === nothing ? args : (args..., scalar)))
     end
     for f in REAL_TRIG
-        add(f, (0.005, 0.09); wide=(-100.0, 100.0), rejected=(0.1, 100.0))
+        add(f, (0.005, 0.09); wide = (-100.0, 100.0), rejected = (0.1, 100.0))
     end
     for f in (sin, cos, sincos, tan, cis)
-        add(f, (-6.25, 6.25); label="$(f)/circle", wide=(-6.25, 6.25), rejected=(7.0, 8.0))
+        add(f, (-6.25, 6.25); label = "$(f)/circle", wide = (-6.25, 6.25), rejected = (7.0, 8.0))
         if bounded
-            add(f, (0.125, 0.18); label="$(f)/sector", rejected=(7.0, 8.0))
+            add(f, (0.125, 0.18); label = "$(f)/sector", rejected = (7.0, 8.0))
         end
     end
     for f in REAL_ATAN
-        add(f, f in (acsc, asec) ? (1.1, 4.0) : (0.005, 0.19);
-            wide=f in (asin, acos) ? (-0.99, 0.99) : f in (acsc, asec) ? (1.01, 100.0) : (-100.0, 100.0))
+        add(
+            f,
+            f in (acsc, asec) ? (1.1, 4.0) : (0.005, 0.19);
+            wide = f in (asin, acos) ? (-0.99, 0.99) : f in (acsc, asec) ? (1.01, 100.0) : (-100.0, 100.0),
+        )
     end
     for f in (atan, DF.atanxy)
-        add(f, (-100.0, 100.0), (-100.0, 100.0); label="$(f)/2", rejected=(30.0, 100.0))
+        add(f, (-100.0, 100.0), (-100.0, 100.0); label = "$(f)/2", rejected = (30.0, 100.0))
     end
     for f in HYP
-        add(f, (1.1, 5.0); wide=(-20.0, 20.0), rejected=(5.01, 20.0))
+        add(f, (1.1, 5.0); wide = (-20.0, 20.0), rejected = (5.01, 20.0))
     end
-    for (f, interval, wide) in zip(INVHYP,
-            ((0.005, 0.045), (1.00002, 1.001), (0.005, 0.025), (30.0, 50.0),
-             (0.999, 0.99998), (40.0, 100.0)),
-            ((-100.0, 100.0), (1.0, 100.0), (-0.99, 0.99), (0.1, 100.0),
-             (0.01, 1.0), (1.01, 100.0)))
+    for (f, interval, wide) in zip(
+        INVHYP,
+        ((0.005, 0.045), (1.00002, 1.001), (0.005, 0.025), (30.0, 50.0), (0.999, 0.99998), (40.0, 100.0)),
+        ((-100.0, 100.0), (1.0, 100.0), (-0.99, 0.99), (0.1, 100.0), (0.01, 1.0), (1.01, 100.0)),
+    )
         add(f, interval; wide)
     end
-    add(expm1, (0.5, 1.0); label="expm1/central", wide=(-1.0, 1.0), rejected=(1.01, 2.0))
+    add(expm1, (0.5, 1.0); label = "expm1/central", wide = (-1.0, 1.0), rejected = (1.01, 2.0))
     for f in EXPLOG
-        interval = f === expm1 ? (0.032, 0.06) : f === log1p ? (0.005, 0.05) :
-                   f in (log, log2, log10) ? (0.95, 1.05) : (0.55, 16.0)
-        rejected = f === expm1 ? (0.07, 0.4) : f === log1p ? (0.07, 1.0) :
-                   f === exp2 ? (0.00005, 0.0005) :
-                   f in (log, log2, log10) ? (0x1p-950, 0x1p-925) :
-                   f === exp ? (701.0, 708.0) : (301.0, 307.0)
-        add(f, interval; wide=f in (exp, exp2, exp10, expm1) ? (-100.0, 100.0) : (0.01, 100.0),
-            rejected)
+        interval =
+            f === expm1 ? (0.032, 0.06) :
+            f === log1p ? (0.005, 0.05) : f in (log, log2, log10) ? (0.95, 1.05) : (0.55, 16.0)
+        rejected =
+            f === expm1 ? (0.07, 0.4) :
+            f === log1p ? (0.07, 1.0) :
+            f === exp2 ? (0.00005, 0.0005) :
+            f in (log, log2, log10) ? (0x1p-950, 0x1p-925) : f === exp ? (701.0, 708.0) : (301.0, 307.0)
+        add(f, interval; wide = f in (exp, exp2, exp10, expm1) ? (-100.0, 100.0) : (0.01, 100.0), rejected)
     end
     for f in (hypot, DF.normalize)
-        add(f, (0.25, 8.0), (0.25, 8.0); rejected=(9.0, 12.0))
+        add(f, (0.25, 8.0), (0.25, 8.0); rejected = (9.0, 12.0))
     end
-    add(inv, (0.25, 8.0); wide=(-128.0, 128.0), rejected=(0x1p257, 0x1p260))
-    add(^, (0.5, 1.5); scalar=5, label="^/fixed 5")
+    add(inv, (0.25, 8.0); wide = (-128.0, 128.0), rejected = (0x1p257, 0x1p260))
+    add(^, (0.5, 1.5); scalar = 5, label = "^/fixed 5")
     if occursin(filter, "^/Int vector")
-        push!(cases, (; label="^/Int vector", f=^, ranges=((0.5, 1.5), (-9, 9)),
-                      args=(sample(rng, (0.5, 1.5), n), rand(rng, -9:9, n))))
+        push!(
+            cases,
+            (;
+                label = "^/Int vector",
+                f = ^,
+                ranges = ((0.5, 1.5), (-9, 9)),
+                args = (sample(rng, (0.5, 1.5), n), rand(rng, -9:9, n)),
+            ),
+        )
     end
     if bounded
-        add(^, (1.1, 1.5), (0.2, 0.9); label="^/Double64 vector")
+        add(^, (1.1, 1.5), (0.2, 0.9); label = "^/Double64 vector")
     else
-        add(^, (0.25, 10.0), (-4.0, 4.0); label="^/Double64 vector")
+        add(^, (0.25, 10.0), (-4.0, 4.0); label = "^/Double64 vector")
     end
     for f in COMPLEX
         label = "complex/$(f)"
@@ -120,24 +156,33 @@ function fixtures(n; bounded=true, mixture=0.0, clustered=false, filter=r"",
             indices = clustered ? (1:count) : randperm(rng, n)[1:count]
             x[indices] = complex.(sample(rng, (-4.0, -0.1), count), sample(rng, wide, count))
         end
-        push!(cases, (; label, f, ranges=bounded ? (r, i) : (wide, wide), args=(x,)))
+        push!(cases, (; label, f, ranges = bounded ? (r, i) : (wide, wide), args = (x,)))
     end
     if bounded
         for f in (log, log2, log10)
-            add(f, (1.1, 4.0); label="$(f)/table", rejected=(0x1p-950, 0x1p-925))
+            add(f, (1.1, 4.0); label = "$(f)/table", rejected = (0x1p-950, 0x1p-925))
             if log_regimes == "1"
-                add(f, (1.3001, 1.3002); label="$(f)/repeated-index", rejected=(0x1p-950, 0x1p-925))
-                add(f, (0.95, 1.05); label="$(f)/mixed-regimes", rejected=(1.1, 4.0))
+                add(f, (1.3001, 1.3002); label = "$(f)/repeated-index", rejected = (0x1p-950, 0x1p-925))
+                add(f, (0.95, 1.05); label = "$(f)/mixed-regimes", rejected = (1.1, 4.0))
             end
         end
-        add(expm1, (0.55, 16.0); label="expm1/ordinary", rejected=(0.07, 0.4))
-        add(x -> x^5, (0.5, 1.5); label="^/literal closure")
+        add(expm1, (0.55, 16.0); label = "expm1/ordinary", rejected = (0.07, 0.4))
+        add(x -> x^5, (0.5, 1.5); label = "^/literal closure")
     end
-    for (f, a, b) in ((exp, 0.25, 2.25), (exp2, 0.25, 2.25), (expm1, -0.5, 0.5),
-                      (log, 1.125, 2.25), (log2, 1.125, 2.25), (log1p, -0.0625, 0.0625),
-                      (atan, -1.0, 1.0), (tan, -0.5, 0.5), (sinh, -1.0, 1.0),
-                      (cosh, -1.0, 1.0), (tanh, -1.0, 1.0))
-        add(f, (a, b); label="$(f)/Double32", input_type=Double32)
+    for (f, a, b) in (
+        (exp, 0.25, 2.25),
+        (exp2, 0.25, 2.25),
+        (expm1, -0.5, 0.5),
+        (log, 1.125, 2.25),
+        (log2, 1.125, 2.25),
+        (log1p, -0.0625, 0.0625),
+        (atan, -1.0, 1.0),
+        (tan, -0.5, 0.5),
+        (sinh, -1.0, 1.0),
+        (cosh, -1.0, 1.0),
+        (tanh, -1.0, 1.0),
+    )
+        add(f, (a, b); label = "$(f)/Double32", input_type = Double32)
     end
     return cases
 end
@@ -146,7 +191,7 @@ function exceptional_fixtures(n)
     near_pole = df64"1.57079632679489661923132169164"
     function build(label, f, inputs)
         x = [inputs[mod1(i, length(inputs))] for i in 1:n]
-        return (; label, f, ranges=inputs, args=(x,))
+        return (; label, f, ranges = inputs, args = (x,))
     end
     midpoint = setprecision(BigFloat, 256) do
         m = log2(BigFloat(1.5) * BigFloat(nextfloat(0.0)))
@@ -218,8 +263,11 @@ function report_llvm(path, label, k, dest, args)
         open(file, "w") do io
             code_llvm(io, DF._batch_native!, Tuple{typeof(kernel),typeof(dest),typeof(args),UnitRange{Int}})
             if regime isa DF._BatchRepair
-                code_llvm(io, DF._batch_masked!,
-                          Tuple{typeof(kernel),typeof(dest),typeof(first(args)),UnitRange{Int},UInt64,Double64})
+                code_llvm(
+                    io,
+                    DF._batch_masked!,
+                    Tuple{typeof(kernel),typeof(dest),typeof(first(args)),UnitRange{Int},UInt64,Double64},
+                )
             end
         end
     end
@@ -253,20 +301,25 @@ function run_case(f::F, args, n, label, ranges, repeats, storage; baseline) wher
     out, inputs = dest, args
     broadcast_args = map(x -> x isa Number ? Ref(x) : x, inputs)
     methods = (
-        broadcast=() -> broadcast!(f, out, broadcast_args...),
-        scalar=() -> scalar_loop!(f, out, inputs, eachindex(out)),
-        caller_threads=() -> threaded_loop!(f, out, inputs),
+        broadcast = () -> broadcast!(f, out, broadcast_args...),
+        scalar = () -> scalar_loop!(f, out, inputs, eachindex(out)),
+        caller_threads = () -> threaded_loop!(f, out, inputs),
     )
     coverage = nothing
     if baseline == false
-        methods = merge(methods, (batch=() -> DF.simdmap!(f, out, inputs...),
-                                  batch_threads=() -> DF.simdmap!(f, out, inputs...; threaded=true)))
+        methods = merge(
+            methods,
+            (
+                batch = () -> DF.simdmap!(f, out, inputs...),
+                batch_threads = () -> DF.simdmap!(f, out, inputs...; threaded = true),
+            ),
+        )
         if storage == "dense" && n > 0
             kernel = DF._batch_kernel(f, eltype(dest), batch_specs(args)...)
             regimes = batch_regimes(kernel)
             if any(k -> k isa DF._BatchRepair, regimes)
                 whole_kernel = unmasked(last(regimes))
-                methods = merge(methods, (whole_block=() -> compare_block_sizes!(whole_kernel, f, out, inputs, 64),))
+                methods = merge(methods, (whole_block = () -> compare_block_sizes!(whole_kernel, f, out, inputs, 64),))
             end
             blocks = get(ENV, "SIMD_BLOCK_SIZES", "")
             if kernel !== nothing && !isempty(blocks)
@@ -274,7 +327,8 @@ function run_case(f::F, args, n, label, ranges, repeats, storage; baseline) wher
                 for width in parse.(Int, split(blocks, ','))
                     width > 0 || throw(ArgumentError("SIMD_BLOCK_SIZES must be positive"))
                     key = Symbol("block_", width)
-                    methods = merge(methods, NamedTuple{(key,)}((() -> compare_block_sizes!(whole, f, out, inputs, width),)))
+                    methods =
+                        merge(methods, NamedTuple{(key,)}((() -> compare_block_sizes!(whole, f, out, inputs, width),)))
                 end
             end
             if kernel !== nothing
@@ -311,9 +365,17 @@ function run_case(f::F, args, n, label, ranges, repeats, storage; baseline) wher
         t = samples[name]
         med[name] = median(t)
         stats = allocation[name]
-        @printf("  %-14s %9.2f μs [%9.2f, %9.2f]  %8d B  %6d allocs  %8.3f s first  %5.2fx\n",
-                name, med[name], minimum(t), maximum(t), stats.bytes, Base.gc_alloc_count(stats.gcstats),
-                first_call[name], med[:broadcast] / med[name])
+        @printf(
+            "  %-14s %9.2f μs [%9.2f, %9.2f]  %8d B  %6d allocs  %8.3f s first  %5.2fx\n",
+            name,
+            med[name],
+            minimum(t),
+            maximum(t),
+            stats.bytes,
+            Base.gc_alloc_count(stats.gcstats),
+            first_call[name],
+            med[:broadcast] / med[name]
+        )
     end
     llvm_path = get(ENV, "SIMD_LLVM", "")
     if !baseline && storage == "dense" && n > 0 && !isempty(llvm_path)
@@ -341,17 +403,40 @@ function main()
     filter = Regex(get(ENV, "SIMD_FILTER", ""))
     baseline = "--baseline" in ARGS
     log_regimes = get(ENV, "SIMD_LOG_REGIMES", "")
-    println("Julia ", VERSION, " / ", Sys.CPU_NAME, " / ", first(Sys.cpu_info()).model,
-            " / target ", unsafe_string(Base.JLOptions().cpu_target),
-            " / ", Threads.nthreads(), " threads / seed ", SEED)
+    println(
+        "Julia ",
+        VERSION,
+        " / ",
+        Sys.CPU_NAME,
+        " / ",
+        first(Sys.cpu_info()).model,
+        " / target ",
+        unsafe_string(Base.JLOptions().cpu_target),
+        " / ",
+        Threads.nthreads(),
+        " threads / seed ",
+        SEED,
+    )
     revision = get(ENV, "SIMD_REVISION") do
         readchomp(`git rev-parse --short HEAD`)
     end
     for n in sizes, mixture in mixtures
-        println("Commit ", revision, " / n=", n, " / range=", range,
-                " / mixture=", mixture, " / clustered=", clustered, " / storage=", storage)
-        cases = range == "special" ? exceptional_fixtures(n) :
-                fixtures(n; bounded, mixture, clustered, filter, log_regimes)
+        println(
+            "Commit ",
+            revision,
+            " / n=",
+            n,
+            " / range=",
+            range,
+            " / mixture=",
+            mixture,
+            " / clustered=",
+            clustered,
+            " / storage=",
+            storage,
+        )
+        cases =
+            range == "special" ? exceptional_fixtures(n) : fixtures(n; bounded, mixture, clustered, filter, log_regimes)
         for case in cases
             occursin(filter, case.label) || continue
             run_case(case.f, case.args, n, case.label, case.ranges, repeats, storage; baseline)

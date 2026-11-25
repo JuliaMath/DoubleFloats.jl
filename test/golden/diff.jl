@@ -56,8 +56,18 @@ function worker(mode, input, output)
                             bytes = IOBuffer()
                             emit(bytes, results[i])
                             argument = single ? string("element ", i) : describe(s.arguments[i])
-                            println(io, s.key, '\t', i, '\t', argument, '\t', bytes2hex(take!(bytes)), '\t',
-                                    describe(results[i]))
+                            println(
+                                io,
+                                s.key,
+                                '\t',
+                                i,
+                                '\t',
+                                argument,
+                                '\t',
+                                bytes2hex(take!(bytes)),
+                                '\t',
+                                describe(results[i]),
+                            )
                         end
                     end
                 end

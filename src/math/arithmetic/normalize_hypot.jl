@@ -20,7 +20,7 @@ function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
         return oftype(rr, r)
     end
     return rr
- end
+end
 
 """
     normalize(x,y)
@@ -40,11 +40,9 @@ function normalize(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     return xnorm, ynorm
 end
 
-@inline _batch_hypot_range(x, y) =
-    _batch_abs_bounded(x, 0.25, 8.0) & _batch_abs_bounded(y, 0.25, 8.0)
+@inline _batch_hypot_range(x, y) = _batch_abs_bounded(x, 0.25, 8.0) & _batch_abs_bounded(y, 0.25, 8.0)
 
-@inline _batch_positive_hypot_range(x, y) =
-    _batch_bounded(x, 0.25, 8.0) & _batch_bounded(y, 0.25, 8.0)
+@inline _batch_positive_hypot_range(x, y) = _batch_bounded(x, 0.25, 8.0) & _batch_bounded(y, 0.25, 8.0)
 
 @inline function _batch_positive_hypot(ax, ay)
     # Within this finite nonzero window both absolute heads are positive.
@@ -63,12 +61,13 @@ end
     return _batch_div(x, h), _batch_div(y, h)
 end
 
-_batch_kernel(::typeof(hypot), ::Type{Double64}, ::Type{Double64}, ::Type{Double64}) =
-    _BatchAlternatives(_BatchKernel(_batch_positive_hypot_range, _batch_positive_hypot),
-                       _BatchKernel(_batch_hypot_range, _batch_hypot))
+_batch_kernel(::typeof(hypot), ::Type{Double64}, ::Type{Double64}, ::Type{Double64}) = _BatchAlternatives(
+    _BatchKernel(_batch_positive_hypot_range, _batch_positive_hypot),
+    _BatchKernel(_batch_hypot_range, _batch_hypot),
+)
 
 _batch_kernel(::typeof(normalize), ::Type{Tuple{Double64,Double64}}, ::Type{Double64}, ::Type{Double64}) =
-    _BatchAlternatives(_BatchKernel(_batch_positive_hypot_range,
-                                   (x, y) -> _batch_normalize(x, y, _batch_positive_hypot)),
-                       _BatchKernel(_batch_hypot_range,
-                                   (x, y) -> _batch_normalize(x, y, _batch_hypot)))
+    _BatchAlternatives(
+        _BatchKernel(_batch_positive_hypot_range, (x, y) -> _batch_normalize(x, y, _batch_positive_hypot)),
+        _BatchKernel(_batch_hypot_range, (x, y) -> _batch_normalize(x, y, _batch_hypot)),
+    )

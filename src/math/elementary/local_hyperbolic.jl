@@ -2,31 +2,30 @@
 # the inner fraction is p/q, the correction is z*q/(p+z*q).
 function _tan_fraction(depth)
     p, q = BigInt[2depth + 1], BigInt[1]
-    for j in depth-1:-1:1
+    for j in (depth - 1):-1:1
         next = (2j + 1) .* p
         append!(next, zeros(BigInt, max(0, length(q) + 1 - length(p))))
-        next[2:length(q)+1] .+= q
+        next[2:(length(q) + 1)] .+= q
         p, q = next, p
     end
     denominator = copy(p)
     append!(denominator, zeros(BigInt, max(0, length(q) + 1 - length(p))))
-    denominator[2:length(q)+1] .+= q
+    denominator[2:(length(q) + 1)] .+= q
     return q, denominator, BigFloat(p[1])
 end
 
-const _SINH_LOCAL, _COSH_LOCAL, _TAN_CORRECTION, _TAN_DENOMINATOR =
-    setprecision(BigFloat, 256) do
-        sinh_coeffs = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(2i + 1)))))), 15)
-        cosh_coeffs = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(2i)))))), 15)
+const _SINH_LOCAL, _COSH_LOCAL, _TAN_CORRECTION, _TAN_DENOMINATOR = setprecision(BigFloat, 256) do
+    sinh_coeffs = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(2i + 1)))))), 15)
+    cosh_coeffs = ntuple(i -> HILO(Double64(inv(BigFloat(factorial(big(2i)))))), 15)
 
-        numerator, denominator, scale = _tan_fraction(15)
-        pack(xs) = Tuple(HILO(Double64(BigFloat(x) / scale)) for x in xs)
-        sinh_coeffs, cosh_coeffs, pack(numerator), pack(denominator)
-    end
+    numerator, denominator, scale = _tan_fraction(15)
+    pack(xs) = Tuple(HILO(Double64(BigFloat(x) / scale)) for x in xs)
+    sinh_coeffs, cosh_coeffs, pack(numerator), pack(denominator)
+end
 
 @inline function _local_poly(z, c)
     p = c[end]
-    for i in length(c)-1:-1:1
+    for i in (length(c) - 1):-1:1
         p = _horner_step_dd(c[i], p, z)
     end
     return p

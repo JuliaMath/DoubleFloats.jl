@@ -43,7 +43,6 @@ This is the inline version of [`add2`](@ref) and written as ``\\oplus``.
 """
 ⊕(x::T, y::T) where {T<:IEEEFloat} = add2(x, y)
 
-
 """
     sub2(x::T, y::T) where {T<:IEEEFloat}
 

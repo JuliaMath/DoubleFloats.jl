@@ -4,16 +4,16 @@
     # Previous integer is representable, next integer is not
     @test maxintfloat(T) == (maxintfloat(T) - one(T)) + one(T)
     @test maxintfloat(T) != (maxintfloat(T) + one(T)) - one(T)
-    
+
     @test maxintfloat(T) < floatmax(T)
 end
 
 @testset "corner cases" begin
-   @test 2/Double64(1e-310) == Double64(Inf)
-   @test Double64(1e300)^2 == Double64(Inf)
-   b = floatmax(DoubleFloat{Float64})
-   @test b + b == Double64(Inf)
-   @test exp(b) == Double64(Inf)
+    @test 2/Double64(1e-310) == Double64(Inf)
+    @test Double64(1e300)^2 == Double64(Inf)
+    b = floatmax(DoubleFloat{Float64})
+    @test b + b == Double64(Inf)
+    @test exp(b) == Double64(Inf)
 end
 
 @testset "Inf and NaN generation $T" for T in (Double16, Double32, Double64)
@@ -98,8 +98,8 @@ end
     @test isinf(T(Inf)*T(1))
     @test isinf(T(1)*T(Inf))
 end
-    
+
 @testset "floatmin2 $T" for T in (Double16, Double32, Double64)
-    trueval = (twopar = 2one(T); twopar^trunc(Integer,log(floatmin(T)/eps(T))/log(twopar)/twopar))
-    @test LinearAlgebra.floatmin2(T) == trueval 
-end         
+    trueval = (twopar = 2one(T); twopar^trunc(Integer, log(floatmin(T)/eps(T))/log(twopar)/twopar))
+    @test LinearAlgebra.floatmin2(T) == trueval
+end

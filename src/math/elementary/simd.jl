@@ -11,11 +11,11 @@ a scalar error leaves the preceding writes in index order. With
 `threaded=true`, supported operations on sufficiently large, disjoint dense
 vectors can run in parallel. A failing task may leave writes in other chunks.
 """
-@inline simdmap!(f::F, dest::AbstractVector, x::AbstractVector; threaded::Bool=false) where {F} =
+@inline simdmap!(f::F, dest::AbstractVector, x::AbstractVector; threaded::Bool = false) where {F} =
     _simdmap!(f, dest, (x,), threaded)
-@inline simdmap!(f::F, dest::AbstractVector, x::AbstractVector, y::AbstractVector; threaded::Bool=false) where {F} =
+@inline simdmap!(f::F, dest::AbstractVector, x::AbstractVector, y::AbstractVector; threaded::Bool = false) where {F} =
     _simdmap!(f, dest, (x, y), threaded)
-@inline simdmap!(f::typeof(^), dest::AbstractVector, x::AbstractVector, y::Number; threaded::Bool=false) =
+@inline simdmap!(f::typeof(^), dest::AbstractVector, x::AbstractVector, y::Number; threaded::Bool = false) =
     _simdmap!(f, dest, (x, y), threaded)
 
 # Base.mightalias is useful for ordinary arrays and views. Snapshot unknown
@@ -34,8 +34,7 @@ function _batch_overlaps(dest, x::AbstractVector)
     (isempty(d) || isempty(a)) && return false
     GC.@preserve d a begin
         p, q = UInt(pointer(d)), UInt(pointer(a))
-        return p <= q ? q - p < length(d) * Base.elsize(d) :
-                        p - q < length(a) * Base.elsize(a)
+        return p <= q ? q - p < length(d) * Base.elsize(d) : p - q < length(a) * Base.elsize(a)
     end
 end
 
@@ -99,16 +98,14 @@ _batch_width(k::_BatchAlternatives) = _batch_width(k.preferred)
     return (lower <= h <= upper) & (abs(l) <= 0x1p-53 * binade)
 end
 
-@inline _batch_abs_bounded(x::Double64, lower, upper) =
-    _batch_bounded(Double64(abs(HI(x)), LO(x)), lower, upper)
+@inline _batch_abs_bounded(x::Double64, lower, upper) = _batch_bounded(Double64(abs(HI(x)), LO(x)), lower, upper)
 
 # Only called with dense vector arguments after their axes are checked.
 @inline _batch_eligible(k, args::Tuple{Any}, i) = @inbounds k.eligible(_batch_arg(args[1], i))
 @inline _batch_eligible(k, args::Tuple{Any,Any}, i) =
     @inbounds k.eligible(_batch_arg(args[1], i), _batch_arg(args[2], i))
 @inline _batch_value(k, args::Tuple{Any}, i) = @inbounds k.evaluate(_batch_arg(args[1], i))
-@inline _batch_value(k, args::Tuple{Any,Any}, i) =
-    @inbounds k.evaluate(_batch_arg(args[1], i), _batch_arg(args[2], i))
+@inline _batch_value(k, args::Tuple{Any,Any}, i) = @inbounds k.evaluate(_batch_arg(args[1], i), _batch_arg(args[2], i))
 
 @noinline function _batch_native!(k::_BatchKernel, dest, args, indices)
     @inbounds @simd ivdep for i in indices
@@ -117,8 +114,7 @@ end
     return dest
 end
 
-@inline _batch_select(k::_BatchKernel, args, block) =
-    all(i -> _batch_eligible(k, args, i), block) ? k : nothing
+@inline _batch_select(k::_BatchKernel, args, block) = all(i -> _batch_eligible(k, args, i), block) ? k : nothing
 
 @inline function _batch_select(k::Tuple{_BatchKernel,_BatchKernel}, args, block)
     # Pick a regime from the first lane, then check the rest once.
@@ -210,15 +206,56 @@ end
     return dest
 end
 
-_batch_blocks!(::Nothing, f::F, dest, args, indices) where {F} =
-    _batch_scalar!(f, dest, args, indices)
+_batch_blocks!(::Nothing, f::F, dest, args, indices) where {F} = _batch_scalar!(f, dest, args, indices)
 
 const _BatchReal = Union{Double64,Double32,Double16}
 const _BatchComplex = Union{ComplexDF64,ComplexDF32,ComplexDF16}
-const _BatchUnary = Union{typeof.((exp2, exp, exp10, expm1, log2, log, log10, log1p,
-    sin, cos, tan, cot, sincos, cis, sinpi, cospi, tanpi, sincospi, cispi,
-    atan, asin, acos, acsc, asec, acot, sinh, cosh, tanh, csch, sech, coth,
-    asinh, acosh, atanh, acsch, asech, acoth, sqrt, square, abs2, csc, sec))...}
+const _BatchUnary = Union{
+    typeof.((
+        exp2,
+        exp,
+        exp10,
+        expm1,
+        log2,
+        log,
+        log10,
+        log1p,
+        sin,
+        cos,
+        tan,
+        cot,
+        sincos,
+        cis,
+        sinpi,
+        cospi,
+        tanpi,
+        sincospi,
+        cispi,
+        atan,
+        asin,
+        acos,
+        acsc,
+        asec,
+        acot,
+        sinh,
+        cosh,
+        tanh,
+        csch,
+        sech,
+        coth,
+        asinh,
+        acosh,
+        atanh,
+        acsch,
+        asech,
+        acoth,
+        sqrt,
+        square,
+        abs2,
+        csc,
+        sec,
+    ))...,
+}
 
 _batch_thread_min(f, types...) = typemax(Int)
 _batch_thread_min(::_BatchUnary, ::Type{<:Union{_BatchReal,_BatchComplex}}) = 4096
@@ -233,7 +270,9 @@ _batch_thread_min(::Union{typeof(hypot),typeof(normalize)}, ::Type{Double64}, ::
     kernel = _batch_kernel(f, eltype(dest), map(x -> x isa Number ? x : eltype(x), args)...)
     n = length(dest)
     workers = Threads.nthreads()
-    if threaded && workers > 1 && _batch_thread_output(eltype(dest), first(types)) &&
+    if threaded &&
+       workers > 1 &&
+       _batch_thread_output(eltype(dest), first(types)) &&
        n >= _batch_thread_min(f, types...)
         return _batch_threaded!(kernel, f, dest, args, n, workers)
     end
@@ -241,10 +280,8 @@ _batch_thread_min(::Union{typeof(hypot),typeof(normalize)}, ::Type{Double64}, ::
 end
 
 _batch_thread_output(R, X) = false
-_batch_thread_output(R, ::Type{T}) where {T<:_BatchReal} =
-    R === T || R === Complex{T} || R === Tuple{T,T}
-_batch_thread_output(R, ::Type{Complex{T}}) where {T<:_BatchReal} =
-    R === T || R === Complex{T}
+_batch_thread_output(R, ::Type{T}) where {T<:_BatchReal} = R === T || R === Complex{T} || R === Tuple{T,T}
+_batch_thread_output(R, ::Type{Complex{T}}) where {T<:_BatchReal} = R === T || R === Complex{T}
 
 @noinline function _batch_threaded!(kernel, f::F, dest, args, n, workers) where {F}
     chunks = min(workers, cld(n, _BATCH_BLOCK))
@@ -264,10 +301,10 @@ _batch_same_axis(axis, x::AbstractVector) = axes(x, 1) == axis
 
 @inline function _simdmap!(f::F, dest, args, threaded) where {F}
     axis = axes(dest, 1)
-    all(x -> _batch_same_axis(axis, x), args) ||
-        throw(DimensionMismatch("all vector axes must match the destination"))
+    all(x -> _batch_same_axis(axis, x), args) || throw(DimensionMismatch("all vector axes must match the destination"))
     isempty(dest) && return dest
-    if dest isa Vector && isbitstype(eltype(dest)) &&
+    if dest isa Vector &&
+       isbitstype(eltype(dest)) &&
        all(x -> x isa Union{Vector,Number}, args) &&
        all(x -> !_batch_overlaps(dest, x), args)
         return _batch_dense!(f, dest, args, threaded)

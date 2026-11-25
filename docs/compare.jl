@@ -24,34 +24,33 @@ const REPOSITORY = "https://github.com/JuliaMath/DoubleFloats.jl"
 # effect. An expression that throws is reported by the type of its exception.
 const PROBES = [
     "Equality and order" => [
-        "NaN == NaN"                  => "Double64(NaN) == Double64(NaN)",
-        "sort with NaN"               => "Float64.(sort(Double64[1, NaN, 0, -1]))",
-        "isless(-0.0, 0.0)"           => "isless(Double64(-0.0), Double64(0.0))",
-        "1/3 == 1//3"                 => "Double64(1)/3 == 1//3",
-        "Dict lookup by equal key"    => "haskey(Dict(Double64(1)/3 => 1), big(Double64(1)/3))",
-        "decompose"                   => "Base.decompose(Double64(1)/3) isa Tuple",
+        "NaN == NaN" => "Double64(NaN) == Double64(NaN)",
+        "sort with NaN" => "Float64.(sort(Double64[1, NaN, 0, -1]))",
+        "isless(-0.0, 0.0)" => "isless(Double64(-0.0), Double64(0.0))",
+        "1/3 == 1//3" => "Double64(1)/3 == 1//3",
+        "Dict lookup by equal key" => "haskey(Dict(Double64(1)/3 => 1), big(Double64(1)/3))",
+        "decompose" => "Base.decompose(Double64(1)/3) isa Tuple",
     ],
     "Construction and conversion" => [
-        "Double64(2^62 + 1) exact"    => "big(Double64(2^62 + 1)) == 2^62 + 1",
-        "Double64(1.0, 1.0) words"    => "HILO(Double64(1.0, 1.0))",
-        "Int64(Double64(2.5))"        => "Int64(Double64(2.5))",
-        "rationalize(1/3)"            => "rationalize(Double64(1)/3)",
-        "tryparse of bad text"        => "tryparse(Double64, \"abc\")",
-        "Double32 + Float64"          => "typeof(Double32(1) + 1.0)",
+        "Double64(2^62 + 1) exact" => "big(Double64(2^62 + 1)) == 2^62 + 1",
+        "Double64(1.0, 1.0) words" => "HILO(Double64(1.0, 1.0))",
+        "Int64(Double64(2.5))" => "Int64(Double64(2.5))",
+        "rationalize(1/3)" => "rationalize(Double64(1)/3)",
+        "tryparse of bad text" => "tryparse(Double64, \"abc\")",
+        "Double32 + Float64" => "typeof(Double32(1) + 1.0)",
     ],
     "Text" => [
-        "string(1/3)"                 => "string(Double64(1)/3)",
-        "repr(1/3)"                   => "repr(Double64(1)/3)",
-        "repr round trip"             => "eval(Meta.parse(repr(Double64(1)/3))) === Double64(1)/3",
-        "string of Double32(1)/3"     => "string(Double32(1)/3)",
-        "string round trip, wide"     => "(x = Double64(1.0) + Double64(2.0)^-200; parse(Double64, string(x)) == x)",
-        "@sprintf %.25f"              => "@sprintf(\"%.25f\", Double64(1)/3)",
+        "string(1/3)" => "string(Double64(1)/3)",
+        "repr(1/3)" => "repr(Double64(1)/3)",
+        "repr round trip" => "eval(Meta.parse(repr(Double64(1)/3))) === Double64(1)/3",
+        "string of Double32(1)/3" => "string(Double32(1)/3)",
+        "string round trip, wide" => "(x = Double64(1.0) + Double64(2.0)^-200; parse(Double64, string(x)) == x)",
+        "@sprintf %.25f" => "@sprintf(\"%.25f\", Double64(1)/3)",
     ],
     "Elementary functions on wide inputs" => [
         "sinpi(1 + 2^-120), true -2.36e-36" => "Float64(sinpi(Double64(1.0) + Double64(2.0)^-120))",
-        "acos(1 - 2^-120), true 1.23e-18"   => "Float64(acos(Double64(1.0) - Double64(2.0)^-120))",
-        "sinpi near 1, error in units of 2^-104" =>
-            "(x = 1 + Double64(1)/3 * 2.0^-40; t = sinpi(big(x)); round(Float64(abs((big(sinpi(x)) - t) / t) * big(2.0)^104), sigdigits = 3))",
+        "acos(1 - 2^-120), true 1.23e-18" => "Float64(acos(Double64(1.0) - Double64(2.0)^-120))",
+        "sinpi near 1, error in units of 2^-104" => "(x = 1 + Double64(1)/3 * 2.0^-40; t = sinpi(big(x)); round(Float64(abs((big(sinpi(x)) - t) / t) * big(2.0)^104), sigdigits = 3))",
     ],
 ]
 
@@ -115,8 +114,17 @@ function main(args)
             i += 1
             differs = oldresults[i] != newresults[i]
             changed += differs
-            println("| ", cell(label), " | `", cell(oldresults[i]), "` | `", cell(newresults[i]), "` | ",
-                    differs ? "changed" : "", " |")
+            println(
+                "| ",
+                cell(label),
+                " | `",
+                cell(oldresults[i]),
+                "` | `",
+                cell(newresults[i]),
+                "` | ",
+                differs ? "changed" : "",
+                " |",
+            )
         end
     end
     println("\n", changed, " of ", i, " probes differ.")

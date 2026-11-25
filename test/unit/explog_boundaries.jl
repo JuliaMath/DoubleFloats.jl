@@ -1,14 +1,18 @@
 @testset "Log mantissa scaling" begin
     setprecision(BigFloat, 512) do
-        for (D, T, tiny) in ((Double64, Float64, 0x1p-915),
-                             (Double32, Float32, Float32(0x1p-77)))
+        for (D, T, tiny) in ((Double64, Float64, 0x1p-915), (Double32, Float32, Float32(0x1p-77)))
             q = nextfloat(zero(T))
-            for (hi, lo) in ((q, zero(T)), (T(4), floatmin(T)),
-                             (T(2)^100, floatmin(T)), (T(2), floatmin(T)),
-                             (T(2)^100, q), (T(1.5), eps(T)/2),
-                             (floatmin(T)*T(2)^10, q),
-                             (prevfloat(tiny), prevfloat(floatmin(T))),
-                             (tiny, prevfloat(floatmin(T))))
+            for (hi, lo) in (
+                (q, zero(T)),
+                (T(4), floatmin(T)),
+                (T(2)^100, floatmin(T)),
+                (T(2), floatmin(T)),
+                (T(2)^100, q),
+                (T(1.5), eps(T)/2),
+                (floatmin(T)*T(2)^10, q),
+                (prevfloat(tiny), prevfloat(floatmin(T))),
+                (tiny, prevfloat(floatmin(T))),
+            )
                 for sign in (-one(T), one(T))
                     x = D(hi, sign * lo)
                     reference = BigFloat(HI(x)) + BigFloat(LO(x))
@@ -30,12 +34,10 @@ end
 
 @testset "Exponential underflow rounding" begin
     setprecision(BigFloat, 1536) do
-        for (D, T, zero_midpoint) in ((Double64, Float64, -1075.0),
-                                      (Double32, Float32, -150.0f0))
+        for (D, T, zero_midpoint) in ((Double64, Float64, -1075.0), (Double32, Float32, -150.0f0))
             q = nextfloat(zero(T))
             for lo in (-q, -eps(T)^2, zero(T), q, eps(T)^2)
-                @test HILO(exp2(D(zero_midpoint, lo))) ===
-                      (lo > 0 ? q : zero(T), zero(T))
+                @test HILO(exp2(D(zero_midpoint, lo))) === (lo > 0 ? q : zero(T), zero(T))
             end
             @test HILO(exp2(D(zero_midpoint + one(T)))) === (q, zero(T))
             @test HILO(exp2(D(exponent(floatmin(T))))) === (floatmin(T), zero(T))
@@ -103,7 +105,7 @@ end
 @testset "Direct central expm1 reconstruction" begin
     setprecision(BigFloat, 512) do
         tolerance = BigFloat(eps(Double64))
-        for sign in (1.0, -1.0), h in range(0.5, 1.0; length=257)
+        for sign in (1.0, -1.0), h in range(0.5, 1.0; length = 257)
             for l in (-eps(h) / 4, 0.0, eps(h) / 4)
                 x = Double64(sign * h, l)
                 y = expm1(BigFloat(x))

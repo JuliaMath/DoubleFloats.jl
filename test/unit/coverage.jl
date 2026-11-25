@@ -1,5 +1,4 @@
 @testset "convert" begin
-
     one = 1
     bf = BigFloat(pi)
     df = Double64(bf)
@@ -31,7 +30,6 @@
 end # convert
 
 @testset "construct $T" for T in (Double16, Double32, Double64)
-
     i5 = 5
     five = T(5)
 
@@ -57,7 +55,6 @@ end
 end
 
 @testset "predicates $T" for T in (Double16, Double32, Double64)
-
     @test iszero(zero(T))
     @test isone(one(T))
     @test ispositive(one(T))
@@ -75,18 +72,16 @@ end
     @test isnormal(one(T))
     @test isinteger(one(T))
     @test isfractional(one(T)/2)
-
 end # predicates
 
 @testset "double $T" for T in (Double16, Double32, Double64)
-
     @test HI(one(T)) == one(T)
     @test LO(one(T)) == zero(T)
     @test HILO(one(T)) == (one(T), zero(T))
 
-    sqrt2  = sqrt(T(2))
+    sqrt2 = sqrt(T(2))
     hi, lo = sqrt2.hi, sqrt2.lo
-    hilo   = HILO(sqrt2)
+    hilo = HILO(sqrt2)
 
     @test HI(sqrt2) == hi
     @test LO(sqrt2) == lo
@@ -95,17 +90,15 @@ end # predicates
     @test HI(hilo) == hi
     @test LO(hilo) == lo
     @test HILO(hilo) == hilo
-
 end # Double
 
 @testset "compare $T" for T in (Double16, Double32, Double64)
-
     one = 1
     fp1 = T(1)
     two = 2.0
     fp2 = T(2)
-    sqrt2  = sqrt(T(2))
-    sqrt5  = sqrt(T(5))
+    sqrt2 = sqrt(T(2))
+    sqrt5 = sqrt(T(5))
 
     @test isequal(sqrt2, sqrt2)
     @test isless(sqrt2, sqrt5)
@@ -136,53 +129,52 @@ end # Double
     @test !(one >= sqrt5)
     @test sqrt5 >= one
 
-    @test   sqrt2 == sqrt2
-    @test   sqrt2 >= sqrt2
-    @test   sqrt2 <= sqrt2
+    @test sqrt2 == sqrt2
+    @test sqrt2 >= sqrt2
+    @test sqrt2 <= sqrt2
     @test !(sqrt2 != sqrt2)
-    @test !(sqrt2 >  sqrt2)
-    @test !(sqrt2 <  sqrt2)
+    @test !(sqrt2 > sqrt2)
+    @test !(sqrt2 < sqrt2)
 
     @test !(sqrt2 == sqrt5)
     @test !(sqrt2 >= sqrt5)
-    @test   sqrt2 <= sqrt5
-    @test   sqrt2 != sqrt5
-    @test !(sqrt2 >  sqrt5)
-    @test   sqrt2 <  sqrt5
+    @test sqrt2 <= sqrt5
+    @test sqrt2 != sqrt5
+    @test !(sqrt2 > sqrt5)
+    @test sqrt2 < sqrt5
 
     @test !(fp2 == sqrt5)
     @test !(fp2 >= sqrt5)
-    @test   fp2 <= sqrt5
-    @test   fp2 != sqrt5
-    @test !(fp2 >  sqrt5)
-    @test   fp2 <  sqrt5
+    @test fp2 <= sqrt5
+    @test fp2 != sqrt5
+    @test !(fp2 > sqrt5)
+    @test fp2 < sqrt5
 
     @test !(sqrt5 == fp2)
     @test !(sqrt5 <= fp2)
-    @test   sqrt5 >= fp2
-    @test   sqrt5 != fp2
-    @test !(sqrt5 <  fp2)
-    @test   sqrt5 >  fp2
+    @test sqrt5 >= fp2
+    @test sqrt5 != fp2
+    @test !(sqrt5 < fp2)
+    @test sqrt5 > fp2
 
     @test !(two == sqrt5)
     @test !(two >= sqrt5)
-    @test   two <= sqrt5
-    @test   two != sqrt5
-    @test !(two >  sqrt5)
-    @test   two <  sqrt5
+    @test two <= sqrt5
+    @test two != sqrt5
+    @test !(two > sqrt5)
+    @test two < sqrt5
 
     @test !(sqrt5 == two)
     @test !(sqrt5 <= two)
-    @test   sqrt5 >= two
-    @test   sqrt5 != two
-    @test !(sqrt5 <  two)
-    @test   sqrt5 >  two
-
+    @test sqrt5 >= two
+    @test sqrt5 != two
+    @test !(sqrt5 < two)
+    @test sqrt5 > two
 end # compare
 
 @testset "eps $T" for T in (Double16, Double32, Double64)
     fp2 = T(2)
-    sqrt2  = sqrt(T(2))
+    sqrt2 = sqrt(T(2))
 
     @test eps(fp2) >= DoubleFloats.ulp(fp2)
     @test eps(sqrt2) >= DoubleFloats.ulp(sqrt2)
@@ -199,11 +191,11 @@ end # compare
     @test prevfloat(-fp2) < -fp2
     @test prevfloat(-sqrt2) < -sqrt2
 
-    @test nextfloat(fp2,2) > fp2
-    @test nextfloat(sqrt2,2) > sqrt2
+    @test nextfloat(fp2, 2) > fp2
+    @test nextfloat(sqrt2, 2) > sqrt2
 
-    @test nextfloat(fp2,3) > nextfloat(fp2,2)
-    @test prevfloat(fp2,3) < prevfloat(fp2,2)
+    @test nextfloat(fp2, 3) > nextfloat(fp2, 2)
+    @test prevfloat(fp2, 3) < prevfloat(fp2, 2)
 end
 
 #=

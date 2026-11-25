@@ -31,7 +31,6 @@ end
     return sum(hihi, hilo, lohi, lolo)
 end
 
-
 @inline function dvi_fpdd_dd(x::T, y::Tuple{T,T}) where {T<:IEEEFloat}
     yinv = inv_dd_dd(y)
     zhi, zlo = mul_fpdd_dd(x, yinv)

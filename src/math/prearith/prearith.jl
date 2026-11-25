@@ -32,15 +32,15 @@ function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return DoubleFloat{T}(frhi, ldexp(frlo, explo - exphi)), exphi
 end
 
-function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat, I<:Integer}
+function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat,I<:Integer}
     return DoubleFloat{T}(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
-function ldexps(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat, I<:Integer}
+function ldexps(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat,I<:Integer}
     return DoubleFloat(ldexp(dhi[1], dhi[2]), ldexp(dlo[1], dlo[2]))
 end
 
-function ldexps(dhilo::Tuple{Tuple{T,I}, Tuple{T,I}}) where {T<:IEEEFloat, I<:Integer}
+function ldexps(dhilo::Tuple{Tuple{T,I},Tuple{T,I}}) where {T<:IEEEFloat,I<:Integer}
     return ldexp(dhilo[1], dhilo[2])
 end
 
@@ -52,8 +52,7 @@ function exponent(x::DoubleFloat{T}) where {T<:IEEEFloat}
     e = Base.exponent(HI(x))
     # a hi word exactly at a binade boundary with an opposing lo word puts
     # |x| just below 2^e
-    if !iszero(LO(x)) && (signbit(LO(x)) != signbit(HI(x))) &&
-       abs(HI(x)) == ldexp(one(T), e)
+    if !iszero(LO(x)) && (signbit(LO(x)) != signbit(HI(x))) && abs(HI(x)) == ldexp(one(T), e)
         e -= 1
     end
     return e
@@ -68,7 +67,6 @@ function signs(x::DoubleFloat{T}) where {T<:IEEEFloat}
     slo = sign(LO(x))
     return shi, slo
 end
-
 
 ulp(x::T) where {T<:IEEEFloat} = significand(x) !== -one(T) ? eps(x) : eps(x)/2
 
@@ -87,14 +85,13 @@ function ulp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return LO(x) !== zero(T) ? posulp(LO(x)) : posulp(posulp(HI(x)))
 end
 
-Base.Math.eps(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
-ulp(::Type{D}) where {T<:AbstractFloat, D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
-
+Base.Math.eps(::Type{D}) where {T<:AbstractFloat,D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
+ulp(::Type{D}) where {T<:AbstractFloat,D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
 
 function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if !isfinite(x)
-       isnan(x) && return x
-       signbit(x) ? floatmin(DoubleFloat{T}) : x
+        isnan(x) && return x
+        signbit(x) ? floatmin(DoubleFloat{T}) : x
     elseif !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
     else
@@ -114,7 +111,7 @@ function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
-    !isfinite(x) && return(x)
+    !isfinite(x) && return (x)
     if !iszero(LO(x))
         x + n*ulp(LO(x))
     else
@@ -123,14 +120,13 @@ function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
 end
 
 function Base.Math.prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
-    !isfinite(x) && return(x)
+    !isfinite(x) && return (x)
     if !iszero(LO(x))
         x - n*ulp(LO(x))
     else
         DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x))))
     end
 end
-
 
 @inline function intpart(x::Tuple{T,T}) where {T<:AbstractFloat}
     hi, lo = x
@@ -151,7 +147,6 @@ function intpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return DoubleFloat{T}(ihi, ilo)
 end
 
-
 function fracpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     fhi, flo = fracpart(HILO(x))
     return DoubleFloat{T}(fhi, flo)
@@ -169,9 +164,9 @@ function modf(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function fmod(fpart::DoubleFloat{T}, ipart::DoubleFloat{T}) where {T<:IEEEFloat}
-   return ipart + fpart
+    return ipart + fpart
 end
 
-function fmod(parts::Tuple{DoubleFloat{T}, DoubleFloat{T}}) where {T<:IEEEFloat}
-   return parts[1] + parts[2]
+function fmod(parts::Tuple{DoubleFloat{T},DoubleFloat{T}}) where {T<:IEEEFloat}
+    return parts[1] + parts[2]
 end

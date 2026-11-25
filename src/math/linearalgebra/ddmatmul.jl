@@ -16,8 +16,7 @@
 # (~2^-105 per operation) as the generic scalar path.
 
 # one fused step: (ch,cl) += (ah,al) * (bh,bl), all branch-free
-@inline function _dd_fma_acc(ah::Float64, al::Float64, bh::Float64, bl::Float64,
-                             ch::Float64, cl::Float64)
+@inline function _dd_fma_acc(ah::Float64, al::Float64, bh::Float64, bl::Float64, ch::Float64, cl::Float64)
     p = ah * bh
     e = fma(ah, bh, -p)
     e = fma(ah, bl, fma(al, bh, e))
@@ -43,11 +42,12 @@ function _planes(A::AbstractMatrix{Double64})
 end
 
 # C-planes += A-planes * B-planes
-function _dd_gemm_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate=false)
+function _dd_gemm_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate = false)
     m, K = size(Ah)
     n = size(Bh, 2)
     @inbounds for j in 1:n, k in 1:K
-        bh = Bh[k, j]; bl = Bl[k, j]
+        bh = Bh[k, j]
+        bl = Bl[k, j]
         if negate
             bh, bl = -bh, -bl
         end
@@ -82,55 +82,60 @@ function _dd_matmul_small!(C, A, B, α, β)
         for k in 2:K
             acc += A[i, k] * B[k, j]
         end
-        C[i, j] = (α === true && (β === false || iszero(β))) ? acc :
-                  α * acc + β * C[i, j]
+        C[i, j] = (α === true && (β === false || iszero(β))) ? acc : α * acc + β * C[i, j]
     end
     return C
 end
 
-function LinearAlgebra.mul!(C::Matrix{Double64}, A::Matrix{Double64},
-                            B::Matrix{Double64}, α::Number, β::Number)
+function LinearAlgebra.mul!(C::Matrix{Double64}, A::Matrix{Double64}, B::Matrix{Double64}, α::Number, β::Number)
     m, K = size(A)
     K2, n = size(B)
-    (K == K2 && size(C) == (m, n)) ||
-        throw(DimensionMismatch("mul!: sizes $(size(C)) = $(size(A)) * $(size(B))"))
+    (K == K2 && size(C) == (m, n)) || throw(DimensionMismatch("mul!: sizes $(size(C)) = $(size(A)) * $(size(B))"))
     (m == 0 || n == 0) && return C
     K == 0 && return fill!(C, zero(Double64))
     m * n * K < 4096 && return _dd_matmul_small!(C, A, B, α, β)
     Ah, Al = _planes(A)
     Bh, Bl = _planes(B)
-    Ch = zeros(Float64, m, n); Cl = zeros(Float64, m, n)
+    Ch = zeros(Float64, m, n)
+    Cl = zeros(Float64, m, n)
     _dd_gemm_acc!(Ch, Cl, Ah, Al, Bh, Bl)
     return _combine!(C, Ch, Cl, α, β)
 end
 
-function LinearAlgebra.mul!(C::Matrix{Complex{Double64}}, A::Matrix{Complex{Double64}},
-                            B::Matrix{Complex{Double64}}, α::Number, β::Number)
+function LinearAlgebra.mul!(
+    C::Matrix{Complex{Double64}},
+    A::Matrix{Complex{Double64}},
+    B::Matrix{Complex{Double64}},
+    α::Number,
+    β::Number,
+)
     m, K = size(A)
     K2, n = size(B)
-    (K == K2 && size(C) == (m, n)) ||
-        throw(DimensionMismatch("mul!: sizes $(size(C)) = $(size(A)) * $(size(B))"))
+    (K == K2 && size(C) == (m, n)) || throw(DimensionMismatch("mul!: sizes $(size(C)) = $(size(A)) * $(size(B))"))
     (m == 0 || n == 0) && return C
     K == 0 && return fill!(C, zero(Complex{Double64}))
     m * n * K < 1024 && return _dd_matmul_small!(C, A, B, α, β)
-    Arh, Arl = _planes(real.(A));  Aih, Ail = _planes(imag.(A))
-    Brh, Brl = _planes(real.(B));  Bih, Bil = _planes(imag.(B))
-    nBih = .-Bih; nBil = .-Bil
-    Crh = zeros(Float64, m, n); Crl = zeros(Float64, m, n)
-    Cih = zeros(Float64, m, n); Cil = zeros(Float64, m, n)
+    Arh, Arl = _planes(real.(A))
+    Aih, Ail = _planes(imag.(A))
+    Brh, Brl = _planes(real.(B))
+    Bih, Bil = _planes(imag.(B))
+    nBih = .-Bih
+    nBil = .-Bil
+    Crh = zeros(Float64, m, n)
+    Crl = zeros(Float64, m, n)
+    Cih = zeros(Float64, m, n)
+    Cil = zeros(Float64, m, n)
     _dd_gemm_acc!(Crh, Crl, Arh, Arl, Brh, Brl)     # + Ar*Br
     _dd_gemm_acc!(Crh, Crl, Aih, Ail, nBih, nBil)   # - Ai*Bi
     _dd_gemm_acc!(Cih, Cil, Arh, Arl, Bih, Bil)     # + Ar*Bi
     _dd_gemm_acc!(Cih, Cil, Aih, Ail, Brh, Brl)     # + Ai*Br
     if α === true && (β === false || iszero(β))
         @inbounds for idx in eachindex(C)
-            C[idx] = Complex{Double64}(Double64(Crh[idx], Crl[idx]),
-                                       Double64(Cih[idx], Cil[idx]))
+            C[idx] = Complex{Double64}(Double64(Crh[idx], Crl[idx]), Double64(Cih[idx], Cil[idx]))
         end
     else
         @inbounds for idx in eachindex(C)
-            C[idx] = α * Complex{Double64}(Double64(Crh[idx], Crl[idx]),
-                                           Double64(Cih[idx], Cil[idx])) + β * C[idx]
+            C[idx] = α * Complex{Double64}(Double64(Crh[idx], Crl[idx]), Double64(Cih[idx], Cil[idx])) + β * C[idx]
         end
     end
     return C
@@ -146,15 +151,15 @@ end
 
 # Both operands are known to be upper triangular by the matrix-function
 # driver. Retain the dense accumulator's ascending k order.
-function _dd_tri_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate=false)
+function _dd_tri_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate = false)
     n = size(Ah, 1)
     @inbounds for j in 1:n, k in 1:j
-        bh, bl = Bh[k,j], Bl[k,j]
+        bh, bl = Bh[k, j], Bl[k, j]
         if negate
             bh, bl = -bh, -bl
         end
         @simd for i in 1:k
-            Ch[i,j], Cl[i,j] = _dd_fma_acc(Ah[i,k], Al[i,k], bh, bl, Ch[i,j], Cl[i,j])
+            Ch[i, j], Cl[i, j] = _dd_fma_acc(Ah[i, k], Al[i, k], bh, bl, Ch[i, j], Cl[i, j])
         end
     end
     return nothing
@@ -178,8 +183,10 @@ function _mat_tri_mul(A::Matrix{ComplexDF64}, B::Matrix{ComplexDF64})
     _pack_planes!(right, B)
     Arh, Arl, Aih, Ail = left
     Brh, Brl, Bih, Bil = right
-    Crh = zeros(Float64, size(A)); Crl = zeros(Float64, size(A))
-    Cih = zeros(Float64, size(A)); Cil = zeros(Float64, size(A))
+    Crh = zeros(Float64, size(A))
+    Crl = zeros(Float64, size(A))
+    Cih = zeros(Float64, size(A))
+    Cil = zeros(Float64, size(A))
     _dd_tri_acc!(Crh, Crl, Arh, Arl, Brh, Brl)
     _dd_tri_acc!(Crh, Crl, Aih, Ail, Bih, Bil, true)
     _dd_tri_acc!(Cih, Cil, Arh, Arl, Bih, Bil)
@@ -197,8 +204,7 @@ _packed_planes(::Type{Double64}, dims) = ntuple(_ -> Matrix{Float64}(undef, dims
 _packed_planes(::Type{ComplexDF64}, dims) = ntuple(_ -> Matrix{Float64}(undef, dims), Val(4))
 
 function _root_product_workspace(::Type{E}, width, n) where {E}
-    return (_packed_planes(E, (width, n)), _packed_planes(E, (n, width)),
-            _packed_planes(E, (width, width)))
+    return (_packed_planes(E, (width, n)), _packed_planes(E, (n, width)), _packed_planes(E, (width, width)))
 end
 
 @inline _root_panel(planes, m, n) = map(p -> view(p, 1:m, 1:n), planes)
@@ -206,7 +212,7 @@ end
 function _pack_planes!(planes, A::AbstractMatrix{Double64})
     H, L = planes
     @inbounds for j in axes(A, 2), i in axes(A, 1)
-        H[i,j], L[i,j] = HILO(A[i,j])
+        H[i, j], L[i, j] = HILO(A[i, j])
     end
     return nothing
 end
@@ -214,9 +220,9 @@ end
 function _pack_planes!(planes, A::AbstractMatrix{ComplexDF64})
     Rh, Rl, Ih, Il = planes
     @inbounds for j in axes(A, 2), i in axes(A, 1)
-        r, z = reim(A[i,j])
-        Rh[i,j], Rl[i,j] = HILO(r)
-        Ih[i,j], Il[i,j] = HILO(z)
+        r, z = reim(A[i, j])
+        Rh[i, j], Rl[i, j] = HILO(r)
+        Ih[i, j], Il[i, j] = HILO(z)
     end
     return nothing
 end
@@ -242,7 +248,7 @@ function _root_subproduct!(F, A, B, C, ::Type{Double64})
     Ch, Cl = C
     _dd_gemm_acc!(Ch, Cl, A..., B...)
     @inbounds for j in axes(F, 2), i in axes(F, 1)
-        F[i,j] -= Double64(Ch[i,j], Cl[i,j])
+        F[i, j] -= Double64(Ch[i, j], Cl[i, j])
     end
     return F
 end
@@ -256,7 +262,7 @@ function _root_subproduct!(F, A, B, C, ::Type{ComplexDF64})
     _dd_gemm_acc!(Cih, Cil, Arh, Arl, Bih, Bil)
     _dd_gemm_acc!(Cih, Cil, Aih, Ail, Brh, Brl)
     @inbounds for j in axes(F, 2), i in axes(F, 1)
-        F[i,j] -= ComplexDF64(Double64(Crh[i,j], Crl[i,j]), Double64(Cih[i,j], Cil[i,j]))
+        F[i, j] -= ComplexDF64(Double64(Crh[i, j], Crl[i, j]), Double64(Cih[i, j], Cil[i, j]))
     end
     return F
 end

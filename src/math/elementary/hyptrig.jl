@@ -67,7 +67,7 @@ function csch(x::DoubleFloat{T}) where {T<:IEEEFloat}
 end
 
 function sech(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    abs(HI(x)) > maxhyp_fp64max && return zero(DoubleFloat{T})    
+    abs(HI(x)) > maxhyp_fp64max && return zero(DoubleFloat{T})
     return inv(cosh(x))
 end
 
@@ -99,14 +99,14 @@ end
 end
 
 for (scalar, kernel) in ((csch, _batch_csch), (sech, _batch_sech), (coth, _batch_coth))
-    @eval _batch_kernel(::typeof($scalar), ::Type{Double64}, ::Type{Double64}) =
-        _BatchKernel(_batch_hyp_range, $kernel)
+    @eval _batch_kernel(::typeof($scalar), ::Type{Double64}, ::Type{Double64}) = _BatchKernel(_batch_hyp_range, $kernel)
 end
 
 @inline _batch_local_hyp_range(x) = _batch_abs_bounded(x, 0.005, 1.0)
-for (scalar, local_kernel, ordinary) in ((sinh, _sinh_local, _batch_sinh),
-        (cosh, _cosh_local, _batch_cosh), (tanh, _tanh_local, _batch_tanh))
-    @eval _batch_kernel(::typeof($scalar), ::Type{Double64}, ::Type{Double64}) =
-        _BatchAlternatives(_BatchKernel(_batch_local_hyp_range, $local_kernel),
-                           _BatchKernel(_batch_hyp_range, $ordinary))
+for (scalar, local_kernel, ordinary) in
+    ((sinh, _sinh_local, _batch_sinh), (cosh, _cosh_local, _batch_cosh), (tanh, _tanh_local, _batch_tanh))
+    @eval _batch_kernel(::typeof($scalar), ::Type{Double64}, ::Type{Double64}) = _BatchAlternatives(
+        _BatchKernel(_batch_local_hyp_range, $local_kernel),
+        _BatchKernel(_batch_hyp_range, $ordinary),
+    )
 end

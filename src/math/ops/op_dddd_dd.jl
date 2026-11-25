@@ -1,5 +1,5 @@
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
-@inline function add_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function add_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_sum(xhi, yhi)
@@ -13,7 +13,7 @@ end
 
 # Algorithm 6 from Tight and rigourous error bounds. relative error < 3u²
 # reworked for subtraction
-@inline function sub_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function sub_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_diff(xhi, yhi)
@@ -26,7 +26,7 @@ end
 end
 
 # Algorithm 10 from Tight and rigourous error bounds.  relative error <= 7u²
-@inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function mul_dddd_dd(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_prod(xhi, yhi)
@@ -41,7 +41,7 @@ end
 # Branch-free hot-path variants of the kernels above. Bit-identical to the
 # guarded versions for finite results; callers must re-check the result and
 # fall back to the guarded kernel on non-finite output (see op_dbdb_db.jl).
-@inline function add_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function add_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_sum_(xhi, yhi)
@@ -53,7 +53,7 @@ end
     return hi, lo
 end
 
-@inline function sub_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function sub_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_diff_(xhi, yhi)
@@ -65,7 +65,7 @@ end
     return hi, lo
 end
 
-@inline function mul_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where T<:IEEEFloat
+@inline function mul_dddd_dd_(x::Tuple{T,T}, y::Tuple{T,T}) where {T<:IEEEFloat}
     xhi, xlo = x
     yhi, ylo = y
     hi, lo = two_prod_(xhi, yhi)
@@ -86,7 +86,7 @@ end
     end
     uh, ul = two_prod(hi, yhi)
     lo = ((((xhi - uh) - ul) + xlo) - hi*ylo)/yhi
-    hi,lo = two_hilo_sum(hi, lo)
+    hi, lo = two_hilo_sum(hi, lo)
     return hi, lo
 end
 

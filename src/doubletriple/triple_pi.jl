@@ -1,14 +1,17 @@
 """
     x_minus_onepi(x) is x - π
-""" x_minus_onepi
+"""
+x_minus_onepi
 
 """
     x_minus_halfpi(x) is x - π/2
-""" x_minus_halfpi
+"""
+x_minus_halfpi
 
 """
     x_minus_qrtrpi(x) is x - π/4
-""" x_minus_qrtrpi
+"""
+x_minus_qrtrpi
 
 x_minus_onepi(x::DoubleFloat{Float64}) = x_minus_onepi(HI(x), LO(x))
 x_minus_halfpi(x::DoubleFloat{Float64}) = x_minus_halfpi(HI(x), LO(x))
@@ -36,18 +39,14 @@ const _trig_twopi = (6.283185307179586, 2.4492935982947064e-16, -5.9895396194366
     return Double64(-s1, -(e1 + u2))
 end
 
-x_minus_onepi(hi::Float64, lo::Float64) =
-    _trig_subtract(hi, lo, _trig_pi, two_diff, two_sum)
-x_minus_halfpi(hi::Float64, lo::Float64) =
-    _trig_subtract(hi, lo, _trig_halfpi, two_diff, two_sum)
+x_minus_onepi(hi::Float64, lo::Float64) = _trig_subtract(hi, lo, _trig_pi, two_diff, two_sum)
+x_minus_halfpi(hi::Float64, lo::Float64) = _trig_subtract(hi, lo, _trig_halfpi, two_diff, two_sum)
 
 x_minus_threehalfpi(x::DoubleFloat{Float64}) = x_minus_threehalfpi(HI(x), LO(x))
 x_minus_twopi(x::DoubleFloat{Float64}) = x_minus_twopi(HI(x), LO(x))
 
-x_minus_threehalfpi(hi::Float64, lo::Float64) =
-    _trig_subtract(hi, lo, _trig_threehalfpi, two_diff, two_sum)
-x_minus_twopi(hi::Float64, lo::Float64) =
-    _trig_subtract(hi, lo, _trig_twopi, two_diff, two_sum)
+x_minus_threehalfpi(hi::Float64, lo::Float64) = _trig_subtract(hi, lo, _trig_threehalfpi, two_diff, two_sum)
+x_minus_twopi(hi::Float64, lo::Float64) = _trig_subtract(hi, lo, _trig_twopi, two_diff, two_sum)
 
 function x_minus_qrtrpi(hi::T, lo::T) where {T<:Float64}
     zhi, t1 = two_diff(0.78539816339744830, hi)

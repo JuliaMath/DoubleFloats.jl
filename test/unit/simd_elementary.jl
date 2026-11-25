@@ -13,7 +13,7 @@ function same_limbs(x, y)
     typeof(x) === typeof(y) && isequal(limbs(x), limbs(y))
 end
 
-function compare_batch(f::F, args...; threaded=false) where {F}
+function compare_batch(f::F, args...; threaded = false) where {F}
     broadcast_args = map(x -> x isa Number ? Ref(x) : x, args)
     reference = f.(broadcast_args...)
     dest = similar(reference)
@@ -96,9 +96,14 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         for f in (sinh, cosh, tanh, csch, sech, coth)
             compare_batch(f, bounded(1.1, 5.0))
         end
-        for (f, lower, upper) in ((asinh, 0.005, 0.045), (acosh, 1.00002, 1.001),
-                (atanh, 0.005, 0.025), (acsch, 30.0, 50.0),
-                (asech, 0.999, 0.99998), (acoth, 40.0, 100.0))
+        for (f, lower, upper) in (
+            (asinh, 0.005, 0.045),
+            (acosh, 1.00002, 1.001),
+            (atanh, 0.005, 0.025),
+            (acsch, 30.0, 50.0),
+            (asech, 0.999, 0.99998),
+            (acoth, 40.0, 100.0),
+        )
             compare_batch(f, bounded(lower, upper))
         end
     end
@@ -137,12 +142,10 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
     end
 
     @testset "Wider converted exponentials" begin
-        for (f, first_head, last_head) in ((exp, 0.001, 700.0), (exp10, 0.001, 300.0),
-                                           (expm1, 0.5, 700.0))
+        for (f, first_head, last_head) in ((exp, 0.001, 700.0), (exp10, 0.001, 300.0), (expm1, 0.5, 700.0))
             compare_batch(f, bounded(first_head, last_head))
             compare_batch(f, bounded(-last_head, -first_head))
-            compare_batch(f, vcat(bounded(first_head, last_head),
-                                  Double64[0, -0.0, NaN, Inf, -Inf, -800, 800]))
+            compare_batch(f, vcat(bounded(first_head, last_head), Double64[0, -0.0, NaN, Inf, -Inf, -800, 800]))
         end
         for (low, high) in ((0.5, 1.0), (-1.0, -0.5))
             compare_batch(expm1, bounded(low, high))
@@ -158,8 +161,9 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         setprecision(256) do
             for (f, factor, k) in ((exp, log(big(2.0)), 997), (exp10, log10(big(2.0)), 992))
                 midpoint = Double64(k * factor + factor / 2)
-                mids = Double64[Double64(HI(midpoint), l) for l in
-                                (prevfloat(LO(midpoint)), LO(midpoint), nextfloat(LO(midpoint)))]
+                mids = Double64[
+                    Double64(HI(midpoint), l) for l in (prevfloat(LO(midpoint)), LO(midpoint), nextfloat(LO(midpoint)))
+                ]
                 compare_batch(f, repeat(vcat(mids, -mids), 16))
                 for (x, y) in zip(mids, f.(mids))
                     exact = f(BigFloat(HI(x)) + BigFloat(LO(x)))
@@ -180,8 +184,18 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
             b = reverse(a)
             compare_batch(f, a, b)
             compare_batch(f, a, reverse(b))
-            special = Double64[-0.0, 0.0, Inf, -Inf, NaN, nextfloat(0.0), floatmax(Float64),
-                               Double64(0.0, 1.0), Double64(1.0, Inf), Double64(1.0, NaN)]
+            special = Double64[
+                -0.0,
+                0.0,
+                Inf,
+                -Inf,
+                NaN,
+                nextfloat(0.0),
+                floatmax(Float64),
+                Double64(0.0, 1.0),
+                Double64(1.0, Inf),
+                Double64(1.0, NaN),
+            ]
             compare_batch(f, vcat(x, special), vcat(y, reverse(special)))
         end
         expected = hypot.(x, y)
@@ -190,8 +204,17 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         @test all(same_limbs.(alias, expected))
         compare_batch(inv, bounded(0x1p-256, 0x1p256))
         compare_batch(inv, bounded(-0x1p256, -0x1p-256))
-        reciprocals = Double64[0.0, -0.0, Inf, -Inf, NaN, nextfloat(0.0), floatmin(Float64),
-                               floatmax(Float64), Double64(2.0, NaN)]
+        reciprocals = Double64[
+            0.0,
+            -0.0,
+            Inf,
+            -Inf,
+            NaN,
+            nextfloat(0.0),
+            floatmin(Float64),
+            floatmax(Float64),
+            Double64(2.0, NaN),
+        ]
         compare_batch(inv, vcat(x, reciprocals))
         @test iszero(batch_allocations(hypot, similar(x), x, y))
         @test iszero(batch_allocations(DF.normalize, Vector{Tuple{Double64,Double64}}(undef, length(x)), x, y))
@@ -258,10 +281,8 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         for f in (tanh, coth, csch, sech)
             compare_batch(f, complex.(large, smaller))
         end
-        cuts = ComplexDF64[ComplexDF64(r, i) for r in (-2, -0.5, 0.5, 2)
-                         for i in (0.0, -0.0, 1e-30, -1e-30)]
-        for f in (sqrt, log, asin, acos, atan, acsc, asec, acot,
-                  asinh, acosh, atanh, acsch, asech, acoth)
+        cuts = ComplexDF64[ComplexDF64(r, i) for r in (-2, -0.5, 0.5, 2) for i in (0.0, -0.0, 1e-30, -1e-30)]
+        for f in (sqrt, log, asin, acos, atan, acsc, asec, acot, asinh, acosh, atanh, acsch, asech, acoth)
             compare_batch(f, cuts)
         end
     end
@@ -288,15 +309,19 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         simdmap!(cis, complex_dest, x)
         @test all(same_limbs.(complex_dest, ComplexDF64.(reference)))
 
-        exponents = Double64[Double64(-1075.0), Double64(-1075.0, 1e-30),
-                             Double64(-1075.0, -1e-30), Double64(-1022), Double64(1024)]
+        exponents = Double64[
+            Double64(-1075.0),
+            Double64(-1075.0, 1e-30),
+            Double64(-1075.0, -1e-30),
+            Double64(-1022),
+            Double64(1024),
+        ]
         y = compare_batch(exp2, exponents)
         setprecision(256) do
             expected = Float64[Float64(exp2(BigFloat(HI(x)) + BigFloat(LO(x)))) for x in exponents]
             @test HI.(y) == expected
             pole = Double64("1.57079632679489661923132169163975")
-            angles = Double64[Double64(HI(pole), prevfloat(LO(pole))), pole,
-                              Double64(HI(pole), nextfloat(LO(pole)))]
+            angles = Double64[Double64(HI(pole), prevfloat(LO(pole))), pole, Double64(HI(pole), nextfloat(LO(pole)))]
             for (x, t) in zip(angles, compare_batch(tan, angles))
                 exact = tan(BigFloat(HI(x)) + BigFloat(LO(x)))
                 @test abs((BigFloat(HI(t)) + BigFloat(LO(t))) / exact - 1) < BigFloat(2)^(-68)
@@ -370,19 +395,19 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
 
     @testset "Optional threads" begin
         positive = repeat(bounded(1.1, 1.5), 129)
-        compare_batch(exp, positive; threaded=true)
-        compare_batch(atan, positive, reverse(positive); threaded=true)
-        compare_batch(hypot, positive, -positive; threaded=true)
-        compare_batch(DF.normalize, -positive, positive; threaded=true)
-        compare_batch(inv, repeat(positive, 4); threaded=true)
-        compare_batch(sinpi, positive; threaded=true)
-        compare_batch(exp, complex.(positive, Double64(0.03125)); threaded=true)
-        compare_batch(sincos, fill(Double64(0.03125), length(positive)); threaded=true)
-        compare_batch(^, positive, 5; threaded=true)
-        compare_batch(exp, positive[1:1]; threaded=true)
+        compare_batch(exp, positive; threaded = true)
+        compare_batch(atan, positive, reverse(positive); threaded = true)
+        compare_batch(hypot, positive, -positive; threaded = true)
+        compare_batch(DF.normalize, -positive, positive; threaded = true)
+        compare_batch(inv, repeat(positive, 4); threaded = true)
+        compare_batch(sinpi, positive; threaded = true)
+        compare_batch(exp, complex.(positive, Double64(0.03125)); threaded = true)
+        compare_batch(sincos, fill(Double64(0.03125), length(positive)); threaded = true)
+        compare_batch(^, positive, 5; threaded = true)
+        compare_batch(exp, positive[1:1]; threaded = true)
         @test fetch(Threads.@spawn begin
             out = similar(positive)
-            simdmap!(exp, out, positive; threaded=true)
+            simdmap!(exp, out, positive; threaded = true)
             all(same_limbs.(out, exp.(positive)))
         end)
 
@@ -390,16 +415,16 @@ Base.setindex!(x::ShiftedVector, v, i::Int) = (x.storage[i + 1] = v)
         invalid[95] = Double64(-1)
         out = fill(Double64(-1), length(invalid))
         if Threads.nthreads() > 1
-            @test_throws CompositeException simdmap!(log, out, invalid; threaded=true)
+            @test_throws CompositeException simdmap!(log, out, invalid; threaded = true)
             @test same_limbs(out[end], log(invalid[end]))
         else
-            @test_throws DomainError simdmap!(log, out, invalid; threaded=true)
+            @test_throws DomainError simdmap!(log, out, invalid; threaded = true)
             @test out[end] == -1
         end
         calls = Int[]
         f(x) = (push!(calls, Int(x)); x)
         xs = collect(1:17000)
-        simdmap!(f, similar(xs), xs; threaded=true)
+        simdmap!(f, similar(xs), xs; threaded = true)
         @test calls == xs
     end
 end

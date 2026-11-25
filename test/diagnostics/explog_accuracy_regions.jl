@@ -24,7 +24,7 @@ function relerr(dd::Double64, big_ref::BigFloat)
     return Float64(abs(ddbig - big_ref) / abs(big_ref))
 end
 
-function scan(label, xs, f_dd, f_big; ulp_thresh=100.0)
+function scan(label, xs, f_dd, f_big; ulp_thresh = 100.0)
     worst = 0.0
     worst_x = 0.0
     nbad = 0
@@ -61,7 +61,7 @@ xs_near0 = vcat(xs_near0, -xs_near0)
 scan("exp near 0 (powers of 10)", xs_near0, exp, exp)
 
 # 2. random tiny
-xs_tiny_rand = (rand(2000) .- 0.5) .* 2.0 .^ (-collect(range(1,60,length=2000)))
+xs_tiny_rand = (rand(2000) .- 0.5) .* 2.0 .^ (-collect(range(1, 60, length = 2000)))
 scan("exp tiny random", xs_tiny_rand, exp, exp)
 
 # 3. near half-integers / integer boundaries in [0,64] (calc_exp uses xint, xfrac with 0.5 branch)
@@ -114,7 +114,8 @@ let worst = 0.0, worst_x = xs_near1_dd[1]
         re = relerr(r_dd, r_big)
         ulps = re / Float64(EPS_DD)
         if ulps > worst
-            worst = ulps; worst_x = xdd
+            worst = ulps
+            worst_x = xdd
         end
     end
     println("log near x=1 (Double64(1.0, tiny lo)) : worst = $worst ulps at x=$worst_x")
@@ -141,7 +142,21 @@ scan("log near 1 random perturbations at various double ulp scales", xs_near1b, 
 
 println()
 println("=== Follow-up: characterize exp large-negative-arg region ===")
-for x in [-650.0, -680.0, -690.0, -695.0, -699.0, -699.3263934463292, -700.0, -703.0, -705.0, -707.0, -708.0, -708.9, -708.99]
+for x in [
+    -650.0,
+    -680.0,
+    -690.0,
+    -695.0,
+    -699.0,
+    -699.3263934463292,
+    -700.0,
+    -703.0,
+    -705.0,
+    -707.0,
+    -708.0,
+    -708.9,
+    -708.99,
+]
     xdd = Double64(x)
     r_dd = exp(xdd)
     r_big = exp(BigFloat(xdd))

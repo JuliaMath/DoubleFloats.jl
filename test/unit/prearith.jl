@@ -1,8 +1,7 @@
 @testset "prearith $T" for T in (Double16, Double32, Double64)
-  
     val = T(17)/3
     negval = -val
-  
+
     @test -val == negval
     @test abs(val) == val
     @test abs(negval) == val
@@ -11,7 +10,7 @@
     @test copysign(val, -1) == negval
     @test copysign(negval, 1) == val
 
-    @test ldexp(frexp(val)...,) == val
+    @test ldexp(frexp(val)...) == val
     fr, ex = frexp(val)
     @test fr * T(2)^ex == val
 
@@ -22,7 +21,7 @@
     @test isinf(frexp(T(Inf))[1])
     @test iszero(frexp(T(0))[1])
 
-    @test DoubleFloats.ldexps(DoubleFloats.frexps(val)...,) == val
+    @test DoubleFloats.ldexps(DoubleFloats.frexps(val)...) == val
     # @test ldexp(significand(val), exponent(val)) == val
 
     @test signs(val) == (sign(HI(val)), sign(LO(val)))
@@ -31,33 +30,32 @@
 end
 
 @testset "trunc $T" for T in (Double16, Double32, Double64)
-   for I in (:Int16, :Int32, :Int64, :Int128)
-       @test 3 == @eval trunc($I, $T(pi))
-   end
+    for I in (:Int16, :Int32, :Int64, :Int128)
+        @test 3 == @eval trunc($I, $T(pi))
+    end
 end
 
 @testset "floor $T" for T in (Double16, Double32, Double64)
-   for I in (:Int16, :Int32, :Int64, :Int128)
-       @test 3 == @eval floor($I, $T(pi))
-   end
+    for I in (:Int16, :Int32, :Int64, :Int128)
+        @test 3 == @eval floor($I, $T(pi))
+    end
 end
 
 @testset "ceil $T" for T in (Double16, Double32, Double64)
-   for I in (:Int16, :Int32, :Int64, :Int128)
-       @test 4 == @eval ceil($I, $T(pi))
-   end
+    for I in (:Int16, :Int32, :Int64, :Int128)
+        @test 4 == @eval ceil($I, $T(pi))
+    end
 end
 
 @testset "round $T" for T in (Double16, Double32, Double64)
-   for I in (:Int16, :Int32, :Int64, :Int128)
-       @test 3 == @eval round($I, $T(pi), RoundNearest)
-       @test 3 == @eval round($I, $T(pi), RoundNearestTiesAway)
-       @test 4 == @eval round($I, $T(pi), RoundUp)
-       @test 3 == @eval round($I, $T(pi), RoundDown)
-       @test 3 == @eval round($I, $T(pi), RoundToZero)
-   end
+    for I in (:Int16, :Int32, :Int64, :Int128)
+        @test 3 == @eval round($I, $T(pi), RoundNearest)
+        @test 3 == @eval round($I, $T(pi), RoundNearestTiesAway)
+        @test 4 == @eval round($I, $T(pi), RoundUp)
+        @test 3 == @eval round($I, $T(pi), RoundDown)
+        @test 3 == @eval round($I, $T(pi), RoundToZero)
+    end
 end
-
 
 @testset "spread $T" for T in (Double16, Double32, Double64)
     @test 4 == @eval spread($T(pi))

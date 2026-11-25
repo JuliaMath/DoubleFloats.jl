@@ -17,15 +17,13 @@
 # matrix (imaginary roundoff dust is stripped), matching the LAPACK-backed
 # behavior for Float64.
 
-const _DFR{T}  = DoubleFloat{T}
-const _DFC{T}  = Complex{DoubleFloat{T}}
-const _DFRC{T} = Union{DoubleFloat{T}, Complex{DoubleFloat{T}}}
+const _DFR{T} = DoubleFloat{T}
+const _DFC{T} = Complex{DoubleFloat{T}}
+const _DFRC{T} = Union{DoubleFloat{T},Complex{DoubleFloat{T}}}
 
 # 1/33!, 1/34! -- continuing inv_fact (sequences.jl), which stops at 1/32!
-const _invfact_33_34 = (
-  Double64(1.151633562077195e-37,-6.09957445788454e-54),
-  Double64(3.387157535521162e-39,5.09056148151085e-56),
-)
+const _invfact_33_34 =
+    (Double64(1.151633562077195e-37, -6.09957445788454e-54), Double64(3.387157535521162e-39, 5.09056148151085e-56))
 
 @inline _invfact(k::Int) = k <= 32 ? inv_fact[k] : _invfact_33_34[k - 32]
 
@@ -39,7 +37,7 @@ _strip_imag_dust(M::Matrix{_DFR{T}}) where {T<:IEEEFloat} = M
 
 # Paterson-Stockmeyer evaluation of sum(c[k+1] * X^k for k in 0:K)
 # with real double-double coefficients; O(2*sqrt(K)) matrix products.
-function _ps_polyval(c::NTuple{N,Double64}, X::AbstractMatrix{E}, mul::F=*) where {N,E<:Number,F}
+function _ps_polyval(c::NTuple{N,Double64}, X::AbstractMatrix{E}, mul::F = *) where {N,E<:Number,F}
     n = LinearAlgebra.checksquare(X)
     K = N - 1
     q = max(1, round(Int, sqrt(K)))
@@ -47,19 +45,19 @@ function _ps_polyval(c::NTuple{N,Double64}, X::AbstractMatrix{E}, mul::F=*) wher
     P = Vector{typeof(X)}(undef, q)          # X^1 .. X^q
     P[1] = X
     for i in 2:q
-        P[i] = mul(P[i-1], X)
+        P[i] = mul(P[i - 1], X)
     end
     J = K ÷ q
     blockpoly(j) = begin
-        M = Matrix{E}(RT(c[j*q + 1]) * I, n, n)
-        for r in 1:q-1
+        M = Matrix{E}(RT(c[j * q + 1]) * I, n, n)
+        for r in 1:(q - 1)
             j*q + r <= K || break
-            M += RT(c[j*q + r + 1]) * P[r]
+            M += RT(c[j * q + r + 1]) * P[r]
         end
         M
     end
     S = blockpoly(J)
-    for j in J-1:-1:1
+    for j in (J - 1):-1:1
         S = mul(S, P[q]) + blockpoly(j)
     end
     # final block j = 0 covers degrees 1:q-1 plus the constant term
@@ -86,7 +84,7 @@ function _mat_triangle(A)
     upper = lower = true
     @inbounds for j in axes(A, 2), i in axes(A, 1)
         i == j && continue
-        if (i > j ? upper : lower) && !_mat_zero(A[i,j])
+        if (i > j ? upper : lower) && !_mat_zero(A[i, j])
             if i > j
                 upper = false
             else
@@ -98,17 +96,16 @@ function _mat_triangle(A)
     return upper ? :upper : :lower
 end
 
-function _mat_diagonal(f::F, A, positive=false) where {F}
+function _mat_diagonal(f::F, A, positive = false) where {F}
     A isa Matrix{Double64} || return nothing
     n = size(A, 1)
     n > 0 && size(A, 2) == n || return nothing
     @inbounds for j in 1:n, i in 1:n
-        i == j || _mat_zero(A[i,j]) || return nothing
+        i == j || _mat_zero(A[i, j]) || return nothing
     end
     @inbounds for j in 1:n
-        x = A[j,j]
-        within = positive ? _batch_bounded(x, 0x1p-64, 8.0) :
-                            _batch_abs_bounded(x, 0x1p-64, 8.0)
+        x = A[j, j]
+        within = positive ? _batch_bounded(x, 0x1p-64, 8.0) : _batch_abs_bounded(x, 0x1p-64, 8.0)
         within || return nothing
     end
     return _mat_diagonal_result(f, A)
@@ -126,8 +123,7 @@ _mat_transpose(A::Tuple) = map(_mat_transpose, A)
 function _mat_polynomial(f::F, A, eta, args...) where {F}
     # For this input norm the scaled powers, reconstruction, and
     # coefficient combinations stay within the packed product envelope.
-    if A isa Matrix{<:Union{Double64,ComplexDF64}} && size(A, 1) >= 64 &&
-       eta <= 8
+    if A isa Matrix{<:Union{Double64,ComplexDF64}} && size(A, 1) >= 64 && eta <= 8
         side = _mat_triangle(A)
         if side !== :general && all(_mat_ordinary, A)
             side === :upper && return f(_mat_tri_mul, A, eta, args...)
@@ -137,7 +133,7 @@ function _mat_polynomial(f::F, A, eta, args...) where {F}
     return f(*, A, eta, args...)
 end
 
-function _matexp(A::Matrix{E}, eta=nothing) where {E<:Number}
+function _matexp(A::Matrix{E}, eta = nothing) where {E<:Number}
     n = LinearAlgebra.checksquare(A)
     n == 0 && return copy(A)
     eta = eta === nothing ? opnorm(A, 1) : eta
@@ -197,12 +193,10 @@ end
 # real results), replacing the 4x-cost complex exp(im*A) route and the
 # two-exponential hyperbolic route.
 
-const _msc_sin  = ntuple(j -> j == 1 ? Double64(1.0, 0.0) :
-                          (isodd(j) ? inv_fact[2j-1] : -inv_fact[2j-1]), 14)
-const _msc_cos  = ntuple(j -> j == 1 ? Double64(1.0, 0.0) :
-                          (isodd(j) ? inv_fact[2j-2] : -inv_fact[2j-2]), 14)
-const _msc_sinh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j-1], 14)
-const _msc_cosh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j-2], 14)
+const _msc_sin = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : (isodd(j) ? inv_fact[2j - 1] : -inv_fact[2j - 1]), 14)
+const _msc_cos = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : (isodd(j) ? inv_fact[2j - 2] : -inv_fact[2j - 2]), 14)
+const _msc_sinh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j - 1], 14)
+const _msc_cosh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j - 2], 14)
 
 # sum(c[j+1] * Y^j for j in 0:13) sharing the power stack Y..Y^4
 function _pair_poly(c::NTuple{14,Double64}, Y::Matrix{E}, P2, P3, P4, n, mul::F) where {E<:Number,F}
@@ -222,8 +216,7 @@ end
 
 # with ||B||_1 <= 0.5, ||Y|| <= 0.25 and the 14-term series truncates
 # below 2^-114; the double-angle phase then mirrors exp's squaring phase
-function _mat_pair(A::Matrix{E}, codd::NTuple{14,Double64},
-                   ceven::NTuple{14,Double64}, eta=nothing) where {E<:Number}
+function _mat_pair(A::Matrix{E}, codd::NTuple{14,Double64}, ceven::NTuple{14,Double64}, eta = nothing) where {E<:Number}
     n = LinearAlgebra.checksquare(A)
     eta = eta === nothing ? opnorm(A, 1) : eta
     isfinite(eta) || return fill(E(NaN), n, n), fill(E(NaN), n, n)
@@ -234,7 +227,9 @@ function _mat_pair_poly(mul::F, A::Matrix{E}, eta, codd, ceven) where {F,E}
     s = eta > 0.5 ? exponent(Float64(eta)) + 2 : 0
     B = s > 0 ? A .* real(E)(2.0)^(-s) : A
     Y = mul(B, B)
-    P2 = mul(Y, Y); P3 = mul(P2, Y); P4 = mul(P3, Y)
+    P2 = mul(Y, Y)
+    P3 = mul(P2, Y)
+    P4 = mul(P3, Y)
     n = size(A, 1)
     sn = mul(B, _pair_poly(codd, Y, P2, P3, P4, n, mul))
     cs = _pair_poly(ceven, Y, P2, P3, P4, n, mul)
@@ -248,7 +243,7 @@ function _mat_pair_poly(mul::F, A::Matrix{E}, eta, codd, ceven) where {F,E}
 end
 
 # The even member alone uses one square per doubling.
-function _mat_even(A::Matrix{E}, ceven::NTuple{14,Double64}, eta=nothing) where {E<:Number}
+function _mat_even(A::Matrix{E}, ceven::NTuple{14,Double64}, eta = nothing) where {E<:Number}
     n = LinearAlgebra.checksquare(A)
     eta = eta === nothing ? opnorm(A, 1) : eta
     isfinite(eta) || return fill(E(NaN), n, n)
@@ -259,7 +254,9 @@ function _mat_even_poly(mul::F, A::Matrix{E}, eta, ceven) where {F,E}
     s = eta > 0.5 ? exponent(Float64(eta)) + 2 : 0
     B = s > 0 ? A .* real(E)(2.0)^(-s) : A
     Y = mul(B, B)
-    P2 = mul(Y, Y); P3 = mul(P2, Y); P4 = mul(P3, Y)
+    P2 = mul(Y, Y)
+    P3 = mul(P2, Y)
+    P4 = mul(P3, Y)
     cs = _pair_poly(ceven, Y, P2, P3, P4, size(A, 1), mul)
     for _ in 1:s
         cs2 = mul(cs, cs)
@@ -268,21 +265,21 @@ function _mat_even_poly(mul::F, A::Matrix{E}, eta, ceven) where {F,E}
     return cs
 end
 
-_diag_allnonneg(m) = all(i -> !signbit(HI(m[i,i])), 1:size(m,1))
-_diag_allpos(m)    = all(i -> HI(m[i,i]) > 0.0, 1:size(m,1))
+_diag_allnonneg(m) = all(i -> !signbit(HI(m[i, i])), 1:size(m, 1))
+_diag_allpos(m) = all(i -> HI(m[i, i]) > 0.0, 1:size(m, 1))
 
 # square root of an upper triangular matrix (Bjorck-Hammarling recurrence)
 function _sqrt_uppertri_point(Tm::Matrix{E}) where {E<:Number}
     n = size(Tm, 1)
     U = zeros(E, n, n)
     @inbounds for j in 1:n
-        U[j,j] = sqrt(Tm[j,j])
-        for i in j-1:-1:1
-            s = Tm[i,j]
-            for k in i+1:j-1
-                s -= U[i,k] * U[k,j]
+        U[j, j] = sqrt(Tm[j, j])
+        for i in (j - 1):-1:1
+            s = Tm[i, j]
+            for k in (i + 1):(j - 1)
+                s -= U[i, k] * U[k, j]
             end
-            U[i,j] = s / (U[i,i] + U[j,j])
+            U[i, j] = s / (U[i, i] + U[j, j])
         end
     end
     return U
@@ -290,10 +287,12 @@ end
 
 # Restrict blocked solves to an ordinary, near-identity triangle. In
 # this envelope Re(sqrt(T[i,i])) is separated from zero.
-function _sqrt_uppertri(Tm::Matrix{E}, eta=nothing) where {E<:Number}
-    if E <: Union{Double64,ComplexDF64} && size(Tm, 1) >= 96 &&
-       all(_mat_ordinary, Tm) && (eta === nothing ? opnorm(Tm - I, 1) : eta) <= 0.625 &&
-       all(i -> real(Tm[i,i]) >= 0.375, axes(Tm, 1))
+function _sqrt_uppertri(Tm::Matrix{E}, eta = nothing) where {E<:Number}
+    if E <: Union{Double64,ComplexDF64} &&
+       size(Tm, 1) >= 96 &&
+       all(_mat_ordinary, Tm) &&
+       (eta === nothing ? opnorm(Tm - I, 1) : eta) <= 0.625 &&
+       all(i -> real(Tm[i, i]) >= 0.375, axes(Tm, 1))
         R = _sqrt_uppertri_blocked(Tm, 12)
         R === nothing || return R
     end
@@ -303,33 +302,32 @@ end
 function _sqrt_uppertri_blocked(Tm::Matrix{E}, width) where {E}
     n = size(Tm, 1)
     blocks = [i:min(i + width - 1, n) for i in 1:width:n]
-    roots = [_sqrt_uppertri_point(Tm[J,J]) for J in blocks]
+    roots = [_sqrt_uppertri_point(Tm[J, J]) for J in blocks]
     for R in roots
-        all(_mat_packable, R) && all(i -> real(R[i,i]) >= 0.5, axes(R, 1)) || return nothing
+        all(_mat_packable, R) && all(i -> real(R[i, i]) >= 0.5, axes(R, 1)) || return nothing
     end
     U = zeros(E, n, n)
     workspace = _root_product_workspace(E, width, n)
     for (j, J) in enumerate(blocks)
-        U[J,J] = roots[j]
-        for i in j-1:-1:1
+        U[J, J] = roots[j]
+        for i in (j - 1):-1:1
             I = blocks[i]
-            F = Tm[I,J]
+            F = Tm[I, J]
             if i + 1 < j
-                K = first(blocks[i+1]):last(blocks[j-1])
-                @views _root_subproduct!(F, U[I,K], U[K,J], workspace)
+                K = first(blocks[i + 1]):last(blocks[j - 1])
+                @views _root_subproduct!(F, U[I, K], U[K, J], workspace)
             end
             all(_mat_packable, F) || return nothing
             _sylvester_uppertri!(roots[i], roots[j], F)
             all(_mat_packable, F) || return nothing
-            U[I,J] = F
+            U[I, J] = F
         end
     end
     return U
 end
 
 function _mat_schur_restore(Z, U)
-    if Z isa Matrix{ComplexDF64} && size(Z, 1) >= 16 &&
-       all(_mat_packable, Z) && all(_mat_packable, U)
+    if Z isa Matrix{ComplexDF64} && size(Z, 1) >= 16 && all(_mat_packable, Z) && all(_mat_packable, U)
         return (Z * U) * Matrix(adjoint(Z))
     end
     return Z * U * Z'
@@ -400,14 +398,18 @@ function _log_uppertri(T0::Matrix{E}) where {E<:Number}
         s += 1
     end
     Gu = UpperTriangular(shifted) / UpperTriangular(Tk + I)
-    L = if n >= 24 && E <: Union{Double64,ComplexDF64} &&
-           eta <= 0.25 && all(_mat_ordinary, T0) && all(_mat_packable, Gu)
-        G = Matrix(Gu)
-        mul = n >= 64 ? _mat_tri_mul : *
-        mul(G, _ps_polyval(_matlog_coeffs, mul(G, G), mul))
-    else
-        Gu * _ps_polyval(_matlog_coeffs, Gu * Gu)
-    end
+    L =
+        if n >= 24 &&
+           E <: Union{Double64,ComplexDF64} &&
+           eta <= 0.25 &&
+           all(_mat_ordinary, T0) &&
+           all(_mat_packable, Gu)
+            G = Matrix(Gu)
+            mul = n >= 64 ? _mat_tri_mul : *
+            mul(G, _ps_polyval(_matlog_coeffs, mul(G, G), mul))
+        else
+            Gu * _ps_polyval(_matlog_coeffs, Gu * Gu)
+        end
     L = L .+ L                                  # the series is 2*G*S
     return L .* real(E)(2.0)^s
 end
@@ -416,14 +418,14 @@ function _matlog_schur(m::Matrix{E}) where {E<:Number}
     CT = complex(real(E))
     S = schur(Matrix{CT}(m))
     for i in 1:size(m, 1)
-        iszero(S.T[i,i]) && throw(SingularException(i))
+        iszero(S.T[i, i]) && throw(SingularException(i))
     end
     return _mat_schur_restore(S.Z, _log_uppertri(S.T))
 end
 
 function _log_uppertri_checked(Tm::Matrix{E}) where {E<:Number}
     for i in 1:size(Tm, 1)
-        iszero(Tm[i,i]) && throw(SingularException(i))
+        iszero(Tm[i, i]) && throw(SingularException(i))
     end
     return _log_uppertri(Tm)
 end
@@ -500,8 +502,11 @@ cos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cos, m, _msc_
 cosh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cosh, m, _msc_cosh)
 
 function _mat_tangent(s, c)
-    if c isa Matrix{<:Union{Double64,ComplexDF64}} && size(c, 1) >= 64 &&
-       all(_mat_packable, c) && all(_mat_packable, s) && opnorm(c - I, 1) <= 0.5
+    if c isa Matrix{<:Union{Double64,ComplexDF64}} &&
+       size(c, 1) >= 64 &&
+       all(_mat_packable, c) &&
+       all(_mat_packable, s) &&
+       opnorm(c - I, 1) <= 0.5
         side = _mat_triangle(c)
         side === :upper && return s / UpperTriangular(c)
         side === :lower && return s / LowerTriangular(c)
@@ -519,14 +524,14 @@ function tanh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     return _mat_tangent(_mat_pair(m, _msc_sinh, _msc_cosh)...)
 end
 
-csc(m::Matrix{<:_DFRC{T}})  where {T<:IEEEFloat} = inv(sin(m))
-sec(m::Matrix{<:_DFRC{T}})  where {T<:IEEEFloat} = inv(cos(m))
-cot(m::Matrix{<:_DFRC{T}})  where {T<:IEEEFloat} = inv(tan(m))
+csc(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(sin(m))
+sec(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(cos(m))
+cot(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tan(m))
 csch(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(sinh(m))
 sech(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(cosh(m))
 coth(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tanh(m))
 
 expm1(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = exp(m) - I
 log1p(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m + I)
-log2(m::Matrix{<:_DFRC{T}})  where {T<:IEEEFloat} = log(m) .* invlogtwo(DoubleFloat{T})
+log2(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogtwo(DoubleFloat{T})
 log10(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogten(DoubleFloat{T})

@@ -10,9 +10,9 @@ convert(::Type{Float64}, x::Double64) = HI(x)
 convert(::Type{Float32}, x::Double32) = HI(x)
 convert(::Type{Float16}, x::Double16) = HI(x)
 
-convert(::Type{DoubleFloat{T}}, x::I) where {T<:IEEEFloat, I<:Integer} = DoubleFloat{T}(T(x))
+convert(::Type{DoubleFloat{T}}, x::I) where {T<:IEEEFloat,I<:Integer} = DoubleFloat{T}(T(x))
 
-function convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat, I<:Integer}
+function convert(::Type{I}, x::DoubleFloat{T}) where {T<:IEEEFloat,I<:Integer}
     bi = trunc(BigInt, BigFloat(HI(x)) + BigFloat(LO(x)))
     convert(Int64, bi)
 end
@@ -36,12 +36,14 @@ function convert(::Type{DoubleFloat{T}}, x::BigInt) where {T<:IEEEFloat}
 end
 
 convert(::Type{DoubleFloat{T}}, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = HI(x)
-convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat(x, DoubleFloat{T}(zero(T)))
+convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::DoubleFloat{T}) where {T<:IEEEFloat} =
+    DoubleFloat(x, DoubleFloat{T}(zero(T)))
 
 convert(::Type{T}, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = HI(HI(x))
-convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::T) where {T<:IEEEFloat} = DoubleFloat(DoubleFloat{T}(x), DoubleFloat{T}(zero(T)))
+convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::T) where {T<:IEEEFloat} =
+    DoubleFloat(DoubleFloat{T}(x), DoubleFloat{T}(zero(T)))
 
-convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1],x[2])
+convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2])
 
 convert(::Type{Complex{Double64}}, x::T) where {T<:AbstractIrrational} = Complex(Double64(x))
 convert(::Type{Complex{Double32}}, x::T) where {T<:AbstractIrrational} = Complex(Double32(x))

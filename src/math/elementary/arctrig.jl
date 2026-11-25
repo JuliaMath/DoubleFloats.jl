@@ -1,8 +1,8 @@
 for F in (:asin, :acos, :acsc, :asec, :acot)
     @eval begin
-      $F(x::Double64) = Double64Float128($F, x)
-      $F(x::Double32) = Double32Float128($F, x)
-      $F(x::Double16) = Double16Float128($F, x)
+        $F(x::Double64) = Double64Float128($F, x)
+        $F(x::Double32) = Double32Float128($F, x)
+        $F(x::Double16) = Double16Float128($F, x)
     end
 end
 

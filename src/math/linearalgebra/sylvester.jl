@@ -11,30 +11,30 @@
 #     lq(A).Q is exactly qr(A').Q', which also supplies the missing
 #     LQPackedQ kernels (materialization and multiplication).
 
-const _DFmat{T} = StridedMatrix{<:Union{DoubleFloat{T}, Complex{DoubleFloat{T}}}}
+const _DFmat{T} = StridedMatrix{<:Union{DoubleFloat{T},Complex{DoubleFloat{T}}}}
 
 # solve TA*Y + Y*TB = F in place of F, with TA (m x m) and TB (n x n)
 # upper triangular; column-by-column back-substitution
 function _sylvester_uppertri!(TA::Matrix{E}, TB::Matrix{E}, F::Matrix{E}) where {E<:Number}
     m, n = size(F)
     @inbounds for j in 1:n
-        for i in 1:j-1                       # couple in already-solved columns
-            c = TB[i,j]
+        for i in 1:(j - 1)                       # couple in already-solved columns
+            c = TB[i, j]
             if !iszero(c)
                 for r in 1:m
-                    F[r,j] -= F[r,i] * c
+                    F[r, j] -= F[r, i] * c
                 end
             end
         end
-        lam = TB[j,j]                        # (TA + lam*I) y = F[:,j]
+        lam = TB[j, j]                        # (TA + lam*I) y = F[:,j]
         for i in m:-1:1
-            s = F[i,j]
-            for k in i+1:m
-                s -= TA[i,k] * F[k,j]
+            s = F[i, j]
+            for k in (i + 1):m
+                s -= TA[i, k] * F[k, j]
             end
-            den = TA[i,i] + lam
+            den = TA[i, i] + lam
             iszero(den) && throw(SingularException(i))
-            F[i,j] = s / den
+            F[i, j] = s / den
         end
     end
     return F
@@ -50,8 +50,7 @@ function LinearAlgebra.sylvester(A::_DFmat{T}, B::_DFmat{T}, C::_DFmat{T}) where
     end
     m = LinearAlgebra.checksquare(A)
     n = LinearAlgebra.checksquare(B)
-    size(C) == (m, n) ||
-        throw(DimensionMismatch("C has size $(size(C)), expected ($m, $n)"))
+    size(C) == (m, n) || throw(DimensionMismatch("C has size $(size(C)), expected ($m, $n)"))
     CT = Complex{DoubleFloat{T}}
     SA = schur(Matrix{CT}(A))
     SB = schur(Matrix{CT}(B))
@@ -72,8 +71,7 @@ end
 #   A' = Q_qr * R   ==>   A = R' * Q_qr' = L * Q_lq
 # lq() stores factors = (qr(A').factors)' and tau = conj(qr(A').tau), so
 # this helper reconstructs the underlying QRPackedQ exactly
-_lq_qrQ(factors::AbstractMatrix, tau::AbstractVector) =
-    LinearAlgebra.QRPackedQ(Matrix(adjoint(factors)), conj.(tau))
+_lq_qrQ(factors::AbstractMatrix, tau::AbstractVector) = LinearAlgebra.QRPackedQ(Matrix(adjoint(factors)), conj.(tau))
 _lq_qrQ(Q::LinearAlgebra.LQPackedQ) = _lq_qrQ(Q.factors, Q.τ)
 
 function LinearAlgebra.lq(A::_DFmat{T}) where {T<:IEEEFloat}
@@ -83,7 +81,9 @@ end
 
 # materialization (the BlasFloat path uses LAPACK.orglq!): the thin
 # min(m,n) x n row-block of Q, matching the LAPACK-backed convention
-function Base.Matrix{MT}(Q::LinearAlgebra.LQPackedQ{E}) where {MT, E<:Union{DoubleFloat{<:IEEEFloat}, Complex{<:DoubleFloat{<:IEEEFloat}}}}
+function Base.Matrix{MT}(
+    Q::LinearAlgebra.LQPackedQ{E},
+) where {MT,E<:Union{DoubleFloat{<:IEEEFloat},Complex{<:DoubleFloat{<:IEEEFloat}}}}
     m, n = size(Q.factors)
     Qfull = lmul!(_lq_qrQ(Q), Matrix{E}(I, n, n))
     return convert(Matrix{MT}, Matrix(adjoint(view(Qfull, :, 1:min(m, n)))))
@@ -91,18 +91,30 @@ end
 
 # multiplication kernels (Q_lq == Q_qr'), delegated to the generic
 # QRPackedQ machinery
-function LinearAlgebra.lmul!(Q::LinearAlgebra.LQPackedQ{E}, B::AbstractVecOrMat) where {E<:Union{DoubleFloat{<:IEEEFloat}, Complex{<:DoubleFloat{<:IEEEFloat}}}}
+function LinearAlgebra.lmul!(
+    Q::LinearAlgebra.LQPackedQ{E},
+    B::AbstractVecOrMat,
+) where {E<:Union{DoubleFloat{<:IEEEFloat},Complex{<:DoubleFloat{<:IEEEFloat}}}}
     return lmul!(adjoint(_lq_qrQ(Q)), B)
 end
 
-function LinearAlgebra.lmul!(aQ::LinearAlgebra.AdjointQ{<:Any, <:LinearAlgebra.LQPackedQ{E}}, B::AbstractVecOrMat) where {E<:Union{DoubleFloat{<:IEEEFloat}, Complex{<:DoubleFloat{<:IEEEFloat}}}}
+function LinearAlgebra.lmul!(
+    aQ::LinearAlgebra.AdjointQ{<:Any,<:LinearAlgebra.LQPackedQ{E}},
+    B::AbstractVecOrMat,
+) where {E<:Union{DoubleFloat{<:IEEEFloat},Complex{<:DoubleFloat{<:IEEEFloat}}}}
     return lmul!(_lq_qrQ(parent(aQ)), B)
 end
 
-function LinearAlgebra.rmul!(A::AbstractMatrix, Q::LinearAlgebra.LQPackedQ{E}) where {E<:Union{DoubleFloat{<:IEEEFloat}, Complex{<:DoubleFloat{<:IEEEFloat}}}}
+function LinearAlgebra.rmul!(
+    A::AbstractMatrix,
+    Q::LinearAlgebra.LQPackedQ{E},
+) where {E<:Union{DoubleFloat{<:IEEEFloat},Complex{<:DoubleFloat{<:IEEEFloat}}}}
     return rmul!(A, adjoint(_lq_qrQ(Q)))
 end
 
-function LinearAlgebra.rmul!(A::AbstractMatrix, aQ::LinearAlgebra.AdjointQ{<:Any, <:LinearAlgebra.LQPackedQ{E}}) where {E<:Union{DoubleFloat{<:IEEEFloat}, Complex{<:DoubleFloat{<:IEEEFloat}}}}
+function LinearAlgebra.rmul!(
+    A::AbstractMatrix,
+    aQ::LinearAlgebra.AdjointQ{<:Any,<:LinearAlgebra.LQPackedQ{E}},
+) where {E<:Union{DoubleFloat{<:IEEEFloat},Complex{<:DoubleFloat{<:IEEEFloat}}}}
     return rmul!(A, _lq_qrQ(parent(aQ)))
 end

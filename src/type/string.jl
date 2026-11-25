@@ -3,13 +3,15 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     str = string(Float128(x))
     eat = findlast('e', str)
     isnothing(eat) && return str
-    str[eat+2:end] === "00" && return(str[1:eat-1])
-    
+    str[(eat + 2):end] === "00" && return (str[1:(eat - 1)])
+
     zat = eat - 1
     while str[zat] === '0'
         zat -= 1
     end
-    if (str[zat] === '.') zat += 1 end
+    if (str[zat] === '.')
+        zat += 1
+    end
     str[1:zat] * str[eat:end]
 end
 
@@ -24,7 +26,8 @@ end
     stringtyped
     
 a `full representation of a DoubleFloat as a string
-""" stringtyped
+"""
+stringtyped
 
 function stringtyped(x::Double64)
     str = string("Double64(", HI(x), ", ", LO(x), ")")
