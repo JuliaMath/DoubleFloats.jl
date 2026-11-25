@@ -59,8 +59,13 @@ function sqrt_dd_dd(x::Tuple{T,T}) where {T<:IEEEFloat}
     signbit(HI(x)) && Base.Math.throw_complex_domainerror(:sqrt, HI(x))
     isinf(HI(x)) && return x
 
+    return _sqrt_positive(x, sqrt)
+end
+
+# Called only after proving the high limb is positive and finite.
+@inline function _sqrt_positive(x, root::F) where {F}
     ahi, alo = HILO(x)
-    s = sqrt(ahi)
+    s = root(ahi)
     d = fma(-s, s, ahi)    # ahi=s*s+d,  same order of magnitude than alo, so we can add alo safely below:
     d += alo               #  ahi+alo = s*s+d = s*s*(1+d/(s*s))   ==> sqrt(ahi+alo) = s*sqrt(1+d/s2) approx= s*(1+d/(2s2)) = s + d/(2*s)
     d = d/(s+s)
@@ -82,7 +87,26 @@ invcuberootsquared(A) is found iteratively using Newton's method with a final ap
 =#
 
 function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
-    isnan(HI(a)) && return a
+    hi, lo = a
+    isnan(hi) && return a
+    (iszero(hi) || isinf(hi)) && return (hi, zero(T))
+    # Across this window the input square and the inverse-square seed's
+    # cube are well inside the Float64 exponent range.
+    if T === Float64 && !(0x1p-256 <= abs(hi) <= 0x1p256)
+        return _cbrt_rescaled(hi, lo)
+    end
+    return _cbrt_newton(a)
+end
+
+@noinline function _cbrt_rescaled(hi::Float64, lo::Float64)
+    k = fld(exponent(abs(hi)), 3)
+    # The scaled head has magnitude in [1, 8). Scale the limbs directly
+    # because the normalizing factor itself can exceed floatmax.
+    rh, rl = _cbrt_newton((ldexp(hi, -3k), ldexp(lo, -3k)))
+    return ldexp(rh, k), ldexp(rl, k)
+end
+
+function _cbrt_newton(a::Tuple{T,T}) where {T<:IEEEFloat}
     a2 = mul_dddd_dd(a,a)
     one1 = one(T)
     onethird = (0.3333333333333333, 1.850371707708594e-17)
@@ -134,6 +158,6 @@ function cbrt_dd_dd(a::Tuple{T,T}) where {T<:IEEEFloat}
 
     ax = add_dddd_dd(ax, amax3)
 
-    isnan(HI(ax)) && return (cbrt(HI(a)), zero(T))  # subnormal numbers
+    T !== Float64 && isnan(HI(ax)) && return (cbrt(HI(a)), zero(T))
     return ax
 end

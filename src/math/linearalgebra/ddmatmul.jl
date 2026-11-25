@@ -43,11 +43,14 @@ function _planes(A::AbstractMatrix{Double64})
 end
 
 # C-planes += A-planes * B-planes
-function _dd_gemm_acc!(Ch, Cl, Ah, Al, Bh, Bl)
+function _dd_gemm_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate=false)
     m, K = size(Ah)
     n = size(Bh, 2)
     @inbounds for j in 1:n, k in 1:K
         bh = Bh[k, j]; bl = Bl[k, j]
+        if negate
+            bh, bl = -bh, -bl
+        end
         @simd for i in 1:m
             h, l = _dd_fma_acc(Ah[i, k], Al[i, k], bh, bl, Ch[i, j], Cl[i, j])
             Ch[i, j] = h
@@ -131,4 +134,129 @@ function LinearAlgebra.mul!(C::Matrix{Complex{Double64}}, A::Matrix{Complex{Doub
         end
     end
     return C
+end
+
+# A conservative envelope for the unchecked packed products. Even with
+# typemax(Int) summands, products and partial sums have exponent headroom.
+@inline function _mat_packable(x::Double64)
+    h, l = HILO(x)
+    return (abs(h) <= 0x1p200) & (abs(l) <= 0x1p200)
+end
+@inline _mat_packable(x::ComplexDF64) = _mat_packable(real(x)) & _mat_packable(imag(x))
+
+# Both operands are known to be upper triangular by the matrix-function
+# driver. Retain the dense accumulator's ascending k order.
+function _dd_tri_acc!(Ch, Cl, Ah, Al, Bh, Bl, negate=false)
+    n = size(Ah, 1)
+    @inbounds for j in 1:n, k in 1:j
+        bh, bl = Bh[k,j], Bl[k,j]
+        if negate
+            bh, bl = -bh, -bl
+        end
+        @simd for i in 1:k
+            Ch[i,j], Cl[i,j] = _dd_fma_acc(Ah[i,k], Al[i,k], bh, bl, Ch[i,j], Cl[i,j])
+        end
+    end
+    return nothing
+end
+
+function _mat_tri_mul(A::Matrix{Double64}, B::Matrix{Double64})
+    all(_mat_packable, A) && all(_mat_packable, B) || return A * B
+    Ah, Al = _planes(A)
+    Bh, Bl = _planes(B)
+    Ch = zeros(Float64, size(A))
+    Cl = zeros(Float64, size(A))
+    _dd_tri_acc!(Ch, Cl, Ah, Al, Bh, Bl)
+    return _combine!(similar(A), Ch, Cl, true, false)
+end
+
+function _mat_tri_mul(A::Matrix{ComplexDF64}, B::Matrix{ComplexDF64})
+    all(_mat_packable, A) && all(_mat_packable, B) || return A * B
+    left = _packed_planes(ComplexDF64, size(A))
+    right = _packed_planes(ComplexDF64, size(B))
+    _pack_planes!(left, A)
+    _pack_planes!(right, B)
+    Arh, Arl, Aih, Ail = left
+    Brh, Brl, Bih, Bil = right
+    Crh = zeros(Float64, size(A)); Crl = zeros(Float64, size(A))
+    Cih = zeros(Float64, size(A)); Cil = zeros(Float64, size(A))
+    _dd_tri_acc!(Crh, Crl, Arh, Arl, Brh, Brl)
+    _dd_tri_acc!(Crh, Crl, Aih, Ail, Bih, Bil, true)
+    _dd_tri_acc!(Cih, Cil, Arh, Arl, Bih, Bil)
+    _dd_tri_acc!(Cih, Cil, Aih, Ail, Brh, Brl)
+    C = similar(A)
+    @inbounds for i in eachindex(C)
+        C[i] = ComplexDF64(Double64(Crh[i], Crl[i]), Double64(Cih[i], Cil[i]))
+    end
+    return C
+end
+
+# A blocked root reuses one set of packed buffers. Views cover only the
+# active rectangle, including the short block at the end of the matrix.
+_packed_planes(::Type{Double64}, dims) = ntuple(_ -> Matrix{Float64}(undef, dims), Val(2))
+_packed_planes(::Type{ComplexDF64}, dims) = ntuple(_ -> Matrix{Float64}(undef, dims), Val(4))
+
+function _root_product_workspace(::Type{E}, width, n) where {E}
+    return (_packed_planes(E, (width, n)), _packed_planes(E, (n, width)),
+            _packed_planes(E, (width, width)))
+end
+
+@inline _root_panel(planes, m, n) = map(p -> view(p, 1:m, 1:n), planes)
+
+function _pack_planes!(planes, A::AbstractMatrix{Double64})
+    H, L = planes
+    @inbounds for j in axes(A, 2), i in axes(A, 1)
+        H[i,j], L[i,j] = HILO(A[i,j])
+    end
+    return nothing
+end
+
+function _pack_planes!(planes, A::AbstractMatrix{ComplexDF64})
+    Rh, Rl, Ih, Il = planes
+    @inbounds for j in axes(A, 2), i in axes(A, 1)
+        r, z = reim(A[i,j])
+        Rh[i,j], Rl[i,j] = HILO(r)
+        Ih[i,j], Il[i,j] = HILO(z)
+    end
+    return nothing
+end
+
+function _root_subproduct!(F, A, B, workspace)
+    m, n = size(F)
+    k = size(A, 2)
+    threshold = eltype(F) === Double64 ? 4096 : 1024
+    if m * n * k < threshold
+        F .-= Matrix(A) * Matrix(B)
+        return F
+    end
+    left = _root_panel(workspace[1], m, k)
+    right = _root_panel(workspace[2], k, n)
+    product = _root_panel(workspace[3], m, n)
+    _pack_planes!(left, A)
+    _pack_planes!(right, B)
+    foreach(p -> fill!(p, 0.0), product)
+    return _root_subproduct!(F, left, right, product, eltype(F))
+end
+
+function _root_subproduct!(F, A, B, C, ::Type{Double64})
+    Ch, Cl = C
+    _dd_gemm_acc!(Ch, Cl, A..., B...)
+    @inbounds for j in axes(F, 2), i in axes(F, 1)
+        F[i,j] -= Double64(Ch[i,j], Cl[i,j])
+    end
+    return F
+end
+
+function _root_subproduct!(F, A, B, C, ::Type{ComplexDF64})
+    Arh, Arl, Aih, Ail = A
+    Brh, Brl, Bih, Bil = B
+    Crh, Crl, Cih, Cil = C
+    _dd_gemm_acc!(Crh, Crl, Arh, Arl, Brh, Brl)
+    _dd_gemm_acc!(Crh, Crl, Aih, Ail, Bih, Bil, true)
+    _dd_gemm_acc!(Cih, Cil, Arh, Arl, Bih, Bil)
+    _dd_gemm_acc!(Cih, Cil, Aih, Ail, Brh, Brl)
+    @inbounds for j in axes(F, 2), i in axes(F, 1)
+        F[i,j] -= ComplexDF64(Double64(Crh[i,j], Crl[i,j]), Double64(Cih[i,j], Cil[i,j]))
+    end
+    return F
 end

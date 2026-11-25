@@ -1,49 +1,35 @@
 # Special Functions
 
-DoubleFloats supports some special functions of real values.
+These functions accept real `Double64`, `Double32`, and `Double16`
+arguments. Load them with `using DoubleFloats`.
 
-_`x` below is any of `Double64`, `Double32`, `Double16`_
+| Family | Calls |
+|:-------|:------|
+| [Bessel functions of the first kind](glossary.md#glossary-bessel) | `besselj0(x)`, `besselj1(x)`, `besselj(n, x)` with integer order [`n`](glossary.md#glossary-bessel) |
+| [Bessel functions of the second kind](glossary.md#glossary-bessel) | `bessely0(x)`, `bessely1(x)`, `bessely(n, x)` with integer order `n` |
+| [Gamma function](glossary.md#glossary-gamma) | `gamma(x)` |
+| [Error function and its complement](glossary.md#glossary-erf) | `erf(x)`, `erfc(x)` |
+| [Arithmetic-geometric mean](glossary.md#glossary-agm) | `agm(a, b)`, `agm1(x)` for `agm(one(x), x)` |
+| [Complete elliptic integral of the first kind](glossary.md#glossary-elliptic-integral) | `ellipk(m)` with parameter `m` |
 
-## Bessel Functions
+For the logarithm of the absolute gamma function and its sign, use
+`DoubleFloats.logabsgamma(x)`. The Bessel, gamma, and error functions
+use [`Float128`](glossary.md#glossary-float128) internally. See the [Accuracy Report](accuracy_report.md)
+for sampled functions and domains.
 
-- `besselj0(x)`, besselj1(x)`
-    - `besselj(0, x)`, `besselj(1, x)`
-    
-- `bessely0(x)`, `bessely1(x)`
-    - `bessely(0, x)`, `bessely(1, x)`
+## Arithmetic-geometric mean and elliptic integral
 
-- `besselj(nu::Int, x)`
-    - Bessel function of the first kind
+Use same-type positive inputs for the usual arithmetic-geometric mean.
+The iteration stops when the gap ceases to shrink. `ellipk(m)` uses
+the parameter [`m`](glossary.md#glossary-elliptic-integral). If your formula is expressed in terms of the [modulus](glossary.md#glossary-elliptic-integral)
+[`k`](glossary.md#glossary-elliptic-integral), pass `k^2`. The implemented real domain is `0 ≤ m ≤ 1`, with
+an infinite result at `m = 1`.
 
-- `bessely(nu::Int, x)`
-    - Bessel function of the second kind
+```@example elliptic_integral
+using DoubleFloats
 
-
-## Gamma Functions
-
-- `gamma(x)`
-    - gamma function
-    
-- `loggamma(x)`, `lgamma(x)`
-    - log gamma function
-    
-## Error Functions
-
-- `erf(x)`
-    - error function
-    
-- `erfc(x)`
-    - complementary error function (`1-erf(x)`)
-    
-## Arithmetic-Geometric Mean
-
-- `agm(a, b)`, `agm1(x) = agm(1, x)`
-    - converges for all same-signed operands; the iteration stops at its
-      roundoff floor, so no operand scale can stall it
-
-## Elliptic Integrals
-
-- `ellipk(m)`
-    - Complete Elliptic Integral of the First Kind, `K(m)` with parameter `m`
-    - accurate over the whole domain `0 <= m < 1`, including arbitrarily
-      close to `m = 1`
+k = df64"0.5"
+m = k^2
+@assert isinf(ellipk(one(Double64)))
+string(ellipk(m))
+```

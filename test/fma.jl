@@ -52,3 +52,28 @@ _muladd_allocation_regression() = muladd(Double64(1.0), Double64(1.0), Double64(
   @test @allocated(_fma_allocation_regression()) == 0
   @test @allocated(_muladd_allocation_regression()) == 0
 end
+
+@noinline function _store_fma!(out, op, x, y, z)
+    out[] = op(x, y, z)
+    return nothing
+end
+
+function _test_runtime_fma(op::F, x, y, z) where {F<:Function}
+    out = Ref(zero(Double64))
+    _store_fma!(out, op, x, y, z)
+    @test (@inferred op(x, y, z)) === out[]
+    @test (@allocated _store_fma!(out, op, x, y, z)) == 0
+    setprecision(BigFloat, 512) do
+        reference = BigFloat(x) * BigFloat(y) + BigFloat(z)
+        @test !iszero(reference)
+        @test abs(BigFloat(out[]) - reference) <= abs(reference) * big"1.5e-30"
+    end
+end
+
+@testset "FMA refinement with runtime limbs" begin
+    x = Double64(1.125, 0x1p-56)
+    y = Double64(1.75, -0x1p-55)
+    z = -(x * y)
+    _test_runtime_fma(fma, x, y, z)
+    _test_runtime_fma(muladd, x, y, z)
+end

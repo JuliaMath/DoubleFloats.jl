@@ -1,101 +1,36 @@
-# Characteristics
+# Representation and precision
 
-This package provides extended precision versions of `Float64`, `Float32`, `Float16`.
+## Choose a type
 
-----
+Each real type stores two floats of the same [underlying type](glossary.md#glossary-underlying-type). The number
+of [significand bits](glossary.md#glossary-significand) reported by `precision(T)` describes the [nominal precision](glossary.md#glossary-precision). The significand is the part of the number that carries its
+digits. The [exponent](glossary.md#glossary-exponent) sets their scale.
 
-| type name  | significand | exponent | ◊ | base type | significand | exponent |
-|:-----------|:-----------:|:--------:|:-:|:----------|:-----------:|:--------:|
-| `Double64` |  106 bits   | 11 bits  | ◊ | `Float64` |   53 bits   | 11 bits  |
-| `Double32` |   48 bits   |  8 bits  | ◊ | `Float32` |   24 bits   |  8 bits  |
-| `Double16` |   22 bits   |  5 bits  | ◊ | `Float16` |   11 bits   |  5 bits  |
+| Real type | Underlying pair | Nominal significand | Approximate decimal digits | Complex type |
+|:----------|:----------------|--------------------:|---------------------------:|:-------------|
+| [`Double64`](glossary.md#glossary-doublefloat) | two [`Float64`](glossary.md#glossary-binary-formats) | 106 bits | 32 | [`ComplexDF64`](glossary.md#glossary-complex) |
+| [`Double32`](glossary.md#glossary-doublefloat) | two [`Float32`](glossary.md#glossary-binary-formats) | 48 bits | 14 | [`ComplexDF32`](glossary.md#glossary-complex) |
+| [`Double16`](glossary.md#glossary-doublefloat) | two [`Float16`](glossary.md#glossary-binary-formats) | 22 bits | 6 | [`ComplexDF16`](glossary.md#glossary-complex) |
 
-## Representation
+Start with `Double64` for more precision than `Float64`. A
+`ComplexDF64` stores two `Double64` values, one for each component.
+Use [`BigFloat`](glossary.md#glossary-bigfloat) when you need adjustable precision or a wider exponent
+range. See [Choosing and checking precision](appropriate.md) for a
+reference calculation.
 
+## High and low components
 
-> `Double64` is a magnitude ordered, nonoverlapping pair of `Float64`
->
-> `Double32` is a magnitude ordered, nonoverlapping pair of `Float32`
->
-> `Double16` is a magnitude ordered, nonoverlapping pair of `Float16`
+For ordinary [normalized numbers](glossary.md#glossary-normalized-pair), the [high component](glossary.md#glossary-components) carries the leading
+digits and the low component carries a correction. Arithmetic uses both
+components. Adding them in the underlying type ordinarily rounds away
+the correction.
 
-- (`+`, `-`, `*`) are error-free, (`/`, `sqrt`) are least-error
-- elementary functions are quite accurate
-    - often better than C "double-double" libraries
+Each type retains the exponent range of its underlying float. As a result
+approaches the smallest representable magnitude, the low component can
+become [subnormal](glossary.md#glossary-subnormal) or round to zero, reducing the effective precision.
+The [Technical Guide](technicalguide.md) explains how the representation
+affects the algorithms.
 
-----
-
-> `ComplexDF64` is a (real, imag) pair of `Double64`
->
-> `ComplexDF32` is a (real, imag) pair of `Double32`
->
-> `ComplexDF16` is a (real, imag) pair of `Double16`
-
-- elementary functions are quite accurate
-    - functions and their inverses round-trip well
-
-----
-## Accuracy
-
-For `Double64` arguments within 0.0..2.0
-
-- expect the `abserr` of elementary functions to be 1e-30 or better
-- expect the `relerr` of elementary functions to be 1e-28 or better
-
-----
-
-When used with reasonably sized values, expect successive DoubleFloat ops to add no more than 10⋅𝘂²
-to the cumulative relative error (𝘂 is the relative rounding unit, usually `𝘂 = eps(x)/2`).
-Relative error can accrue steadily. After 100,000 DoubleFloat ops with reasonably sized values,
-the `relerr` could approach 100,000 * 10⋅𝘂². In practice these functions are considerably
-more resiliant: our algorithms come frome seminal papers and extensive numeric investigation.
-
-----
-
-### Absolute and Relative Error
-
-
-
-results for f(x), x in 0..1
- 
-
-| function |   abserr   |   relerr   |
-|:--------:|:----------:|:----------:|
-|   exp    |  1.0e-31   |   1.0e-31  |
-|   log    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sin    |  1.0e-31   |   1.0e-31  |
-|   cos    |  1.0e-31   |   1.0e-31  |
-|   tan    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|  asin    |  1.0e-31   |   1.0e-31  |
-|  acos    |  1.0e-31   |   1.0e-31  |
-|  atan    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sinh   |  1.0e-31   |   1.0e-29  |
-|   cosh   |  1.0e-31   |   1.0e-31  |
-|   tanh   |  1.0e-31   |   1.0e-29  |
-|          |            |            |
-|  asinh   |  1.0e-31   |   1.0e-29  |
-|  atanh   |  1.0e-31   |   1.0e-30  |
-
-
-results for f(x), x in 1..2
- 
-
-| function |   abserr   |   relerr   |
-|:--------:|:----------:|:----------:|
-|   exp    |  1.0e-30   |   1.0e-31  |
-|   log    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sin    |  1.0e-31   |   1.0e-31  |
-|   cos    |  1.0e-31   |   1.0e-28  |
-|   tan    |  1.0e-30   |   1.0e-30  | 
-|          |            |            |
-|  atan    |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|   sinh   |  1.0e-30   |   1.0e-31  |
-|   cosh   |  1.0e-30   |   1.0e-31  |
-|   tanh   |  1.0e-31   |   1.0e-31  |
-|          |            |            |
-|  asinh   |  1.0e-31   |   1.0e-31  |
+The [Accuracy Report](accuracy_report.md) uses a [relative working-precision
+unit](glossary.md#glossary-working-unit) of `2^-104` for `Double64`. This is a scale for comparing measured
+errors. The [spacing](glossary.md#glossary-eps) of a particular stored pair depends on its components.

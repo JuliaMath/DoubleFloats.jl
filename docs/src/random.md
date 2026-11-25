@@ -1,34 +1,26 @@
-# Random
+# Random numbers
 
-```julia
-julia> rand(Double64)
-0.2654749880242928
+Use `rand(T)` for a [uniform sample](glossary.md#glossary-random) on the unit interval and
+`rand(T, n)` for a vector of samples. The complex sampler draws
+the real and imaginary parts separately.
 
-julia> rand(Double32, 4)
-4-element Array{DoubleFloat{Float32},1}:
- 0.62278694
- 0.14700651
- 0.42059994
- 0.8824145 
+For real DoubleFloats, `randn(T)` draws a [standard normal sample](glossary.md#glossary-random).
+`randpm(T)` applies a random sign to a uniform sample. For complex
+values, `randpm` applies signs to the two components independently.
 
-julia> randpm(Double32)
--0.78260666
+```@example random_samples
+using DoubleFloats, Random
 
-julia> randpm(Double64, 4)
-4-element Array{DoubleFloat{Float64},1}:
-  0.8066283194653339
-  0.3846875811169719
- -0.8318619362182055
- -0.1718555031982676
+rng = MersenneTwister(42)
+uniform = rand(rng, Double64, 4)
+normal = randn(rng, Double64)
+signed = randpm(rng, ComplexDF64, 4)
 
-julia> rand(ComplexDF32)
-0.7863289 + 0.9202755im
-
-julia> randpm(ComplexDF32,5)
-5-element Array{Complex{DoubleFloat{Float32}},1}:
- -0.22268367 + 0.94761634im
-   0.9173372 - 0.51481026im
-  0.22448015 + 0.20910525im
- -0.25364602 + 0.4772849im 
- -0.52076036 - 0.40857565im
+@assert length(uniform) == length(signed) == 4
+@assert normal isa Double64
+nothing
 ```
+
+An [explicit RNG](glossary.md#glossary-random) makes the example independent of the session's default
+generator. For `randpm`, the explicit RNG methods accept
+[`MersenneTwister`](glossary.md#glossary-random).

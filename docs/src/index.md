@@ -1,153 +1,50 @@
 # DoubleFloats.jl
 
-### Math with 85+ accurate bits.
-#### Extended precision float and complex types
+DoubleFloats adds real and [complex](glossary.md#glossary-complex) [floating-point types](glossary.md#glossary-floating-point) for Julia. Start
+with [`Double64`](glossary.md#glossary-doublefloat) when [`Float64`](glossary.md#glossary-binary-formats) loses too many digits in a calculation and
+the values fit within the `Float64` [exponent range](glossary.md#glossary-exponent). `Double64` represents
+a number using two `Float64` [components](glossary.md#glossary-components) and provides about 32 decimal
+digits of [working precision](glossary.md#glossary-precision) in ordinary ranges.
 
-- N.B. `Double64` is the most performant type [^β]
+## Install and try it
 
-----
-
-## Installation
+Use Julia 1.10 or later. Run this once in your Julia project.
 
 ```julia
-pkg> add DoubleFloats
-```
-or
-```julia
-julia> using Pkg
-julia> Pkg.add("DoubleFloats")
+using Pkg
+Pkg.add("DoubleFloats")
 ```
 
+Use a [decimal string literal](glossary.md#glossary-construction) to create the number directly at the working
+precision. Here `string` exposes the extra digits of the square root.
 
-## More Performant Than BigFloat
+```@example first_value
+using DoubleFloats
 
-Comparing Double64 and BigFloat after setting BigFloat precision to 106 bits.
-
-| op   | speedup |
-|:-----|--------:|
-| +    |     11x |
-| *    |     18x |
-| \    |      7x |
-| trig |   3x-6x |
- _these results are from BenchmarkTools, on one machine_
-
-
-## Examples
-
-### Double64, Double32, Double16
-```julia
-julia> using DoubleFloats
-
-julia> dbl64 = sqrt(Double64(2)); 1 - dbl64 * inv(dbl64)
-0.0
-julia> dbl32 = sqrt(Double32(2)); 1 - dbl32 * inv(dbl32)
-0.0
-julia> dbl16 = sqrt(Double16(2)); 1 - dbl16 * inv(dbl16)
-0.0
-
-julia> typeof(ans) === Double16
-true
-```
-note: floating-point constants must be used with care,
-they are evaluated as Float64 values before additional processing
-```julia
-julia> Double64(0.2)
-2.0000000000000001110223024625156540e-01
-
-julia> Double64(2)/10
-1.9999999999999999999999999999999937e-01
-
-julia> df64"0.2"
-1.9999999999999999999999999999999937e-01
+x = df64"2"
+string(sqrt(x))
 ```
 
-### Complex functions
-```julia
+## Find the right guide
 
-julia> x = ComplexDF64(sqrt(df64"2"), cbrt(df64"3"))
-1.4142135623730951 + 1.4422495703074083im
+- [Construct values](construction.md) from decimal text, integers, fractions,
+  or existing floating-point data. [Display and parse values](stringshowparse.md)
+  explains how to inspect and exchange them.
+- [Compute with scalars, vectors, and matrices](userguide.md) shows how to apply
+  functions, reuse output arrays, and choose between `exp(A)` and `exp.(A)`.
+- [Choose a precision and check your results](appropriate.md) explains how to
+  measure error and includes a reference calculation with [`BigFloat`](glossary.md#glossary-bigfloat).
+- [Read the implementation and performance details](technicalguide.md) for
+  algorithm choices, [SIMD](glossary.md#glossary-simd) and matrix eligibility, and measured timings.
 
-julia> y = acosh(x)
-1.402873733241199 + 0.8555178360714634im
+## Questions and contributions
 
-julia> x - cosh(y)
-7.395570986446986e-32 + 0.0im
-```
-### show, string, parse
-```julia
-julia> using DoubleFloats
-
-julia> x = sqrt(Double64(2)) / sqrt(Double64(6))
-0.5773502691896257
-
-julia> string(x)
-"5.7735026918962576450914878050194151e-01"
-
-julia> show(IOContext(Base.stdout,:compact=>false),x)
-5.7735026918962576450914878050194151e-01
-
-julia> showtyped(x)
-Double64(0.5773502691896257, 3.3450280739356326e-17)
-
-julia> showtyped(parse(Double64, stringtyped(x)))
-Double64(0.5773502691896257, 3.3450280739356326e-17)
-
-julia> Meta.parse(stringtyped(x))
-:(Double64(0.5773502691896257, 3.3450280739356326e-17))
-
-julia> x = ComplexDF32(sqrt(d32"2"), cbrt(d32"3"))
-1.4142135 + 1.4422495im
-
-julia> string(x)
-"1.414213562373094 + 1.442249570307406im"
-
-julia> stringtyped(x)
-"ComplexDF32(Double32(1.4142135, 2.4203233e-8), Double32(1.4422495, 3.3793125e-8))"
-```
-
-### golden ratio
-```julia
-julia> using DoubleFloats
-
-julia> ϕ = Double32(MathConstants.golden)
-1.61803398874989490
-julia> phi = "1.61803398874989484820+"
-julia> ϕ⁻¹ = inv(ϕ)
-6.18033988749894902e-01
-
-julia> ϕ == 1 + ϕ⁻¹
-true
-julia> ϕ === ϕ * ϕ⁻¹ + ϕ⁻¹
-true
-```
-
-| typed value                      | computed value                   | ~abs(golden - computed) |
-|:---------------------------------|:---------------------------------|:-----------------------:|
-| `MathConstants.golden`           | 1.61803_39887_49894_84820_45868+ |           0.0           |
-| `Float64(MathConstants.golden)`  | 1.61803_39887_49895              |         1.5e-16         |
-| `Double32(MathConstants.golden)` | 1.61803_39887_49894_90           |         5.2e-17         |
-| `Double64(MathConstants.golden)` | 1.61803_39887_49894_84820_45868_34365_6354 |         2.7e-33         |
-
-
-
-## Questions
-
-Usage questions can be posted on the [Julia Discourse forum](https://discourse.julialang.org/tags/doublefloats).  Use the topic `Numerics` (a "Discipline") and a put the package name, DoubleFloats, in your question ("topic").
-
+Ask usage questions on [Julia Discourse](https://discourse.julialang.org/tags/doublefloats).
+Report defects or propose features in the [issue tracker](https://github.com/JuliaMath/DoubleFloats.jl/issues).
+See [Adding New Functions](addingfunctions.md) for contributor guidance.
 
 ## Acknowledgements
 
-There have been many helpful contributors.
-
-Claude Fable (High) was applied for specific purposes and always with a great deal of guidance, rigorous checking, and re-validation.
-
-The logic for exp and log is adapted from MultiFloats.jl.
-
-## Contributions
-
-Contributions are very welcome, as are feature requests and suggestions. Please open an [issue](https://github.com/JuliaMath/DoubleFloats.jl/issues) if you encounter any problems. The [contributing page](https://juliamath.github.io/DoubleFloats.jl/latest/#Contributions) has a few guidelines that should be followed when opening pull requests.
-
-
-[^β]: If you want to get involved with moving `Double32` performance forward, great. I would provide guidance. Otherwise, for most purposes you are better off using `Float64` than `Double32` (`Float64` has more significant bits, wider exponent range, and is much faster).
-
-
+Many contributors have helped develop DoubleFloats. Claude Fable (High) was
+applied for specific purposes with guidance, checking, and re-validation.
+The logic for `exp` and `log` is adapted from MultiFloats.jl.

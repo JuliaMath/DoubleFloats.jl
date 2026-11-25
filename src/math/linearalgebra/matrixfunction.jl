@@ -50,6 +50,12 @@ end
 
 function Base.:(^)(m::Matrix{DoubleFloat{T}}, p::Union{IEEEFloat, DoubleFloat{T}}) where {T<:IEEEFloat}
     pw = DoubleFloat{T}(p)
+    if T === Float64 && HI(pw) == 0.5 && iszero(LO(pw)) &&
+       issquare(m) && !isempty(m) && all(_mat_ordinary, m) &&
+       _mat_triangle(m) !== :general && opnorm(m - I, 1) <= 0.625 &&
+       all(i -> m[i,i] >= 0.375, axes(m, 1))
+        return sqrt(m)
+    end
     res = pw * log(m)
     result = exp(res)
     return result isa Matrix{Complex{DoubleFloat{T}}} ? _strip_imag_dust(result) : result

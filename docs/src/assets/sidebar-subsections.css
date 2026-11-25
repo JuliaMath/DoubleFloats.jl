@@ -1,0 +1,21 @@
+.docs-sidebar .docs-menu ul.internal ul.docs-subsections {
+  padding-inline-start: 1rem;
+}
+
+.docs-sidebar .docs-menu ul.internal ul.docs-subsections .tocitem::before {
+  content: "–";
+}
+
+.docs-sidebar .docs-menu ul.internal .docs-glossary-terms > summary {
+  cursor: pointer;
+  font-style: italic;
+  margin-inline-start: 1rem;
+}
+
+#documenter-page h3[id^="glossary-"] {
+  scroll-margin-block-start: 5rem;
+}
+
+.docs-sidebar .docs-glossary-terms:not([open]) > .docs-subsections {
+  display: none;
+}

@@ -6,63 +6,45 @@ for F in (:asin, :acos, :acsc, :asec, :acot)
     end
 end
 
-# atan is sufficiently common that routing every Double64 call through
-# libquadmath dominates its cost (conversion, a foreign call, and conversion
-# back).  Reduce to |r| <= tan(pi/16), halve once with
-#     atan(r) = 2atan(r / (1 + sqrt(1 + r^2))),
-# and evaluate the alternating Taylor series there.  The halved argument is
-# below 0.1, so 21 terms leave more than 130 bits of truncation margin.
-const _atan_pi8 = sqrt(Double64(2.0)) - 1.0
-const _atan_tanpi16_hi = 0.1989123673796580
-const _atan_tan3pi16_hi = 0.6681786379192989
+# The dyadic centers reduce the argument to about ±1/32.
+const _ATAN_DYADIC, _ATAN_LOCAL_COEFFS = setprecision(BigFloat, 256) do
+    anchors = ntuple(i -> HILO(Double64(atan(BigFloat(i - 1) / 16))), 17)
+    coeffs = ntuple(i -> HILO(Double64((-1)^i / BigFloat(2i + 1))), 9)
+    anchors, coeffs
+end
 
-@inline function _atan_small(x::Double64)
-    y = x / (1.0 + sqrt(1.0 + square(x)))
-    z = square(y)
-    zh = HI(z); zl = LO(z)
-    # Q(z) = sum_{j>=1} (-1)^j z^(j-1)/(2j+1), atan(y) = y*(1 + z*Q(z)).
-    # Coefficients must be double-double (a Float64-rounded 1/3 alone costs
-    # ~2e-20 absolute); the Horner runs on zh with the lo word applied
-    # through the Float64 derivative, as in log1p_small.  |z| <= 0.0097,
-    # so truncating after 1/37 leaves ~2^-120 margin.
-    ph = inv_oddint_f64[18]; pl = inv_oddint_lo[18]
-    for j in 17:-1:1
-        s = iseven(j) ? 1.0 : -1.0
-        ph, pl = _horner_step(s * inv_oddint_f64[j], s * inv_oddint_lo[j], zh, ph, pl)
-    end
-    qp = 9.0 * inv_oddint_f64[10]
-    for j in 9:-1:2
-        s = iseven(j) ? 1.0 : -1.0
-        qp = s * (j - 1) * inv_oddint_f64[j] + zh * qp
-    end
-    ph, pl = two_hilo_sum(ph, qp * zl + pl)
-    th, tl = _horner_step(1.0, 0.0, zh, ph, pl)        # 1 + z*Q
-    th, tl = two_hilo_sum(th, ph * zl + tl)
-    return mul_by_two(y * Double64(th, tl))
+@inline function _atan_unit(a::Double64)
+    return Double64(_atan_unit_words(HILO(a)..., _ATAN_DYADIC, _ATAN_LOCAL_COEFFS, Val(5))...)
+end
+
+@inline function _atan_unit_words(h::T, l::T, anchors, coefficients, taper) where {T}
+    k = unsafe_trunc(Int, round(16 * h))
+    c = k * T(0.0625)
+    numerator = two_hilo_sum_(h - c, l)
+    denominator = add_dddd_dd_((one(T), zero(T)), mul_dddd_dd_((c, zero(T)), (h, l)))
+    p = dvi_dddd_dd_(numerator, denominator)
+    z = square_dd_dd_(p)
+    correction = mul_dddd_dd_(mul_dddd_dd_(p, z), _tapered_poly(z, coefficients, taper))
+    angle = add_dddd_dd_(p, correction)
+    return add_dddd_dd_(angle, @inbounds(anchors[k + 1]))
 end
 
 function atan(x::Double64)
     isnan(x) && return x
-    iszero(x) && return x
+    abs(HI(x)) <= 0x1p-53 && return x
     isinf(x) && return copysign(halfpi, x)
-
-    ax = abs(x)
-    invert = ax > 1.0
-    invert && (ax = inv(ax))
-    if HI(ax) > _atan_tan3pi16_hi
-        y = qrtrpi + _atan_small((ax - 1.0) / (ax + 1.0))
-    elseif HI(ax) > _atan_tanpi16_hi
-        y = mul_by_half(qrtrpi) + _atan_small((ax - _atan_pi8) / (1.0 + ax * _atan_pi8))
-    else
-        y = _atan_small(ax)
+    a = abs(x)
+    if a > 1.0
+        return copysign(halfpi - _atan_unit(inv(a)), x)
     end
-    invert && (y = halfpi - y)
-    return copysign(y, x)
+    return copysign(_atan_unit(a), x)
 end
 
-atan(x::Double32) = Double32(atan(Double64(x)))
 atan(x::Double16) = Double16(atan(Double64(x)))
 
 atan(y::Double64, x::Double64) = Double64(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
 atan(y::Double32, x::Double32) = Double32(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
 atan(y::Double16, x::Double16) = Double16(atan(Quadmath.Float128(y), Quadmath.Float128(x)))
+
+_batch_kernel(::typeof(atan), ::Type{Double64}, ::Type{Double64}) =
+    _BatchKernel(x -> _batch_bounded(x, 0.005, prevfloat(1.0)), _atan_unit)
