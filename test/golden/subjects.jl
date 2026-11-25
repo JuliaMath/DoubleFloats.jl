@@ -359,6 +359,10 @@ function subjects()
         T === Double16 && continue
         cs = [complex(x, y) for (x, y) in zip(xs, ys)]
         for name in COMPLEX_UNARY
+            # Complex square root of Double64 is computed by libquadmath, whose
+            # result on ARM macOS with Julia 1.12.0 differs from every other
+            # platform and version tested. It is not recorded.
+            (name === :sqrt && T === Double64) && continue
             add(string("complex", name), each(resolve(name), tuple.(cs)))
         end
         vs = batchinputs(T)
