@@ -231,8 +231,8 @@ import Quadmath: Float128
 
 include("Double.jl")   # Double64, Double32, Double16
 
-include("math/errorfree.jl")
-include("math/leasterror.jl")
+include("eft/errorfree.jl")
+include("eft/quotients.jl")
 
 include("doubletriple/double_consts.jl")
 include("doubletriple/triple.jl")
