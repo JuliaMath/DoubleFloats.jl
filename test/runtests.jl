@@ -4,14 +4,6 @@ using Test
 
 using Base: IEEEFloat
 
-import Base: isapprox
-
-function isapprox(a::T, b::T) where {T<:IEEEFloat}
-   (iszero(a) && (0 < abs(b) < eps(T)^2) ||
-    iszero(b) && (0 < abs(a) < eps(T)^2) ||
-    isapprox(a, b, atol=eps(T)^2, rtol = eps(T)))
-end
-
 using Printf
 using Random
 
