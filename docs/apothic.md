@@ -271,7 +271,8 @@ test/
   unit/                    the present per-topic files
 benchmark/
   benchmarks.jl            the suite, in the layout PkgBenchmark expects
-  baseline-1.13.3.json
+  compare.jl               runs the suite against two versions on one machine
+  studies/                 the earlier measurement scripts
 ```
 
 ### 3.2 File map, present to final
@@ -403,7 +404,7 @@ test process and is replaced by a named helper in `support/`.
 |:--|:--|:--|
 | `test` | Julia 1.12, current, pre-release; Linux, macOS, Windows | All suites |
 | `docs` | current | `checkdocs = :exports`, doctests, generated tables |
-| `benchmark` | current, Linux | Compare against `baseline-1.13.3.json`; comment on the pull request |
+| `benchmark` | current, Linux | Time the pull request and `release-1.13` on the same runner; table in the job summary |
 | `invalidations` | current | Already present; kept |
 | `report` | current, scheduled | 10⁶-sample reports with provenance |
 | `downstream` | current, scheduled | Reverse-dependency tests |
@@ -687,7 +688,7 @@ every corpus entry.
 | W0.2 | config | CI of §3.5 (`test`, `docs`, `invalidations`); this is W1.10 | W0.1 | Matrix green on the unchanged source |
 | W0.3 | add | `test/Project.toml`; `test/support/`; move present tests to `test/unit/`; remove the `isapprox` piracy | W0.2 | Same tests pass |
 | W0.4 | add | Golden corpus generated at the head of `release-1.13`; `test/golden.jl` | W0.3 | Corpus matches on the full matrix, or per-platform differences are found and recorded |
-| W0.5 | add | `benchmark/benchmarks.jl`; `baseline-1.13.3.json`; benchmark job | W0.2 | Job reports on a no-op pull request |
+| W0.5 | add | `benchmark/benchmarks.jl`; `benchmark/compare.jl`, which times two versions on one machine (a stored baseline from another machine is not comparable); benchmark job against `release-1.13` | W0.2 | Job reports on a no-op pull request |
 | W0.6 | move | Formatter configuration and one formatting commit | W0.4 | Corpus unchanged |
 | W0.7 | move | The tree of §3.1: one commit per destination directory, `git mv` first, splits second | W0.6 | Corpus unchanged; `test/layering.jl` passes |
 | W0.8 | move | Sealed struct and `unsafe_double` at every internal construction site; the public pair constructor still raw | W0.7 | Corpus unchanged |
