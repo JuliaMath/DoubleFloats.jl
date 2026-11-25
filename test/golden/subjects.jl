@@ -22,8 +22,9 @@ wordtype(::Type{DoubleFloat{F}}) where {F} = F
 # 2^-shift. Zero when `hi` is zero or not finite, or when the word underflows.
 function lowword(hi::F, fraction::Float64, shift::Int) where {F}
     (isfinite(hi) && !iszero(hi)) || return zero(F)
-    lo = F(fraction) * eps(hi) / 4
-    lo = ldexp(lo, -shift)
+    # Computed in Float64 and converted once. `ldexp` on a subnormal Float32
+    # is not used: its result differs between Julia 1.12 and 1.13.
+    lo = F(fraction * Float64(eps(hi)) / 4 * exp2(-shift))
     return (hi + lo == hi) ? lo : zero(F)
 end
 
@@ -121,7 +122,15 @@ emit(io::IO, y::Base.BitInteger) = write(io, Int128(y))
 emit(io::IO, y::Complex) = (emit(io, real(y)); emit(io, imag(y)))
 emit(io::IO, y::Union{Tuple,AbstractArray}) = foreach(v -> emit(io, v), y)
 emit(io::IO, y::AbstractString) = write(io, y)
-emit(io::IO, y) = write(io, string(y))             # BigFloat, BigInt, Rational, types, nothing
+# The exact value, independent of precision and of how Julia prints it.
+function emit(io::IO, y::BigFloat)
+    isfinite(y) || return write(io, isnan(y) ? "NaN" : y > 0 ? "Inf" : "-Inf")
+    iszero(y) && return write(io, signbit(y) ? "-0" : "0")
+    significand, power, sign = Base.decompose(y)
+    shift = trailing_zeros(significand)
+    write(io, string(sign * (significand >> shift)), "p", string(power + shift))
+end
+emit(io::IO, y) = write(io, string(y))             # BigInt, Rational, types, nothing
 
 function attempt(f, args...)
     try
@@ -201,12 +210,14 @@ function matrixsubjects!(list, ::Type{T}, key) where {T}
     g = SplitMix64(0x3a7)
     F = wordtype(T)
     entry() = (hi = F(2 * unitfloat!(g) - 1); pair(T, hi, lowword(hi, 2 * unitfloat!(g) - 1, 0)))
-    for n in (2, 5, 8)
+    # Matrix results pass through LinearAlgebra, whose generic kernels change
+    # between Julia versions. Products of 2x2 matrices (different on Julia
+    # 1.12) and matrix-vector products (different from Julia 1.14) are left
+    # out for that reason; what is kept agrees on Julia 1.12, 1.13, and 1.15.
+    for n in (5, 8)
         A = [entry() for _ in 1:n, _ in 1:n]
         B = [entry() for _ in 1:n, _ in 1:n]
-        v = [entry() for _ in 1:n]
         push!(list, named(string("matmul", n, "/", key), whole(*, A, B)))
-        push!(list, named(string("matvec", n, "/", key), whole(*, A, v)))
         push!(list, named(string("matexp", n, "/", key), whole(exp, A)))
     end
     return list
