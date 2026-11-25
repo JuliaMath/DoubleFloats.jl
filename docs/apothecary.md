@@ -10,9 +10,8 @@ checked. Where this document and those two differ, this one governs.
 
 - **Normative sections** (§3–§10) say what 2.0 does. Each rule carries the
   defects it resolves and the property that tests it.
-- **Rulings** (§2) are the choices that belong to the arbiter. Each has a
-  recommendation, the alternative, and what follows from each. Nothing in
-  the work plan depends on an unruled choice without saying so.
+- **Rulings** (§2) are the choices that belonged to the arbiter. All are
+  made; each records what was chosen and what was rejected.
 - **The work plan** (§11) lists items by stage with the files they touch.
 - **The ledger** (§12) is every verified defect with its remedy and stage.
 
@@ -53,13 +52,18 @@ Four laws follow.
 | R1 | Everything ships in 2.0. The 1.x line receives no changes from this plan. |
 | R2 | Display changes (digits, compact form, `repr`) ship in 2.0 with the rest. |
 | R3 | `Float128` leaves the core one function at a time (was D6). `string`, `sinpi`, and `cospi` are replaced unconditionally. Every other replacement kernel ships only if it passes the gate of §8.1; a kernel that misses stays on `Float128` in 2.0, tier `sampled`, with the 113-bit precondition stated. Quadmath becomes a weak dependency when the last such kernel passes, in 2.0 or a later 2.x. |
+| R4 | The minimum Julia is 1.12 (was D11), set in `Project.toml`. `public` is used directly, with no version guard. Releases after 1.13.3 are not offered to Julia 1.10 or 1.11. |
+| R5 | Branch model (D14 of `apothic.md`): `release-1.13` is cut from the present default branch, and the default branch becomes `2.0.0-DEV`. |
+| R6 | The source tree is rearranged first (D15), as `move` commits proved bit-identical by the golden corpus, so every later change lands in its final file. |
+| R7 | The pair constructor writes `lo = 0` when the sum is non-finite (D16). No function may read the low word of a non-finite value; D1 is unaffected. |
+| R8 | Every remaining recommendation is accepted (2026-11-25): D1–D5, D7–D10, D12, and D13 are ruled at the option the table of §2.2 lists as chosen. |
 
-### 2.2 Awaiting the arbiter
+### 2.2 Ruled by question
 
-The work plan assumes the recommended option. A different ruling changes
-only the items named in the last column.
+No ruling is open. The sections below cite these by their D numbers. The
+last column names the items each one governs.
 
-| # | Question | Recommended | Alternative | Affects |
+| # | Question | Chosen | Rejected alternative | Affects |
 |:--|:--|:--|:--|:--|
 | D1 | Low word of a non-finite value | Ignored: only `hi` is read | Canonical `lo = hi`, enforced on every result | §3.2, W1.2 |
 | D2 | Raw pair constructor | Internal `unsafe_double`; `Double64(hi, lo)` normalizes | Keep raw and public, document the hazard | §3.3, W1.3 |
@@ -71,7 +75,7 @@ only the items named in the last column.
 | D8 | Implicit broadcast fast path | Ship only for kernels proved bit-identical to scalar | Explicit `simdmap!` only | §7, W4.8 |
 | D9 | Unicode operators `⊕ ⊖ ⊗ ⊘` | `public`, not exported | Keep exported | §9 |
 | D10 | `Double16` | Supported as "computed in `Double64`", stated in the manual | Remove the type | §9, W3.7 |
-| D11 | Minimum Julia | Stay at 1.10 (LTS); `public` under a version guard | Raise to 1.11 | W3.5 |
+| D11 | Minimum Julia | Ruled: see R4 | | W1.10, W3.5 |
 | D12 | Deprecated names | Kept through 2.x with `depwarn`, removed in 3.0 | Removed at 2.0 | §9 |
 | D13 | Sample sizes | 10⁶ per scalar route in the report job, 10⁴ in CI | Other | §6.3 |
 
@@ -99,8 +103,8 @@ minimum for values at or above `floatmin_full`.
 | Value | Stored | Rule |
 |:--|:--|:--|
 | `±0` | `(±0.0, 0.0)` | The sign is the sign of `hi` |
-| `±Inf` | `hi = ±Inf`, `lo` unspecified | Only `hi` is read (D1) |
-| `NaN` | `hi = NaN`, `lo` unspecified | Only `hi` is read (D1) |
+| `±Inf` | `hi = ±Inf`, `lo` unspecified | Only `hi` is read (D1); the constructor writes `lo = 0` (R7) |
+| `NaN` | `hi = NaN`, `lo` unspecified | Only `hi` is read (D1); the constructor writes `lo = 0` (R7) |
 
 Today `Double64(Inf)` stores `(Inf, Inf)` and `floatmax(Double64) * 2`
 stores `(Inf, 0.0)` (F17). Under D1 both are valid and indistinguishable
@@ -228,9 +232,8 @@ end
 - No call to the global `setprecision` (C4). The precision grows with the
   input length so long digit strings round-trip.
 - String macros call `parse` at expansion time, unchanged.
-- *Confirm* that `tryparse(BigFloat, s; precision)` is available on Julia
-  1.10; otherwise use `setprecision(BigFloat, prec) do … end`, which is
-  task-local in effect because it restores on exit.
+- `tryparse(BigFloat, s; precision)` was run on Julia 1.13.3; the CI job
+  on 1.12 (R4) covers the minimum.
 
 ### 4.4 Promotion
 
@@ -726,7 +729,7 @@ is done when its property or gate passes in CI.
 | W1.7 | `isapprox` keywords; `randpm` on `AbstractRNG`; `rand` grid; `@via_df32` | `src/extras/` | F3, C12, C13 |
 | W1.8 | Promotion table of §4.4 | `src/type/promote.jl` | C10 |
 | W1.9 | `Aqua.test_all`; resolve 12 ambiguities; review `Base.lerpi` and `clamp` methods for piracy | `test/aqua.jl` | C16 |
-| W1.10 | CI on `main`, Julia 1.10 and current; compat bounds; untrack `docs/build*` | `.github/`, `Project.toml`, `.gitignore` | F9, F10 |
+| W1.10 | CI on `main`, Julia 1.12 and current; compat bounds; untrack `docs/build*` | `.github/`, `Project.toml`, `.gitignore` | F9, F10 |
 
 Gate: conformance suite and Aqua pass on the full matrix.
 
@@ -750,7 +753,7 @@ Gate: P-TXT passes.
 | W3.2 | Audit arithmetic kernels against the cited paper; assign tiers | `src/math/ops/`, `errorfree.jl` | §6.2 |
 | W3.3 | Batch kernels as routes; batch table generated | `src/math/elementary/simd.jl` | F6 |
 | W3.4 | Scalar chains as routes, one family per change, each benchmarked | `explog.jl`, `trig.jl`, `hyptrig.jl`, … | F6, F8 |
-| W3.5 | Route properties P-TOTAL … P-ADMIT; `public` declarations under a version guard | `test/routes.jl`, `src/DoubleFloats.jl` | C14 |
+| W3.5 | Route properties P-TOTAL … P-ADMIT; `public` declarations | `test/routes.jl`, `src/DoubleFloats.jl` | C14 |
 | W3.6 | Docstrings for every exported and public name; rule on the last row of §9 | all | C15 |
 | W3.7 | Reports with provenance, metrics, raised sample sizes; `floatmin_full`; support-level table | `docs/reports/` | F5, F7, F11 |
 | W3.8 | Manual re-layered; `make.jl` simplified; history to `NEWS.md` | `docs/` | F8, F9 |
@@ -828,7 +831,7 @@ Verified defects, their remedy, and where it lands.
 
 ## 13. Release criteria
 
-2.0 is released when each holds in CI on Julia 1.10 and current.
+2.0 is released when each holds in CI on Julia 1.12 and current.
 
 1. P-ORD, P-TXT, and the conversion properties pass for all three types.
 2. P-TOTAL, P-NORM, P-BOUND, P-SEAM, P-ADMIT pass for every route, and
