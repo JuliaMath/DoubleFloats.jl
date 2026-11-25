@@ -8,6 +8,9 @@ using Printf
 using Random
 
 include("support/constants.jl")
+include("support/reference.jl")
+include("support/splitmix.jl")
+include("support/selftest.jl")
 
 include("unit/specialvalues.jl")
 include("unit/construct.jl")
