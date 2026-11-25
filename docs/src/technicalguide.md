@@ -54,8 +54,10 @@ reduction with three squarings near the exponent limits. Arguments
 safely past the zero-rounding threshold skip the polynomial. In the
 underflow band, both components determine the nearest point on the
 underlying grid. Directed MPFR bounds refine a rounding decision near
-a midpoint. Ordinary `Double32 exp` evaluates in `Double64` before
-narrowing and rounds directly to the `Float32` grid in its underflow band.
+a midpoint. Ordinary `Double32 exp` uses the guarded Float64 route
+when it can represent the input exactly. Its fallback preserves the
+two input words and rounds directly to the Float32 grid in the
+underflow band.
 
 Outside the guarded Double64 log ranges, the 32-center table path
 rescales tiny inputs and checks both source and destination exponent
@@ -444,6 +446,79 @@ whole block fails its checks.
 
 The repository's `docs/vecbetter.md` records the phased rollout and the
 numerical results for binary `atan`.
+
+### To be well-balanced
+
+Choose the error measure for the part of the domain you care about.
+For ordinary finite results away from zero, the
+[Accuracy Report](accuracy_report.md) gives relative error in
+working-precision units. The 99th percentile describes the upper
+tail of a sample, and the maximum checks the worst case encountered
+in that sample. Near exponential underflow, compare against the
+underlying format's rounding grid. Test signed zeros, domain errors,
+and values near poles separately.
+
+For scalar calls, the main question is whether the fast evaluation
+preserves the part of the input that matters. Ordinary Double32
+calls can use Float64 when it retains both words exactly. Near one,
+a low word can determine the entire logarithm, so the two-word path
+is important. The Double64 results show two ways to gain speed.
+On the sampled intervals, the shorter `sinh` evaluation lowered
+both time and maximum error. The finer `exp2` reduction lowered
+time while raising the sampled maximum from 0.837 to 1.009 report
+units. A 1.0-unit target and a 2.2-unit target give different
+assessments of that change.
+
+For vector calls, compare the batch with **current scalar evaluation
+on the same inputs**. In a matched run with 32,768 elements on one
+i9-14900K thread using Julia 1.10.10, the eleven Double64 operations
+listed in the scalar benchmarks above gained 2.96–3.59× on dense
+eligible inputs and produced identical output words. The six native
+Double32 kernels used two-Float32 arithmetic with higher sampled
+errors than their scalar paths.
+
+| Double32 operation | Dense speedup | Speedup with 1% outside the batch range | Dense maximum, scalar → batch |
+|:---|---:|---:|---:|
+| `log2` | 1.44× | 1.25× | 0.131 → 0.443 |
+| `log1p` | 2.59× | 1.61× | 0.130 → 1.151 |
+| `atan` | 1.75× | 1.44× | 0.131 → 0.826 |
+| `tan` | 1.93× | 1.42× | 0.132 → 0.403 |
+| `sinh` | 2.28× | 1.54× | 0.132 → 0.396 |
+| `tanh` | 2.70× | 1.70× | 0.139 → 0.518 |
+
+An occasional out-of-range input can send a whole block to scalar
+evaluation. With independent inputs, a whole-block kernel of width
+`m` stays eligible with probability `p^m`, where `p` is the
+per-element eligibility rate. With 1% scattered misses, about
+72.5% of 32-element blocks are expected to remain eligible. The
+matched run measured 72.3%. Grouping inputs in compatible regimes
+changes that fraction. The repair path for Double64 `exp2` kept
+all blocks on a native route in its mixed fixture and retained a
+2.86× speedup. Storage, overlap, and threaded exception order
+also affect which routes are available.
+
+A practical balance starts by screening for required semantics and
+hard error limits. In this fixture, doubling throughput with a
+sampled maximum below 2.2 units favored dense Double32 `log1p`,
+`sinh`, and `tanh`. Their mixed runs fell below 2×. A 1.0-unit
+limit already excludes the dense `log1p` batch on the sampled data.
+
+For candidates that pass the screen, take the larger of
+`p99 error / p99 target` and `maximum error / maximum target`
+as a normalized error score. If the batch is faster and has a
+higher score, compare the speedup `s` with the score increase
+`r` (batch score divided by scalar score). In a weighted
+comparison of the two logarithms, the choice switches at
+`log(s) / (log(s) + log(r))` as the weight on accuracy rises
+from zero to one. With p99 and maximum targets of 1 and 2.2
+units, the switch for Double32 `tanh` occurs at 0.51 for the
+dense fixture and at 0.38 for the mixed fixture. This weight
+expresses a workload preference.
+
+Use input ranges, storage, and sizes representative of your own
+work. The [matched comparison and crossover model](multifulcrum.md)
+gives the function-by-function data, fixture details, and algebra
+for choosing different speed and accuracy targets.
 
 ## Linear algebra
 

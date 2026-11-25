@@ -17,6 +17,31 @@ for (script, report) in (("benchmarks.jl", "benchmark_report.md"),
     cp(reportpath, joinpath(@__DIR__, "src", report); force = true)
 end
 
+# Keep the repository report as the source for the manual's report page.
+# Documenter uses case-sensitive heading IDs and links to its rendered reports.
+comparison = read(joinpath(@__DIR__, "multifulcrum.md"), String)
+write(joinpath(@__DIR__, "src", "multifulcrum.md"), replace(comparison,
+    "](src/technicalguide.md#to-be-well-balanced)" => "](technicalguide.md#To-be-well-balanced)",
+    "](src/technicalguide.md#double32-benchmarks)" => "](technicalguide.md#Double32-benchmarks)",
+    "](src/technicalguide.md#faster-double64-elementary-kernels)" =>
+        "](technicalguide.md#Faster-Double64-elementary-kernels)",
+    "](src/technicalguide.md#faster-double32-elementary-kernels)" =>
+        "](technicalguide.md#Faster-Double32-elementary-kernels)",
+    "](src/technicalguide.md#elementary-function-algorithms)" =>
+        "](technicalguide.md#Elementary-function-algorithms)",
+    "](src/technicalguide.md#elementary-vector-kernels)" => "](technicalguide.md#elementary-vector-kernels)",
+    "](src/technicalguide.md#batch-benchmarks)" => "](technicalguide.md#Batch-benchmarks)",
+    "](src/userguide.md#elementwise-operations-on-vectors)" =>
+        "](userguide.md#Elementwise-operations-on-vectors)",
+    "](reports/accuracy_report.md)" => "](accuracy_report.md)",
+    "](reports/benchmark_report.md#elementary-functions-1)" => "](benchmark_report.md#Elementary-Functions-2)",
+    "](worstulps.md)" => "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/worstulps.md)",
+    "](double32better.md#validation-results)" =>
+        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/docs/double32better.md#validation-results)",
+    "](../perf/bench_simd_elementary.jl)" =>
+        "](https://github.com/JuliaMath/DoubleFloats.jl/blob/HEAD/perf/bench_simd_elementary.jl)",
+))
+
 makedocs(
     modules = [DoubleFloats],
     sitename = "DoubleFloats.jl",
@@ -48,6 +73,7 @@ makedocs(
             "Accuracy Report" => "accuracy_report.md",
             "Benchmark Report" => "benchmark_report.md",
             "Technical Guide" => "technicalguide.md",
+            "Matched comparison and crossover model" => "multifulcrum.md",
             "Adding New Functions" => "addingfunctions.md",
             "References" => "references.md",
         ],
