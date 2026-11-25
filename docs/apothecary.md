@@ -516,7 +516,12 @@ wrong, sometimes completely, so they cannot carry a bound.
 | `sinh`, `cosh` above 709 | `exp(Float128(x)) / 2` | `exp(x − ln2)` with a two-word `ln2`, or `(exp(x/2))² / 2` with rescaling | W4.1 |
 | `asin`, `acos`, `acsc`, `asec`, `acot` | `Float128` | Composed from the `atan` and `sqrt` kernels with exact differences near ±1 | W4.3 |
 | `atan(y, x)` | `Float128` | Quotient, unary `atan` kernel, quadrant correction with two-word `π` | W4.4 |
+| `sqrt` of a `ComplexDF64` | `ComplexF128` | The real `sqrt` and `hypot` kernels, as the generic `Complex{DoubleFloat}` method already does | W4.9 |
 | `sin`, `cos` for `abs(x) ≥ 6.28125` | `Float128` | `BigFloat` reduction modulo `π/2` at precision set by the exponent, then the kernels; native Payne–Hanek later | W4.5 |
+
+The complex square root was found by the golden corpus: on ARM macOS with
+Julia 1.12.0 its bits differ from every other platform and Julia version
+tested, which is what a route through the platform's libquadmath risks.
 
 `erf`, `gamma`, and the Bessel functions keep `Float128` inside the
 special-functions extension and are outside this ruling.
@@ -771,6 +776,7 @@ passes its properties; no scalar benchmark regresses beyond noise.
 | W4.3 | `asin`, `acos`, and relatives from `atan` and `sqrt` (gated) | F18 |
 | W4.4 | Two-argument `atan` (gated) | F18 |
 | W4.5 | Large-argument `sin`, `cos` by `BigFloat` reduction (gated) | F18 |
+| W4.9 | `sqrt` of a `ComplexDF64` without `Float128` (gated) | F18 |
 | W4.6 | Extensions; error hints; precompile workloads | C17, D7 |
 | W4.7 | Reduced exports; deprecations with `depwarn` | §9 |
 | W4.8 | Transparent broadcast path, if P-IDENT holds everywhere | D8 |

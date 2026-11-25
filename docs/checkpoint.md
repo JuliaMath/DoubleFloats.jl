@@ -21,8 +21,8 @@ design is `apothecary.md`. Updated at the end of each work item.
 | W0.4 Golden corpus | done | `0ea66d94`, `067ffaa4`, `cb79391c` | 483 subjects recorded from `release-1.13`. CI: identical on Linux, macOS ARM, Windows with Julia 1.12.0, 1.13.4, 1.14 beta (one subject removed, see findings) |
 | W0.5 Benchmark suite | done | `acab47e4`, benchmark fix | 179 benchmarks; `release-1.13` against the working tree: every ratio between 0.95 and 1.05. CI job passes |
 | W0.6 Line endings and formatting | done | `e01825b1`, `00d5f7bc`, `53da9379` | Corpus and suite unchanged; benchmark ratios 0.95 to 1.05 |
-| W0.7 Source tree | next | | |
-| W0.8 Sealed constructor | | | |
+| W0.7 Source tree | done, with two splits deferred (below) | `66f38363` through `c3c90aef` (15 commits) | Corpus identical after every commit; suite passes; layering lint reports no upward use |
+| W0.8 Sealed constructor | next | | |
 | W0.9 Explicit imports | | | |
 | W0.10 Contributor guide | | | |
 
@@ -77,6 +77,27 @@ design is `apothecary.md`. Updated at the end of each work item.
 - The formatter leaves a trailing `;` where two statements shared a line.
   To be cleaned by hand as files are touched in W0.7 and W0.9.
 
+- W0.7 as done: every source file is in its layer directory; ten operation
+  files became `arith/kernels.jl` and `arith/operators.jl`; the include
+  list is in layer order. Deferred: splitting `elementary/explog.jl`,
+  `elementary/trig.jl`, and `core/type.jl` into the smaller files of
+  `apothic.md` §3.1. The first two are rewritten family by family in W3.4,
+  and `core/type.jl` is rewritten in W0.8 and W1.3, so splitting them now
+  would be done twice.
+- The layering lint moved the route records below arithmetic. With the
+  batch records in the batch layer, more than sixty uses in `arith/` and
+  `elementary/` reached upward. Layers are now: eft, core, routes, arith,
+  contract, constants, elementary, batch, io, random, linalg. `apothic.md`
+  §2.1 is updated.
+- `elementary/templated.jl` holds the `Double32` and `Double16` functions
+  computed in `Double64`, not nested-type methods. It is kept, as
+  `elementary/widened.jl`. The plan is corrected.
+- `type/intraconstructors.jl` was never included by anything. Removed.
+- `two_cbrt` sat with the error-free transformations but calls
+  `DoubleFloat` arithmetic. Moved to `arith/operators.jl`.
+- The plan's "prefix loading" check was vacuous: a package that loads has
+  already loaded every prefix. `apothic.md` §2.2 now says so.
+
 ## Open
 
 - Registration of 1.13.3 to be confirmed merged; then tag `v1.13.3` appears.
@@ -86,5 +107,7 @@ design is `apothecary.md`. Updated at the end of each work item.
 
 ## Next
 
-W0.7: rearrange the source tree to the layout of `apothic.md` §3.1, one
-commit per destination directory, corpus unchanged after each.
+W0.8: seal the struct. `unsafe_double` becomes the only way to build a pair
+without normalizing, and every internal construction site that follows a
+kernel uses it. The public pair constructor stays raw until W1.3a. Corpus
+unchanged.

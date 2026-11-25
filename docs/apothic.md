@@ -138,9 +138,9 @@ only the layers above it in the table.
 |:--|:--|:--|:--|:--|
 | 1 | Error-free transformations | `eft/` | `two_sum`, `two_prod`, and relatives on plain `F` | exact |
 | 2 | Value | `core/` | The type, the sealed constructor, accessors, reflection, predicates | |
-| 3 | Arithmetic | `arith/` | Double-word kernels on tuples; `Base` operators; rounding; `fma` | bounded or sampled |
-| 4 | Base contract | `contract/` | Conversion, comparison, `decompose`, `hash`, promotion | exact |
-| 5 | Routes | `routes/` | `Route`, `Tier`, `Metric`, `evaluate`, `guarantee`, `route` | |
+| 3 | Routes | `routes/` | `Route`, `Tier`, `Metric`, `evaluate`, `guarantee`, `route`; the batch kernel records | |
+| 4 | Arithmetic | `arith/` | Double-word kernels on tuples; `Base` operators; rounding; `fma`; arithmetic used inside batch kernels | bounded or sampled |
+| 5 | Base contract | `contract/` | Conversion, comparison, `decompose`, `hash`, promotion | exact |
 | 6 | Constants | `constants/` | Two- and three-word constants; coefficient tables | |
 | 7 | Elementary | `elementary/` | Kernels and their `routes` methods, one file per family | sampled |
 | 8 | Batch | `batch/` | `simdmap!`, block selection, repair, threading | per route |
@@ -150,24 +150,33 @@ only the layers above it in the table.
 | 12 | Surface | `DoubleFloats.jl`, `deprecated.jl` | Exports, `public`, deprecations | |
 | | Extensions | `ext/` | Schur-based linear algebra, special functions, `Float128` | |
 
-Two observations fix the order.
+Three observations fix the order.
 
 - `eft/` comes before the type. Error-free transformations are functions
   of machine floats and know nothing of `DoubleFloat`. Placing them first
   lets the constructor use `two_sum`, which is what makes law 1 structural
   (§4.1).
+- `routes/` comes before `arith/`. The records name no function and depend
+  on nothing but the type, and every layer from arithmetic up declares
+  kernels with them. The lint of §2.2 found this: with the records in the
+  batch layer, sixty-odd uses in `arith/` and `elementary/` reached upward.
 - `contract/` comes after `arith/`. Exact mixed comparison and exact
   construction from integers need exact subtraction, and `decompose` needs
   the accessors.
 
 ### 2.2 The dependency rule, checked
 
-`test/layering.jl` loads the include list one prefix at a time into a fresh
-module and requires each prefix to load. This catches a type, constant, or
-macro used above its layer. It does not catch a function called above its
-layer, because Julia resolves calls late; a second check scans each
-directory for identifiers defined in a later one. The scan is a lint with
-an allow-list, not a proof, and the document says so.
+Julia enforces the rule for types, constants, and macros: the include list
+is evaluated in order, so the package does not load if one is used above
+its layer. Nothing needs to be written for that.
+
+Julia does not enforce it for functions, which are resolved when called.
+`test/layering.jl` does: it parses every source file, finds the layer in
+which the package first defines each of its own names, and reports each
+use of a name from a later layer. It works on names, so it is a lint and
+not a proof; exceptions go in `test/layering_allowed.txt`, and the test
+fails both on a new upward use and on a listed entry that no longer
+occurs, so the list can only shrink. It is empty.
 
 ### 2.3 How the four laws map to structure
 
@@ -312,7 +321,7 @@ by `move` commits before any content changes.
 | `elementary/hyptrig.jl` | `elementary/hyperbolic.jl` | |
 | `elementary/arctrig.jl` | `elementary/arctrig.jl` | |
 | `elementary/archyptrig.jl` | `elementary/archyperbolic.jl` | |
-| `elementary/templated.jl` | deleted | nested-type methods (F11) |
+| `elementary/templated.jl` | `elementary/widened.jl` | `Double32` and `Double16` functions computed in `Double64`; not the nested-type methods the first draft took it for |
 | `elementary/double32.jl` | `elementary/double32.jl` | |
 | `elementary/complex.jl` | `elementary/complex.jl` | |
 | `elementary/simd.jl` | `batch/blocks.jl`, `batch/simdmap.jl` | *split* |
@@ -711,7 +720,7 @@ Order matters: the invariant first, then what assumes it.
 | W1.1 | add | `test/conformance/` with every Stage 1 property as `@test_broken` | Gate 0 | | |
 | W1.3a | fix | Public pair constructor normalizes (§4.1); `isnormalized`, `normalize` public | W1.1 | `isnormalized(Double64(1.0, 1.0))` | `Double64(hi, lo)` now normalizes |
 | W1.3b | fix | Exact construction from `Integer`, `Rational`, `BigFloat` | W1.3a | `big(Double64(2^62 + 1)) == 2^62 + 1` | Large integers convert exactly |
-| W1.3c | drop | `templated.jl` and nested-type methods | W0.8 | `DoubleFloat{Double32}` is a `TypeError` | |
+| W1.3c | drop | Nested-type methods (in `contract/convert.jl`) | W0.8 | `DoubleFloat{Double32}` is a `TypeError` | |
 | W1.2a | fix | `==`, `<`, `<=`, `isless`, `isequal` on one type | W1.3a | P-ORD, same-type part | `NaN == NaN` is `false`; `sort` orders NaN last |
 | W1.4a | fix | Exact `decompose`; `Rational(x)` | W1.2a | `Rational(x) == big(x.hi) + big(x.lo)` exactly | `decompose` no longer throws |
 | W1.4b | fix | `hash` | W1.4a | `isequal(a, b) ⇒ hash(a) == hash(b)` across types | `Dict` lookups by equal `Float64` keys now succeed |
@@ -789,6 +798,7 @@ a defect to retire, not a design.
 | W4.3 | fix, gated | `asin`, `acos`, `acsc`, `asec`, `acot` | W4.0 | Same |
 | W4.4 | fix, gated | `atan(y, x)` | W4.0 | Same |
 | W4.5 | fix, gated | `sin`, `cos` for large arguments | W4.0 | Same |
+| W4.9 | fix, gated | `sqrt` of a `ComplexDF64` | W4.0 | Same |
 | W4.6a | move | Schur-based linear algebra to its extension; error hints | Gate 3 | `using DoubleFloats` does not load GenericLinearAlgebra; `eigen` on a `Double64` matrix without it gives the hint |
 | W4.6b | move | Special functions to their extension; drop their exports | Gate 3 | Same pattern for `erf` |
 | W4.6c | move | `Float128` conversion and promotion to the Quadmath extension | R3 retained list empty | `using DoubleFloats` loads only standard libraries |
