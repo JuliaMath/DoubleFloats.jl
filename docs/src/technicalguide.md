@@ -7,10 +7,12 @@ public functions.  For guidance on extending the package, see
 ## Representation as an unevaluated sum
 
 A `DoubleFloat{T}` holds two floats, `hi` and `lo`, whose *unevaluated
-sum* is the represented value:
+sum* is the represented value. In a normalized pair, the low word
+is bounded by half a unit of the high word's spacing.
 
-```
-value = hi + lo,   with   |lo| ≤ ulp(hi)/2
+```math
+\mathrm{value} = \mathrm{hi} + \mathrm{lo},
+\qquad |\mathrm{lo}| \le \frac{\operatorname{ulp}(\mathrm{hi})}{2}.
 ```
 
 `hi` is the value rounded to `T`; `lo` is the leading part of the
@@ -506,13 +508,17 @@ limit already excludes the dense `log1p` batch on the sampled data.
 For candidates that pass the screen, take the larger of
 `p99 error / p99 target` and `maximum error / maximum target`
 as a normalized error score. If the batch is faster and has a
-higher score, compare the speedup `s` with the score increase
-`r` (batch score divided by scalar score). In a weighted
-comparison of the two logarithms, the choice switches at
-`log(s) / (log(s) + log(r))` as the weight on accuracy rises
-from zero to one. With p99 and maximum targets of 1 and 2.2
-units, the switch for Double32 `tanh` occurs at 0.51 for the
-dense fixture and at 0.38 for the mixed fixture. This weight
+higher score, let $s$ be its speedup and $r$ its score divided
+by the scalar score. The crossover weight on accuracy is
+
+```math
+w^* = \frac{\log s}{\log s + \log r}.
+```
+
+With p99 and maximum targets of 1 and 2.2 units, the switch for
+Double32 `tanh` occurs at 0.51 for the dense fixture and at 0.38
+for the mixed fixture. Below the crossover the model favors the
+batch. Above it the model favors the scalar loop. This weight
 expresses a workload preference.
 
 Use input ranges, storage, and sizes representative of your own

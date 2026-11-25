@@ -214,26 +214,38 @@ that choice to a broader workload.
 
 After screening, a graded comparison can express how well each
 candidate fits the workload. The categories include function, format,
-range, input arrangement, storage, and target. Let $T_s$ be the scalar
-baseline and $\sigma$ the requested speedup. For a candidate with time
-$T_k$, p99 error $E_{99,k}$, and maximum $E_{\max,k}$, define
+range, input arrangement, storage, and target.
+
+#### Normalizing time and error
 
 ```math
-q_k=\frac{\sigma T_k}{T_s},\qquad
-a_k=\max\!\left(\frac{E_{99,k}}{\tau_{99}},
-                  \frac{E_{\max,k}}{\tau_{\max}}\right).
+\begin{aligned}
+q_k &= \frac{\sigma T_k}{T_s}, \\
+a_k &= \max \left\{\frac{E_{99,k}}{\tau_{99}},
+                     \frac{E_{\max,k}}{\tau_{\max}}\right\}.
+\end{aligned}
 ```
 
-The $\tau$ values are the two error targets. The speed and accuracy
-grades $1/(1+q_k)$ and $1/(1+a_k)$ reach one half when the candidate
-meets the corresponding target exactly. Use the smaller grade when
-both targets matter. More formally, for workload $c$ the relation is
-$Q(c,k)=\min\{I(c,k),1/(1+q_k),1/(1+a_k),\mu_C(c,k)\}$, where
-$I$ is one for an eligible candidate and zero otherwise. Set the
-coverage grade $\mu_C$ to one for ordinary timing comparisons,
-since coverage already affects the measured time. An explicit
-coverage requirement can grade candidates separately. Taking
-$\max_k Q(c,k)$ gives the best joint grade available for that workload.
+Here $T_s$ is the scalar baseline time, $T_k$ is the candidate time,
+and $\sigma$ is the requested speedup. The two errors $E_{99,k}$
+and $E_{\max,k}$ are the candidate's p99 and maximum. The corresponding
+targets are $\tau_{99}$ and $\tau_{\max}$.
+
+The speed and accuracy grades $1/(1+q_k)$ and $1/(1+a_k)$ reach
+one half when the candidate meets the corresponding target exactly.
+For workload $c$, use the smallest grade across requirements.
+
+```math
+Q(c,k) = \min \left\{I(c,k), \frac{1}{1+q_k},
+                       \frac{1}{1+a_k}, \mu_C(c,k)\right\}.
+```
+
+The indicator $I$ is one for a candidate that passes the hard screen
+and zero otherwise. Set the coverage grade $\mu_C$ to one for
+ordinary timing comparisons, since coverage already affects the
+measured time. An explicit coverage requirement can grade candidates
+separately. Taking $\max_k Q(c,k)$ gives the best joint grade for
+that workload.
 These grades express chosen preferences and have no probability
 interpretation. [Zadeh, *Fuzzy Sets*](https://doi.org/10.1016/S0019-9958%2865%2990241-X)
 
@@ -363,8 +375,10 @@ execution overhead. If $N<S$, the condition for a speedup of
 at least $\sigma$ is approximately
 
 ```math
-T_v\approx bN+(1-b)S+H,\qquad
-b\ge\frac{S(1-1/\sigma)+H}{S-N}.
+\begin{aligned}
+T_v &\approx bN+(1-b)S+H, \\
+b &\ge \frac{S(1-1/\sigma)+H}{S-N}.
+\end{aligned}
 ```
 
 With $S=8.574$ ns and $N=3.170$ ns for Double32 `tanh`, setting
@@ -376,8 +390,13 @@ per-block cost, so measure them separately when they are common.
 The error distribution also changes with coverage. If $\pi$ is the
 fraction of actual lanes that took native arithmetic and $F_n$ and
 $F_s$ are the conditional error distributions for native and scalar
-evaluation, then $F_E(e)=\pi F_n(e)+(1-\pi)F_s(e)$. This combines the
-fractions meeting an error target, rather than averaging percentiles.
+evaluation, then the fraction meeting an error threshold $e$ is
+
+```math
+F_E(e) = \pi F_n(e) + (1-\pi)F_s(e).
+```
+
+The formula combines the two fractions at the same threshold.
 In the mixed Double32 `log1p` fixture, p99 improved from 0.578 to 0.544
 and the maximum stayed at 1.151, while the speedup fell from 2.59× to
 1.61×. The accuracy and speed measurements can therefore pull in
