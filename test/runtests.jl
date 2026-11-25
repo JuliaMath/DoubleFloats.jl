@@ -15,6 +15,7 @@ include("support/selftest.jl")
 include("golden.jl")
 include("layering.jl")
 include("quality.jl")
+include("conformance.jl")
 
 include("unit/specialvalues.jl")
 include("unit/construct.jl")

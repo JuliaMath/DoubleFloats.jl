@@ -1,0 +1,112 @@
+construct/2^62 + 1 is exact/Double64
+construct/Rational of a pair is exact/Double16
+construct/Rational of a pair is exact/Double32
+construct/Rational of a pair is exact/Double64
+construct/decompose is exact/Double16
+construct/decompose is exact/Double32
+construct/decompose is exact/Double64
+construct/integers wider than a word are exact/Double16
+construct/integers wider than a word are exact/Double32
+construct/integers wider than a word are exact/Double64
+construct/isnormalized exists/Double16
+construct/isnormalized exists/Double32
+construct/isnormalized exists/Double64
+construct/nested pair type cannot be named/Double16
+construct/nested pair type cannot be named/Double32
+construct/nested pair type cannot be named/Double64
+construct/non-finite pair has a zero low word/Double16
+construct/non-finite pair has a zero low word/Double32
+construct/non-finite pair has a zero low word/Double64
+construct/pair constructor normalizes/Double16
+construct/pair constructor normalizes/Double32
+construct/pair constructor normalizes/Double64
+construct/typemax(Int64) is exact/Double64
+convert/Int64 of a fraction throws InexactError/Double16
+convert/Int64 of a fraction throws InexactError/Double32
+convert/Int64 of a fraction throws InexactError/Double64
+convert/convert(Int, x) of a fraction throws InexactError/Double16
+convert/convert(Int, x) of a fraction throws InexactError/Double32
+convert/convert(Int, x) of a fraction throws InexactError/Double64
+convert/rationalize finds 1//3/Double16
+convert/rationalize finds 1//3/Double64
+convert/round rounds ties to even/Double16
+convert/round rounds ties to even/Double32
+convert/round rounds ties to even/Double64
+convert/round to Int rounds ties to even/Double16
+convert/round to Int rounds ties to even/Double32
+convert/round to Int rounds ties to even/Double64
+convert/typemax(Int64) round trip/Double64
+misc/@via_df32 returns Float32 for one, two, and three arrays
+misc/csc and sec are Base methods/Double16
+misc/csc and sec are Base methods/Double32
+misc/csc and sec are Base methods/Double64
+misc/isapprox default tolerance/Double16
+misc/isapprox default tolerance/Double32
+misc/isapprox default tolerance/Double64
+misc/isapprox with NaN/Double16
+misc/isapprox with NaN/Double32
+misc/isapprox with NaN/Double64
+misc/randpm accepts any generator/Double16
+misc/randpm accepts any generator/Double32
+misc/randpm accepts any generator/Double64
+order/!=/Double16
+order/!=/Double32
+order/!=/Double64
+order/</Double16
+order/</Double32
+order/</Double64
+order/<=/Double16
+order/<=/Double32
+order/<=/Double64
+order/==/Double16
+order/==/Double32
+order/==/Double64
+order/Dict lookup by an equal Float64/Double16
+order/Dict lookup by an equal Float64/Double32
+order/Dict lookup by an equal Float64/Double64
+order/NaN is not equal to itself/Double16
+order/NaN is not equal to itself/Double32
+order/NaN is not equal to itself/Double64
+order/Set merges equal values of two types/Double16
+order/Set merges equal values of two types/Double32
+order/Set merges equal values of two types/Double64
+order/a third is not 1//3/Double16
+order/a third is not 1//3/Double32
+order/a third is not 1//3/Double64
+order/hash equals that of an equal BigFloat/Double16
+order/hash equals that of an equal BigFloat/Double32
+order/hash equals that of an equal BigFloat/Double64
+order/hash equals that of an equal Float64/Double16
+order/hash equals that of an equal Float64/Double32
+order/hash equals that of an equal Float64/Double64
+order/hash follows isequal/Double16
+order/hash follows isequal/Double32
+order/hash follows isequal/Double64
+order/isequal/Double16
+order/isequal/Double32
+order/isequal/Double64
+order/isless/Double16
+order/isless/Double32
+order/isless/Double64
+order/mixed </Double16
+order/mixed </Double32
+order/mixed </Double64
+order/mixed <=/Double16
+order/mixed ==/Double16
+order/mixed ==/Double32
+order/mixed ==/Double64
+order/sort/Double16
+order/sort/Double32
+order/sort/Double64
+parse/digits beyond the head are kept/Double32
+parse/parse of bad text throws ArgumentError/Double16
+parse/parse of bad text throws ArgumentError/Double32
+parse/parse of bad text throws ArgumentError/Double64
+parse/tryparse of bad text is nothing/Double16
+parse/tryparse of bad text is nothing/Double32
+parse/tryparse of bad text is nothing/Double64
+promote/Double16 with Float32 gives Double32
+promote/Double16 with Float64 gives Double64
+promote/Double32 with Float64 gives Double64
+promote/Double64 with Float128 gives Float128
+promote/arithmetic follows the table
