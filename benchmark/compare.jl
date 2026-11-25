@@ -19,7 +19,15 @@ const REPOSITORY = "https://github.com/JuliaMath/DoubleFloats.jl"
 function worker(output)
     include(joinpath(@__DIR__, "benchmarks.jl"))
     Base.invokelatest() do
-        results = run(SUITE; seconds = 0.4, samples = 400, evals = 1)
+        # A quick calibration in place of `tune!`, which takes minutes here:
+        # choose evaluations per sample so that a sample lasts about 20 μs
+        # and the fastest benchmarks are not at the timer's resolution.
+        for (_, benchmark) in BenchmarkTools.leaves(SUITE)
+            warmup(benchmark)
+            estimate = minimum(run(benchmark; samples = 5, evals = 1)).time
+            benchmark.params.evals = clamp(ceil(Int, 20_000 / estimate), 1, 1000)
+        end
+        results = run(SUITE; seconds = 0.4, samples = 400)
         open(output, "w") do io
             for (path, trial) in BenchmarkTools.leaves(results)
                 println(io, join(path, " / "), '\t', minimum(trial).time)

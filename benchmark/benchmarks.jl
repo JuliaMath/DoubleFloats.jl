@@ -1,7 +1,6 @@
 # The regression suite. It defines `SUITE`, in the layout PkgBenchmark and
 # AirspeedVelocity expect, and uses only names that exist in every version it
-# is asked to compare. Each benchmark is a loop over a vector, so one
-# evaluation takes microseconds and needs no tuning.
+# is asked to compare. Each benchmark is one pass over a vector.
 #
 # To compare two versions on this machine, see compare.jl.
 
