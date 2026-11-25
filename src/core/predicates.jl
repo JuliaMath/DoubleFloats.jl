@@ -119,3 +119,12 @@ Base.iseven(x::DoubleFloat{T}) where {T<:IEEEFloat} =
     else
         false
     end
+
+"""
+    isnormalized(x::DoubleFloat)
+
+Whether the high word of `x` is the sum of its two words rounded to nearest.
+Every value the package returns is normalized; a value that is not finite
+counts as normalized whatever its low word.
+"""
+isnormalized(x::DoubleFloat) = !isfinite(HI(x)) | (HI(x) + LO(x) == HI(x))

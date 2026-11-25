@@ -8,18 +8,9 @@ construct/decompose is exact/Double64
 construct/integers wider than a word are exact/Double16
 construct/integers wider than a word are exact/Double32
 construct/integers wider than a word are exact/Double64
-construct/isnormalized exists/Double16
-construct/isnormalized exists/Double32
-construct/isnormalized exists/Double64
 construct/nested pair type cannot be named/Double16
 construct/nested pair type cannot be named/Double32
 construct/nested pair type cannot be named/Double64
-construct/non-finite pair has a zero low word/Double16
-construct/non-finite pair has a zero low word/Double32
-construct/non-finite pair has a zero low word/Double64
-construct/pair constructor normalizes/Double16
-construct/pair constructor normalizes/Double32
-construct/pair constructor normalizes/Double64
 construct/typemax(Int64) is exact/Double64
 convert/Int64 of a fraction throws InexactError/Double16
 convert/Int64 of a fraction throws InexactError/Double32
@@ -27,6 +18,9 @@ convert/Int64 of a fraction throws InexactError/Double64
 convert/convert(Int, x) of a fraction throws InexactError/Double16
 convert/convert(Int, x) of a fraction throws InexactError/Double32
 convert/convert(Int, x) of a fraction throws InexactError/Double64
+convert/modf keeps the sign of a zero integer part/Double16
+convert/modf keeps the sign of a zero integer part/Double32
+convert/modf keeps the sign of a zero integer part/Double64
 convert/rationalize finds 1//3/Double16
 convert/rationalize finds 1//3/Double64
 convert/round rounds ties to even/Double16

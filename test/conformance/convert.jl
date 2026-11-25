@@ -49,6 +49,10 @@
         property("convert/rationalize honours tol/" * name) do
             rationalize(T(F(0.333)); tol = 0.01) == 1 // 3
         end
+        property("convert/modf keeps the sign of a zero integer part/" * name) do
+            f, i = modf(T(F(-0.25)))
+            f == F(-0.25) && iszero(i) && signbit(HI(i)) && modf(T(F(2.5))) == (F(0.5), F(2))
+        end
         property("convert/Bool/" * name) do
             Bool(T(1)) === true && Bool(T(0)) === false && throws(() -> Bool(T(2)), InexactError)
         end

@@ -19,7 +19,17 @@
         end
         property("construct/non-finite pair has a zero low word/" * name) do
             x = T(F(Inf), F(Inf))
-            isinf(x) && iszero(LO(x)) && isnan(T(F(Inf), F(-Inf)))
+            isinf(x) &&
+                iszero(LO(x)) &&
+                T(F(Inf), F(-Inf)) == Inf &&
+                T(F(Inf), F(NaN)) == Inf &&
+                isnan(T(F(NaN), F(1))) &&
+                isinf(T(floatmax(F), floatmax(F)))
+        end
+        property("construct/pair constructor keeps signed zeros/" * name) do
+            x = T(F(-0.0), F(0.0))
+            y = T(F(1), F(-0.0))
+            signbit(HI(x)) && HI(y) === F(1) && signbit(LO(y)) && signbit(HI(DoubleFloat(F(-0.0), F(0.0))))
         end
         property("construct/isnormalized exists/" * name) do
             DoubleFloats.isnormalized(T(F(1), eps(F) / 4)) && DoubleFloats.isnormalized(T(F(Inf)))

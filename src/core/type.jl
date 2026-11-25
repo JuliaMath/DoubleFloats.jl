@@ -20,11 +20,27 @@ end
 unsafe_double(::Type{T}, hi::Union{IEEEFloat,Integer}, lo::Union{IEEEFloat,Integer}) where {T<:IEEEFloat} =
     unsafe_double(T, T(hi), T(lo))
 
-# Normalizes the pair.
-DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat} = unsafe_double(T, two_sum(hi, lo)...)
+"""
+    DoubleFloat{T}(hi::T, lo::T)
+    DoubleFloat(hi::T, lo::T)
 
-# Does not alter hi, lo.
-DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat} = unsafe_double(T, hi, lo)
+The pair of words `(hi, lo)`, normalized: the stored high word is `hi + lo`
+rounded to nearest and the stored low word is the rounding error. A pair
+that is already normalized is returned unchanged, signed zeros included.
+
+A high word that is not finite is the value, whatever `lo` holds, and the
+low word is stored as zero. So is a sum that is not finite.
+"""
+@inline function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
+    s, e = two_sum(hi, lo)
+    # Leave the words as given when the low word is zero: adding it would
+    # turn a high word of -0.0 into 0.0 and discard the sign of the low word.
+    asgiven = iszero(lo) | !isfinite(hi)
+    high = ifelse(asgiven, hi, s)
+    low = ifelse(iszero(lo), lo, ifelse(isfinite(high), e, zero(T)))
+    return unsafe_double(T, high, low)
+end
+DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat} = DoubleFloat{T}(hi, lo)
 
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
