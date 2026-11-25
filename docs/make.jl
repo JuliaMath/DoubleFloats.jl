@@ -33,6 +33,7 @@ write(joinpath(@__DIR__, "src", "multifulcrum.md"), replace(comparison,
     "](src/technicalguide.md#elementary-vector-kernels)" => "](technicalguide.md#elementary-vector-kernels)",
     "](src/technicalguide.md#batch-benchmarks)" => "](technicalguide.md#Batch-benchmarks)",
     "](src/glossary.md#" => "](glossary.md#",
+    "[Zadeh (1965)](src/references.md#zadeh-1965)" => "[Zadeh (1965)](@ref \"Zadeh (1965)\")",
     "](src/userguide.md#elementwise-operations-on-vectors)" =>
         "](userguide.md#Elementwise-operations-on-vectors)",
     "](reports/accuracy_report.md)" => "](accuracy_report.md)",

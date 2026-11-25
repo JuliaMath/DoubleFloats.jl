@@ -48,7 +48,7 @@ components. $U$ expresses a relative error in units of `eps(D)`.
 The local spacing between representable sums depends on the components
 and their exponents. In particular, an absolute spacing floor near
 underflow can be vastly larger than $|y|\varepsilon_D$.
-See [Goldberg on relative error, ulps, and gradual underflow](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html).
+See [Goldberg (1991)](src/references.md#goldberg-1991) for relative error, ulps, and gradual underflow.
 
 The replay used seed `20260718` and the report's draw order on Julia
 1.13.3 at commit `d63ef398`. The reference used MPFR at 512 bits on the sum of
@@ -60,7 +60,7 @@ skips nonfinite results. It runs the `Double64` scalar and matrix
 sections before the `Double32` scalar section, so reseeding each row
 would change the sample. See the [generator](https://github.com/JuliaMath/DoubleFloats.jl/blob/d63ef39842bae3dad3f5b6f36e405ce50e6c5609/docs/reports/accuracies.jl),
 [recorded report](https://github.com/JuliaMath/DoubleFloats.jl/blob/d63ef39842bae3dad3f5b6f36e405ce50e6c5609/docs/reports/accuracy_report.md), and
-[MPFR reference operations](https://www.mpfr.org/mpfr-current/mpfr.html#Transcendental-Functions).
+[the GNU MPFR manual](src/references.md#gnu-mpfr-manual) for the reference operations.
 
 | Type | Function | Draw / retained | Input components | Median $U$ | Maximum $U$ |
 |:---|:---|---:|:---|---:|---:|

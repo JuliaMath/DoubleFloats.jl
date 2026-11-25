@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const article = document.getElementById("documenter-page");
   if (!outline || !article) return;
 
+  const glossary = article.querySelector("h1#Glossary") !== null;
   const sections = new Map();
   for (const link of outline.querySelectorAll(":scope > li > a[href^='#']")) {
     sections.set(decodeURIComponent(link.hash.slice(1)), link.parentElement);
@@ -23,7 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!children) {
       children = document.createElement("ul");
       children.className = "docs-subsections";
-      parent.append(children);
+      if (glossary) {
+        const disclosure = document.createElement("details");
+        disclosure.className = "docs-glossary-terms";
+        const summary = document.createElement("summary");
+        const title = document.createElement("em");
+        title.textContent = "Terms";
+        summary.append(title);
+        disclosure.append(summary, children);
+        parent.append(disclosure);
+      } else {
+        parent.append(children);
+      }
     }
 
     const item = document.createElement("li");

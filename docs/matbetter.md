@@ -137,7 +137,7 @@ entries in the original order in public triangular and Schur callers.
    inputs near the norm cutoff. Reuse the final shifted matrix
    for the right solve when that saves a pass. The logarithm literature motivates
    preserving the inverse scaling and approximation as a unit.
-   [Al-Mohy and Higham, *Improved Inverse Scaling and Squaring Algorithms for the Matrix Logarithm*](https://epubs.siam.org/doi/abs/10.1137/110852553)
+   [Al-Mohy and Higham (2012)](src/references.md#al-mohy-and-higham-2012).
 3. Benchmark Schur reconstruction as a separate change in
    `_matlog_schur` and `_matsqrt_schur`. Compare the existing
    lazy `Z'` with a single materialized `Matrix(adjoint(Z))`,
@@ -169,7 +169,7 @@ The right-hand update can be one rectangular product over the
 intervening block indices. Use the packed dense kernel for that
 product. This ordering makes both dependencies available when
 solving each block.
-[Deadman, Higham, and Ralha, *Blocked Schur Algorithms for Computing the Matrix Square Root*](https://research.manchester.ac.uk/en/publications/blocked-schur-algorithms-for-computing-the-matrix-square-root/)
+[Deadman, Higham, and Ralha (2013)](src/references.md#deadman-higham-and-ralha-2013).
 
 - Start with finite triangular inputs close to identity, for example
   a safely verified `opnorm(T - I, 1) <= 0.625`, with finite
@@ -322,7 +322,7 @@ pairs, separation from the closed negative real axis, and cases
 that need complex results. Use the existing complex Schur path when
 block or branch admission fails. Measure the entire public call
 before enabling real Schur.
-[Al-Mohy, Higham, and Relton, real Schur algorithm, section 6](https://eprints.maths.manchester.ac.uk/2015/1/120885991.pdf)
+[Al-Mohy, Higham, and Relton (2013), §6](src/references.md#al-mohy-higham-and-relton-2013).
 
 ## Correctness and performance acceptance
 

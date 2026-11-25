@@ -35,7 +35,7 @@ $E=|\widehat y-y|/(|y|\epsilon_D)$. The working-precision unit
 [$\epsilon_D$](src/glossary.md#glossary-working-unit) is $2^{-104}$ for Double64 and $2^{-46}$ for Double32,
 so compare their scores to targets in their respective units.
 The reference uses both input words and 512-bit [BigFloat](src/glossary.md#glossary-bigfloat) arithmetic.
-The tables show the [99th percentile](src/glossary.md#glossary-percentile) (p99) and the maximum of each
+The tables show the [99th percentile](src/glossary.md#glossary-percentile) (𝐏₉₉) and the maximum of each
 sample. Tuple results use the largest component score per input.
 Complex results use the complex magnitude. A sampled maximum gives
 evidence for the tested inputs. A domain-wide bound requires further
@@ -47,7 +47,7 @@ Each row uses the same head distribution in both formats. The
 before revisions are `cfeee67e` for Double32 and `bbe7832c` for
 Double64. The error columns describe the current scalar method.
 
-| Function | Dense head interval | D32 ns before → after | D32 p99 / max | D64 ns before → after | D64 p99 / max |
+| Function | Dense head interval | D32 ns before → after | D32 𝐏₉₉ / max | D64 ns before → after | D64 𝐏₉₉ / max |
 | --- | --- | --- | --- | --- | --- |
 | `exp` | 0.25–2.25 | 21.30 → 4.86 | 0.107 / 0.130 | 27.40 → 15.73 | 0.434 / 0.938 |
 | `exp2` | 0.25–2.25 | 13.06 → 4.66 | 0.113 / 0.614 | 24.98 → 15.81 | 0.442 / 1.009 |
@@ -68,7 +68,7 @@ the hyperbolic functions. The measured Double64 `sinh` maximum fell
 from 2.322 to 0.397 units, and `tan` fell from 1.229 to 0.358, while
 both got faster. For `exp` and `exp2`, the faster methods raised the
 sampled maxima from 0.831 to 0.938 and 0.837 to 1.009 respectively.
-The `expm1` maximum fell slightly, from 1.603 to 1.579, while p99 rose
+The `expm1` maximum fell slightly, from 1.603 to 1.579, while 𝐏₉₉ rose
 from 0.901 to 1.073. A tail-percentile target and a maximum target
 therefore give different assessments of that change.
 [Scalar implementation details](src/technicalguide.md#faster-double64-elementary-kernels)
@@ -80,7 +80,7 @@ back into two Float32 words. All eleven dense fixtures admitted
 sparse to survive widening. The largest scalar Double32 `exp2` error
 came from the fallback at the pair `(1.7698154f0, 3.6909767f-10)`.
 The `exp2` maximum nevertheless fell from 0.911 to 0.614 units on the
-matched inputs. Its p99 fell from 0.442 to 0.113.
+matched inputs. Its 𝐏₉₉ fell from 0.442 to 0.113.
 
 The same input conversion error can matter much more near a root.
 If rounding the input changes $x$ by [$\delta$](src/glossary.md#glossary-delta), the first-order relative
@@ -121,7 +121,7 @@ valid. Some belong to a different fast regime, and some fall back to
 scalar evaluation. For example, 1.015625 belongs to the direct
 Double64 logarithm regime while the other inputs use the table.
 
-| Function | D32 dense / mixed | D32 dense p99 / max | D64 dense / mixed | D64 dense p99 / max | Mixed heads D32 / D64 |
+| Function | D32 dense / mixed | D32 dense 𝐏₉₉ / max | D64 dense / mixed | D64 dense 𝐏₉₉ / max | Mixed heads D32 / D64 |
 | --- | --- | --- | --- | --- | --- |
 | `exp` | 0.99× / 0.99× | 0.107 / 0.130 | 2.96× / 1.85× | 0.434 / 0.938 | 81 / 705 |
 | `exp2` | 0.99× / 0.98× | 0.113 / 0.614 | 3.03× / 2.86× | 0.442 / 1.009 | 113 / 0 |
@@ -150,7 +150,7 @@ operations. Scalar and batch maxima agree at the displayed precision.
 The scalar baseline for `sincos`, `cis`, and `normalize` already
 computes both components in one call.
 
-| Operation | Dense head interval | Scalar → batch ns | Speedup | Batch p99 / max |
+| Operation | Dense head interval | Scalar → batch ns | Speedup | Batch 𝐏₉₉ / max |
 | --- | --- | --- | --- | --- |
 | `sin` | 0.012–0.08 | 29.85 → 7.30 | 4.09× | 0.338 / 0.599 |
 | `cos` | 0.012–0.08 | 31.00 → 24.33 | 1.27× | 0.139 / 0.288 |
@@ -223,7 +223,7 @@ normalized error [$a_k$](src/glossary.md#glossary-model-scores).
 
 Let [$T_s$](src/glossary.md#glossary-model-time) denote the scalar baseline time, [$T_k$](src/glossary.md#glossary-model-time) the candidate time,
 and [$\sigma$](src/glossary.md#glossary-model-time) the requested speedup. The two errors [$E_{99,k}$](src/glossary.md#glossary-model-targets)
-and [$E_{\max,k}$](src/glossary.md#glossary-model-targets) are the candidate's p99 and maximum. The corresponding
+and [$E_{\max,k}$](src/glossary.md#glossary-model-targets) are the candidate's 𝐏₉₉ and maximum. The corresponding
 targets are [$\tau_{99}$](src/glossary.md#glossary-model-targets) and [$\tau_{\max}$](src/glossary.md#glossary-model-targets).
 
 ```math
@@ -252,13 +252,13 @@ coverage already affects the measured time. An explicit coverage requirement can
 separately. Taking $\max_k Q(c,k)$ gives the best joint grade for
 that workload.
 These grades express chosen preferences and have no probability
-interpretation. [Zadeh, *Fuzzy Sets*](https://doi.org/10.1016/S0019-9958%2865%2990241-X)
+interpretation. [Zadeh (1965)](src/references.md#zadeh-1965)
 
 For a concrete target, take $\sigma=2$, $\tau_{99}=1$, and
 $\tau_{\max}=2.2$. Dense Double32 `log1p`, `sinh`, and `tanh`
 meet all three targets. They miss the speed target with the mixed
 inputs. All eleven dense Double64 batches meet the speed and maximum
-targets. Only `expm1` misses the p99 target, with an observed value
+targets. Only `expm1` misses the 𝐏₉₉ target, with an observed value
 of about 1.0735.
 
 ### The accuracy weight at a crossover
@@ -300,11 +300,11 @@ scalar evaluation for all six.
 
 #### Inputs to the Double32 crossover calculation
 
-The p99 and maximum columns use working-precision units. Each row
+The 𝐏₉₉ and maximum columns use working-precision units. Each row
 supplies the two times and four error statistics needed to recalculate
 its crossover or apply different error targets.
 
-| Function | Fixture | Scalar ns | Batch ns | Scalar p99 / max | Batch p99 / max |
+| Function | Fixture | Scalar ns | Batch ns | Scalar 𝐏₉₉ / max | Batch 𝐏₉₉ / max |
 |:---|:---|---:|---:|---:|---:|
 | `log2` | dense | 6.285 | 4.359 | 0.10895 / 0.13138 | 0.28756 / 0.44284 |
 | `log2` | mixed | 6.557 | 5.255 | 0.10895 / 0.13138 | 0.26534 / 0.44284 |
@@ -320,7 +320,7 @@ its crossover or apply different error targets.
 | `tanh` | mixed | 9.026 | 5.304 | 0.10745 / 0.13877 | 0.25983 / 0.51788 |
 
 For dense Double32 `tanh`, the speedup is `8.574 / 3.170 = 2.705`.
-With p99 and maximum targets of 1 and 2.2 units, the scalar score
+With 𝐏₉₉ and maximum targets of 1 and 2.2 units, the scalar score
 is `max(0.10766, 0.13877 / 2.2) = 0.10766`. The batch score is
 `max(0.27613, 0.51788 / 2.2) = 0.27613`. Their ratio is 2.565,
 giving `log(2.705) / (log(2.705) + log(2.565)) ≈ 0.514`.
@@ -332,9 +332,9 @@ advantage shrinks more than the error penalty.
 
 The same model can compare two algorithm revisions. These
 measurements use the same dense inputs as the scalar table above.
-The accuracy targets are again 1 for p99 and 2.2 for the maximum.
+The accuracy targets are again 1 for 𝐏₉₉ and 2.2 for the maximum.
 
-| Function | Scalar ns before → after | p99 before → after | Maximum before → after | Crossover |
+| Function | Scalar ns before → after | 𝐏₉₉ before → after | Maximum before → after | Crossover |
 |:---|---:|---:|---:|---:|
 | `exp` | 27.399 → 15.733 | 0.42317 → 0.43419 | 0.83129 → 0.93810 | 0.956 |
 | `exp2` | 24.977 → 15.808 | 0.42163 → 0.44151 | 0.83711 → 1.00928 | 0.844 |
@@ -402,7 +402,7 @@ F_E(e) = \pi F_n(e) + (1-\pi)F_s(e).
 ```
 
 The formula combines the two fractions at the same threshold.
-In the mixed Double32 `log1p` fixture, p99 improved from 0.578 to 0.544
+In the mixed Double32 `log1p` fixture, 𝐏₉₉ improved from 0.578 to 0.544
 and the maximum stayed at 1.151, while the speedup fell from 2.59× to
 1.61×. The accuracy and speed measurements can therefore pull in
 opposite directions as coverage changes.
@@ -472,10 +472,10 @@ function compare(f, x)
         map((scalar, batch)) do outputs
             e = [Float64(abs(BigFloat(y)-r) / (abs(r)*eps(Double32)))
                  for (y, r) in zip(outputs, ref)]
-            (p99=quantile(e, 0.99), worst=maximum(e))
+            (percentile_99=quantile(e, 0.99), worst=maximum(e))
         end
     end
-    a_s, a_v = map(e -> max(e.p99, e.worst / 2.2), errors)
+    a_s, a_v = map(e -> max(e.percentile_99, e.worst / 2.2), errors)
     s, r = times.scalar / times.batch, a_v / a_s
     crossover = s > 1 && r > 1 ? log(s) / (log(s) + log(r)) : nothing
     return (; times, errors, speedup=s, crossover)

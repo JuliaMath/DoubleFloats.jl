@@ -531,7 +531,8 @@ sampled maximum below 2.2 units favored dense Double32 `log1p`,
 limit already excludes the dense `log1p` batch on the sampled data.
 
 For candidates that pass the screen, take the larger of
-`p99 error / p99 target` and `maximum error / maximum target`
+the [𝐏₉₉](glossary.md#glossary-percentile) error divided by its
+target and the maximum error divided by its target
 as a normalized error score. If the batch is faster and has a
 higher score, let [$s$](glossary.md#glossary-model-ratios) be its speedup and [$r$](glossary.md#glossary-model-ratios) its score divided
 by the scalar score. The [crossover weight](glossary.md#glossary-model-weight) on accuracy is
@@ -540,7 +541,7 @@ by the scalar score. The [crossover weight](glossary.md#glossary-model-weight) o
 w^* = \frac{\log s}{\log s + \log r}.
 ```
 
-With [p99](glossary.md#glossary-percentile) and maximum targets of 1 and 2.2 units, the switch for
+With 𝐏₉₉ and maximum targets of 1 and 2.2 units, the switch for
 Double32 `tanh` occurs at 0.51 for the dense fixture and at 0.38
 for the mixed fixture. Below the crossover the model favors the
 batch. Above it the model favors the scalar loop. This weight
