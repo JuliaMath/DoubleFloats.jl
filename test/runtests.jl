@@ -13,6 +13,7 @@ include("support/splitmix.jl")
 include("support/selftest.jl")
 
 include("golden.jl")
+include("layering.jl")
 
 include("unit/specialvalues.jl")
 include("unit/construct.jl")
