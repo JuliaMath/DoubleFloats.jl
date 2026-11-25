@@ -1,0 +1,8 @@
+# Commits that change layout only. Use with:
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# One line-ending convention, LF
+e01825b11971d6ff9f79b3cdce00c440d9e716ca
+
+# Apply one formatter configuration to the whole repository
+00d5f7bc5a874e1881e5f9386e97d2ab2491b200

@@ -35,7 +35,7 @@ matrix algorithms.
   multiplication, and the single reversed solves for `cot` and `coth`
   are described as follow-on candidates.
 
-The [benchmark driver](../perf/bench_matrix_functions.jl) reproduces
+The [benchmark driver](../benchmark/studies/bench_matrix_functions.jl) reproduces
 the fixtures. The [Technical Guide](src/technicalguide.md) records
 the public-path timings and size thresholds.
 

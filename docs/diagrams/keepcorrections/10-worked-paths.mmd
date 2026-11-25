@@ -1,0 +1,13 @@
+flowchart TD
+    start["Three tests that locate the loss of a small correction"] --> scalar["Scalar: delta = 2^-60; evaluate log of one plus delta"]
+    scalar --> slow["Binary expression log(1.0 + delta) sees 1.0 and gives zero"]
+    scalar --> sgood["Keep delta explicit with log1p, or form the sum in a pair before taking log"]
+    start --> widen["Conversion: Double32 pair with high word 1 and low word 2^-60"]
+    widen --> wbad["A single Float64 sum gives 1; both component values individually convert exactly"]
+    widen --> wgood["Reject exact widening to one Float64; keep the pair or use a wider sum"]
+    start --> matrix["Matrix: form A = [1 1; 1 1 + delta] and b = [3, 3 + 2 delta]"]
+    matrix --> mbad["Base-float conversion erases the perturbation and makes A singular"]
+    matrix --> mgood["Build A and b as pairs, solve, and check against the known answer [1, 2]"]
+    sgood --> reference["Check against the intended value reconstructed from the retained data"]
+    wgood --> reference
+    mgood --> reference

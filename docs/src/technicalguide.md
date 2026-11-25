@@ -37,14 +37,14 @@ Two structural consequences matter throughout the package:
 
 ### Error-free transformations
 
-Scalar arithmetic uses building blocks from `src/math/errorfree.jl`.
+Scalar arithmetic uses building blocks from `src/eft/errorfree.jl`.
 Their error-free identities assume finite inputs and representable
 intermediate results and residuals.
 
 - [`two_sum(a, b)`](glossary.md#glossary-error-free) / `two_hilo_sum(a, b)`: `hi + lo == a + b` exactly.
 - [`two_prod(a, b)`](glossary.md#glossary-error-free): `hi + lo == a * b` exactly, using [`fma`](glossary.md#glossary-fma).
 - Division and square root use these plus one [Newton-like correction](glossary.md#glossary-newton)
-  (`src/math/ops/`) to recover low bits. Operations returning one
+  (`src/arith/`) to recover low bits. Operations returning one
   DoubleFloat can still round.
 
 A zero low word describes the input pair. The output can still need a
@@ -116,7 +116,7 @@ that would lose `1/x - 1`.
 
 #### Special functions
 
-For `agm` and `ellipk` in `src/math/special/`, the [AGM iteration](glossary.md#glossary-agm)
+For `agm` and `ellipk` in `src/special/`, the [AGM iteration](glossary.md#glossary-agm)
 stops when the gap `|a-b|` stops shrinking. This stopping rule tracks
 the [roundoff floor](glossary.md#glossary-roundoff-floor) at the operand scale.
 
@@ -346,7 +346,7 @@ records the validation criteria.
 #### Double64 and complex benchmarks
 
 The table reports median microseconds per 4,096 elements from 11 interleaved
-measurements. It uses the bounded fixtures in `perf/bench_simd_elementary.jl`,
+measurements. It uses the bounded fixtures in `benchmark/studies/bench_simd_elementary.jl`,
 seed `0x5eed`, Julia 1.13.3, and native AVX2/FMA targeting on an Intel Core
 i9-14900K. The baseline is [preallocated](glossary.md#glossary-destination) scalar broadcast from revision
 `d68a1c0c`. The batch column includes dispatch and [lane](glossary.md#glossary-batch) checks.
@@ -425,10 +425,10 @@ pre-change comparison, run the same driver with `--baseline` and the
 older checkout as the active project.
 
 ```sh
-julia --project -t4 perf/bench_simd_elementary.jl
-SIMD_RANGE=general SIMD_SIZE=65536 julia --project -t4 perf/bench_simd_elementary.jl
+julia --project -t4 benchmark/studies/bench_simd_elementary.jl
+SIMD_RANGE=general SIMD_SIZE=65536 julia --project -t4 benchmark/studies/bench_simd_elementary.jl
 SIMD_MIXTURE=0,0.01,0.1,0.5,1 SIMD_FILTER='^(sin|exp2|log)$' \
-    julia --project perf/bench_simd_elementary.jl
+    julia --project benchmark/studies/bench_simd_elementary.jl
 ```
 
 Set `SIMD_CLUSTERED=1` for clustered mixtures, `SIMD_LOG_REGIMES=1` for
@@ -470,7 +470,7 @@ The gains apply to the input intervals and compiler target tested.
 Replacing the low words of 1% of the inputs with much smaller values
 still admitted those inputs to the six native kernels. Their batch
 times stayed within 5% of the eligible-only runs or improved. The
-batch driver in `perf/bench_simd_elementary.jl` includes these intervals.
+batch driver in `benchmark/studies/bench_simd_elementary.jl` includes these intervals.
 Use `SIMD_FILTER=/Double32 SIMD_SIZE=65536 SIMD_MIXTURE=0,0.01` to
 measure dense inputs and inputs with sparse low words.
 
@@ -562,7 +562,7 @@ routes dense [factorizations](glossary.md#glossary-factorization) through pure-J
 - `lu`, `qr`, `\`: LinearAlgebra's generic kernels.
 - [`eigen`](glossary.md#glossary-eigen), `eigvals`, [`schur`](glossary.md#glossary-schur), `hessenberg`: [GenericSchur](glossary.md#glossary-schur) (QR iteration).
   DoubleFloats owns explicit `eigen`/`eigvals` methods
-  (`src/math/linearalgebra/eigen.jl`) that pin this routing, detect
+  (`src/linalg/eigen.jl`) that pin this routing, detect
   hermitian input (tridiagonalization + symmetric QR: real eigenvalues,
   orthonormal vectors), and normalize output conventions to match the
   LAPACK route (real `Eigen` for a real spectrum, `(real, imag)` sorting,
@@ -580,7 +580,7 @@ routes dense [factorizations](glossary.md#glossary-factorization) through pure-J
 
 See [Linear Algebra](linearalgebra.md#Functions-of-whole-matrices) for
 function domains and a worked example. The dedicated implementations in
-`src/math/linearalgebra/matfun.jl` can handle [defective inputs](glossary.md#glossary-jordan). Structure checks apply
+`src/linalg/matfun.jl` can handle [defective inputs](glossary.md#glossary-jordan). Structure checks apply
 to the stored matrix. For a skipped entry, both limbs of each component
 must be zero.
 
@@ -677,7 +677,7 @@ factorization, product, solve, and reconstruction timings.
 
 ```sh
 MAT_SIZE=64,256 MAT_FILTER='upper/(log|sqrt|exp|cos|halfpower)' \
-    julia --project -t1 perf/bench_matrix_functions.jl
+    julia --project -t1 benchmark/studies/bench_matrix_functions.jl
 ```
 
 The repository's `docs/matbetter.md` records the rollout and the

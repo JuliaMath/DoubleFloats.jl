@@ -1,0 +1,18 @@
+flowchart TD
+    input["Receive preserved input data and an output accuracy requirement"] --> counterfactual{"Is a public DoubleFloats route eligible for this source and contract?"}
+    counterfactual -->|No or unknown| guard["Evaluate from the original data if retained, or use the supplied value with its rounding provenance"]
+    counterfactual -->|Yes for this input and contract| construct["Use a decimal string constructor for intended decimals, or DoubleFloat(hi, lo) for a finite pair in range"]
+    construct --> choice{"What is being computed?"}
+    choice -->|Two base-float operands| operators["Use add2, sub2, or mul2 in a validated range; retain the returned pair"]
+    choice -->|Scalar correction| scalar["Use pair arithmetic, expm1(x), or log1p(delta); check any narrower intermediate for exact conversion"]
+    choice -->|Elementwise array| vector["Use qualified simdmap! for compatible inputs and outputs, or map the chosen scalar method"]
+    choice -->|Matrix calculation| matrix["Use pair-typed data with the appropriate Julia or DoubleFloats matrix method; check structure, branch, and accuracy"]
+    operators --> verify["Check operation semantics and required accuracy"]
+    scalar --> verify
+    vector --> verify
+    matrix --> verify
+    verify -->|Satisfied| keep["Keep the result paired; access both words with HILO when exporting"]
+    verify -->|Insufficient| guard
+    guard --> wider["Use a wider or exact route and apply the same result checks"]
+    wider --> output["Return the qualifying result, or report why it could not be established"]
+    keep --> output

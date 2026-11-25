@@ -89,8 +89,10 @@ function exponential_results(op, inputs, ::Type{D}) where {D}
     maxabs = map(xs -> isempty(xs) ? "—" : @sprintf("%.4e", maximum(xs) * step), grid_errors)
     summary = "| `$op` | $(length(inputs)) | $(counts[1]) | $(counts[2]) | $zeros_out | $overflow_out | $invalid | $mismatches |"
     nearest = [iszero(counts[i]) ? "—" : "$(agreements[i])/$(counts[i])" for i in 1:2]
-    grids = ["| `$op` | $label | $(nearest[i]) | $(maxstep[i]) | $(maxabs[i]) |"
-             for (i, label) in enumerate(("Subnormal range", "Quantization-limited normal range"))]
+    grids = [
+        "| `$op` | $label | $(nearest[i]) | $(maxstep[i]) | $(maxabs[i]) |" for
+        (i, label) in enumerate(("Subnormal range", "Quantization-limited normal range"))
+    ]
     return (; ordinary, summary, grids)
 end
 
@@ -128,8 +130,10 @@ function exponential_rounding_section(D, random_exp, random_exp2)
     # A low component can be one subnormal step away from an exact
     # integer input. Keep that perturbation in the reference evaluation.
     boundaries = setprecision(BigFloat, 1536) do
-        (exponential_results(exp, exponential_boundary_inputs(log, D), D),
-         exponential_results(exp2, exponential_boundary_inputs(log2, D), D))
+        (
+            exponential_results(exp, exponential_boundary_inputs(log, D), D),
+            exponential_results(exp2, exponential_boundary_inputs(log2, D), D),
+        )
     end
     return """
 ### Exponential rounding near the format limits
@@ -161,16 +165,16 @@ end
 
 function scalar_rows(T)
     ulp = BigFloat(eps(T))
-    unit()     = T(rand())
-    sym()      = T(2rand() - 1)
-    wide()     = T((2rand() - 1) * 100)
+    unit() = T(rand())
+    sym() = T(2rand() - 1)
+    wide() = T((2rand() - 1) * 100)
     positive() = T(rand() * 100 + 1e-6)
-    above1()   = T(1 + rand() * 100)
-    near1()    = T(1 + (rand() - 0.5) * 2.0^-30)
-    tiny()     = T((2rand() - 1) * 2.0^-40)
-    nearone()  = T(1.0, T === Double64 ? rand() * 2.0^-54 : rand() * 2.0^-25)
-    dom2()     = T((2rand() - 1) * 2)
-    dom9()     = T((2rand() - 1) * 9)
+    above1() = T(1 + rand() * 100)
+    near1() = T(1 + (rand() - 0.5) * 2.0^-30)
+    tiny() = T((2rand() - 1) * 2.0^-40)
+    nearone() = T(1.0, T === Double64 ? rand() * 2.0^-54 : rand() * 2.0^-25)
+    dom2() = T((2rand() - 1) * 2)
+    dom9() = T((2rand() - 1) * 9)
 
     exp_results = exponential_results(exp, [wide() for _ in 1:NSAMPLES], T)
     expm1_row = accrow("expm1", expm1, sym, ulp; domain = "(-1, 1)")
@@ -185,26 +189,52 @@ function scalar_rows(T)
         accrow("log2", log2, positive, ulp; domain = "(0, 100)"),
     ]
     trig = [
-        accrow("sin", sin, wide, ulp; domain = "(-100, 100)"), accrow("cos", cos, wide, ulp; domain = "(-100, 100)"),
+        accrow("sin", sin, wide, ulp; domain = "(-100, 100)"),
+        accrow("cos", cos, wide, ulp; domain = "(-100, 100)"),
         accrow("tan", tan, sym, ulp; domain = "(-1, 1)"),
         accrow("sin", sin, () -> T(1.47 + 0.2rand()), ulp; domain = "near π/2"),
         accrow("cos", cos, () -> T(1.47 + 0.2rand()), ulp; domain = "near π/2"),
         accrow("cos", cos, () -> T(3.04 + 0.2rand()), ulp; domain = "near π"),
     ]
-    arctrig = [accrow("asin", asin, sym, ulp; domain = "(-1, 1)"), accrow("acos", acos, sym, ulp; domain = "(-1, 1)"), accrow("atan", atan, wide, ulp; domain = "(-100, 100)")]
+    arctrig = [
+        accrow("asin", asin, sym, ulp; domain = "(-1, 1)"),
+        accrow("acos", acos, sym, ulp; domain = "(-1, 1)"),
+        accrow("atan", atan, wide, ulp; domain = "(-100, 100)"),
+    ]
     hyp = [
-        accrow("sinh", sinh, dom2, ulp; domain = "(-2, 2)"), accrow("sinh", sinh, dom9, ulp; domain = "(-9, 9)"),
-        accrow("cosh", cosh, dom2, ulp; domain = "(-2, 2)"), accrow("cosh", cosh, dom9, ulp; domain = "(-9, 9)"),
-        accrow("tanh", tanh, dom2, ulp; domain = "(-2, 2)"), accrow("tanh", tanh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("sinh", sinh, dom2, ulp; domain = "(-2, 2)"),
+        accrow("sinh", sinh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("cosh", cosh, dom2, ulp; domain = "(-2, 2)"),
+        accrow("cosh", cosh, dom9, ulp; domain = "(-9, 9)"),
+        accrow("tanh", tanh, dom2, ulp; domain = "(-2, 2)"),
+        accrow("tanh", tanh, dom9, ulp; domain = "(-9, 9)"),
         accrow("asinh", asinh, wide, ulp; domain = "(-100, 100)"),
-        accrow("asinh", asinh, tiny, ulp; domain = "±2⁻⁴⁰"), accrow("acosh", acosh, above1, ulp; domain = "(1, 101)"),
-        accrow("acosh", acosh, nearone, ulp; domain = "1 + ε"), accrow("atanh", atanh, sym, ulp; domain = "(-1, 1)"), accrow("atanh", atanh, tiny, ulp; domain = "±2⁻⁴⁰"),
+        accrow("asinh", asinh, tiny, ulp; domain = "±2⁻⁴⁰"),
+        accrow("acosh", acosh, above1, ulp; domain = "(1, 101)"),
+        accrow("acosh", acosh, nearone, ulp; domain = "1 + ε"),
+        accrow("atanh", atanh, sym, ulp; domain = "(-1, 1)"),
+        accrow("atanh", atanh, tiny, ulp; domain = "±2⁻⁴⁰"),
     ]
     special = [
-        accrow("erf", erf, sym, ulp; domain = "(-1, 1)"), accrow("erfc", erfc, sym, ulp; domain = "(-1, 1)"),
+        accrow("erf", erf, sym, ulp; domain = "(-1, 1)"),
+        accrow("erfc", erfc, sym, ulp; domain = "(-1, 1)"),
         accrow("gamma", gamma, () -> T(0.1 + 9.9rand()), ulp; domain = "(0.1, 10)"),
-        accrow("ellipk", ellipk, x -> big(pi) / (2 * DoubleFloats.agm(big"1.0", sqrt(1 - x))), unit, ulp; domain = "(0, 1)"),
-        accrow("ellipk", ellipk, x -> big(pi) / (2 * DoubleFloats.agm(big"1.0", sqrt(1 - x))), () -> T(1) - T(2.0)^(-20 - 30rand()), ulp; domain = "1 - 2⁻²⁰⁻⁵⁰"),
+        accrow(
+            "ellipk",
+            ellipk,
+            x -> big(pi) / (2 * DoubleFloats.agm(big"1.0", sqrt(1 - x))),
+            unit,
+            ulp;
+            domain = "(0, 1)",
+        ),
+        accrow(
+            "ellipk",
+            ellipk,
+            x -> big(pi) / (2 * DoubleFloats.agm(big"1.0", sqrt(1 - x))),
+            () -> T(1) - T(2.0)^(-20 - 30rand()),
+            ulp;
+            domain = "1 - 2⁻²⁰⁻⁵⁰",
+        ),
     ]
     return explog, trig, arctrig, hyp, special, exponential_rounding_section(T, exp_results, exp2_results)
 end
@@ -224,47 +254,50 @@ function matres(name, resfn; n = 8, samples = 25)
         return @sprintf("| `%s` | %d×%d | — | unavailable | unavailable |", name, n, n)
     end
     sort!(errs)
-    return @sprintf("| `%s` | %d×%d | %d | %.2f | %.2f |",
-                    name, n, n, samples, errs[(end + 1) ÷ 2], errs[end])
+    return @sprintf("| `%s` | %d×%d | %d | %.2f | %.2f |", name, n, n, samples, errs[(end + 1) ÷ 2], errs[end])
 end
 
 resid(T, M) = Float64(BigFloat(maximum(abs.(M))) / BigFloat(eps(T)))
 
 function matrix_rows(T)
     return [
-    matres("eigen residual  ‖AV−VΛ‖", n -> begin
-        A = rand(T, n, n) .- 0.5
-        F = eigen(A)
-        resid(T, A * F.vectors - F.vectors * Diagonal(F.values)) / n
-    end),
-    matres("exp∘log roundtrip", n -> begin
-        A = rand(T, n, n) .+ Diagonal(fill(T(n), n))
-        resid(T, exp(log(A)) - A) / Float64(maximum(abs.(A))) / n
-    end),
-    matres("sqrt squared", n -> begin
-        A = rand(T, n, n) .+ Diagonal(fill(T(n), n))
-        resid(T, sqrt(A)^2 - A) / Float64(maximum(abs.(A))) / n
-    end),
-    matres("sin²+cos²−I", n -> begin
-        A = rand(T, n, n) .- 0.5
-        s, c = sincos(A)
-        resid(T, s * s + c * c - I) / n
-    end),
+        matres("eigen residual  ‖AV−VΛ‖", n -> begin
+            A = rand(T, n, n) .- 0.5
+            F = eigen(A)
+            resid(T, A * F.vectors - F.vectors * Diagonal(F.values)) / n
+        end),
+        matres("exp∘log roundtrip", n -> begin
+            A = rand(T, n, n) .+ Diagonal(fill(T(n), n))
+            resid(T, exp(log(A)) - A) / Float64(maximum(abs.(A))) / n
+        end),
+        matres("sqrt squared", n -> begin
+            A = rand(T, n, n) .+ Diagonal(fill(T(n), n))
+            resid(T, sqrt(A)^2 - A) / Float64(maximum(abs.(A))) / n
+        end),
+        matres("sin²+cos²−I", n -> begin
+            A = rand(T, n, n) .- 0.5
+            s, c = sincos(A)
+            resid(T, s * s + c * c - I) / n
+        end),
     ]
 end
 
 function batch32_accuracy()
     rng = MersenneTwister(0x32e1)
     unit = BigFloat(eps(Double32))
-    cases = ((log2, 0.125f0, 0.875f0), (log2, 1.125f0, 8.0f0),
-             (log1p, -0.0625f0, 0.0625f0),
-             (atan, -1.0f0, 1.0f0), (tan, -0.5f0, 0.5f0),
-             (sinh, -1.0f0, 1.0f0), (tanh, -1.0f0, 1.0f0))
+    cases = (
+        (log2, 0.125f0, 0.875f0),
+        (log2, 1.125f0, 8.0f0),
+        (log1p, -0.0625f0, 0.0625f0),
+        (atan, -1.0f0, 1.0f0),
+        (tan, -0.5f0, 0.5f0),
+        (sinh, -1.0f0, 1.0f0),
+        (tanh, -1.0f0, 1.0f0),
+    )
     rows = map(cases) do (f, a, b)
         x = map(1:4096) do i
             h = a + (b - a) * rand(rng, Float32)
-            l = i % 8 == 0 ? copysign(Float32(0x1p-90), h) :
-                (rand(rng, Float32) - 0.5f0) * eps(h)
+            l = i % 8 == 0 ? copysign(Float32(0x1p-90), h) : (rand(rng, Float32) - 0.5f0) * eps(h)
             Double32(h, l)
         end
         y = DoubleFloats.simdmap!(f, similar(x), x)
@@ -339,8 +372,28 @@ $(join(matrix, "\n"))
 """
 end
 
-double64_section = accuracy_section("Double64", "2⁻¹⁰⁴ (about 4.9e-32)", explog64, trig64, arctrig64, hyp64, special64, rounding64, matrix64)
-double32_section = accuracy_section("Double32", "2⁻⁴⁶ (about 1.4e-14)", explog32, trig32, arctrig32, hyp32, special32, rounding32, matrix32)
+double64_section = accuracy_section(
+    "Double64",
+    "2⁻¹⁰⁴ (about 4.9e-32)",
+    explog64,
+    trig64,
+    arctrig64,
+    hyp64,
+    special64,
+    rounding64,
+    matrix64,
+)
+double32_section = accuracy_section(
+    "Double32",
+    "2⁻⁴⁶ (about 1.4e-14)",
+    explog32,
+    trig32,
+    arctrig32,
+    hyp32,
+    special32,
+    rounding32,
+    matrix32,
+)
 
 report = """
 # DoubleFloats Accuracy Report
@@ -371,4 +424,3 @@ open(outpath, "w") do io
     println(io, rstrip(report))
 end
 println("wrote ", outpath)
-

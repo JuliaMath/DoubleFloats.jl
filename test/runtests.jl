@@ -2,85 +2,49 @@ using DoubleFloats, LinearAlgebra
 using Quadmath
 using Test
 
-using  Base: IEEEFloat
-import Base: isapprox
+using Base: IEEEFloat
 
 using Printf
 using Random
 
-const phi = Base.MathConstants.golden
-const eulergamma = Base.MathConstants.eulergamma
+include("support/constants.jl")
+include("support/reference.jl")
+include("support/splitmix.jl")
+include("support/selftest.jl")
 
-const phi_df64   = Double64(phi)
-const phi_df32   = Double32(phi)
-const gamma_df64 = Double64(eulergamma)
-const gamma_df32 = Double32(eulergamma)
+include("golden.jl")
+include("layering.jl")
+include("quality.jl")
 
-const phi_df64hi = HI(phi_df64); const phi_df64lo = LO(phi_df64)
-const phi_df32hi = HI(phi_df32); const phi_df32lo = LO(phi_df32)
-const gamma_df64hi = HI(gamma_df64); const gamma_df64lo = LO(gamma_df64)
-const gamma_df32hi = HI(gamma_df32); const gamma_df32lo = LO(gamma_df32)
+include("unit/specialvalues.jl")
+include("unit/construct.jl")
+include("unit/compare.jl")
+include("unit/promote.jl")
 
+include("unit/prearith.jl")
+include("unit/arithmetic.jl")
+include("unit/fma.jl")
+include("unit/modrem.jl")
+include("unit/functions.jl")
+include("unit/explog_boundaries.jl")
+include("unit/elementary_fast_paths.jl")
+include("unit/double32_fast_paths.jl")
+include("unit/simd_elementary.jl")
+include("unit/matmul.jl")
+include("unit/complex.jl")
 
-function isapprox(a::T, b::T) where {T<:IEEEFloat}
-   (iszero(a) && (0 < abs(b) < eps(T)^2) ||
-    iszero(b) && (0 < abs(a) < eps(T)^2) ||
-    isapprox(a, b, atol=eps(T)^2, rtol = eps(T)))
-end
+include("unit/linearalgebra.jl")
+include("unit/eigen.jl")
+include("unit/matrixfunctions.jl")
+include("unit/special_functions.jl")
 
+include("unit/concrete_accuracy.jl")
+include("unit/function_accuracy.jl")
 
+include("unit/coverage.jl")
+include("unit/op_.jl")
 
-# isapprox(lo,eps(one(Float64)),atol=eps(one(Float64)))
+include("unit/string.jl")
+include("unit/parse.jl")
 
-# to cover functions that are not exported
-
-macro df(func)
-  :(DoubleFloats.$func)
-end
-macro df(func, arg)
-  :(DoubleFloats.$func($arg))
-end
-macro df(func, arg1, arg2)
-  :(DoubleFloats.$func($arg1, $arg2))
-end
-macro df(func, arg1, arg2, arg3)
-  :(DoubleFloats.$func($arg1, $arg2, $arg3))
-end
-macro df(func, arg1, arg2, arg3, arg4)
-  :(DoubleFloats.$func($arg1, $arg2, $arg3, $arg4))
-end
-
-
-include("specialvalues.jl")
-include("construct.jl")
-include("compare.jl")
-include("promote.jl")
-
-include("prearith.jl")
-include("arithmetic.jl")
-include("fma.jl")
-include("modrem.jl")
-include("functions.jl")
-include("explog_boundaries.jl")
-include("elementary_fast_paths.jl")
-include("double32_fast_paths.jl")
-include("simd_elementary.jl")
-include("matmul.jl")
-include("complex.jl")
-
-include("linearalgebra.jl")
-include("eigen.jl")
-include("matrixfunctions.jl")
-include("special_functions.jl")
-
-include("concrete_accuracy.jl")
-include("function_accuracy.jl")
-
-include("coverage.jl")
-include("op_.jl")
-
-include("string.jl")
-include("parse.jl")
-
-include("legacy.jl")
-
+include("unit/legacy.jl")

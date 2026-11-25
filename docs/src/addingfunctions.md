@@ -29,8 +29,8 @@ depends on, including input corrections near [roots](glossary.md#glossary-sensit
 
 ### Wire the method
 
-- Implementation files live under `src/math/elementary/` (or
-  `src/math/special/`), included from `src/DoubleFloats.jl`.
+- Implementation files live under `src/elementary/` (or
+  `src/special/`), included from `src/DoubleFloats.jl`.
 - When extending a `Base` or `SpecialFunctions` operation, import it
   in `src/DoubleFloats.jl` or qualify the method definition. Export a
   new package-specific function if callers should be able to use it
@@ -38,7 +38,7 @@ depends on, including input corrections near [roots](glossary.md#glossary-sensit
 - Write for the generic signature
   `fn(x::DoubleFloat{T}) where {T<:IEEEFloat}`.  `Double32`/`Double16`
   variants of many functions are forwarded through `Double64` by
-  `src/math/elementary/templated.jl`; add your function to its list if
+  `src/elementary/widened.jl`; add your function to its list if
   that treatment fits.
 
 ### Preserve relative accuracy at sensitive points
@@ -146,9 +146,9 @@ select a kernel for one exponent. The generic registration returns
 for the kernel, such as `Tuple{Double64,Double64}` for `sincos` or
 `ComplexDF64` for `cis` on finite real inputs.
 
-The reciprocal registration in `src/math/ops/op_db_db.jl` shows the
+The reciprocal registration in `src/arith/operators.jl` shows the
 pattern. `_BatchKernel` pairs an eligibility predicate with a per-element
-evaluator. Shared helpers and the loop are in `src/math/elementary/simd.jl`.
+evaluator. Shared helpers and the loop are in `src/batch/simdmap.jl`.
 
 ```julia
 @inline _batch_inv_range(x) = _batch_abs_bounded(x, 0x1p-256, 0x1p256)
@@ -209,7 +209,7 @@ println("Checked reciprocal batch, including scalar fallback")
   exception order. Use the scalar result as the behavioral reference
   and a higher-precision calculation where the arithmetic changes.
 - Measure warmed calls with reused destinations. The benchmark driver
-  in `perf/bench_simd_elementary.jl` can compare against preallocated
+  in `benchmark/studies/bench_simd_elementary.jl` can compare against preallocated
   broadcast and check allocation and mixed-input costs. Use
   `SIMD_LLVM` to dump the native loop's LLVM and check for vector
   arithmetic. A SIMD annotation alone cannot establish that the
@@ -226,7 +226,7 @@ two batch sizes with eligible inputs and with scattered exclusions.
 
 ```sh
 SIMD_FILTER=inv SIMD_SIZE=4096,65536 SIMD_MIXTURE=0,0.01 \
-    julia --project -t4 perf/bench_simd_elementary.jl
+    julia --project -t4 benchmark/studies/bench_simd_elementary.jl
 ```
 
 Record published eligibility ranges and measured crossovers in the
@@ -293,7 +293,7 @@ Random-matrix [identity residuals](glossary.md#glossary-residual) alone are not 
 
 ### Wiring
 
-Dedicated implementations go in `src/math/linearalgebra/matfun.jl` (or a
+Dedicated implementations go in `src/linalg/matfun.jl` (or a
 sibling file included from `matrixfunction.jl`).  If a function moves
 from the eigen route to a dedicated one, *remove it from the `@eval`
 loop* in `matrixfunction.jl` — otherwise the loop's definition silently

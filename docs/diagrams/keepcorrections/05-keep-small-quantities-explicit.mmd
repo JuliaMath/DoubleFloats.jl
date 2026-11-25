@@ -1,0 +1,13 @@
+flowchart TD
+    start["Identify the small quantity the caller needs to retain"] --> form{"Where could rounding or cancellation hide it?"}
+    form -->|Exponential minus one| exp["Pass x directly to expm1; carry the offset from one through reconstruction"]
+    form -->|Logarithm near one| log["Pass delta directly to log1p for log of one plus delta"]
+    form -->|Difference of close values| diff["Subtract with both words present, or reformulate to compute the difference from its source data"]
+    form -->|Dot product or linear residual| dot["Accumulate products with their corrections; form b minus A times x using retained A and b"]
+    form -->|Matrix perturbation| matrix["Keep E when A equals I plus E; construct both words before assembling A, or use an algorithm expressed in E"]
+    exp --> result["Keep the correction in the returned representation until the consumer requests rounding"]
+    log --> result
+    diff --> result
+    dot --> result
+    matrix --> result
+    result --> check["Check a reference formed from the retained inputs and with the same domain or branch"]

@@ -11,59 +11,109 @@ module DoubleFloats
 abstract type MultipartFloat <: AbstractFloat end
 
 export DoubleFloat,
-       Double64, Double32, Double16,
-       ComplexDF64, ComplexDF32, ComplexDF16,
-       @df64_str, @df32_str, @df16_str,
-       @via_df64, @via_df32,
-       MultipartFloat, HI, LO, HILO,
-       stringtyped, showtyped, showall,
-       isnonzero, ispositive, isnegative, isnonpositive, isnonnegative,
-       isposinf, isneginf, isfractional, isnormal, issquare,
-       nan, inf, posinf, neginf,
-       ulp,
-       intpart, fracpart, fmod,
-       square, cube,
-       add2, sub2, mul2, div2,
-       ⊕, ⊖, ⊗, ⊘,
-       spread, sld, tld,
-       signs,
-       randpm,
-       agm, agm1, ellipk,
-       besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-       gamma, loggamma, lgamma, erf, erfc,
-       matrixfunction
+    Double64,
+    Double32,
+    Double16,
+    ComplexDF64,
+    ComplexDF32,
+    ComplexDF16,
+    @df64_str,
+    @df32_str,
+    @df16_str,
+    @via_df64,
+    @via_df32,
+    MultipartFloat,
+    HI,
+    LO,
+    HILO,
+    stringtyped,
+    showtyped,
+    showall,
+    isnonzero,
+    ispositive,
+    isnegative,
+    isnonpositive,
+    isnonnegative,
+    isposinf,
+    isneginf,
+    isfractional,
+    isnormal,
+    issquare,
+    nan,
+    inf,
+    posinf,
+    neginf,
+    ulp,
+    intpart,
+    fracpart,
+    fmod,
+    square,
+    cube,
+    add2,
+    sub2,
+    mul2,
+    div2,
+    ⊕,
+    ⊖,
+    ⊗,
+    ⊘,
+    spread,
+    sld,
+    tld,
+    signs,
+    randpm,
+    agm,
+    agm1,
+    ellipk,
+    besselj0,
+    besselj1,
+    besselj,
+    bessely0,
+    bessely1,
+    bessely,
+    gamma,
+    loggamma,
+    lgamma,
+    erf,
+    erfc,
+    matrixfunction
 
-using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
+# Methods for functions of other modules are written `Base.name(...)` where
+# they are defined. Only names that are used, not extended, are brought in.
+using Base: IEEEFloat
 
-using Printf
-using Random
-import Random: rand, randn
-
-using LinearAlgebra
-import LinearAlgebra: norm, mul!, AdjointQ
-
-using GenericLinearAlgebra
-using GenericSchur
-
+using GenericLinearAlgebra: GenericLinearAlgebra
+using GenericSchur: GenericSchur
+using LinearAlgebra:
+    LinearAlgebra,
+    Diagonal,
+    Hermitian,
+    I,
+    LowerTriangular,
+    SingularException,
+    UpperTriangular,
+    diag,
+    eigen,
+    eigvals,
+    ishermitian,
+    istril,
+    istriu,
+    lmul!,
+    opnorm,
+    qr,
+    rank,
+    rmul!,
+    schur,
+    sylvester
+using Printf: Printf
 import Quadmath
+using Quadmath: Float128
+using Random: Random, AbstractRNG, MersenneTwister
+using SpecialFunctions:
+    SpecialFunctions, erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
 
-import Base: hash, promote_type, promote_rule, convert,
-             string, show, parse, tryparse, eltype,
-             signbit, sign, abs, abs2, hypot,
-             significand, exponent, precision, widen,
-             (+), (-), (*), (/), (\), (^), inv, sqrt, cbrt,
-             (==), (!=), (<), (<=), (>=), (>), isequal, isless,
-             IEEEFloat, iszero, isone, isinf, isnan, isinf, isfinite, issubnormal,
-             isinteger, isodd, iseven, zero, one,
-             typemax, typemin, floatmax, floatmin, maxintfloat,
-             min, max, minmax, minimum, maximum,
-             floor, ceil, trunc, round, div, fld, cld,
-             rem, mod, rem2pi, mod2pi, divrem, fldmod,
-             sqrt, cbrt,
-             BigFloat, BigInt,
-             Int8, Int16, Int32, Int64, Int128,
-             Float64, Float32, Float16
-             
+# `ispositive` and `isnegative` are Base functions from Julia 1.13; before
+# that they are this package's own.
 @static if isdefined(Base, :ispositive)
     import Base: ispositive
 end
@@ -72,73 +122,79 @@ end
     import Base: isnegative
 end
 
-import Base: modf, fma, muladd,
-             log, log1p, log2, log10, exp, expm1, exp2, exp10,
-             sin, cos, tan, cot,
-             asin, acos, atan, acsc, asec, acot,
-             sinh, cosh, tanh, csch, sech, coth,
-             asinh, acosh, atanh, acsch, asech, acoth,
-             sinpi, cospi, tanpi,
-             sincos, sincospi, cis, cispi
+# Layers, in dependency order. A file may use only what is loaded above it.
+# test/layering.jl checks the functions; Julia checks the rest.
 
-import Quadmath: Float128
+# 1. Error-free transformations on machine floats
+include("eft/errorfree.jl")
+include("eft/quotients.jl")
 
-include("Double.jl")   # Double64, Double32, Double16
+# 2. The value
+include("core/type.jl")
+include("core/constructors.jl")
+include("core/predicates.jl")
+include("core/specialvalues.jl")
+include("core/reflection.jl")
 
-include("math/errorfree.jl")
-include("math/leasterror.jl")
+# 3. Routes: the records that describe a kernel
+include("routes/batchrecords.jl")
 
-include("doubletriple/double_consts.jl")
-include("doubletriple/triple.jl")
-include("doubletriple/triple_consts.jl")
-include("doubletriple/triple_pi.jl")
+# 4. Arithmetic
+include("arith/nonfinite.jl")
+include("arith/kernels.jl")
+include("arith/batchops.jl")
+include("arith/operators.jl")
+include("arith/mixed.jl")
+include("arith/fma.jl")
+include("arith/rounding.jl")
+include("arith/divrem.jl")
+include("arith/hypot.jl")
 
-include("type/constructors.jl")
-include("type/promote.jl")
-include("type/convert.jl")
-include("type/compare.jl")
-include("type/predicates.jl")
-include("type/specialvalues.jl")
-include("type/string.jl")
-include("type/show.jl")
-include("type/parse.jl")
-include("type/quadmath.jl")
+# 5. The Base contract
+include("contract/promote.jl")
+include("contract/convert.jl")
+include("contract/compare.jl")
+include("contract/approx.jl")
+include("contract/quadmath.jl")
 
-include("math/prearith/prearith.jl")
-include("math/prearith/floorceiltrunc.jl")
-include("math/prearith/divrem.jl")
+# 6. Constants and coefficient tables
+include("constants/double.jl")
+include("constants/triple.jl")
+include("constants/triple_consts.jl")
+include("constants/triple_pi.jl")
+include("constants/tables.jl")
 
-include("math/arithmetic/fma.jl")
-include("math/arithmetic/modpi.jl")
-include("math/arithmetic/normalize_hypot.jl")
-include("math/arithmetic/mixedarith.jl")
-include("math/arithmetic/complex/pow.jl")
-include("math/ops.jl")
+# 7. Elementary functions
+include("elementary/reduce.jl")
+include("elementary/explog.jl")
+include("elementary/trig.jl")
+include("elementary/arctrig.jl")
+include("elementary/hyperbolic.jl")
+include("elementary/archyperbolic.jl")
+include("elementary/widened.jl")
+include("elementary/double32.jl")
+include("elementary/complexpow.jl")
+include("elementary/complex.jl")
 
-include("math/elementary/sequences.jl")
-include("math/elementary/explog.jl")
-include("math/elementary/trig.jl")
-include("math/elementary/arctrig.jl")
-include("math/elementary/hyptrig.jl")
-include("math/elementary/archyptrig.jl")
-include("math/elementary/templated.jl")
-include("math/elementary/complex.jl")
-include("math/elementary/simd.jl")
-include("math/elementary/double32.jl")
+# 8. Batch evaluation
+include("batch/simdmap.jl")
+include("batch/double32.jl")
 
-include("math/linearalgebra/support.jl")
-include("math/linearalgebra/matrixfunction.jl")
+# 9. Text
+include("io/string.jl")
+include("io/show.jl")
+include("io/parse.jl")
 
-include("extras/random.jl")
-include("extras/misc.jl")
-include("extras/macros.jl")
+# 10. Random numbers
+include("random/rand.jl")
 
-import SpecialFunctions: erf, erfc, gamma, logabsgamma,
-    besselj0, besselj1, besselj, bessely0, bessely1, bessely,
-    ellipk
-include("math/special/specialfunctions.jl")
+# 11. Matrices
+include("linalg/support.jl")
+include("linalg/matrixfunction.jl")
+
+include("macros.jl")
+
+# Special functions, to become an extension
+include("special/specialfunctions.jl")
 
 end # module DoubleFloats
-
-
-

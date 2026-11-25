@@ -335,7 +335,7 @@ and rejected branches.
   retain inference, allocations, throughput, and numerical results
   after any helper extraction.
 
-Extend [the existing benchmark driver](../perf/bench_simd_elementary.jl)
+Extend [the existing benchmark driver](../benchmark/studies/bench_simd_elementary.jl)
 with the new fixtures. Save measurements of the current public batch
 path before changing it. Compare those with preallocated scalar
 broadcast, an ordered scalar loop, the new public path, and its
@@ -347,7 +347,7 @@ outside timed loops.
 
 ```sh
 SIMD_RANGE=general SIMD_SIZE=4096,65536 SIMD_FILTER='^(exp|exp10|expm1)$' \
-    julia --project -t1 perf/bench_simd_elementary.jl
+    julia --project -t1 benchmark/studies/bench_simd_elementary.jl
 ```
 
 Update the injected outlier fixtures when a range expands. For example,
