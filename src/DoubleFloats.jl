@@ -272,8 +272,8 @@ include("elementary/complex.jl")
 include("batch/simdmap.jl")
 include("elementary/double32.jl")
 
-include("math/linearalgebra/support.jl")
-include("math/linearalgebra/matrixfunction.jl")
+include("linalg/support.jl")
+include("linalg/matrixfunction.jl")
 
 include("extras/random.jl")
 include("contract/approx.jl")
