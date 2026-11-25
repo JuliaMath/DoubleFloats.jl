@@ -28,7 +28,7 @@ end
 end
 
 for name in _DOUBLE32_WIDENED
-    @eval @inline function $name(x::Double32)
+    @eval @inline function Base.$name(x::Double32)
         h, l = HILO(x)
         y = _double32_exact($name, h, l)
         y === nothing || return _double32_split($name(y))

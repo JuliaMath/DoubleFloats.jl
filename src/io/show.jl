@@ -1,6 +1,6 @@
 import Printf: ini_dec, fix_dec
 
-function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     compact = get(io, :compact, false)
     if compact
         str = string(x.hi)
@@ -10,7 +10,7 @@ function show(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     print(io, str)
 end
 
-function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+function Base.show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     re, im = reim(x)
     imstr = isfinite(im) ? "im" : "*im"
     compact = get(io, :compact, false)
@@ -22,9 +22,9 @@ function show(io::IO, x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     print(io, str)
 end
 
-show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
+Base.show(x::DoubleFloat{T}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
-show(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(Base.stdout, x)
+Base.show(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat} = show(Base.stdout, x)
 
 function showtyped(io::IO, x::DoubleFloat{T}) where {T<:IEEEFloat}
     str = stringtyped(x)

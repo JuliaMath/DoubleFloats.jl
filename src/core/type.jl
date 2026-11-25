@@ -218,22 +218,22 @@ let precision =
     @eval Base.$precision(::Type{DoubleFloat{T}}) where {T<:IEEEFloat} = 2*Base.$precision(T)
 end
 
-eltype(::Type{Double64}) = Double64
-eltype(::Type{Double32}) = Double32
-eltype(::Type{Double16}) = Double16
-eltype(x::Double64) = Double64
-eltype(x::Double32) = Double32
-eltype(x::Double16) = Double16
+Base.eltype(::Type{Double64}) = Double64
+Base.eltype(::Type{Double32}) = Double32
+Base.eltype(::Type{Double16}) = Double16
+Base.eltype(x::Double64) = Double64
+Base.eltype(x::Double32) = Double32
+Base.eltype(x::Double16) = Double16
 
 # a type specific hash function helps the type to 'just work'
 const hash_double_lo = (UInt === UInt64) ? 0x9bad5ebab034fe78 : 0x72da40cb
 const hash_0_double_lo = hash(zero(UInt), hash_double_lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} = hash(z.hi, h) ⊻ hash(z.lo)
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {T<:IEEEFloat} = hash(z.hi, h) ⊻ hash(z.lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,T<:DoubleFloat{F}} = hash(z.hi) ⊻ hash(z.lo)
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,T<:DoubleFloat{F}} = hash(z.hi) ⊻ hash(z.lo)
 
-@inline hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,G<:DoubleFloat{F},T<:DoubleFloat{G}} =
+@inline Base.hash(z::DoubleFloat{T}, h::UInt) where {F<:IEEEFloat,G<:DoubleFloat{F},T<:DoubleFloat{G}} =
     hash(z.hi) ⊻ hash(z.lo)
 
 Base.precision(::DoubleFloat{T}) where {T<:IEEEFloat} = 2 * precision(T)

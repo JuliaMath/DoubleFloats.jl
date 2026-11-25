@@ -1,7 +1,7 @@
 ## Edited by Michael Kline, MIT License
 ## This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internships Program (SULI) program at Oak Ridge National Laboratory, administered by the Oak Ridge Institute for Science and Education.
 
-function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     s = x < 0
     c = s ? -1 : 1
     y = c * x
@@ -89,7 +89,7 @@ function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return unsafe_double(T, himdlo[1], himdlo[2])
 end
 
-function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     m = mod2pi(x)
     return HI(x) < 0 ? -m : m
 end
@@ -107,7 +107,7 @@ end
     •    if r == RoundUp, then the result is in the interval [-2π, 0].
 =#
 
-function rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest})
+function Base.rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest})
     abs(x) < onepi && return x
     w1 = mul323(inv_pi_2o1_t64, HILO(x))
     w2 = two_sum(w1[1] - round(w1[1]), w1[2], w1[3])
@@ -116,12 +116,12 @@ function rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Nearest})
     return z
 end
 
-rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod2pi(x)
-rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem2pi(-x, RoundDown)
-rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
+Base.rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Down}) = mod2pi(x)
+Base.rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:Up}) = -rem2pi(-x, RoundDown)
+Base.rem2pi(x::DoubleFloat{Float64}, rounding::RoundingMode{:ToZero}) =
     signbit(x) ? rem2pi(x, RoundUp) : rem2pi(x, RoundDown)
 
-rem2pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
+Base.rem2pi(x::DoubleFloat{Float32}, rounding::RoundingMode) =
     DoubleFloat{Float32}(rem2pi(DoubleFloat{Float64}(x), rounding))
-rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
+Base.rem2pi(x::DoubleFloat{Float16}, rounding::RoundingMode) =
     DoubleFloat{Float16}(rem2pi(DoubleFloat{Float64}(x), rounding))

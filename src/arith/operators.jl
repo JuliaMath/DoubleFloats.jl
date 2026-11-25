@@ -217,31 +217,31 @@ end
 
 # --- Base operators --------------------------------------------------------
 
-inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
+Base.inv(x::DoubleFloat{T}) where {T<:IEEEFloat} = inv_db_db(x)
 
 square(x::DoubleFloat{T}) where {T<:IEEEFloat} = square_db_db(x)
 cube(x::DoubleFloat{T}) where {T<:IEEEFloat} = cube_db_db(x)
 
-abs2(x::DoubleFloat{T}) where {T<:IEEEFloat} = square(x)
+Base.abs2(x::DoubleFloat{T}) where {T<:IEEEFloat} = square(x)
 
-sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = sqrt_db_db(x)
-cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = cbrt_db_db(x)
+Base.sqrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = sqrt_db_db(x)
+Base.cbrt(x::DoubleFloat{T}) where {T<:IEEEFloat} = cbrt_db_db(x)
 
-(+)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_fpdb_db(x, y)
-(+)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = add_dbfp_db(x, y)
-(+)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_dbdb_db(x, y)
+(Base.:(+))(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_fpdb_db(x, y)
+(Base.:(+))(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = add_dbfp_db(x, y)
+(Base.:(+))(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = add_dbdb_db(x, y)
 
-(-)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = sub_fpdb_db(x, y)
-(-)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = sub_dbfp_db(x, y)
-(-)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = sub_dbdb_db(x, y)
+(Base.:(-))(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = sub_fpdb_db(x, y)
+(Base.:(-))(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = sub_dbfp_db(x, y)
+(Base.:(-))(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = sub_dbdb_db(x, y)
 
-(*)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = mul_fpdb_db(x, y)
-(*)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = mul_dbfp_db(x, y)
-(*)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = mul_dbdb_db(x, y)
+(Base.:(*))(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = mul_fpdb_db(x, y)
+(Base.:(*))(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = mul_dbfp_db(x, y)
+(Base.:(*))(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = mul_dbdb_db(x, y)
 
-(/)(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = dvi_fpdb_db(x, y)
-(/)(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = dvi_dbfp_db(x, y)
-(/)(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = dvi_dbdb_db(x, y)
+(Base.:(/))(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat} = dvi_fpdb_db(x, y)
+(Base.:(/))(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat} = dvi_dbfp_db(x, y)
+(Base.:(/))(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = dvi_dbdb_db(x, y)
 
 # Also provide arithmetic to add two floating point numbers in a higher precision
 # without first converting them

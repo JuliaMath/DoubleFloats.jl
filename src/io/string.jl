@@ -1,4 +1,4 @@
-function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     (!isfinite(HI(x)) || iszero(LO(x))) && return string(HI(x))
     str = string(Float128(x))
     eat = findlast('e', str)
@@ -15,7 +15,7 @@ function string(x::DoubleFloat{T}) where {T<:IEEEFloat}
     str[1:zat] * str[eat:end]
 end
 
-function string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
+function Base.string(x::Complex{DoubleFloat{T}}) where {T<:IEEEFloat}
     xreal, ximag = reim(x)
     sepstr = signbit(ximag) ? " - " : " + "
     imstr = isfinite(ximag) ? "im" : "*im"

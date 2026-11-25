@@ -34,12 +34,12 @@ const cosC_l = map(x -> LO(x), cosC)
     Sh = sinS_h[9]
     Sl = sinS_l[9]
     for k in 8:-1:1
-        Sh, Sl = DoubleFloats._horner_step(sinS_h[k], sinS_l[k], yh, Sh, Sl)
+        Sh, Sl = _horner_step(sinS_h[k], sinS_l[k], yh, Sh, Sl)
     end
     Ch = cosC_h[10]
     Cl = cosC_l[10]
     for k in 9:-1:1
-        Ch, Cl = DoubleFloats._horner_step(cosC_h[k], cosC_l[k], yh, Ch, Cl)
+        Ch, Cl = _horner_step(cosC_h[k], cosC_l[k], yh, Ch, Cl)
     end
     Sp = -0.16666666666666666 + yh*(0.016666666666666666 + yh*(-0.0005952380952380953 + yh*1.1022927689594356e-5))
     Cp = -0.5 + yh*(0.08333333333333333 + yh*(-0.004166666666666667 + yh*9.920634920634921e-5))
@@ -225,7 +225,7 @@ end
     return s, c
 end
 
-function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cos(x) only defined for finite x"))
     if T === Float64 && abs(x.hi) < 6.28125
@@ -236,7 +236,7 @@ function cos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return abs(x.hi) < 6.28125 ? cos_kernel(x) : DoubleFloat{T}(cos(Quadmath.Float128(x)))
 end
 
-function sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sin(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sin(x) only defined for finite x"))
     if T === Float64 && abs(x.hi) < 6.28125
@@ -282,7 +282,7 @@ end
     return q - hi == lo ? Double64(tan(q)) : _tan_mpfr(x)
 end
 
-function tan(x::Double64)
+function Base.tan(x::Double64)
     isnan(x) && return x
     isinf(x) && throw(DomainError("tan(x) only defined for finite x"))
     abs(HI(x)) <= 0.5 && return _tan_local(x)
@@ -297,32 +297,32 @@ function tan(x::Double64)
     return _tan_wide(x)
 end
 
-function cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cot(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cot(x) only defined for finite x"))
     abs(mod1pi(x)) <= eps(one(DoubleFloat{T})) && return DoubleFloat{T}(Inf)
     return inv(tan(x))
 end
 
-function sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sinpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sinpi(x) only defined for finite x"))
     return DoubleFloat{T}(sinpi(Quadmath.Float128(x)))
 end
 
-function cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cospi(x) only defined for finite x"))
     return DoubleFloat{T}(cospi(Quadmath.Float128(x)))
 end
 
-function tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.tanpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("tanpi(x) only defined for finite x"))
     return sinpi(x)/cospi(x)
 end
 
-function sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x, x
     isinf(x) && throw(DomainError("sincos(x) only defined for finite x"))
     if T === Float64 && abs(x.hi) < 6.28125
@@ -335,19 +335,19 @@ function sincos(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return sin(x), cos(x)
 end
 
-function sincospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sincospi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("sincospi(x) only defined for finite x"))
     return sinpi(x), cospi(x)
 end
 
-function cis(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cis(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
     return cos(x) + im*sin(x)
 end
 
-function cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cispi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     isnan(x) && return x
     isinf(x) && throw(DomainError("cis(x) only defined for finite x"))
     return cospi(x) + im*sinpi(x)

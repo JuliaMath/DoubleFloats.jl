@@ -174,7 +174,7 @@ function _mat_hermitian_poly_norm(A::Matrix{Double64})
     return nothing
 end
 
-function exp(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+function Base.exp(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     D = _mat_diagonal(exp, m)
     D === nothing || return D
     if ishermitian(m)
@@ -350,7 +350,7 @@ end
 _demote16mat(R::Matrix{Double64}) = Double16.(R)
 _demote16mat(R::Matrix{Complex{Double64}}) = Complex{Double16}.(R)
 
-function sqrt(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
+function Base.sqrt(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     T === Float16 && return _demote16mat(sqrt(Matrix{Double64}(m)))
     D = _mat_diagonal(sqrt, m, true)
@@ -376,7 +376,7 @@ function sqrt(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
     return _strip_imag_dust(_matsqrt_schur(m))
 end
 
-function sqrt(m::Matrix{_DFC{T}}) where {T<:IEEEFloat}
+function Base.sqrt(m::Matrix{_DFC{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     T === Float16 && return _demote16mat(sqrt(Matrix{Complex{Double64}}(m)))
     istriu(m) && return _sqrt_uppertri(m)
@@ -434,7 +434,7 @@ function _log_uppertri_checked(Tm::Matrix{E}) where {E<:Number}
     return _log_uppertri(Tm)
 end
 
-function log(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
+function Base.log(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     T === Float16 && return _demote16mat(log(Matrix{Double64}(m)))
     D = _mat_diagonal(log, m, true)
@@ -457,7 +457,7 @@ function log(m::Matrix{_DFR{T}}) where {T<:IEEEFloat}
     return _strip_imag_dust(_matlog_schur(m))
 end
 
-function log(m::Matrix{_DFC{T}}) where {T<:IEEEFloat}
+function Base.log(m::Matrix{_DFC{T}}) where {T<:IEEEFloat}
     issquare(m) || throw(ErrorException("matrix must be square"))
     T === Float16 && return _demote16mat(log(Matrix{Complex{Double64}}(m)))
     istriu(m) && return _log_uppertri_checked(m)
@@ -466,7 +466,7 @@ function log(m::Matrix{_DFC{T}}) where {T<:IEEEFloat}
 end
 
 # Trigonometric and hyperbolic functions of dense matrices.
-function sincos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+function Base.sincos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     D = _mat_diagonal(sincos, m)
     D === nothing || return D
     if ishermitian(m)
@@ -479,7 +479,7 @@ function sincos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     return _mat_pair(m, _msc_sin, _msc_cos)
 end
 
-function sinh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+function Base.sinh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     D = _mat_diagonal(sinh, m)
     D === nothing || return D
     if ishermitian(m)
@@ -501,9 +501,9 @@ function _mat_even_public(f::F, m, even) where {F}
     return _mat_even(m, even)
 end
 
-sin(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = first(sincos(m))
-cos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cos, m, _msc_cos)
-cosh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cosh, m, _msc_cosh)
+Base.sin(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = first(sincos(m))
+Base.cos(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cos, m, _msc_cos)
+Base.cosh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = _mat_even_public(cosh, m, _msc_cosh)
 
 function _mat_tangent(s, c)
     if c isa Matrix{<:Union{Double64,ComplexDF64}} &&
@@ -518,24 +518,24 @@ function _mat_tangent(s, c)
     return s / c
 end
 
-function tan(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+function Base.tan(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     ishermitian(m) && return _herm_apply(tan, m)
     return _mat_tangent(_mat_pair(m, _msc_sin, _msc_cos)...)
 end
 
-function tanh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
+function Base.tanh(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat}
     ishermitian(m) && return _herm_apply(tanh, m)
     return _mat_tangent(_mat_pair(m, _msc_sinh, _msc_cosh)...)
 end
 
 csc(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(sin(m))
 sec(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(cos(m))
-cot(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tan(m))
-csch(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(sinh(m))
-sech(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(cosh(m))
-coth(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tanh(m))
+Base.cot(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tan(m))
+Base.csch(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(sinh(m))
+Base.sech(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(cosh(m))
+Base.coth(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = inv(tanh(m))
 
-expm1(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = exp(m) - I
-log1p(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m + I)
-log2(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogtwo(DoubleFloat{T})
-log10(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogten(DoubleFloat{T})
+Base.expm1(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = exp(m) - I
+Base.log1p(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m + I)
+Base.log2(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogtwo(DoubleFloat{T})
+Base.log10(m::Matrix{<:_DFRC{T}}) where {T<:IEEEFloat} = log(m) .* invlogten(DoubleFloat{T})

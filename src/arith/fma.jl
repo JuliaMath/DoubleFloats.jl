@@ -1,4 +1,4 @@
-@inline function fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat}
+@inline function Base.fma(xhi::T, xlo::T, yhi::T, ylo::T, zhi::T, zlo::T) where {T<:IEEEFloat}
     chi, c1 = two_prod(xhi, yhi)
     t0 = xlo * ylo
     t1 = fma(xhi, ylo, t0)
@@ -15,7 +15,7 @@
     return unsafe_double(T, hi, lo)
 end
 
-@inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function Base.fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
     return fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
 end
 
@@ -94,14 +94,14 @@ function _fma_refined(x::Double64, y::Double64, z::Double64)
     return result
 end
 
-@inline function fma(x::Double64, y::Double64, z::Double64)
+@inline function Base.fma(x::Double64, y::Double64, z::Double64)
     result = fma(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo)
     (!isfinite(result) || _fma_cancellation_ratio(x.hi, x.lo, y.hi, y.lo, z.hi, z.lo, result.hi) >= 0x1.0p-6) &&
         return result
     return _fma_refined(x, y, z)
 end
 
-@inline function fma(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
+@inline function Base.fma(x::T, y::T, zhi::T, zlo::T) where {T<:IEEEFloat}
     chi, c1 = two_prod(x, y)
     shi, slo = two_sum(zhi, chi)
     thi, tlo = two_sum(zlo, c1)
@@ -112,11 +112,11 @@ end
     return unsafe_double(T, hi, lo)
 end
 
-@inline function fma(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function Base.fma(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
     return fma(x, y, z.hi, z.lo)
 end
 
-@inline function fma(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:IEEEFloat}
+@inline function Base.fma(xhi::T, xlo::T, yhi::T, ylo::T, z::T) where {T<:IEEEFloat}
     chi, c1 = two_prod(xhi, yhi)
     t0 = xlo * ylo
     t1 = fma(xhi, ylo, t0)
@@ -129,16 +129,16 @@ end
     return unsafe_double(T, hi, lo)
 end
 
-@inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
+@inline function Base.fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
     return fma(x.hi, x.lo, y.hi, y.lo, z)
 end
 
-@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function Base.muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
     return fma(x, y, z)
 end
-@inline function muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
+@inline function Base.muladd(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}
     return fma(x, y, z)
 end
-@inline function muladd(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function Base.muladd(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
     return fma(x, y, z)
 end

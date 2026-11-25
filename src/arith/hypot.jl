@@ -1,4 +1,4 @@
-function hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.hypot(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     ax = abs(x)
     ay = abs(y)
     ay, ax = minmax(ax, ay)

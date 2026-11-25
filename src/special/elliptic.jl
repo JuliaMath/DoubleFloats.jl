@@ -1,4 +1,4 @@
-function ellipk(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function SpecialFunctions.ellipk(x::DoubleFloat{T}) where {T<:IEEEFloat}
     !(-0.0 <= x <= 1.0) && throw(DomainError("$x not in 0..1"))
     isone(x) && return DoubleFloat{T}(Inf)
 

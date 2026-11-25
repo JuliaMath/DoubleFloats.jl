@@ -1,7 +1,7 @@
-@inline signbit(a::DoubleFloat{T}) where {T} = signbit(HI(a))
-@inline sign(a::DoubleFloat{T}) where {T} = DoubleFloat{T}(sign(HI(a)))
+@inline Base.signbit(a::DoubleFloat{T}) where {T} = signbit(HI(a))
+@inline Base.sign(a::DoubleFloat{T}) where {T} = DoubleFloat{T}(sign(HI(a)))
 
-@inline function (-)(a::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function (Base.:(-))(a::DoubleFloat{T}) where {T<:IEEEFloat}
     if iszero(LO(a)) || isnan(LO(a))
         unsafe_double(T, -HI(a), LO(a))
     else
@@ -9,7 +9,7 @@
     end
 end
 
-@inline function abs(a::DoubleFloat{T}) where {T<:IEEEFloat}
+@inline function Base.abs(a::DoubleFloat{T}) where {T<:IEEEFloat}
     (!signbit(a) || isnan(a)) && return a
     return -a
 end
@@ -48,7 +48,7 @@ end
 # and significand returns x / 2^e.  (These once returned per-word tuples,
 # which broke any Base code that calls them -- e.g. sqrt(::Complex) via
 # ssqs, which sank the Complex{Double32} Schur path.)
-function exponent(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.exponent(x::DoubleFloat{T}) where {T<:IEEEFloat}
     e = Base.exponent(HI(x))
     # a hi word exactly at a binade boundary with an opposing lo word puts
     # |x| just below 2^e
@@ -58,7 +58,7 @@ function exponent(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return e
 end
 
-function significand(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.significand(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return ldexp(x, -exponent(x))
 end
 
@@ -77,7 +77,7 @@ ulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 posulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 negulp(::Type{T}) where {T<:IEEEFloat} = ulp(one(T))
 
-function Base.Math.eps(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.eps(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return LO(x) !== zero(T) ? eps(LO(x)) : eps(posulp(HI(x)))
 end
 
@@ -85,10 +85,10 @@ function ulp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return LO(x) !== zero(T) ? posulp(LO(x)) : posulp(posulp(HI(x)))
 end
 
-Base.Math.eps(::Type{D}) where {T<:AbstractFloat,D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
+Base.eps(::Type{D}) where {T<:AbstractFloat,D<:DoubleFloat{T}} = D(eps(posulp(one(T))))
 ulp(::Type{D}) where {T<:AbstractFloat,D<:DoubleFloat{T}} = D(posulp(poslulp(one(T))))
 
-function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if !isfinite(x)
         isnan(x) && return x
         signbit(x) ? floatmin(DoubleFloat{T}) : x
@@ -99,7 +99,7 @@ function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     end
 end
 
-function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if !isfinite(x)
         isnan(x) && return x
         signbit(x) ? x : floatmax(DoubleFloat{T})
@@ -110,7 +110,7 @@ function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     end
 end
 
-function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
+function Base.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     !isfinite(x) && return (x)
     if !iszero(LO(x))
         x + n*ulp(LO(x))
@@ -119,7 +119,7 @@ function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     end
 end
 
-function Base.Math.prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
+function Base.prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     !isfinite(x) && return (x)
     if !iszero(LO(x))
         x - n*ulp(LO(x))
@@ -152,7 +152,7 @@ function fracpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return unsafe_double(T, fhi, flo)
 end
 
-function modf(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.modf(x::DoubleFloat{T}) where {T<:IEEEFloat}
     hi, lo = HILO(x)
     fhi, ihi = modf(hi)
     flo, ilo = modf(lo)

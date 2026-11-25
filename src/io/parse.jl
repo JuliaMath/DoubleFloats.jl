@@ -34,32 +34,32 @@ macro df16_str(val::AbstractString)
     Double16(val)
 end
 
-function tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{DoubleFloat{Float64}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base = base)
     return ifelse(x === nothing, nothing, DoubleFloat{Float64}(x))
 end
 
-function tryparse(::Type{DoubleFloat{Float32}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{DoubleFloat{Float32}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base = base)
     return ifelse(x === nothing, nothing, DoubleFloat{Float32}(x))
 end
 
-function tryparse(::Type{DoubleFloat{Float16}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{DoubleFloat{Float16}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(BigFloat, str, base = base)
     return ifelse(x === nothing, nothing, DoubleFloat{Float16}(x))
 end
 
-function tryparse(::Type{Complex{DoubleFloat{Float64}}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{Complex{DoubleFloat{Float64}}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
     return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float64}}(x))
 end
 
-function tryparse(::Type{Complex{DoubleFloat{Float32}}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{Complex{DoubleFloat{Float32}}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
     return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float32}}(x))
 end
 
-function tryparse(::Type{Complex{DoubleFloat{Float16}}}, str::S; base::Int = 10) where {S<:AbstractString}
+function Base.tryparse(::Type{Complex{DoubleFloat{Float16}}}, str::S; base::Int = 10) where {S<:AbstractString}
     x = tryparse(Complex{BigFloat}, str)
     return ifelse(x === nothing, nothing, Complex{DoubleFloat{Float16}}(x))
 end

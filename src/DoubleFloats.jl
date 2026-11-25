@@ -78,105 +78,42 @@ export DoubleFloat,
     erfc,
     matrixfunction
 
-using Base.MathConstants: pi, golden, ℯ, eulergamma, catalan
+# Methods for functions of other modules are written `Base.name(...)` where
+# they are defined. Only names that are used, not extended, are brought in.
+using Base: IEEEFloat
 
-using Printf
-using Random
-import Random: rand, randn
-
-using LinearAlgebra
-import LinearAlgebra: norm, mul!, AdjointQ
-
-using GenericLinearAlgebra
-using GenericSchur
-
+using GenericLinearAlgebra: GenericLinearAlgebra
+using GenericSchur: GenericSchur
+using LinearAlgebra:
+    LinearAlgebra,
+    Diagonal,
+    Hermitian,
+    I,
+    LowerTriangular,
+    SingularException,
+    UpperTriangular,
+    diag,
+    eigen,
+    eigvals,
+    ishermitian,
+    istril,
+    istriu,
+    lmul!,
+    opnorm,
+    qr,
+    rank,
+    rmul!,
+    schur,
+    sylvester
+using Printf: Printf
 import Quadmath
+using Quadmath: Float128
+using Random: Random, AbstractRNG, MersenneTwister
+using SpecialFunctions:
+    SpecialFunctions, erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
 
-import Base:
-    hash,
-    promote_type,
-    promote_rule,
-    convert,
-    string,
-    show,
-    parse,
-    tryparse,
-    eltype,
-    signbit,
-    sign,
-    abs,
-    abs2,
-    hypot,
-    significand,
-    exponent,
-    precision,
-    widen,
-    (+),
-    (-),
-    (*),
-    (/),
-    (\),
-    (^),
-    inv,
-    sqrt,
-    cbrt,
-    (==),
-    (!=),
-    (<),
-    (<=),
-    (>=),
-    (>),
-    isequal,
-    isless,
-    IEEEFloat,
-    iszero,
-    isone,
-    isinf,
-    isnan,
-    isinf,
-    isfinite,
-    issubnormal,
-    isinteger,
-    isodd,
-    iseven,
-    zero,
-    one,
-    typemax,
-    typemin,
-    floatmax,
-    floatmin,
-    maxintfloat,
-    min,
-    max,
-    minmax,
-    minimum,
-    maximum,
-    floor,
-    ceil,
-    trunc,
-    round,
-    div,
-    fld,
-    cld,
-    rem,
-    mod,
-    rem2pi,
-    mod2pi,
-    divrem,
-    fldmod,
-    sqrt,
-    cbrt,
-    BigFloat,
-    BigInt,
-    Int8,
-    Int16,
-    Int32,
-    Int64,
-    Int128,
-    Float64,
-    Float32,
-    Float16
-
+# `ispositive` and `isnegative` are Base functions from Julia 1.13; before
+# that they are this package's own.
 @static if isdefined(Base, :ispositive)
     import Base: ispositive
 end
@@ -184,50 +121,6 @@ end
 @static if isdefined(Base, :isnegative)
     import Base: isnegative
 end
-
-import Base:
-    modf,
-    fma,
-    muladd,
-    log,
-    log1p,
-    log2,
-    log10,
-    exp,
-    expm1,
-    exp2,
-    exp10,
-    sin,
-    cos,
-    tan,
-    cot,
-    asin,
-    acos,
-    atan,
-    acsc,
-    asec,
-    acot,
-    sinh,
-    cosh,
-    tanh,
-    csch,
-    sech,
-    coth,
-    asinh,
-    acosh,
-    atanh,
-    acsch,
-    asech,
-    acoth,
-    sinpi,
-    cospi,
-    tanpi,
-    sincos,
-    sincospi,
-    cis,
-    cispi
-
-import Quadmath: Float128
 
 # Layers, in dependency order. A file may use only what is loaded above it.
 # test/layering.jl checks the functions; Julia checks the rest.
@@ -302,7 +195,6 @@ include("linalg/matrixfunction.jl")
 include("macros.jl")
 
 # Special functions, to become an extension
-import SpecialFunctions: erf, erfc, gamma, logabsgamma, besselj0, besselj1, besselj, bessely0, bessely1, bessely, ellipk
 include("special/specialfunctions.jl")
 
 end # module DoubleFloats

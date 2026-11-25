@@ -29,12 +29,14 @@ for F in (# :mod2pi, :square, :cube, :sqrt,
     :asech,
     :acoth,
 )
+    # `csc` and `sec` are this package's own functions, not Base's.
+    G = F in (:csc, :sec) ? F : :(Base.$F)
     @eval begin
         if $(F !== :exp && F ∉ _DOUBLE32_WIDENED)
-            $F(x::Double32) = Double32($F(Double64(x)))
+            $G(x::Double32) = Double32($F(Double64(x)))
         end
-        $F(x::Double16) = Double16($F(Double64(x)))
-        $F(x::DoubleFloat{Double32}) = DoubleFloat{Double32}($F(DoubleFloat{Double64}(x)))
-        $F(x::DoubleFloat{Double16}) = DoubleFloat{Double16}($F(DoubleFloat{Double64}(x)))
+        $G(x::Double16) = Double16($F(Double64(x)))
+        $G(x::DoubleFloat{Double32}) = DoubleFloat{Double32}($F(DoubleFloat{Double64}(x)))
+        $G(x::DoubleFloat{Double16}) = DoubleFloat{Double16}($F(DoubleFloat{Double64}(x)))
     end
 end

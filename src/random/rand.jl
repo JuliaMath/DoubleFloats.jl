@@ -1,4 +1,4 @@
-function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
+function Base.rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{DoubleFloat{T}}}) where {T<:IEEEFloat}
     hi = rand(rng, T)
     lo = rand(rng, T)
     if hi === zero(T)
@@ -15,7 +15,7 @@ function rand(rng::AbstractRNG, ::Random.SamplerTrivial{Random.CloseOpen01{Doubl
     DoubleFloat(hi, lo)
 end
 
-function rand(
+function Base.rand(
     rng::AbstractRNG,
     ::Random.SamplerTrivial{Random.CloseOpen01{Complex{DoubleFloat{T}}}},
 ) where {T<:IEEEFloat}
@@ -84,7 +84,7 @@ end
 
 # normal variates
 
-function randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
+function Base.randn(rng::AbstractRNG, ::Type{DoubleFloat{T}}) where {T<:IEEEFloat}
     urand1, urand2, s = ntuple(i -> zero(DoubleFloat{T}), Val{3}())
 
     while true

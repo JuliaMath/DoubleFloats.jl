@@ -2,7 +2,7 @@ const fp64max = floatmax(Float64)
 const maxhyp_fp64max = 710.4758600739439
 const minhyp_fp64max = 5.562684646268003e-309
 
-function sinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     T === Float64 && abs(HI(x)) <= 1.0 && return _sinh_local(x)
     abs(HI(x)) > maxhyp_fp64max && return DoubleFloat{T}(copysign(Inf, HI(x)))
     !isfinite(HI(x)) && return x
@@ -28,7 +28,7 @@ function sinh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return mul_by_half(w - inv(w))
 end
 
-function cosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.cosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     T === Float64 && abs(HI(x)) <= 1.0 && return _cosh_local(x)
     abs(HI(x)) > maxhyp_fp64max && return DoubleFloat{T}(Inf)
     !isfinite(x) && return abs(x)
@@ -46,7 +46,7 @@ function cosh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return mul_by_half(w + inv(w))
 end
 
-function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     T === Float64 && abs(HI(x)) <= 1.0 && return _tanh_local(x)
     isnan(x) && return x
     ax = abs(x)
@@ -61,17 +61,17 @@ function tanh(x::DoubleFloat{T}) where {T<:IEEEFloat}
     return copysign(t, x)
 end
 
-function csch(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.csch(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return copysign(zero(DoubleFloat{T}), x)
     return inv(sinh(x))
 end
 
-function sech(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.sech(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return zero(DoubleFloat{T})
     return inv(cosh(x))
 end
 
-function coth(x::DoubleFloat{T}) where {T<:IEEEFloat}
+function Base.coth(x::DoubleFloat{T}) where {T<:IEEEFloat}
     abs(HI(x)) > maxhyp_fp64max && return copysign(one(DoubleFloat{T}), x)
     return cosh(x) / sinh(x)
 end
