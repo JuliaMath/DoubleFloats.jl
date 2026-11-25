@@ -82,6 +82,6 @@ end
 # for getting fast floatmin2, used in Givens rotations in LinearAlgebra
 # these values were computed with the existing code saved
 # floatmin2(::Type{T}) where {T} = (twopar = 2one(T); twopar^trunc(Integer,log(floatmin(T)/eps(T))/log(twopar)/twopar))
-LinearAlgebra.floatmin2(::Type{Double64}) = Double64(reinterpret(Float64, 0x2350000000000000), 0.0)
-LinearAlgebra.floatmin2(::Type{Double32}) = Double32(reinterpret(Float32, 0x2c000000), 0.0f0)
-LinearAlgebra.floatmin2(::Type{Double16}) = Double16(Float16(8.0), Float16(0.0))
+LinearAlgebra.floatmin2(::Type{Double64}) = unsafe_double(Float64, reinterpret(Float64, 0x2350000000000000), 0.0)
+LinearAlgebra.floatmin2(::Type{Double32}) = unsafe_double(Float32, reinterpret(Float32, 0x2c000000), 0.0f0)
+LinearAlgebra.floatmin2(::Type{Double16}) = unsafe_double(Float16, Float16(8.0), Float16(0.0))

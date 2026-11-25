@@ -20,7 +20,7 @@ function mod2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if s
         himdlo = sub333(pi_2o1_t64, himdlo)
     end
-    return DoubleFloat{T}(himdlo[1], himdlo[2])
+    return unsafe_double(T, himdlo[1], himdlo[2])
 end
 
 function mod1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -42,7 +42,7 @@ function mod1pi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if s
         himdlo = sub333(pi_1o1_t64, himdlo)
     end
-    return DoubleFloat{T}(himdlo[1], himdlo[2])
+    return unsafe_double(T, himdlo[1], himdlo[2])
 end
 
 function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -64,7 +64,7 @@ function modhalfpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if s
         himdlo = sub333(pi_1o2_t64, himdlo)
     end
-    return DoubleFloat{T}(himdlo[1], himdlo[2])
+    return unsafe_double(T, himdlo[1], himdlo[2])
 end
 
 function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -86,7 +86,7 @@ function modqrtrpi(x::DoubleFloat{T}) where {T<:IEEEFloat}
     if s
         himdlo = sub333(pi_1o4_t64, himdlo)
     end
-    return DoubleFloat{T}(himdlo[1], himdlo[2])
+    return unsafe_double(T, himdlo[1], himdlo[2])
 end
 
 function rem2pi(x::DoubleFloat{T}) where {T<:IEEEFloat}

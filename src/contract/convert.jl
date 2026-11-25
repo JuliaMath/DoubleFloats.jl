@@ -43,7 +43,7 @@ convert(::Type{T}, x::DoubleFloat{DoubleFloat{T}}) where {T<:IEEEFloat} = HI(HI(
 convert(::Type{DoubleFloat{DoubleFloat{T}}}, x::T) where {T<:IEEEFloat} =
     DoubleFloat(DoubleFloat{T}(x), DoubleFloat{T}(zero(T)))
 
-convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2])
+convert(::Type{DoubleFloat{T}}, x::Tuple{T,T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2])
 
 convert(::Type{Complex{Double64}}, x::T) where {T<:AbstractIrrational} = Complex(Double64(x))
 convert(::Type{Complex{Double32}}, x::T) where {T<:AbstractIrrational} = Complex(Double32(x))

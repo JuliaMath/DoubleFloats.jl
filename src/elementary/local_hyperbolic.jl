@@ -36,17 +36,17 @@ end
     p = HILO(x)
     z = square_dd_dd_(p)
     correction = mul_dddd_dd_(mul_dddd_dd_(p, z), _tapered_poly(z, _SINH_LOCAL, Val(8)))
-    return Double64(add_dddd_dd_(p, correction)...)
+    return unsafe_double(Float64, add_dddd_dd_(p, correction)...)
 end
 
 @inline function _cosh_local(x::Double64)
     z = square_dd_dd_(HILO(x))
-    return Double64(_horner_step_dd((1.0, 0.0), _tapered_poly(z, _COSH_LOCAL, Val(9)), z)...)
+    return unsafe_double(Float64, _horner_step_dd((1.0, 0.0), _tapered_poly(z, _COSH_LOCAL, Val(9)), z)...)
 end
 
 @inline function _tan_local(x::Double64, ::Val{C}) where {C}
     abs(HI(x)) <= 0x1p-53 && return x
-    return Double64(_tan_local_words(HILO(x), Val(C), _TAN_CORRECTION, _TAN_DENOMINATOR)...)
+    return unsafe_double(Float64, _tan_local_words(HILO(x), Val(C), _TAN_CORRECTION, _TAN_DENOMINATOR)...)
 end
 
 @inline function _tan_local_words(p, ::Val{C}, numer, denom) where {C}

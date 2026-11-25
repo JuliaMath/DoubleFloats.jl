@@ -14,7 +14,7 @@ const _ATAN_DYADIC, _ATAN_LOCAL_COEFFS = setprecision(BigFloat, 256) do
 end
 
 @inline function _atan_unit(a::Double64)
-    return Double64(_atan_unit_words(HILO(a)..., _ATAN_DYADIC, _ATAN_LOCAL_COEFFS, Val(5))...)
+    return unsafe_double(Float64, _atan_unit_words(HILO(a)..., _ATAN_DYADIC, _ATAN_LOCAL_COEFFS, Val(5))...)
 end
 
 @inline function _atan_unit_words(h::T, l::T, anchors, coefficients, taper) where {T}

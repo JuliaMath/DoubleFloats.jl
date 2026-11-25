@@ -36,7 +36,7 @@ const _trig_twopi = (6.283185307179586, 2.4492935982947064e-16, -5.9895396194366
     t5 = t3 + t4
     u1, u2 = sum(t7, t5 + c[3])
     s1, e1 = sum(zhi, u1)
-    return Double64(-s1, -(e1 + u2))
+    return unsafe_double(Float64, -s1, -(e1 + u2))
 end
 
 x_minus_onepi(hi::Float64, lo::Float64) = _trig_subtract(hi, lo, _trig_pi, two_diff, two_sum)
@@ -55,5 +55,5 @@ function x_minus_qrtrpi(hi::T, lo::T) where {T<:Float64}
     t5 = t3 + t4
     u1, u2 = two_sum(t7, t5 - 7.4869245242958490e-34)
     s1, e1 = two_sum(zhi, u1)
-    return DoubleFloat{Float64}(-s1, -(e1 + u2))
+    return unsafe_double(Float64, -s1, -(e1 + u2))
 end

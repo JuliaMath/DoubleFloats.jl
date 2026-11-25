@@ -8,32 +8,32 @@
     thi = inv(yhi)
     # NB: ylo == 0 does NOT make the reciprocal exact; unsafe_inv_dd_dd_
     #     handles it properly and must not be skipped
-    (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) && return DoubleFloat{T}(zero_error_result(thi)...)
+    (!isfinite(thi) || !isfinite(yhi) || !isfinite(ylo)) && return unsafe_double(T, zero_error_result(thi)...)
     zhi, zlo = unsafe_inv_dd_dd_(yhi, ylo)
-    isfinite(zhi) || return DoubleFloat{T}(unsafe_inv_dd_dd(yhi, ylo)...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, unsafe_inv_dd_dd(yhi, ylo)...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function square_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
-    isnotfinite(x) && return DoubleFloat{T}(square_dd_dd((x.hi, x.lo))...)
+    isnotfinite(x) && return unsafe_double(T, square_dd_dd((x.hi, x.lo))...)
     zhi, zlo = square_dd_dd_((x.hi, x.lo))
-    isfinite(zhi) || return DoubleFloat{T}(square_dd_dd((x.hi, x.lo))...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, square_dd_dd((x.hi, x.lo))...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function cube_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     zhi, zlo = cube_dd_dd((x.hi, x.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function sqrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     zhi, zlo = sqrt_dd_dd((x.hi, x.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function cbrt_db_db(x::DoubleFloat{T}) where {T<:IEEEFloat}
     zhi, zlo = cbrt_dd_dd((x.hi, x.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 # Here the reciprocal head is between 2^-256 and 2^256 in magnitude.
@@ -66,45 +66,45 @@ end
 @inline function add_fpdb_db(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return add_fpdb_db_nonfinite(x, y)
     zhi, zlo = add_fpdd_dd(x, (y.hi, y.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function sub_fpdb_db(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return sub_fpdb_db_nonfinite(x, y)
     zhi, zlo = sub_fpdd_dd(x, (y.hi, y.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function mul_fpdb_db(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return mul_fpdb_db_nonfinite(x, y)
     zhi, zlo = mul_fpdd_dd(x, (y.hi, y.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function dvi_fpdb_db(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return dvi_fpdb_db_nonfinite(x, y)
     zhi, zlo = dvi_fpdd_dd(x, (y.hi, y.lo))
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function add_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = x + HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function sub_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = x - HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function mul_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = x * HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function dvi_fpdb_db_nonfinite(x::T, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = x / HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 # --- DoubleFloat and word in -----------------------------------------------
@@ -112,107 +112,107 @@ end
 @inline function add_dbfp_db(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return add_dbfp_db_nonfinite(x, y)
     zhi, zlo = add_ddfp_dd((x.hi, x.lo), y)
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function sub_dbfp_db(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return sub_dbfp_db_nonfinite(x, y)
     zhi, zlo = sub_ddfp_dd((x.hi, x.lo), y)
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function mul_dbfp_db(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return mul_dbfp_db_nonfinite(x, y)
     zhi, zlo = mul_ddfp_dd((x.hi, x.lo), y)
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function dvi_dbfp_db(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return dvi_dbfp_db_nonfinite(x, y)
     zhi, zlo = dvi_ddfp_dd((x.hi, x.lo), y)
-    return DoubleFloat{T}(zhi, zlo)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function add_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     z = HI(x) + y
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function sub_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     z = HI(x) - y
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function mul_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     z = HI(x) * y
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function dvi_dbfp_db_nonfinite(x::DoubleFloat{T}, y::T) where {T<:IEEEFloat}
     z = HI(x) / y
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 # --- two DoubleFloats in ---------------------------------------------------
 
-Base.:(+)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x + DoubleFloat{T}(y[1], y[2])
-Base.:(+)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2]) + y
+Base.:(+)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x + unsafe_double(T, y[1], y[2])
+Base.:(+)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2]) + y
 
-Base.:(-)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x - DoubleFloat{T}(y[1], y[2])
-Base.:(-)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2]) - y
+Base.:(-)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x - unsafe_double(T, y[1], y[2])
+Base.:(-)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2]) - y
 
-Base.:(*)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x * DoubleFloat{T}(y[1], y[2])
-Base.:(*)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2]) * y
+Base.:(*)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x * unsafe_double(T, y[1], y[2])
+Base.:(*)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2]) * y
 
-Base.:(/)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x / DoubleFloat{T}(y[1], y[2])
-Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2]) / y
+Base.:(/)(x::DoubleFloat{T}, y::Tuple{T,T}) where {T<:IEEEFloat} = x / unsafe_double(T, y[1], y[2])
+Base.:(/)(x::Tuple{T,T}, y::DoubleFloat{T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2]) / y
 
 @inline function add_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return add_dbdb_db_nonfinite(x, y)
     zhi, zlo = add_dddd_dd_((x.hi, x.lo), (y.hi, y.lo))
-    isfinite(zhi) || return DoubleFloat{T}(add_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, add_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function sub_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return sub_dbdb_db_nonfinite(x, y)
     zhi, zlo = sub_dddd_dd_((x.hi, x.lo), (y.hi, y.lo))
-    isfinite(zhi) || return DoubleFloat{T}(sub_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, sub_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function mul_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (isnotfinite(x) | isnotfinite(y)) && return mul_dbdb_db_nonfinite(x, y)
     zhi, zlo = mul_dddd_dd_((x.hi, x.lo), (y.hi, y.lo))
-    isfinite(zhi) || return DoubleFloat{T}(mul_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, mul_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function dvi_dbdb_db(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     (iszero(HI(y)) | isnotfinite(x) | isnotfinite(y)) && return dvi_dbdb_db_nonfinite(x, y)
     zhi, zlo = dvi_dddd_dd_((x.hi, x.lo), (y.hi, y.lo))
-    isfinite(zhi) || return DoubleFloat{T}(dvi_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
-    return DoubleFloat{T}(zhi, zlo)
+    isfinite(zhi) || return unsafe_double(T, dvi_dddd_dd((x.hi, x.lo), (y.hi, y.lo))...)
+    return unsafe_double(T, zhi, zlo)
 end
 
 @inline function add_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = HI(x) + HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function sub_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = HI(x) - HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function mul_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = HI(x) * HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 @inline function dvi_dbdb_db_nonfinite(x::DoubleFloat{T}, y::DoubleFloat{T}) where {T<:IEEEFloat}
     z = HI(x) / HI(y)
-    return DoubleFloat{T}(z, z)
+    return unsafe_double(T, z, z)
 end
 
 # --- Base operators --------------------------------------------------------
@@ -316,5 +316,5 @@ This is the inline version of [`div2`](@ref) and written as ``\\oslash``.
 # --- cube root of a word, as a pair ------------------------------------
 
 function two_cbrt(a::T) where {T<:FloatWithFMA}
-    return HILO(DoubleFloat{T}(a, zero(T))^(one(T)/3))
+    return HILO(unsafe_double(T, a, zero(T))^(one(T)/3))
 end

@@ -149,7 +149,7 @@ end
     abs(h) <= 0x1p-104 && return x
     dh, dl = two_sum_(h, 2.0)
     if abs(h) < 0.0625
-        return Double64(_log_near_regular(h, l, dh, dl, l, _LOG_FINE_COEFFS)...)
+        return unsafe_double(Float64, _log_near_regular(h, l, dh, dl, l, _LOG_FINE_COEFFS)...)
     end
-    return Double64(_log_near_regular(h, l, dh, dl, l, _LOG1P_WIDE_COEFFS, Val(7))...)
+    return unsafe_double(Float64, _log_near_regular(h, l, dh, dl, l, _LOG1P_WIDE_COEFFS, Val(7))...)
 end

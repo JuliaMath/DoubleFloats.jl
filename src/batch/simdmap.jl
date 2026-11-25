@@ -166,7 +166,7 @@ end
     @inbounds @simd ivdep for i in block
         replace = isodd(rejected >> (i - start))
         h, l = HILO(x[i])
-        lane = Double64(ifelse(replace, HI(placeholder), h), ifelse(replace, LO(placeholder), l))
+        lane = unsafe_double(Float64, ifelse(replace, HI(placeholder), h), ifelse(replace, LO(placeholder), l))
         dest[i] = k.evaluate(lane)
     end
     return dest

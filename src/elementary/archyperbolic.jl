@@ -90,7 +90,7 @@ end
 # The scalar expression uses a mixed-float reciprocal and multiplication.
 @inline function _batch_acoth(x)
     y = _batch_inv(_batch_sub(x, 1.0))
-    ratio = Double64(_mul_fpdd_dd(two_prod_, two_sum4_, 2.0, HILO(y))...)
+    ratio = unsafe_double(Float64, _mul_fpdd_dd(two_prod_, two_sum4_, 2.0, HILO(y))...)
     return mul_by_half(_log1p_near(ratio))
 end
 

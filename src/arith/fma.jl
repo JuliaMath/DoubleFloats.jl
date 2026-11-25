@@ -12,7 +12,7 @@
     vhi, vlo = two_hilo_sum(shi, c)
     w = tlo + vlo
     hi, lo = two_hilo_sum(vhi, w)
-    return DoubleFloat{T}(hi, lo)
+    return unsafe_double(T, hi, lo)
 end
 
 @inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -109,7 +109,7 @@ end
     vhi, vlo = two_hilo_sum(shi, c)
     w = tlo + vlo
     hi, lo = two_hilo_sum(vhi, w)
-    return DoubleFloat{T}(hi, lo)
+    return unsafe_double(T, hi, lo)
 end
 
 @inline function fma(x::T, y::T, z::DoubleFloat{T}) where {T<:IEEEFloat}
@@ -126,7 +126,7 @@ end
     shi, slo = two_sum(z, dhi)
     c = slo + dlo
     hi, lo = two_hilo_sum(shi, c)
-    return DoubleFloat{T}(hi, lo)
+    return unsafe_double(T, hi, lo)
 end
 
 @inline function fma(x::DoubleFloat{T}, y::DoubleFloat{T}, z::T) where {T<:IEEEFloat}

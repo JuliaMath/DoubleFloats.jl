@@ -63,11 +63,11 @@ end
 # multiplication by an exact power of two is correctly rounded, so these
 # match ldexp bit-for-bit (including subnormals) without its branches
 @inline function mul_by_half(r::DoubleFloat{T}) where {T<:IEEEFloat}
-    return DoubleFloat{T}(r.hi * T(0.5), r.lo * T(0.5))
+    return unsafe_double(T, r.hi * T(0.5), r.lo * T(0.5))
 end
 
 @inline function mul_by_two(r::DoubleFloat{T}) where {T<:IEEEFloat}
-    return DoubleFloat{T}(r.hi * T(2.0), r.lo * T(2.0))
+    return unsafe_double(T, r.hi * T(2.0), r.lo * T(2.0))
 end
 
 # one Horner step  (chi,clo) + m*(ph,pl)  on raw hi/lo pairs.
@@ -116,26 +116,26 @@ end
 end
 
 const inv_oddint = (
-    Double64(0.3333333333333333, 1.850371707708594e-17),     # 1/3
-    Double64(0.2, -1.1102230246251566e-17),                  # 1/5
-    Double64(0.14285714285714285, 7.93016446160826e-18),     # 1/7
-    Double64(0.1111111111111111, 6.1679056923619804e-18),    # 1/9
-    Double64(0.09090909090909091, -2.523234146875356e-18),   # 1/11
-    Double64(0.07692307692307693, -4.270088556250602e-18),   # 1/13
-    Double64(0.06666666666666667, 9.251858538542971e-19),    # 1/15
-    Double64(0.058823529411764705, 8.163404592832033e-19),   # 1/17
-    Double64(0.05263157894736842, 2.921639538487254e-18),    # 1/19
-    Double64(0.047619047619047616, 2.64338815386942e-18),    # 1/21
-    Double64(0.043478260869565216, 1.206764157201257e-18),   # 1/23
-    Double64(0.04, -8.326672684688674e-19),                  # 1/25
-    Double64(0.037037037037037035, 2.05596856412066e-18),    # 1/27
-    Double64(0.034482758620689655, 4.785444071660157e-19),   # 1/29
-    Double64(0.03225806451612903, 8.953411488912552e-19),    # 1/31
-    Double64(0.030303030303030304, -8.410780489584519e-19),  # 1/33
-    Double64(0.02857142857142857, 8.921435019309293e-19),    # 1/35
-    Double64(0.02702702702702703, -1.50030138462859e-18),    # 1/37
-    Double64(0.02564102564102564, 8.896017825522087e-19),    # 1/39
-    Double64(0.024390243902439025, -8.46206573647223e-19),   # 1/41
+    unsafe_double(Float64, 0.3333333333333333, 1.850371707708594e-17),     # 1/3
+    unsafe_double(Float64, 0.2, -1.1102230246251566e-17),                  # 1/5
+    unsafe_double(Float64, 0.14285714285714285, 7.93016446160826e-18),     # 1/7
+    unsafe_double(Float64, 0.1111111111111111, 6.1679056923619804e-18),    # 1/9
+    unsafe_double(Float64, 0.09090909090909091, -2.523234146875356e-18),   # 1/11
+    unsafe_double(Float64, 0.07692307692307693, -4.270088556250602e-18),   # 1/13
+    unsafe_double(Float64, 0.06666666666666667, 9.251858538542971e-19),    # 1/15
+    unsafe_double(Float64, 0.058823529411764705, 8.163404592832033e-19),   # 1/17
+    unsafe_double(Float64, 0.05263157894736842, 2.921639538487254e-18),    # 1/19
+    unsafe_double(Float64, 0.047619047619047616, 2.64338815386942e-18),    # 1/21
+    unsafe_double(Float64, 0.043478260869565216, 1.206764157201257e-18),   # 1/23
+    unsafe_double(Float64, 0.04, -8.326672684688674e-19),                  # 1/25
+    unsafe_double(Float64, 0.037037037037037035, 2.05596856412066e-18),    # 1/27
+    unsafe_double(Float64, 0.034482758620689655, 4.785444071660157e-19),   # 1/29
+    unsafe_double(Float64, 0.03225806451612903, 8.953411488912552e-19),    # 1/31
+    unsafe_double(Float64, 0.030303030303030304, -8.410780489584519e-19),  # 1/33
+    unsafe_double(Float64, 0.02857142857142857, 8.921435019309293e-19),    # 1/35
+    unsafe_double(Float64, 0.02702702702702703, -1.50030138462859e-18),    # 1/37
+    unsafe_double(Float64, 0.02564102564102564, 8.896017825522087e-19),    # 1/39
+    unsafe_double(Float64, 0.024390243902439025, -8.46206573647223e-19),   # 1/41
 )
 
 const inv_oddint_f64 = map(x -> HI(x), inv_oddint)
@@ -479,18 +479,18 @@ function Base.exp2(x::DoubleFloat{T}) where {T<:_DF64or32}
         y === nothing || return _double32_split(exp2(y))
     end
     p = T === Float64 && _exp2_fine_range(input[1]) ? _exp2_fine(input) : _exp2_clamped(input, zero(T), exp2, input)
-    return DoubleFloat{T}(p[1], p[2])
+    return unsafe_double(T, p[1], p[2])
 end
 
 function Base.exp(x::DoubleFloat{T}) where {T<:_DF64or32}
     iszero(x) && return one(DoubleFloat{T})
     input = HILO(x)
     if T === Float64 && _exp_fine_range(input[1])
-        return Double64(_exp_fine(input)...)
+        return unsafe_double(Float64, _exp_fine(input)...)
     end
     y1, y2, y3 = _mf_mul3(input, _log2_e3(T))
     p = _exp2_clamped((y1, y2), y3, exp, input)
-    return DoubleFloat{T}(p[1], p[2])
+    return unsafe_double(T, p[1], p[2])
 end
 
 function Base.exp(x::Double32)
@@ -504,7 +504,7 @@ function Base.exp(x::Double32)
         y1, y2, y3 = _mf_mul3(input, _log2_e3(Float32))
         if y1 <= _exp2_min(Float32)
             p = _exp2_clamped((y1, y2), y3, exp, input)
-            return Double32(p[1], p[2])
+            return unsafe_double(Float32, p[1], p[2])
         end
     end
     return Double32(exp(Double64(x)))
@@ -515,7 +515,7 @@ function Base.exp10(x::DoubleFloat{T}) where {T<:_DF64or32}
     input = HILO(x)
     y1, y2, y3 = _mf_mul3(input, _log2_10_3(T))
     p = _exp2_clamped((y1, y2), y3, exp10, input)
-    return DoubleFloat{T}(p[1], p[2])
+    return unsafe_double(T, p[1], p[2])
 end
 
 # templated.jl promotes exp/expm1/log/log1p/log2/log10 for Double16, but
@@ -535,12 +535,12 @@ Base.exp10(x::Double16) = Double16(exp10(Double64(x)))
 # DoubleFloat-valued ln(2) / ln(10) and reciprocals, used by archyptrig.jl
 # (large-argument branches) and linearalgebra/matfun.jl (matrix log2/log10);
 # these were dropped in the kernel rewrite while their callers remained
-logtwo(::Type{DoubleFloat{Float64}}) = Double64(0.6931471805599453, 2.3190468138462996e-17)
-logten(::Type{DoubleFloat{Float64}}) = Double64(2.302585092994046, -2.1707562233822494e-16)
-logtwo(::Type{DoubleFloat{Float32}}) = Double32(0.6931472, -1.9046542e-9)
-logten(::Type{DoubleFloat{Float32}}) = Double32(2.3025851, -3.1975436e-8)
-logtwo(::Type{DoubleFloat{Float16}}) = Double16(0.6934, -0.0002122)
-logten(::Type{DoubleFloat{Float16}}) = Double16(2.303, -0.0001493)
+logtwo(::Type{DoubleFloat{Float64}}) = unsafe_double(Float64, 0.6931471805599453, 2.3190468138462996e-17)
+logten(::Type{DoubleFloat{Float64}}) = unsafe_double(Float64, 2.302585092994046, -2.1707562233822494e-16)
+logtwo(::Type{DoubleFloat{Float32}}) = unsafe_double(Float32, 0.6931472, -1.9046542e-9)
+logten(::Type{DoubleFloat{Float32}}) = unsafe_double(Float32, 2.3025851, -3.1975436e-8)
+logtwo(::Type{DoubleFloat{Float16}}) = unsafe_double(Float16, 0.6934, -0.0002122)
+logten(::Type{DoubleFloat{Float16}}) = unsafe_double(Float16, 2.303, -0.0001493)
 
 const invlogtwo64 = inv(logtwo(DoubleFloat{Float64}))
 const invlogten64 = inv(logten(DoubleFloat{Float64}))
@@ -701,7 +701,7 @@ function Base.log2(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
     y = T === Float64 && _log_fine_range(t[1]) ? _log_fine(t, Val(true)) : _log_special(t, _unsafe_log2(t))
-    return DoubleFloat{T}(y[1], y[2])
+    return unsafe_double(T, y[1], y[2])
 end
 
 function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
@@ -710,14 +710,14 @@ function Base.log(x::DoubleFloat{T}) where {T<:_DF64or32}
     y =
         T === Float64 && _log_fine_range(t[1]) ? _log_fine(t, Val(false)) :
         _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _ln_2(T)))
-    return DoubleFloat{T}(y[1], y[2])
+    return unsafe_double(T, y[1], y[2])
 end
 
 function Base.log10(x::DoubleFloat{T}) where {T<:_DF64or32}
     t = HILO(x)
     _log_domain_check(t)
     y = _log_special(t, mul_dddd_dd_(_unsafe_log2(t), _log10_2(T)))
-    return DoubleFloat{T}(y[1], y[2])
+    return unsafe_double(T, y[1], y[2])
 end
 
 function Base.log1p(x::DoubleFloat{T}) where {T<:_DF64or32}
@@ -735,7 +735,7 @@ end
 @inline function _log1p_direct(x::DoubleFloat{T}) where {T<:IEEEFloat}
     t = _mf_div(HILO(x), add_dddd_dd_(HILO(x), (T(2), zero(T))))
     y = mul_dddd_dd_(mul_dddd_dd_(t, _log2_poly_wide(square_dd_dd_(t))), _ln_2(T))
-    return DoubleFloat{T}(y...)
+    return unsafe_double(T, y...)
 end
 
 # expm1 series coefficients 1/j! as per-type (hi, lo) pairs
@@ -800,9 +800,9 @@ end
     h, l, t = _mf_mul3(prod, HILO(x), _log2_e3(Float64))
     n = trunc(h + copysign(0.5, h))
     q = _expm1_offset(h - n, l, t)
-    iszero(n) && return Double64(q...)
+    iszero(n) && return unsafe_double(Float64, q...)
     scale = ifelse(n > 0.0, 2.0, 0.5)
-    return Double64(add_dddd_dd_((scale - 1.0, 0.0), (scale * q[1], scale * q[2]))...)
+    return unsafe_double(Float64, add_dddd_dd_((scale - 1.0, 0.0), (scale * q[1], scale * q[2]))...)
 end
 
 @inline function _expm1_offset(h, l, t)
@@ -833,7 +833,7 @@ end
     for _ in 1:k
         e = _expm1_double(e)
     end
-    return DoubleFloat{T}(e[1], e[2])
+    return unsafe_double(T, e[1], e[2])
 end
 
 @inline _expm1_horner(p, s, c) = add_dddd_dd_(mul_dddd_dd_(p, s), c)
@@ -854,14 +854,14 @@ include("fast_explog.jl")
 # the input can push the high result into underflow or overflow.
 @inline _batch_exp2_range(x) = _batch_bounded(x, -966.0, -0.001) | _batch_bounded(x, 0.001, 1023.0)
 
-@inline _batch_exp2(x) = Double64(_exp2_fine(HILO(x))...)
+@inline _batch_exp2(x) = unsafe_double(Float64, _exp2_fine(HILO(x))...)
 
 @inline function _batch_converted_exp(x, constant)
     h, l, t = _mf_mul3(two_prod_, HILO(x), constant)
-    return Double64(_exp2_normal((h, l), t)...)
+    return unsafe_double(Float64, _exp2_normal((h, l), t)...)
 end
 
-@inline _batch_exp(x) = Double64(_exp_fine(HILO(x))...)
+@inline _batch_exp(x) = unsafe_double(Float64, _exp_fine(HILO(x))...)
 @inline _batch_exp10(x) = _batch_converted_exp(x, _log2_10_3(Float64))
 
 _batch_kernel(::typeof(exp2), ::Type{Double64}, ::Type{Double64}) =
@@ -875,13 +875,13 @@ _batch_kernel(::typeof(exp10), ::Type{Double64}, ::Type{Double64}) = _BatchKerne
 @inline _batch_log_direct_range(x) = _batch_bounded(x, nextfloat(0.9375), prevfloat(1.0625))
 @inline _batch_log_table_range(x) =
     _batch_bounded(x, _log_tiny(Float64), 0.9375) | _batch_bounded(x, 1.0625, floatmax(Float64))
-@inline _batch_log2_direct(x) = Double64(_log_fine_near(HILO(x), Val(true), Val(true))...)
-@inline _batch_log_direct(x) = Double64(_log_fine_near(HILO(x), Val(false), Val(true))...)
-@inline _batch_log10_direct(x) = Double64(mul_dddd_dd_(_log2_direct(HILO(x)), _log10_2(Float64))...)
+@inline _batch_log2_direct(x) = unsafe_double(Float64, _log_fine_near(HILO(x), Val(true), Val(true))...)
+@inline _batch_log_direct(x) = unsafe_double(Float64, _log_fine_near(HILO(x), Val(false), Val(true))...)
+@inline _batch_log10_direct(x) = unsafe_double(Float64, mul_dddd_dd_(_log2_direct(HILO(x)), _log10_2(Float64))...)
 @inline _batch_log_fine_range(x) = _batch_bounded(x, 0x1p-500, 0.9375) | _batch_bounded(x, 1.0625, 0x1p500)
-@inline _batch_log2_table(x) = Double64(_log_fine_table(HILO(x), Val(true))...)
-@inline _batch_log_table(x) = Double64(_log_fine_table(HILO(x), Val(false))...)
-@inline _batch_log10_table(x) = Double64(mul_dddd_dd_(_log2_table(HILO(x), 0), _log10_2(Float64))...)
+@inline _batch_log2_table(x) = unsafe_double(Float64, _log_fine_table(HILO(x), Val(true))...)
+@inline _batch_log_table(x) = unsafe_double(Float64, _log_fine_table(HILO(x), Val(false))...)
+@inline _batch_log10_table(x) = unsafe_double(Float64, mul_dddd_dd_(_log2_table(HILO(x), 0), _log10_2(Float64))...)
 
 _batch_kernel(::typeof(log2), ::Type{Double64}, ::Type{Double64}) =
     (_BatchKernel(_batch_log_direct_range, _batch_log2_direct), _BatchKernel(_batch_log_fine_range, _batch_log2_table))
@@ -895,7 +895,7 @@ _batch_kernel(::typeof(log10), ::Type{Double64}, ::Type{Double64}) = (
 @inline function _batch_log1p(x)
     h, l = HILO(x)
     dh, dl = two_sum_(h, 2.0)
-    return Double64(_log_near_regular(h, l, dh, dl, l, _LOG_FINE_COEFFS)...)
+    return unsafe_double(Float64, _log_near_regular(h, l, dh, dl, l, _LOG_FINE_COEFFS)...)
 end
 _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
     _BatchKernel(x -> _batch_bounded(x, 0.005, 0.05), _batch_log1p)
@@ -905,9 +905,9 @@ _batch_kernel(::typeof(log1p), ::Type{Double64}, ::Type{Double64}) =
 
 @inline function _batch_expm1_series(x)
     h, l, t = _mf_mul3(two_prod_, HILO(x), _log2_e3(Float64))
-    return Double64(_expm1_offset(h, l, t)...)
+    return unsafe_double(Float64, _expm1_offset(h, l, t)...)
 end
-@inline _batch_expm1_ordinary(x) = Double64(sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
+@inline _batch_expm1_ordinary(x) = unsafe_double(Float64, sub_dddd_dd_(HILO(_batch_exp(x)), (1.0, 0.0))...)
 @inline _batch_expm1_central(x) = _expm1_central(x, two_prod_)
 
 # Repair isolated alternate regimes in an otherwise ordinary block.
@@ -925,7 +925,7 @@ _batch_kernel(::typeof(expm1), ::Type{Double64}, ::Type{Double64}) = _BatchAlter
 @inline function _batch_pow5(x, n)
     result = mul_dddd_dd_((1.0, 0.0), HILO(x))
     x4 = square_dd_dd_(square_dd_dd_(HILO(x)))
-    return Double64(mul_dddd_dd_(result, x4)...)
+    return unsafe_double(Float64, mul_dddd_dd_(result, x4)...)
 end
 
 # Test the scalar exponent once. Varying integer exponents use scalar power.
@@ -935,6 +935,6 @@ end
 # 0.2*log(1.1) < y*log(x) < 0.9*log(1.5), with ample room for
 # two-limb corrections. The exponent cannot take the integer branch.
 @inline _batch_pow_range(x, y) = _batch_bounded(x, 1.1, 1.5) & _batch_bounded(y, 0.2, 0.9)
-@inline _batch_pow(x, y) = _batch_exp(Double64(mul_dddd_dd_(HILO(y), HILO(_batch_log_table(x)))...))
+@inline _batch_pow(x, y) = _batch_exp(unsafe_double(Float64, mul_dddd_dd_(HILO(y), HILO(_batch_log_table(x)))...))
 _batch_kernel(::typeof(^), ::Type{Double64}, ::Type{Double64}, ::Type{Double64}) =
     _BatchKernel(_batch_pow_range, _batch_pow)

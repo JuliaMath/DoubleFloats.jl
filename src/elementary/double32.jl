@@ -24,7 +24,7 @@ end
 
 @inline function _double32_split(x::Float64)
     h = Float32(x)
-    return Double32(h, Float32(x - Float64(h)))
+    return unsafe_double(Float32, h, Float32(x - Float64(h)))
 end
 
 for name in _DOUBLE32_WIDENED

@@ -14,17 +14,17 @@
 @inline function Double64(x::Quadmath.Float128)
     hi = Float64(x)
     lo = Float64(x - hi)
-    return Double64(hi, lo)
+    return unsafe_double(Float64, hi, lo)
 end
 @inline function Double32(x::Quadmath.Float128)
     hi = Float32(x)
     lo = Float32(x - hi)
-    return Double32(hi, lo)
+    return unsafe_double(Float32, hi, lo)
 end
 @inline function Double16(x::Quadmath.Float128)
     hi = Float16(x)
     lo = Float16(x - hi)
-    return Double16(hi, lo)
+    return unsafe_double(Float16, hi, lo)
 end
 
 @inline ComplexDF64(x::Quadmath.ComplexF128) = ComplexDF64(Double64(real(x)), Double64(imag(x)))

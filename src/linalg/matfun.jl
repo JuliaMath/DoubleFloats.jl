@@ -22,8 +22,10 @@ const _DFC{T} = Complex{DoubleFloat{T}}
 const _DFRC{T} = Union{DoubleFloat{T},Complex{DoubleFloat{T}}}
 
 # 1/33!, 1/34! -- continuing inv_fact (sequences.jl), which stops at 1/32!
-const _invfact_33_34 =
-    (Double64(1.151633562077195e-37, -6.09957445788454e-54), Double64(3.387157535521162e-39, 5.09056148151085e-56))
+const _invfact_33_34 = (
+    unsafe_double(Float64, 1.151633562077195e-37, -6.09957445788454e-54),
+    unsafe_double(Float64, 3.387157535521162e-39, 5.09056148151085e-56),
+)
 
 @inline _invfact(k::Int) = k <= 32 ? inv_fact[k] : _invfact_33_34[k - 32]
 
@@ -65,7 +67,7 @@ function _ps_polyval(c::NTuple{N,Double64}, X::AbstractMatrix{E}, mul::F = *) wh
     return S
 end
 
-const _matexp_coeffs = (Double64(1.0, 0.0), ntuple(k -> _invfact(k), 34)...)
+const _matexp_coeffs = (unsafe_double(Float64, 1.0, 0.0), ntuple(k -> _invfact(k), 34)...)
 
 # Structural zeros must have both limbs zero. iszero(DoubleFloat)
 # examines only the head.
@@ -193,10 +195,12 @@ end
 # real results), replacing the 4x-cost complex exp(im*A) route and the
 # two-exponential hyperbolic route.
 
-const _msc_sin = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : (isodd(j) ? inv_fact[2j - 1] : -inv_fact[2j - 1]), 14)
-const _msc_cos = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : (isodd(j) ? inv_fact[2j - 2] : -inv_fact[2j - 2]), 14)
-const _msc_sinh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j - 1], 14)
-const _msc_cosh = ntuple(j -> j == 1 ? Double64(1.0, 0.0) : inv_fact[2j - 2], 14)
+const _msc_sin =
+    ntuple(j -> j == 1 ? unsafe_double(Float64, 1.0, 0.0) : (isodd(j) ? inv_fact[2j - 1] : -inv_fact[2j - 1]), 14)
+const _msc_cos =
+    ntuple(j -> j == 1 ? unsafe_double(Float64, 1.0, 0.0) : (isodd(j) ? inv_fact[2j - 2] : -inv_fact[2j - 2]), 14)
+const _msc_sinh = ntuple(j -> j == 1 ? unsafe_double(Float64, 1.0, 0.0) : inv_fact[2j - 1], 14)
+const _msc_cosh = ntuple(j -> j == 1 ? unsafe_double(Float64, 1.0, 0.0) : inv_fact[2j - 2], 14)
 
 # sum(c[j+1] * Y^j for j in 0:13) sharing the power stack Y..Y^4
 function _pair_poly(c::NTuple{14,Double64}, Y::Matrix{E}, P2, P3, P4, n, mul::F) where {E<:Number,F}
@@ -383,7 +387,7 @@ end
 # log of an upper triangular matrix by inverse scaling-and-squaring:
 # repeated triangular square roots bring T near I, then
 # log(T) = 2*atanh(G) = 2*G*sum(G^2k/(2k+1)),  G = (T-I)/(T+I)
-const _matlog_coeffs = (Double64(1.0, 0.0), ntuple(k -> inv_oddint[k], 18)...)
+const _matlog_coeffs = (unsafe_double(Float64, 1.0, 0.0), ntuple(k -> inv_oddint[k], 18)...)
 
 function _log_uppertri(T0::Matrix{E}) where {E<:Number}
     n = size(T0, 1)

@@ -3,9 +3,9 @@
 
 @inline function (-)(a::DoubleFloat{T}) where {T<:IEEEFloat}
     if iszero(LO(a)) || isnan(LO(a))
-        DoubleFloat{T}(-HI(a), LO(a))
+        unsafe_double(T, -HI(a), LO(a))
     else
-        DoubleFloat{T}(-HI(a), -LO(a))
+        unsafe_double(T, -HI(a), -LO(a))
     end
 end
 
@@ -29,11 +29,11 @@ end
 function Base.Math.frexp(x::DoubleFloat{T}) where {T<:IEEEFloat}
     frhi, exphi = frexp(HI(x))
     frlo, explo = frexp(LO(x))
-    return DoubleFloat{T}(frhi, ldexp(frlo, explo - exphi)), exphi
+    return unsafe_double(T, frhi, ldexp(frlo, explo - exphi)), exphi
 end
 
 function Base.Math.ldexp(x::DoubleFloat{T}, exponent::I) where {T<:IEEEFloat,I<:Integer}
-    return DoubleFloat{T}(ldexp(HI(x), exponent), ldexp(LO(x), exponent))
+    return unsafe_double(T, ldexp(HI(x), exponent), ldexp(LO(x), exponent))
 end
 
 function ldexps(dhi::Tuple{T,I}, dlo::Tuple{T,I}) where {T<:IEEEFloat,I<:Integer}
@@ -95,7 +95,7 @@ function Base.Math.nextfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     elseif !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + nextfloat(LO(x))
     else
-        DoubleFloat{T}(HI(x), ulp(ulp(HI(x))))
+        unsafe_double(T, HI(x), ulp(ulp(HI(x))))
     end
 end
 
@@ -106,7 +106,7 @@ function Base.Math.prevfloat(x::DoubleFloat{T}) where {T<:IEEEFloat}
     elseif !iszero(LO(x))
         DoubleFloat{T}(HI(x)) + prevfloat(LO(x))
     else
-        DoubleFloat{T}(HI(x), -ulp(ulp(HI(x))))
+        unsafe_double(T, HI(x), -ulp(ulp(HI(x))))
     end
 end
 
@@ -115,7 +115,7 @@ function Base.Math.nextfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     if !iszero(LO(x))
         x + n*ulp(LO(x))
     else
-        DoubleFloat{T}(HI(x), n*ulp(ulp(HI(x))))
+        unsafe_double(T, HI(x), n*ulp(ulp(HI(x))))
     end
 end
 
@@ -124,7 +124,7 @@ function Base.Math.prevfloat(x::DoubleFloat{T}, n::Int) where {T<:IEEEFloat}
     if !iszero(LO(x))
         x - n*ulp(LO(x))
     else
-        DoubleFloat{T}(HI(x), -n*ulp(ulp(HI(x))))
+        unsafe_double(T, HI(x), -n*ulp(ulp(HI(x))))
     end
 end
 
@@ -144,12 +144,12 @@ end
 
 function intpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     ihi, ilo = intpart(HILO(x))
-    return DoubleFloat{T}(ihi, ilo)
+    return unsafe_double(T, ihi, ilo)
 end
 
 function fracpart(x::DoubleFloat{T}) where {T<:IEEEFloat}
     fhi, flo = fracpart(HILO(x))
-    return DoubleFloat{T}(fhi, flo)
+    return unsafe_double(T, fhi, flo)
 end
 
 function modf(x::DoubleFloat{T}) where {T<:IEEEFloat}

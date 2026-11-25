@@ -11,17 +11,20 @@ struct DoubleFloat{T} <: MultipartFloat
     hi::T
     lo::T
 
-    # this form ensure hi, lo are canonically valued
-    function DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat}
-        hi, lo = two_sum(hi, lo)
-        return new{T}(hi, lo)
-    end
-
-    # this form does not alter hi, lo
-    function DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat}
-        return new{T}(hi, lo)
-    end
+    # The only way to build a pair without normalizing it. Internal: for code
+    # that has already established `hi == RN(hi + lo)`.
+    global unsafe_double(::Type{T}, hi::T, lo::T) where {T<:IEEEFloat} = new{T}(hi, lo)
 end
+
+# Words of another machine type are converted to `T` first, one by one.
+unsafe_double(::Type{T}, hi::Union{IEEEFloat,Integer}, lo::Union{IEEEFloat,Integer}) where {T<:IEEEFloat} =
+    unsafe_double(T, T(hi), T(lo))
+
+# Normalizes the pair.
+DoubleFloat(hi::T, lo::T) where {T<:IEEEFloat} = unsafe_double(T, two_sum(hi, lo)...)
+
+# Does not alter hi, lo.
+DoubleFloat{T}(hi::T, lo::T) where {T<:IEEEFloat} = unsafe_double(T, hi, lo)
 
 const Double64 = DoubleFloat{Float64}
 const Double32 = DoubleFloat{Float32}
@@ -38,7 +41,7 @@ DoubleFloat(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
 DoubleFloat{T}(x::DoubleFloat{T}) where {T<:IEEEFloat} = x
 function DoubleFloat{T1}(x::DoubleFloat{T2}) where {T1<:IEEEFloat,T2<:IEEEFloat}
     hi, lo = two_sum(T1(HI(x)), T1(LO(x)))
-    return DoubleFloat{T1}(hi, lo)
+    return unsafe_double(T1, hi, lo)
 end
 
 ComplexDF64(x::T) where {T<:Real} = ComplexDF64(x, zero(T))
@@ -86,7 +89,7 @@ Convert a tuple `x` of `Float16`s to a `Double16`.
 @inline Double64(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float64(x[1]), Float64(x[2]))
 @inline Double32(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float32(x[1]), Float32(x[2]))
 @inline Double16(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat(Float16(x[1]), Float16(x[2]))
-@inline DoubleFloat(x::Tuple{T,T}) where {T<:IEEEFloat} = DoubleFloat{T}(x[1], x[2])
+@inline DoubleFloat(x::Tuple{T,T}) where {T<:IEEEFloat} = unsafe_double(T, x[1], x[2])
 
 """
     Double64(::Real)
@@ -101,7 +104,7 @@ Convert `x` to an extended precision `Double64`.
         hi = Float64(x)
         lo = hi
     end
-    return Double64(hi, lo)
+    return unsafe_double(Float64, hi, lo)
 end
 """
     Double32(::Real}
@@ -116,7 +119,7 @@ Convert `x` to an extended precision `Double32`.
         hi = Float32(x)
         lo = hi
     end
-    return Double32(hi, lo)
+    return unsafe_double(Float32, hi, lo)
 end
 
 """
@@ -132,7 +135,7 @@ Convert `x` to an extended precision `Double16`.
         hi = Float16(x)
         lo = hi
     end
-    return Double16(hi, lo)
+    return unsafe_double(Float16, hi, lo)
 end
 
 """
@@ -200,13 +203,13 @@ Double16(x::Double64) = Double16(HI(x))
 Double16(x::Double32) = Double16(HI(x))
 
 # cleanup to support other pkgs
-DoubleFloat(x::Float64) = Double64(x, 0.0)
-DoubleFloat(x::Float32) = Double32(x, 0.0f0)
-DoubleFloat(x::Float16) = Double16(x, zero(Float16))
+DoubleFloat(x::Float64) = unsafe_double(Float64, x, 0.0)
+DoubleFloat(x::Float32) = unsafe_double(Float32, x, 0.0f0)
+DoubleFloat(x::Float16) = unsafe_double(Float16, x, zero(Float16))
 # more coverage
-DoubleFloat(x::Int64) = Double64(x, zero(Int64))
-DoubleFloat(x::Int32) = Double32(x, zero(Int32))
-DoubleFloat(x::Int16) = Double16(x, zero(Int16))
+DoubleFloat(x::Int64) = unsafe_double(Float64, x, zero(Int64))
+DoubleFloat(x::Int32) = unsafe_double(Float32, x, zero(Int32))
+DoubleFloat(x::Int16) = unsafe_double(Float16, x, zero(Int16))
 
 # overload Base._precision_with_base_2 or Base._precision to support the base keyword in Julia 1.8
 let precision =

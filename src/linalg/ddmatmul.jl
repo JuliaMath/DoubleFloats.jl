@@ -63,11 +63,11 @@ end
 @inline function _combine!(C::Matrix{TT}, Ch, Cl, α, β) where {TT}
     if α === true && (β === false || iszero(β))
         @inbounds for idx in eachindex(C)
-            C[idx] = TT(Double64(Ch[idx], Cl[idx]))
+            C[idx] = TT(unsafe_double(Float64, Ch[idx], Cl[idx]))
         end
     else
         @inbounds for idx in eachindex(C)
-            C[idx] = α * TT(Double64(Ch[idx], Cl[idx])) + β * C[idx]
+            C[idx] = α * TT(unsafe_double(Float64, Ch[idx], Cl[idx])) + β * C[idx]
         end
     end
     return C
@@ -131,11 +131,18 @@ function LinearAlgebra.mul!(
     _dd_gemm_acc!(Cih, Cil, Aih, Ail, Brh, Brl)     # + Ai*Br
     if α === true && (β === false || iszero(β))
         @inbounds for idx in eachindex(C)
-            C[idx] = Complex{Double64}(Double64(Crh[idx], Crl[idx]), Double64(Cih[idx], Cil[idx]))
+            C[idx] = Complex{Double64}(
+                unsafe_double(Float64, Crh[idx], Crl[idx]),
+                unsafe_double(Float64, Cih[idx], Cil[idx]),
+            )
         end
     else
         @inbounds for idx in eachindex(C)
-            C[idx] = α * Complex{Double64}(Double64(Crh[idx], Crl[idx]), Double64(Cih[idx], Cil[idx])) + β * C[idx]
+            C[idx] =
+                α * Complex{Double64}(
+                    unsafe_double(Float64, Crh[idx], Crl[idx]),
+                    unsafe_double(Float64, Cih[idx], Cil[idx]),
+                ) + β * C[idx]
         end
     end
     return C
@@ -193,7 +200,7 @@ function _mat_tri_mul(A::Matrix{ComplexDF64}, B::Matrix{ComplexDF64})
     _dd_tri_acc!(Cih, Cil, Aih, Ail, Brh, Brl)
     C = similar(A)
     @inbounds for i in eachindex(C)
-        C[i] = ComplexDF64(Double64(Crh[i], Crl[i]), Double64(Cih[i], Cil[i]))
+        C[i] = ComplexDF64(unsafe_double(Float64, Crh[i], Crl[i]), unsafe_double(Float64, Cih[i], Cil[i]))
     end
     return C
 end
@@ -248,7 +255,7 @@ function _root_subproduct!(F, A, B, C, ::Type{Double64})
     Ch, Cl = C
     _dd_gemm_acc!(Ch, Cl, A..., B...)
     @inbounds for j in axes(F, 2), i in axes(F, 1)
-        F[i, j] -= Double64(Ch[i, j], Cl[i, j])
+        F[i, j] -= unsafe_double(Float64, Ch[i, j], Cl[i, j])
     end
     return F
 end
@@ -262,7 +269,8 @@ function _root_subproduct!(F, A, B, C, ::Type{ComplexDF64})
     _dd_gemm_acc!(Cih, Cil, Arh, Arl, Bih, Bil)
     _dd_gemm_acc!(Cih, Cil, Aih, Ail, Brh, Brl)
     @inbounds for j in axes(F, 2), i in axes(F, 1)
-        F[i, j] -= ComplexDF64(Double64(Crh[i, j], Crl[i, j]), Double64(Cih[i, j], Cil[i, j]))
+        F[i, j] -=
+            ComplexDF64(unsafe_double(Float64, Crh[i, j], Crl[i, j]), unsafe_double(Float64, Cih[i, j], Cil[i, j]))
     end
     return F
 end

@@ -1,11 +1,11 @@
-const twopi = Double64(6.283185307179586, 2.4492935982947064e-16)
-const onepi = Double64(3.141592653589793, 1.2246467991473532e-16)
-const halfpi = Double64(1.5707963267948966, 6.123233995736766e-17)
-const qrtrpi = Double64(0.7853981633974483, 3.061616997868383e-17)
-const sixteenthpi = Double64(0.19634954084936207, 7.654042494670958e-18)
+const twopi = unsafe_double(Float64, 6.283185307179586, 2.4492935982947064e-16)
+const onepi = unsafe_double(Float64, 3.141592653589793, 1.2246467991473532e-16)
+const halfpi = unsafe_double(Float64, 1.5707963267948966, 6.123233995736766e-17)
+const qrtrpi = unsafe_double(Float64, 0.7853981633974483, 3.061616997868383e-17)
+const sixteenthpi = unsafe_double(Float64, 0.19634954084936207, 7.654042494670958e-18)
 const _trig_taylor_cutoff = 0.09817477042468103
-const thirtysecondpi = Double64(_trig_taylor_cutoff, 3.827021247335479e-18)
-const threesixteenthpi = Double64(0.5890486225480862, 2.296212748401287e-17)
+const thirtysecondpi = unsafe_double(Float64, _trig_taylor_cutoff, 3.827021247335479e-18)
+const threesixteenthpi = unsafe_double(Float64, 0.5890486225480862, 2.296212748401287e-17)
 
 atanxy(x::T, y::T) where {T<:Real} = atan(y, x)
 
@@ -15,8 +15,8 @@ atanxy(x::T, y::T) where {T<:Real} = atan(y, x)
 =#
 # sin(a) = a*S(a^2), S(y) = 1 - y/3! + y^2/5! - ...
 # cos(a) = C(a^2),   C(y) = 1 - y/2! + y^2/4! - ...
-const sinS = (Double64(1.0, 0.0), ntuple(k -> (iseven(k) ? inv_fact[2k + 1] : -inv_fact[2k + 1]), 8)...)
-const cosC = (Double64(1.0, 0.0), ntuple(k -> (iseven(k) ? inv_fact[2k] : -inv_fact[2k]), 9)...)
+const sinS = (unsafe_double(Float64, 1.0, 0.0), ntuple(k -> (iseven(k) ? inv_fact[2k + 1] : -inv_fact[2k + 1]), 8)...)
+const cosC = (unsafe_double(Float64, 1.0, 0.0), ntuple(k -> (iseven(k) ? inv_fact[2k] : -inv_fact[2k]), 9)...)
 const sinS_h = map(x -> HI(x), sinS);
 const sinS_l = map(x -> LO(x), sinS)
 const cosC_h = map(x -> HI(x), cosC);
@@ -52,7 +52,7 @@ const cosC_l = map(x -> LO(x), cosC)
     # which carry cos(ah) and sin(ah) to well past Float64 accuracy
     s1, e1 = sum(sh, Ch * al)
     c1, e2 = sum(Ch, -sh * al)
-    return DoubleFloat{Float64}(sum(s1, sl + e1)...), DoubleFloat{Float64}(sum(c1, Cl + e2)...)
+    return unsafe_double(Float64, sum(s1, sl + e1)...), unsafe_double(Float64, sum(c1, Cl + e2)...)
 end
 
 function sin_taylor(a::Double64)
@@ -270,7 +270,7 @@ include("local_hyperbolic.jl")
     hi = Float64(value)
     isfinite(hi) || return Double64(hi)
     _exp_mpfr_add!(value, value, BigFloat(-hi, RoundNearest; precision = p), rnd)
-    return Double64(hi, Float64(value))
+    return unsafe_double(Float64, hi, Float64(value))
 end
 
 @inline function _tan_wide(x::Double64)
