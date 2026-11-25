@@ -22,8 +22,8 @@ design is `apothecary.md`. Updated at the end of each work item.
 | W0.5 Benchmark suite | done | `acab47e4`, benchmark fix | 179 benchmarks; `release-1.13` against the working tree: every ratio between 0.95 and 1.05. CI job passes |
 | W0.6 Line endings and formatting | done | `e01825b1`, `00d5f7bc`, `53da9379` | Corpus and suite unchanged; benchmark ratios 0.95 to 1.05 |
 | W0.7 Source tree | done, with two splits deferred (below) | `66f38363` through `c3c90aef` (15 commits) | Corpus identical after every commit; suite passes; layering lint reports no upward use |
-| W0.8 Sealed constructor | next | | |
-| W0.9 Explicit imports | | | |
+| W0.8 Sealed constructor | done | this commit range | Corpus identical; suite passes; benchmark ratios 0.98 to 1.06 against `release-1.13` |
+| W0.9 Explicit imports | next | | |
 | W0.10 Contributor guide | | | |
 
 ## Findings so far
@@ -98,6 +98,20 @@ design is `apothecary.md`. Updated at the end of each work item.
 - The plan's "prefix loading" check was vacuous: a package that loads has
   already loaded every prefix. `apothic.md` §2.2 now says so.
 
+- W0.8: the struct already had two inner constructors, an untyped one that
+  normalizes (`DoubleFloat(hi, lo)`) and a typed one that does not
+  (`Double64(hi, lo)`). Both are now outer methods over `unsafe_double`.
+- Eight of the 506 rewritten sites passed words of another type (`Float64`
+  literals to a `Double32`), and three more passed integers; the old typed
+  constructor converted each word. `unsafe_double` has a method that does
+  the same, restricted to machine floats and integers.
+- Not rewritten: constructions through a type variable (`T(hi, lo)`,
+  `typeof(x)(hi, lo)`). They reach the public constructor and will be
+  normalized after W1.3a. The corpus will show whether any of them mattered;
+  the benchmarks will show the cost.
+- A mistake of mine worth recording: I killed my own shell twice with
+  `pkill -f` on a pattern that matched the command line.
+
 ## Open
 
 - Registration of 1.13.3 to be confirmed merged; then tag `v1.13.3` appears.
@@ -107,7 +121,7 @@ design is `apothecary.md`. Updated at the end of each work item.
 
 ## Next
 
-W0.8: seal the struct. `unsafe_double` becomes the only way to build a pair
-without normalizing, and every internal construction site that follows a
-kernel uses it. The public pair constructor stays raw until W1.3a. Corpus
-unchanged.
+W0.9: methods defined as `Base.name(...)` at the point of definition in
+place of the sixty-line `import Base:` list; every imported name explicit;
+`@eval` loops over the three types replaced by parametric methods where
+that leaves the corpus unchanged.
